@@ -1,82 +1,133 @@
 extern crate askama;
-extern crate serde;
 extern crate num;
-use serde::Serialize;
+extern crate rand;
+extern crate serde;
 use askama::Template;
+use rand::Rng;
+use std::env;
 use std::fs::File;
-use std::process::Command;
 use std::io::Write;
-
+use std::process::Command;
 pub mod charts;
 
-use crate::charts::Scatter;
-use crate::charts::Trace;
+use crate::charts::Layout;
 
 #[derive(Template)]
-#[template(path = "plotly-latest.min.js", escape="none")]
+#[template(path = "plotly-latest.min.js", escape = "none")]
 struct PlotlyJs;
 
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
-pub struct PlotTemplate<'a> {
-    pub plot_data: &'a str,
-    pub plotly_javascript: &'a str,
+struct PlotTemplate<'a> {
+    plot_data: &'a str,
+    plotly_javascript: &'a str,
 }
 
-pub struct Plot<X, Y> where X: num::Num + serde::Serialize, Y: num::Num + serde::Serialize {
-    traces: Vec<Trace<X, Y>>,
+pub trait TraceSerialize {
+    fn serialize(&self) -> String;
 }
 
-impl<X, Y> Plot<X, Y> where X: num::Num + serde::Serialize, Y: num::Num + serde::Serialize {
-    pub fn new() -> Plot<X, Y> {
-        Plot { traces: Vec::with_capacity(2)}
+pub struct Plot {
+    traces: Vec<Box<dyn TraceSerialize>>,
+    layout: Option<Layout>,
+}
+
+impl Plot {
+    pub fn new() -> Plot {
+        Plot {
+            traces: Vec::with_capacity(1),
+            layout: None,
+        }
     }
 
-    pub fn add_trace(&mut self, trace: Trace<X, Y>) {
+    pub fn add_trace(&mut self, trace: Box<dyn TraceSerialize>) {
         self.traces.push(trace);
     }
 
-    pub fn show(&self) {
+    pub fn add_layout(&mut self, layout: Layout) {
+        self.layout = Some(layout);
+    }
+
+    fn render(&self) -> String {
         let mut plot_data = String::new();
         for (idx, trace) in self.traces.iter().enumerate() {
-            let mut s = match trace {
-              Trace::Scatter(t) => { serde_json::to_string(&t).unwrap() },
-              _ => panic!("not implemented"),
-            };
+            let s = trace.serialize();
             plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
         }
         plot_data.push_str("\n");
         plot_data.push_str("var data = [");
         for idx in 0..self.traces.len() {
-            if(idx != self.traces.len()-1) {
+            if idx != self.traces.len() - 1 {
                 plot_data.push_str(format!("trace_{},", idx).as_str());
             } else {
                 plot_data.push_str(format!("trace_{}", idx).as_str());
             }
         }
         plot_data.push_str("];\n");
+        let layout_data = match &self.layout {
+            Some(layout) => format!("var layout = {};\n", TraceSerialize::serialize(layout)),
+            None => {
+                let mut s = String::from("var layout = {");
+                s.push_str("};\n");
+                s
+            }
+        };
+        plot_data.push_str(layout_data.as_str());
 
-        let plotly_js = PlotlyJs{}.render().unwrap();
-
-        let tmpl = PlotTemplate{plot_data: plot_data.as_str(), plotly_javascript: plotly_js.as_str()};
-        let mut file = File::create("/tmp/plot.html").unwrap();
-        file.write_all( tmpl.render().unwrap().as_bytes());
-
-        let r = Command::new("xdg-open").args(&["/tmp/plot.html"]).output().unwrap();
+        let plotly_js = PlotlyJs {}.render().unwrap();
+        let tmpl = PlotTemplate {
+            plot_data: plot_data.as_str(),
+            plotly_javascript: plotly_js.as_str(),
+        };
+        tmpl.render().unwrap()
     }
-}
 
-#[derive(Serialize, Debug)]
-pub struct Axis {
+    #[cfg(target_os = "macos")]
+    fn show_with_default_app(temp_path: &str) {
+        Command::new("open").args(&[temp_path]).output().unwrap();
+    }
 
-}
+    #[cfg(target_os = "linux")]
+    fn show_with_default_app(temp_path: &str) {
+        Command::new("xdg-open")
+            .args(&[temp_path])
+            .output()
+            .unwrap();
+    }
 
-#[derive(Serialize, Debug)]
-pub struct LayoutTitle {
+    #[cfg(target_os = "windows")]
+    fn show_with_default_app(temp_path: &str) {
+        Command::new("start")
+            .args(&[r#""""#, temp_path])
+            .output()
+            .unwrap();
+    }
 
-}
+    pub fn show(&self) {
+        let rendered = self.render();
+        let rendered = rendered.as_bytes();
+        let mut temp = env::temp_dir();
 
-#[derive(Serialize, Debug)]
-pub struct Layout {
+        let mut plot_name = rand::thread_rng()
+            .sample_iter(&rand::distributions::Alphanumeric)
+            .take(22)
+            .collect::<String>();
+        plot_name.push_str(".html");
 
+        temp.push(plot_name);
+        let temp_path = temp.to_str().unwrap();
+        let mut file = File::create(temp_path).unwrap();
+        file.write_all(rendered)
+            .expect("failed to write html output");
+
+        Plot::show_with_default_app(temp_path);
+    }
+
+    pub fn to_file(&self, filename: &str) {
+        let rendered = self.render();
+        let rendered = rendered.as_bytes();
+        let mut file = File::create(filename).unwrap();
+        file.write_all(rendered)
+            .expect("failed to write html output");
+    }
 }

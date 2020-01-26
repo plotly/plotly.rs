@@ -1,16 +1,10 @@
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
-pub struct Contour {
-
-}
+pub struct Contour {}
 
 #[derive(Serialize, Debug)]
-pub struct HeatMap {
-
-}
+pub struct HeatMap {}
 
 #[derive(Serialize, Debug)]
-pub struct ParallelCoordinates {
-
-}
+pub struct ParallelCoordinates {}

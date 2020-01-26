@@ -5,6 +5,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.2.0] - 2020-01-26
+### Added
+- The following plot types are incomplete but fairly functional:
+    - Scatter plot
+    - Box plot
+    - Scatter and Box plot with error bars
+    - Candlestick plot
+    - OHLC plot
+- Basic support for plot Layout
+- Default template data for Layout
+- Examples (See [example_plots.rs](examples/example_plots.rs))
+    - [Line and scatter plot](https://plot.ly/javascript/line-and-scatter/#line-and-scatter-plot)
+    - [Data labels hover](https://plot.ly/javascript/line-and-scatter/#data-labels-hover)
+    - [Data labels on the plot](https://plot.ly/javascript/line-and-scatter/#data-labels-on-the-plot)
+    - Geometric Brownian motion plot (scatter + line plot)
+    - [Basic bar chart](https://plot.ly/javascript/bar-charts/#basic-bar-chart)
+    - [Grouped bar chart](https://plot.ly/javascript/bar-charts/#grouped-bar-chart)
+    - [Stacked bar chart](https://plot.ly/javascript/bar-charts/#stacked-bar-chart)
+    - [Basic symmetric error bars](https://plot.ly/javascript/error-bars/#basic-symmetric-error-bars)
+    - [Bar chart with error bars](https://plot.ly/javascript/error-bars/#bar-chart-with-error-bars)
+    - [Simple candlestick chart](https://plot.ly/javascript/candlestick-charts/#simple-candlestick-chart)
+    - Geometric Brownian motion candlestick plot
+    - [Simple OHLC chart](https://plot.ly/javascript/ohlc-charts/#simple-ohlc-chart)
+    - Geometric Brownian motion OHLC plot
+
 ## [0.1.0] - 2020-01-26
 ### Added
 - Placeholder repository.

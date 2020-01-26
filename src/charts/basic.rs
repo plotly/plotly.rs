@@ -1,12 +1,16 @@
+use crate::charts::{ErrorData, Marker, Mode, PlotType};
+use crate::TraceSerialize;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
-pub struct Scatter<X, Y> where X: num::Num + serde::Serialize, Y: num::Num + serde::Serialize{
+pub struct Scatter<X, Y>
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
+{
     pub x: Vec<X>,
     pub y: Vec<Y>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub z: Option<Vec<f64>>,
-    r#type: String,
+    r#type: PlotType,
     pub visible: bool,
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -15,37 +19,111 @@ pub struct Scatter<X, Y> where X: num::Num + serde::Serialize, Y: num::Num + ser
     pub legendgroup: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub opacity: Option<f64>,
-    pub mode: String,
+    pub mode: Mode,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub textposition: Option<Vec<String>>,
+    pub marker: Marker,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_x: Option<ErrorData>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_y: Option<ErrorData>,
 }
 
-impl<X, Y> Scatter<X, Y>  where X: num::Num + serde::Serialize, Y: num::Num + serde::Serialize{
-    pub fn new(name: &str, x: Vec<X>, y: Vec<Y>) -> Scatter<X, Y> {
-        Scatter {
+impl<X, Y> Scatter<X, Y>
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
+{
+    pub fn new(name: &str, x: Vec<X>, y: Vec<Y>) -> Box<Scatter<X, Y>> {
+        Box::new(Scatter {
             x,
             y,
-            z: None,
-            r#type: String::from("scatter"),
+            r#type: PlotType::Scatter,
             visible: true,
             name: name.to_owned(),
             showlegend: None,
             legendgroup: None,
             opacity: None,
-            mode: String::from("lines"),
-        }
+            mode: Mode::Lines,
+            text: None,
+            textposition: None,
+            marker: Marker::new(),
+            error_x: None,
+            error_y: None,
+        })
+    }
+}
+
+impl<X, Y> TraceSerialize for Scatter<X, Y>
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
+{
+    fn serialize(&self) -> String {
+        serde_json::to_string(&self).unwrap()
     }
 }
 
 #[derive(Serialize, Debug)]
-pub struct Line {
-
+pub struct Bar<X, Y>
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
+{
+    pub x: Vec<X>,
+    pub y: Vec<Y>,
+    r#type: PlotType,
+    pub visible: bool,
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub showlegend: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub legendgroup: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub opacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub textposition: Option<Vec<String>>,
+    pub marker: Marker,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_x: Option<ErrorData>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error_y: Option<ErrorData>,
 }
 
-#[derive(Serialize, Debug)]
-pub struct Bar {
-
+impl<X, Y> Bar<X, Y>
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
+{
+    pub fn new(name: &str, x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
+        Box::new(Bar {
+            x,
+            y,
+            r#type: PlotType::Bar,
+            visible: true,
+            name: name.to_owned(),
+            showlegend: None,
+            legendgroup: None,
+            opacity: None,
+            text: None,
+            textposition: None,
+            marker: Marker::new(),
+            error_x: None,
+            error_y: None,
+        })
+    }
 }
 
-#[derive(Serialize, Debug)]
-pub struct Pie {
-
+impl<X, Y> TraceSerialize for Bar<X, Y>
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
+{
+    fn serialize(&self) -> String {
+        serde_json::to_string(&self).unwrap()
+    }
 }
