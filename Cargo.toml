@@ -2,7 +2,7 @@
 name = "plotly"
 version = "0.1.0"
 description = "Wrapper for Plotly.js"
-authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com"]
+authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"
 homepage = "https://github.com/igiagkiozis/plotly"
 documentation = "https://github.com/igiagkiozis/plotly"
