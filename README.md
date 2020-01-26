@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.2.0"
+plotly = "0.2.1"
 ```
 
 # License
