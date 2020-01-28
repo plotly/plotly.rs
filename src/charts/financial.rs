@@ -10,12 +10,12 @@ pub enum Direction {
 }
 
 #[derive(Serialize, Debug)]
-pub struct Candlestick<X, O>
+pub struct Candlestick<T, O>
     where
-        X: Serialize,
+        T: Serialize,
         O: num::Num + Serialize,
 {
-    pub x: Vec<X>,
+    pub x: Vec<T>,
     pub open: Vec<O>,
     pub high: Vec<O>,
     pub low: Vec<O>,
@@ -27,18 +27,18 @@ pub struct Candlestick<X, O>
     pub decreasing: Direction,
 }
 
-impl<X, O> Candlestick<X, O>
+impl<T, O> Candlestick<T, O>
     where
-        X: Serialize,
+        T: Serialize,
         O: num::Num + Serialize,
 {
     pub fn new(
-        x: Vec<X>,
+        x: Vec<T>,
         open: Vec<O>,
         high: Vec<O>,
         low: Vec<O>,
         close: Vec<O>,
-    ) -> Box<Candlestick<X, O>> {
+    ) -> Box<Candlestick<T, O>> {
         let mut iline = LineSegment::new();
         iline.width = Some(1);
         iline.color = Some(Color::Green);
@@ -70,12 +70,12 @@ impl<X, Y> TraceSerialize for Candlestick<X, Y>
 }
 
 #[derive(Serialize, Debug)]
-pub struct Ohlc<X, O>
+pub struct Ohlc<T, O>
     where
-        X: Serialize,
+        T: Serialize,
         O: num::Num + Serialize,
 {
-    pub x: Vec<X>,
+    pub x: Vec<T>,
     pub open: Vec<O>,
     pub high: Vec<O>,
     pub low: Vec<O>,
@@ -87,18 +87,18 @@ pub struct Ohlc<X, O>
     pub decreasing: Direction,
 }
 
-impl<X, O> Ohlc<X, O>
+impl<T, O> Ohlc<T, O>
     where
-        X: Serialize,
+        T: Serialize,
         O: num::Num + Serialize,
 {
     pub fn new(
-        x: Vec<X>,
+        x: Vec<T>,
         open: Vec<O>,
         high: Vec<O>,
         low: Vec<O>,
         close: Vec<O>,
-    ) -> Box<Ohlc<X, O>> {
+    ) -> Box<Ohlc<T, O>> {
         let mut iline = LineSegment::new();
         iline.width = Some(2);
         iline.color = Some(Color::Green);

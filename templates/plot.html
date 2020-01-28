@@ -1,26 +1,51 @@
 <html>
-<head><meta charset="utf-8" /></head>
+<head>
+    <meta charset="utf-8"/>
+</head>
 <body>
-    <div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-        <script type="text/javascript">if (window.MathJax) {MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>
-        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script type="text/javascript">{{ plotly_javascript }}</script>
-            <div id="ef7091f1-7d0f-444f-a53c-941be30103a8" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-            <script type="text/javascript">
+<div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+    <script type="text/javascript">if (window.MathJax) {MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>
+    <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+    <script type="text/javascript">{{ plotly_javascript }}</script>
+    {% if  export_image -%}
+    <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;" hidden></div>
+    <div ><img id="image-export" class="plotly-graph-div"></img></div>
+    {% else -%}
+    <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+    <div ><img id="image-export" class="plotly-graph-div" hidden></img></div>
+    {% endif -%}
+
+<!--    <div ><img id="image-export" class="plotly-graph-div"></img></div>-->
+
+    <script type="text/javascript">
                 
                 window.PLOTLYENV=window.PLOTLYENV || {};                    
-                if (document.getElementById("ef7091f1-7d0f-444f-a53c-941be30103a8")) {
+                if (document.getElementById("plotly-html-element")) {
+
+                    var d3 = Plotly.d3;
+                    var image_element= d3.select('#image-export');
 
                     {{ plot_data }}
 
-                    Plotly.newPlot('ef7091f1-7d0f-444f-a53c-941be30103a8', data, layout,
+                    Plotly.newPlot('plotly-html-element', data, layout,
                         {"responsive": true})
-
+                        .then(
+                            function(gd) {
+                              Plotly.toImage(gd,{height:{{ image_height }},width:{{ image_width }}})
+                                 .then(
+                                     function(url) {
+                                         if({{ export_image }}) {
+                                             image_element.attr("src", url);
+                                             return Plotly.toImage(gd,{format:'{{ image_type }}',height:{{ image_height }},width:{{ image_width }}});
+                                         }
+                                    })
+                            });
 
                 };
-                
-            </script>
-        </div>
+
+
+    </script>
+</div>
 </body>
 </html>

@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.2.1"
+plotly = "0.3.0"
 ```
 
 # License
@@ -23,3 +23,5 @@ plotly = "0.2.1"
 Plotly for Rust is distributed under the terms of both the MIT license.
 
 See [LICENSE-MIT](LICENSE-MIT), and [COPYRIGHT](COPYRIGHT) for details.
+
+![Image](gbm_simple_ohlc_chart.html)

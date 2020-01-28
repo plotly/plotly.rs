@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.2.1"
+version = "0.3.0"
 description = "Wrapper for Plotly.js"
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"

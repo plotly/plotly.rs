@@ -346,10 +346,7 @@ fn gbm_simple_candlestick_chart() {
         high.push(1.09 * *mid_point);
     }
 
-    let trace1 = Candlestick::new(x, open, high, low, close);
-
-    let mut plot = Plot::new();
-    plot.add_trace(trace1);
+    let plot = Plot::candlestick(x, open, high, low, close);
     plot.show();
 }
 
@@ -445,23 +442,23 @@ fn gbm_simple_ohlc_chart() {
         high.push(1.09 * *mid_point);
     }
 
-    let trace1 = Ohlc::new(x, open, high, low, close);
-
-    let mut plot = Plot::new();
-    plot.add_trace(trace1);
+    let plot = Plot::ohlc(x, open, high, low, close);
     plot.show();
+    plot.show_png(1024, 1024);
+    plot.show_jpg(1024, 512);
 }
 
 fn example_ohlc_plots() {
-    simple_ohlc_chart();
+//    simple_ohlc_chart();
     gbm_simple_ohlc_chart();
 }
 
 fn main() -> std::io::Result<()> {
-    example_scatter_plots();
+//    example_scatter_plots();
     example_bar_charts();
-    example_error_bar_plots();
-    example_candlestick_plots();
+//    example_error_bar_plots();
+//    example_candlestick_plots();
     example_ohlc_plots();
+
     Ok(())
 }
