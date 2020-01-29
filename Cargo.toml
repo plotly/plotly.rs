@@ -1,9 +1,10 @@
 [package]
 name = "plotly"
 version = "0.3.0"
-description = "Wrapper for Plotly.js"
+description = "A plotting library powered by Plotly.js"
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"
+readme = "README.md"
 homepage = "https://github.com/igiagkiozis/plotly"
 documentation = "https://github.com/igiagkiozis/plotly"
 repository = "https://github.com/igiagkiozis/plotly"

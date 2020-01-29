@@ -38,68 +38,13 @@ pub struct Plot {
     layout: Option<Layout>,
 }
 
-impl Plot {
+impl Plot
+{
     pub fn new() -> Plot {
         Plot {
             traces: Vec::with_capacity(1),
             layout: None,
         }
-    }
-
-    pub fn scatter<X, Y>(name: &str, x: Vec<X>, y: Vec<Y>) -> Plot
-        where X: 'static + serde::Serialize,
-              Y: 'static + num::Num + serde::Serialize
-    {
-        let mut plot = Plot {
-            traces: Vec::with_capacity(1),
-            layout: None,
-        };
-
-        let mut trace = charts::Scatter::new(name, x, y);
-        trace.mode = charts::Mode::Markers;
-        plot.add_trace(trace);
-        plot
-    }
-
-    pub fn bar<X, Y>(name: &str, x: Vec<X>, y: Vec<Y>) -> Plot
-        where X: 'static + serde::Serialize,
-              Y: 'static + num::Num + serde::Serialize
-    {
-        let mut plot = Plot {
-            traces: Vec::with_capacity(1),
-            layout: None,
-        };
-
-        let mut trace = charts::Bar::new(name, x, y);
-        plot.add_trace(trace);
-        plot
-    }
-
-    pub fn candlestick<T, O>(time: Vec<T>, open: Vec<O>, high: Vec<O>, low: Vec<O>, close: Vec<O>) -> Plot
-        where T: 'static + serde::Serialize,
-              O: 'static + num::Num + serde::Serialize
-    {
-        let mut plot = Plot {
-            traces: Vec::with_capacity(1),
-            layout: None,
-        };
-
-        let trace = charts::Candlestick::new(time, open, high, low, close);
-        plot.add_trace(trace);
-        plot
-    }
-
-    pub fn ohlc<T, O>(time: Vec<T>, open: Vec<O>, high: Vec<O>, low: Vec<O>, close: Vec<O>) -> Plot
-        where T: 'static + serde::Serialize,
-              O: 'static + num::Num + serde::Serialize {
-        let mut plot = Plot {
-            traces: Vec::with_capacity(1),
-            layout: None,
-        };
-
-        let trace = charts::Ohlc::new(time, open, high, low, close);
-        plot.add_trace(trace);
-        plot
     }
 
     pub fn add_trace(&mut self, trace: Box<dyn TraceSerialize>) {
@@ -110,7 +55,13 @@ impl Plot {
         self.layout = Some(layout);
     }
 
-    fn render(&self, export_image: bool, image_type: &str, image_width: usize, image_height: usize) -> String {
+    fn render(
+        &self,
+        export_image: bool,
+        image_type: &str,
+        image_width: usize,
+        image_height: usize,
+    ) -> String {
         let mut plot_data = String::new();
         for (idx, trace) in self.traces.iter().enumerate() {
             let s = trace.serialize();
@@ -231,22 +182,6 @@ impl Plot {
 
     pub fn to_html(&self, filename: &str) {
         let rendered = self.render(false, "", 0, 0);
-        let rendered = rendered.as_bytes();
-        let mut file = File::create(filename).unwrap();
-        file.write_all(rendered)
-            .expect("failed to write html output");
-    }
-
-    pub fn to_png(&self, filename: &str, width: usize, height: usize) {
-        let rendered = self.render(true, "png", width, height);
-        let rendered = rendered.as_bytes();
-        let mut file = File::create(filename).unwrap();
-        file.write_all(rendered)
-            .expect("failed to write html output");
-    }
-
-    pub fn to_jpg(&self, filename: &str, width: usize, height: usize) {
-        let rendered = self.render(true, "jpg", width, height);
         let rendered = rendered.as_bytes();
         let mut file = File::create(filename).unwrap();
         file.write_all(rendered)
