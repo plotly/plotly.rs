@@ -33,7 +33,7 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    plot.show_png(3840, 2160);
+    plot.show_png(1024, 680);
     plot.show();
 }
 
