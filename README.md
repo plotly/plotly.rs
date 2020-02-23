@@ -120,4 +120,4 @@ Plotly for Rust is distributed under the terms of both the MIT license.
 
 See [LICENSE-MIT](LICENSE-MIT), and [COPYRIGHT](COPYRIGHT) for details.
 
-![Image](gbm_simple_ohlc_chart.html)
+![Image](docs/images/line_dash.html)
