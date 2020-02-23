@@ -33,7 +33,6 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    plot.show_png(1024, 680);
     plot.show();
 }
 
@@ -179,6 +178,7 @@ fn line_shape_options_for_interpolation() {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
+    plot.show_png(1024, 680);
     plot.show();
 }
 
