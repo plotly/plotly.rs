@@ -95,7 +95,8 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
-![Image](docs/images/line_shape_options_for_interpolation.png)
+![line shape options for interpolation](docs/images/line_shape_options_for_interpolation.png)
+[**Click to see interactive version**](docs/images/line_dash.html)
 
 ### Bar plot
 

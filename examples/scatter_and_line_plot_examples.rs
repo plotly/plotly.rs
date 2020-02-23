@@ -221,6 +221,7 @@ fn line_dash() {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
+    plot.to_html("line_dash.html");
     plot.show();
 }
 
