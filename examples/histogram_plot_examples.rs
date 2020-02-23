@@ -77,7 +77,6 @@ fn stacked_histograms() {
     plot.add_layout(layout);
 
     plot.show();
-    plot.to_html("stacked_histograms.html");
 }
 
 fn main() -> std::io::Result<()> {

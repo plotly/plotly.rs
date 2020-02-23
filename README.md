@@ -464,8 +464,8 @@ fn main() -> std::io::Result<()> {
 
 For more examples see [surface_plot_examples.rs](examples/surface_plot_examples.rs). 
 
-### Save plots to PNG and JPEG
-At present it is only possible to save plots in *PNG* and *JPEG* format with the help of the browser. For example the 
+### Save plots
+At present it is only possible to save plots in *PNG*, *JPG* and *HTML* format with the help of the browser. For example the 
 following code: 
 
 ```rust
@@ -488,8 +488,10 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace3);
     // The following will generate the plot in PNG format (width: 1024, height: 680) and display it in the browser. 
     plot.show_png(1024, 680);
-    // Similarly to the above line but with a JPEG format output. 
+    // Similarly to the above line but with a JPG format output. 
     plot.show_jpg(1024, 680);
+    // Save the resulting plot in `filename.html`
+    plot.to_html("filename.html");
     plot.show();
 }
 
@@ -498,9 +500,11 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ``` 
-will open 3 tabs in the browser with the first two containing the *PNG* and *JPEG* outputs respectively. Then these must be saved manually 
+will open 3 tabs in the browser with the first two containing the *PNG* and *JPG* outputs respectively. Then these must be saved manually 
 by right clicking and selecting `Save As...` in the context menu of the browser. This is somewhat cumbersome, however, I haven't found a 
-more elegant solution. **Suggestions are most welcome!**
+more elegant solution. **Suggestions are most welcome!** 
+
+At present the method `to_html` is the only available way to persist the plots programmatically. 
 
 
 # License

@@ -32,8 +32,6 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    plot.show_png(1024, 680);
-    plot.show_jpg(1024, 680);
     plot.show();
 }
 
@@ -308,7 +306,6 @@ fn line_dash() {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    plot.show_png(1024, 680);
     plot.show();
 }
 
@@ -331,7 +328,6 @@ fn data_labels_hover() {
         .xaxis(Axis::new().title(Title::new("x")).range(vec![0.75, 5.25]))
         .yaxis(Axis::new().title(Title::new("y")).range(vec![0., 8.]));
     plot.add_layout(layout);
-
     plot.show();
 }
 
@@ -368,7 +364,6 @@ fn data_labels_on_the_plot() {
         .xaxis(Axis::new().range(vec![0.75, 5.25]))
         .yaxis(Axis::new().range(vec![0., 8.]));
     plot.add_layout(layout);
-
     plot.show();
 }
 
@@ -389,7 +384,6 @@ fn basic_symmetric_error_bars() {
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-
     plot.show();
 }
 
