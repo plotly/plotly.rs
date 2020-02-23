@@ -1,9 +1,8 @@
-use plotly::charts::{Axis, RgbColor, Line, LineShape, Legend, Font, DashType};
 use plotly::charts::Layout;
+use plotly::charts::{Axis, DashType, Font, Legend, Line, LineShape, RgbColor};
 use plotly::charts::{Color, Dim, ErrorData, ErrorType, Marker, Mode, Scatter, Title};
 use plotly::Plot;
 use rand::Rng;
-
 
 fn geometric_brownian_motion(s_0: f64, dt: f64, n: usize, drift: f64, diffusion: f64) -> Vec<f64> {
     let mut rng = rand::thread_rng();
@@ -38,11 +37,14 @@ fn line_and_scatter_plot() {
 
 fn adding_names_to_line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
-        .mode(Mode::Markers).name("Scatter");
+        .mode(Mode::Markers)
+        .name("Scatter");
     let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
-        .mode(Mode::Lines).name("Lines");
+        .mode(Mode::Lines)
+        .name("Lines");
     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
-        .mode(Mode::LinesMarkers).name("Scatter + Lines");
+        .mode(Mode::LinesMarkers)
+        .name("Scatter + Lines");
 
     let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
     let mut plot = Plot::new();
@@ -55,15 +57,34 @@ fn adding_names_to_line_and_scatter_plot() {
 
 fn line_and_scatter_styling() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
-        .mode(Mode::Markers).name("trace1").marker(Marker::new()
-        .color(Dim::Scalar(Color::Rgb(RgbColor::new(219, 64, 82)))).size(Dim::Scalar(12)));
+        .mode(Mode::Markers)
+        .name("trace1")
+        .marker(
+            Marker::new()
+                .color(Dim::Scalar(Color::Rgb(RgbColor::new(219, 64, 82))))
+                .size(Dim::Scalar(12)),
+        );
     let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
-        .mode(Mode::Lines).name("trace2")
-        .line(Line::new().color(Color::Rgb(RgbColor::new(55, 128, 191))).width(3.0));
+        .mode(Mode::Lines)
+        .name("trace2")
+        .line(
+            Line::new()
+                .color(Color::Rgb(RgbColor::new(55, 128, 191)))
+                .width(3.0),
+        );
     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
-        .mode(Mode::LinesMarkers).name("trace3")
-        .marker(Marker::new().color(Dim::Scalar(Color::Rgb(RgbColor::new(128, 0, 128)))).size(Dim::Scalar(12)))
-        .line(Line::new().color(Color::Rgb(RgbColor::new(128, 0, 128))).width(1.0));
+        .mode(Mode::LinesMarkers)
+        .name("trace3")
+        .marker(
+            Marker::new()
+                .color(Dim::Scalar(Color::Rgb(RgbColor::new(128, 0, 128))))
+                .size(Dim::Scalar(12)),
+        )
+        .line(
+            Line::new()
+                .color(Color::Rgb(RgbColor::new(128, 0, 128)))
+                .width(1.0),
+        );
 
     let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
     let mut plot = Plot::new();
@@ -76,13 +97,26 @@ fn line_and_scatter_styling() {
 
 fn styling_line_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
-        .mode(Mode::Markers).name("Red")
-        .line(Line::new().color(Color::Rgb(RgbColor::new(219, 64, 82))).width(3.0));
+        .mode(Mode::Markers)
+        .name("Red")
+        .line(
+            Line::new()
+                .color(Color::Rgb(RgbColor::new(219, 64, 82)))
+                .width(3.0),
+        );
     let trace2 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
-        .mode(Mode::LinesMarkers).name("Blue")
-        .line(Line::new().color(Color::Rgb(RgbColor::new(55, 128, 191))).width(1.0));
+        .mode(Mode::LinesMarkers)
+        .name("Blue")
+        .line(
+            Line::new()
+                .color(Color::Rgb(RgbColor::new(55, 128, 191)))
+                .width(1.0),
+        );
 
-    let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot")).width(500).height(500);
+    let layout = Layout::new()
+        .title(Title::new("Adding Names to Line and Scatter Plot"))
+        .width(500)
+        .height(500);
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -95,42 +129,85 @@ fn colored_and_styled_scatter_plot() {
         .mode(Mode::Markers)
         .name("North America")
         .text(vec!["United States".to_owned(), "Canada".to_owned()])
-        .marker(Marker::new()
-            .color(Dim::Scalar(Color::Rgb(RgbColor::new(164, 194, 244))))
-            .size(Dim::Scalar(12))
-            .line(Line::new().color(Color::White).width(0.5)));
-    let trace2 = Scatter::new(vec![39317, 37236, 35650, 30066, 29570, 27159, 23557, 21046, 18007],
-                              vec![33, 20, 13, 19, 27, 19, 49, 44, 38])
-        .mode(Mode::Markers)
-        .name("Europe")
-        .text(vec!["Germany".to_owned(), "Britain".to_owned(), "France".to_owned(), "Spain".to_owned(),
-                   "Italy".to_owned(), "Czech Rep.".to_owned(), "Greece".to_owned(), "Poland".to_owned()])
-        .marker(Marker::new()
+        .marker(
+            Marker::new()
+                .color(Dim::Scalar(Color::Rgb(RgbColor::new(164, 194, 244))))
+                .size(Dim::Scalar(12))
+                .line(Line::new().color(Color::White).width(0.5)),
+        );
+    let trace2 = Scatter::new(
+        vec![
+            39317, 37236, 35650, 30066, 29570, 27159, 23557, 21046, 18007,
+        ],
+        vec![33, 20, 13, 19, 27, 19, 49, 44, 38],
+    )
+    .mode(Mode::Markers)
+    .name("Europe")
+    .text(vec![
+        "Germany".to_owned(),
+        "Britain".to_owned(),
+        "France".to_owned(),
+        "Spain".to_owned(),
+        "Italy".to_owned(),
+        "Czech Rep.".to_owned(),
+        "Greece".to_owned(),
+        "Poland".to_owned(),
+    ])
+    .marker(
+        Marker::new()
             .color(Dim::Scalar(Color::Rgb(RgbColor::new(255, 217, 102))))
-            .size(Dim::Scalar(12)));
-    let trace3 = Scatter::new(vec![42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
-                              vec![23, 42, 54, 89, 14, 99, 93, 70])
-        .mode(Mode::Markers)
-        .name("Asia/Pacific")
-        .text(vec!["Australia".to_owned(), "Japan".to_owned(),
-                   "South Korea".to_owned(), "Malaysia".to_owned(),
-                   "China".to_owned(), "Indonesia".to_owned(), "Philippines".to_owned(), "India".to_owned()])
-        .marker(Marker::new()
+            .size(Dim::Scalar(12)),
+    );
+    let trace3 = Scatter::new(
+        vec![42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
+        vec![23, 42, 54, 89, 14, 99, 93, 70],
+    )
+    .mode(Mode::Markers)
+    .name("Asia/Pacific")
+    .text(vec![
+        "Australia".to_owned(),
+        "Japan".to_owned(),
+        "South Korea".to_owned(),
+        "Malaysia".to_owned(),
+        "China".to_owned(),
+        "Indonesia".to_owned(),
+        "Philippines".to_owned(),
+        "India".to_owned(),
+    ])
+    .marker(
+        Marker::new()
             .color(Dim::Scalar(Color::Rgb(RgbColor::new(234, 153, 153))))
-            .size(Dim::Scalar(12)));
-    let trace4 = Scatter::new(vec![19097, 18601, 15595, 13546, 12026, 7434, 5419],
-                              vec![43, 47, 56, 80, 86, 93, 80])
-        .mode(Mode::Markers)
-        .name("Latin America")
-        .text(vec!["Chile".to_owned(), "Argentina".to_owned(), "Mexico".to_owned(),
-                   "Venezuela".to_owned(), "Venezuela".to_owned(), "El Salvador".to_owned(), "Bolivia".to_owned()])
-        .marker(Marker::new()
+            .size(Dim::Scalar(12)),
+    );
+    let trace4 = Scatter::new(
+        vec![19097, 18601, 15595, 13546, 12026, 7434, 5419],
+        vec![43, 47, 56, 80, 86, 93, 80],
+    )
+    .mode(Mode::Markers)
+    .name("Latin America")
+    .text(vec![
+        "Chile".to_owned(),
+        "Argentina".to_owned(),
+        "Mexico".to_owned(),
+        "Venezuela".to_owned(),
+        "Venezuela".to_owned(),
+        "El Salvador".to_owned(),
+        "Bolivia".to_owned(),
+    ])
+    .marker(
+        Marker::new()
             .color(Dim::Scalar(Color::Rgb(RgbColor::new(142, 124, 195))))
-            .size(Dim::Scalar(12)));
+            .size(Dim::Scalar(12)),
+    );
 
     let layout = Layout::new()
         .title(Title::new("Quarter 1 Growth"))
-        .xaxis(Axis::new().title(Title::new("GDP per Capita")).show_grid(false).zero_line(false))
+        .xaxis(
+            Axis::new()
+                .title(Title::new("GDP per Capita"))
+                .show_grid(false)
+                .zero_line(false),
+        )
         .yaxis(Axis::new().title(Title::new("Percent")).show_line(false));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -169,9 +246,12 @@ fn line_shape_options_for_interpolation() {
         .line(Line::new().shape(LineShape::Hv));
 
     let mut plot = Plot::new();
-    let layout = Layout::new()
-        .legend(Legend::new().y(0.5).trace_order("reversed")
-            .font(Font::new().size(16)));
+    let layout = Layout::new().legend(
+        Legend::new()
+            .y(0.5)
+            .trace_order("reversed")
+            .font(Font::new().size(16)),
+    );
     plot.add_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -211,8 +291,12 @@ fn line_dash() {
 
     let mut plot = Plot::new();
     let layout = Layout::new()
-        .legend(Legend::new().y(0.5).trace_order("reversed")
-            .font(Font::new().size(16)))
+        .legend(
+            Legend::new()
+                .y(0.5)
+                .trace_order("reversed")
+                .font(Font::new().size(16)),
+        )
         .xaxis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
         .yaxis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
     plot.add_layout(layout);

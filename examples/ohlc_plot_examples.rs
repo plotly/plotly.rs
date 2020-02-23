@@ -110,7 +110,6 @@ fn gbm_simple_ohlc_chart() {
     plot.show();
 }
 
-
 fn main() -> std::io::Result<()> {
     simple_ohlc_chart();
     gbm_simple_ohlc_chart();

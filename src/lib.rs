@@ -38,8 +38,7 @@ pub struct Plot {
     layout: Option<Layout>,
 }
 
-impl Plot
-{
+impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Vec::with_capacity(1),
@@ -114,8 +113,9 @@ impl Plot
 
     #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
-        Command::new("start")
-            .args(&[r#""""#, temp_path])
+        Command::new("cmd")
+            .arg("/C")
+            .arg(format!(r#"start {}"#, temp_path))
             .output()
             .unwrap();
     }
@@ -133,9 +133,12 @@ impl Plot
 
         temp.push(plot_name);
         let temp_path = temp.to_str().unwrap();
-        let mut file = File::create(temp_path).unwrap();
-        file.write_all(rendered)
-            .expect("failed to write html output");
+        {
+            let mut file = File::create(temp_path).unwrap();
+            file.write_all(rendered)
+                .expect("failed to write html output");
+            file.flush();
+        }
 
         Plot::show_with_default_app(temp_path);
     }
@@ -153,9 +156,12 @@ impl Plot
 
         temp.push(plot_name);
         let temp_path = temp.to_str().unwrap();
-        let mut file = File::create(temp_path).unwrap();
-        file.write_all(rendered)
-            .expect("failed to write html output");
+        {
+            let mut file = File::create(temp_path).unwrap();
+            file.write_all(rendered)
+                .expect("failed to write html output");
+            file.flush();
+        }
 
         Plot::show_with_default_app(temp_path);
     }
@@ -173,9 +179,12 @@ impl Plot
 
         temp.push(plot_name);
         let temp_path = temp.to_str().unwrap();
-        let mut file = File::create(temp_path).unwrap();
-        file.write_all(rendered)
-            .expect("failed to write html output");
+        {
+            let mut file = File::create(temp_path).unwrap();
+            file.write_all(rendered)
+                .expect("failed to write html output");
+            file.flush();
+        }
 
         Plot::show_with_default_app(temp_path);
     }

@@ -51,8 +51,8 @@ fn bar_chart_with_error_bars() {
         ],
         vec![3, 6, 4],
     )
-        .name("Control")
-        .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 0.5, 1.5]));
+    .name("Control")
+    .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 0.5, 1.5]));
 
     let trace2 = Bar::new(
         vec![
@@ -62,8 +62,8 @@ fn bar_chart_with_error_bars() {
         ],
         vec![4, 7, 3],
     )
-        .name("LA Zoo")
-        .error_y(ErrorData::new(ErrorType::Data).array(vec![0.5, 1.0, 2.0]));
+    .name("LA Zoo")
+    .error_y(ErrorData::new(ErrorType::Data).array(vec![0.5, 1.0, 2.0]));
 
     let layout = Layout::new();
     let mut plot = Plot::new();

@@ -1,5 +1,5 @@
 use plotly::charts::Layout;
-use plotly::charts::{BarMode,Color, Dim, Histogram, Marker};
+use plotly::charts::{BarMode, Color, Dim, Histogram, Marker};
 use plotly::Plot;
 use rand::Rng;
 

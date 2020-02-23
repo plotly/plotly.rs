@@ -14,18 +14,17 @@ pub use statistical::Density;
 pub use statistical::Histogram;
 
 pub use scientific::Contour;
-pub use scientific::HeatMap;
-pub use scientific::Surface;
-pub use scientific::Lighting;
 pub use scientific::Contours;
 pub use scientific::ContoursType;
-pub use scientific::SurfaceContours;
+pub use scientific::HeatMap;
+pub use scientific::Lighting;
 pub use scientific::PlaneContours;
 pub use scientific::PlaneProject;
+pub use scientific::Surface;
+pub use scientific::SurfaceContours;
 
 pub use financial::Candlestick;
 pub use financial::Ohlc;
-
 
 #[derive(Debug)]
 pub struct HexColor {
@@ -42,8 +41,8 @@ impl HexColor {
 
 impl Serialize for HexColor {
     fn serialize<S>(&self, serializer: S) -> Result<<S as Serializer>::Ok, <S as Serializer>::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         let s = format!("#{:X}{:X}{:X}", self.r, self.g, self.b);
         serializer.serialize_str(s.as_str())
@@ -65,8 +64,8 @@ impl RgbColor {
 
 impl Serialize for RgbColor {
     fn serialize<S>(&self, serializer: S) -> Result<<S as Serializer>::Ok, <S as Serializer>::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         let s = format!("rgb({}, {}, {})", self.r, self.g, self.b);
         serializer.serialize_str(s.as_str())
@@ -89,8 +88,8 @@ impl RgbaColor {
 
 impl Serialize for RgbaColor {
     fn serialize<S>(&self, serializer: S) -> Result<<S as Serializer>::Ok, <S as Serializer>::Error>
-        where
-            S: Serializer,
+    where
+        S: Serializer,
     {
         let s = format!("rgba({}, {}, {}, {})", self.r, self.g, self.b, self.a);
         serializer.serialize_str(s.as_str())
@@ -198,8 +197,8 @@ pub enum Calendar {
 #[derive(Serialize, Debug)]
 #[serde(untagged)]
 pub enum Dim<T>
-    where
-        T: Serialize,
+where
+    T: Serialize,
 {
     Scalar(T),
     Vector(Vec<T>),
@@ -2129,7 +2128,6 @@ pub enum ArrayShow {
     None,
 }
 
-
 #[derive(Serialize, Debug)]
 pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2900,7 +2898,7 @@ pub struct Layout {
     bar_mode: Option<BarMode>,
 }
 
-impl Layout  {
+impl Layout {
     pub fn new() -> Layout {
         Layout {
             title: None,
@@ -3063,7 +3061,7 @@ impl Layout  {
     }
 }
 
-impl TraceSerialize for Layout  {
+impl TraceSerialize for Layout {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }

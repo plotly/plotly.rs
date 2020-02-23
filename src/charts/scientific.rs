@@ -1,6 +1,4 @@
-use crate::charts::{
-    Calendar, Color, ColorBar, ColorScale, Dim, Font, Label, Line, PlotType,
-};
+use crate::charts::{Calendar, Color, ColorBar, ColorScale, Dim, Font, Label, Line, PlotType};
 use crate::TraceSerialize;
 use serde::Serialize;
 
@@ -125,10 +123,10 @@ impl Contours {
 
 #[derive(Serialize, Debug)]
 pub struct Contour<X, Y, Z>
-    where
-        X: num::Num + Serialize,
-        Y: num::Num + Serialize,
-        Z: num::Num + Serialize,
+where
+    X: num::Num + Serialize,
+    Y: num::Num + Serialize,
+    Z: num::Num + Serialize,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -195,10 +193,10 @@ pub struct Contour<X, Y, Z>
 }
 
 impl<X, Y, Z> Contour<X, Y, Z>
-    where
-        X: num::Num + Serialize,
-        Y: num::Num + Serialize,
-        Z: num::Num + Serialize,
+where
+    X: num::Num + Serialize,
+    Y: num::Num + Serialize,
+    Z: num::Num + Serialize,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Contour<X, Y, Z>> {
         Box::new(Contour {
@@ -385,10 +383,10 @@ impl<X, Y, Z> Contour<X, Y, Z>
 }
 
 impl<X, Y, Z> TraceSerialize for Contour<X, Y, Z>
-    where
-        X: num::Num + Serialize,
-        Y: num::Num + Serialize,
-        Z: num::Num + Serialize,
+where
+    X: num::Num + Serialize,
+    Y: num::Num + Serialize,
+    Z: num::Num + Serialize,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
@@ -397,10 +395,10 @@ impl<X, Y, Z> TraceSerialize for Contour<X, Y, Z>
 
 #[derive(Serialize, Debug)]
 pub struct HeatMap<X, Y, Z>
-    where
-        X: num::Num + Serialize,
-        Y: num::Num + Serialize,
-        Z: num::Num + Serialize,
+where
+    X: num::Num + Serialize,
+    Y: num::Num + Serialize,
+    Z: num::Num + Serialize,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -461,10 +459,10 @@ pub struct HeatMap<X, Y, Z>
 }
 
 impl<X, Y, Z> HeatMap<X, Y, Z>
-    where
-        X: num::Num + Serialize,
-        Y: num::Num + Serialize,
-        Z: num::Num + Serialize,
+where
+    X: num::Num + Serialize,
+    Y: num::Num + Serialize,
+    Z: num::Num + Serialize,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<HeatMap<X, Y, Z>> {
         Box::new(HeatMap {
@@ -633,16 +631,15 @@ impl<X, Y, Z> HeatMap<X, Y, Z>
 }
 
 impl<X, Y, Z> TraceSerialize for HeatMap<X, Y, Z>
-    where
-        X: num::Num + Serialize,
-        Y: num::Num + Serialize,
-        Z: num::Num + Serialize,
+where
+    X: num::Num + Serialize,
+    Y: num::Num + Serialize,
+    Z: num::Num + Serialize,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }
-
 
 #[derive(Serialize, Debug)]
 pub struct Lighting {
@@ -720,7 +717,11 @@ pub struct PlaneProject {
 
 impl PlaneProject {
     pub fn new() -> PlaneProject {
-        PlaneProject { x: None, y: None, z: None }
+        PlaneProject {
+            x: None,
+            y: None,
+            z: None,
+        }
     }
 
     pub fn x(mut self, x: bool) -> PlaneProject {
@@ -781,7 +782,6 @@ impl PlaneContours {
             highlight_width: None,
         }
     }
-
 
     pub fn show(mut self, show: bool) -> PlaneContours {
         self.show = Some(show);
@@ -851,7 +851,11 @@ pub struct SurfaceContours {
 
 impl SurfaceContours {
     pub fn new() -> SurfaceContours {
-        SurfaceContours { x: None, y: None, z: None }
+        SurfaceContours {
+            x: None,
+            y: None,
+            z: None,
+        }
     }
 
     pub fn x(mut self, x: PlaneContours) -> SurfaceContours {
@@ -872,10 +876,11 @@ impl SurfaceContours {
 
 #[derive(Serialize, Debug)]
 pub struct Surface<X, Y, Z>
-    where
-        X: Serialize,
-        Y: Serialize,
-        Z: num::Num + Serialize, {
+where
+    X: Serialize,
+    Y: Serialize,
+    Z: num::Num + Serialize,
+{
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<X>>,
@@ -941,10 +946,10 @@ pub struct Surface<X, Y, Z>
 }
 
 impl<X, Y, Z> Surface<X, Y, Z>
-    where
-        X: Serialize,
-        Y: Serialize,
-        Z: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: Serialize,
+    Z: num::Num + Serialize,
 {
     pub fn new(z: Vec<Vec<Z>>) -> Box<Surface<X, Y, Z>> {
         Box::new(Surface {
@@ -1135,10 +1140,10 @@ impl<X, Y, Z> Surface<X, Y, Z>
 }
 
 impl<X, Y, Z> TraceSerialize for Surface<X, Y, Z>
-    where
-        X: Serialize,
-        Y: Serialize,
-        Z: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: Serialize,
+    Z: num::Num + Serialize,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

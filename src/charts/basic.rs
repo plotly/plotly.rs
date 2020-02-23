@@ -1,13 +1,15 @@
-use crate::charts::{Calendar, Color, ConstrainText, Dim, ErrorData, Fill, Font,
-                    GroupNorm, Label, Line, Marker, Mode, Orientation, PlotType, Position, TextAnchor};
+use crate::charts::{
+    Calendar, Color, ConstrainText, Dim, ErrorData, Fill, Font, GroupNorm, Label, Line, Marker,
+    Mode, Orientation, PlotType, Position, TextAnchor,
+};
 use crate::TraceSerialize;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
 pub struct Scatter<X, Y>
-    where
-        X: Serialize,
-        Y: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
 {
     r#type: PlotType,
     x: Vec<X>,
@@ -75,9 +77,9 @@ pub struct Scatter<X, Y>
 }
 
 impl<X, Y> Scatter<X, Y>
-    where
-        X: Serialize,
-        Y: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Scatter<X, Y>> {
         Box::new(Scatter {
@@ -240,9 +242,9 @@ impl<X, Y> Scatter<X, Y>
 }
 
 impl<X, Y> TraceSerialize for Scatter<X, Y>
-    where
-        X: Serialize,
-        Y: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
@@ -269,9 +271,9 @@ impl<X, Y> TraceSerialize for Scatter<X, Y>
 
 #[derive(Serialize, Debug)]
 pub struct Bar<X, Y>
-    where
-        X: Serialize,
-        Y: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
 {
     x: Vec<X>,
     y: Vec<Y>,
@@ -339,9 +341,9 @@ pub struct Bar<X, Y>
 }
 
 impl<X, Y> Bar<X, Y>
-    where
-        X: Serialize,
-        Y: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
         Box::new(Bar {
@@ -533,9 +535,9 @@ impl<X, Y> Bar<X, Y>
 }
 
 impl<X, Y> TraceSerialize for Bar<X, Y>
-    where
-        X: Serialize,
-        Y: num::Num + Serialize,
+where
+    X: Serialize,
+    Y: num::Num + Serialize,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
