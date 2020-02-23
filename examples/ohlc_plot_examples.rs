@@ -108,8 +108,6 @@ fn gbm_simple_ohlc_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.show();
-    plot.show_png(1024, 1024);
-    plot.show_jpg(1024, 512);
 }
 
 

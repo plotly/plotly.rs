@@ -53,7 +53,6 @@ fn overlaid_histogram() {
 
     let layout = Layout::new().bar_mode(BarMode::Overlay);
     plot.add_layout(layout);
-
     plot.show();
 }
 

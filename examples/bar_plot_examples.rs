@@ -71,6 +71,7 @@ fn bar_chart_with_error_bars() {
     plot.add_trace(trace2);
     plot.add_layout(layout);
     plot.show();
+    plot.show_png(1024, 680);
 }
 
 fn main() -> std::io::Result<()> {

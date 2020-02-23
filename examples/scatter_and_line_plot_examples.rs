@@ -138,6 +138,7 @@ fn colored_and_styled_scatter_plot() {
     plot.add_trace(trace3);
     plot.add_trace(trace4);
     plot.add_layout(layout);
+    plot.show_png(1024, 680);
     plot.show();
 }
 
@@ -221,7 +222,7 @@ fn line_dash() {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    plot.to_html("line_dash.html");
+    plot.show_png(1024, 680);
     plot.show();
 }
 
