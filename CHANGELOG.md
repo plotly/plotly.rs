@@ -8,16 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2020-02-23
 ### Added
 - Surface plot
+- More examples for scatter and line plots
+### Changed
 - Completed implementation of the following:
     - Scatter plot
     - Box plot
     - Scatter and Box plot with error bars
     - Candlestick plot
     - OHLC plot 
-- More examples for scatter and line plots
 - Extended README.md with a few basic examples
 - The API is now based on the builder pattern
 - Extended color set
+### Fixed
+- `Plot::show()` now correctly opens the plot in the default browser as is the case for MacOSX and Linux
 
 ## [0.2.1] - 2020-01-26
 ### Added

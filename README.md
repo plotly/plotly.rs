@@ -464,6 +464,44 @@ fn main() -> std::io::Result<()> {
 
 For more examples see [surface_plot_examples.rs](examples/surface_plot_examples.rs). 
 
+### Save plots to PNG and JPEG
+At present it is only possible to save plots in *PNG* and *JPEG* format with the help of the browser. For example the 
+following code: 
+
+```rust
+extern crate plotly;
+use plotly::charts::{Mode, Scatter};
+use plotly::Plot;
+
+fn line_and_scatter_plot() {
+    let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
+        .name("trace1")
+        .mode(Mode::Markers);
+    let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
+        .name("trace2")
+        .mode(Mode::Lines);
+    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+    // The following will generate the plot in PNG format (width: 1024, height: 680) and display it in the browser. 
+    plot.show_png(1024, 680);
+    // Similarly to the above line but with a JPEG format output. 
+    plot.show_jpg(1024, 680);
+    plot.show();
+}
+
+fn main() -> std::io::Result<()> {
+    line_and_scatter_plot();
+    Ok(())
+}
+``` 
+will open 3 tabs in the browser with the first two containing the *PNG* and *JPEG* outputs respectively. Then these must be saved manually 
+by right clicking and selecting `Save As...` in the context menu of the browser. This is somewhat cumbersome, however, I haven't found a 
+more elegant solution. **Suggestions are most welcome!**
+
 
 # License
 
