@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.4.0] - 2020-XX-XX
+### Added
+- Documentation for `Plot`
+- A feature (`orca`) that enables `Plot` conversion to the following output formats: png, jpeg, webp, svg, pdf and eps
+    - This **optional** feature is implemented in the `plotly_orca` crate.  
+### Changed
+- Using specific Plotly.js version: https://cdn.plot.ly/plotly-1.52.2.js
+- `Plot::add_layout` changed to `Plot::set_layout` as there is only one layout per `Plot`
+- `TraceSerialize` renamed to `Trace`
+- `Plot::show_jpg` renamed to `Plot::show_jpeg` for consistency
+
+### Fixed
+- c
+
 ## [0.3.0] - 2020-02-23
 ### Added
 - Surface plot

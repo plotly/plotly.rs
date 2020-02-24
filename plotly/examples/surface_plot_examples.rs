@@ -39,7 +39,7 @@ fn spectral_surface_plot() {
                 .project(PlaneProject::new().z(true))),
         );
     let mut plot = Plot::new();
-    plot.add_layout(Layout::new());
+    plot.set_layout(Layout::new());
     plot.add_trace(trace);
     plot.show();
 }

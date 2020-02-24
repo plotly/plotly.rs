@@ -1,4 +1,4 @@
-use crate::TraceSerialize;
+use crate::Trace;
 use serde::{Serialize, Serializer};
 
 mod basic;
@@ -3061,7 +3061,7 @@ impl Layout {
     }
 }
 
-impl TraceSerialize for Layout {
+impl Trace for Layout {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }

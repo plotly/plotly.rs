@@ -1,0 +1,8 @@
+[package]
+name = "plotly_orca"
+version = "0.1.0"
+authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
+workspace = ".."
+edition = "2018"
+
+[dependencies]

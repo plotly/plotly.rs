@@ -51,7 +51,7 @@ fn adding_names_to_line_and_scatter_plot() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -91,7 +91,7 @@ fn line_and_scatter_styling() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -120,7 +120,7 @@ fn styling_line_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -214,7 +214,7 @@ fn colored_and_styled_scatter_plot() {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     plot.add_trace(trace4);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show_png(1024, 680);
     plot.show();
 }
@@ -252,7 +252,7 @@ fn line_shape_options_for_interpolation() {
             .trace_order("reversed")
             .font(Font::new().size(16)),
     );
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -299,7 +299,7 @@ fn line_dash() {
         )
         .xaxis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
         .yaxis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -327,7 +327,7 @@ fn data_labels_hover() {
         .title(Title::new("Data Labels Hover"))
         .xaxis(Axis::new().title(Title::new("x")).range(vec![0.75, 5.25]))
         .yaxis(Axis::new().title(Title::new("y")).range(vec![0., 8.]));
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -363,7 +363,7 @@ fn data_labels_on_the_plot() {
         .title(Title::new("Data Labels on the Plot"))
         .xaxis(Axis::new().range(vec![0.75, 5.25]))
         .yaxis(Axis::new().range(vec![0., 8.]));
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -387,17 +387,31 @@ fn basic_symmetric_error_bars() {
     plot.show();
 }
 
+fn to_orca_experiments() {
+    let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
+        .name("trace1")
+        .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 2.0, 3.0]));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    // plot.save_png("example");
+    plot.show();
+}
+
+
 fn main() -> std::io::Result<()> {
     line_and_scatter_plot();
-    data_labels_hover();
-    data_labels_on_the_plot();
-    gbm_scatter_plot();
-    adding_names_to_line_and_scatter_plot();
-    line_and_scatter_styling();
-    styling_line_plot();
-    colored_and_styled_scatter_plot();
-    line_shape_options_for_interpolation();
-    line_dash();
-    basic_symmetric_error_bars();
+    // data_labels_hover();
+    // data_labels_on_the_plot();
+    // gbm_scatter_plot();
+    // adding_names_to_line_and_scatter_plot();
+    // line_and_scatter_styling();
+    // styling_line_plot();
+    // colored_and_styled_scatter_plot();
+    // line_shape_options_for_interpolation();
+    // line_dash();
+    // basic_symmetric_error_bars();
+
+    // to_orca_experiments();
     Ok(())
 }

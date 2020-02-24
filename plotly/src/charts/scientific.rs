@@ -1,5 +1,5 @@
 use crate::charts::{Calendar, Color, ColorBar, ColorScale, Dim, Font, Label, Line, PlotType};
-use crate::TraceSerialize;
+use crate::Trace;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
@@ -382,7 +382,7 @@ where
     }
 }
 
-impl<X, Y, Z> TraceSerialize for Contour<X, Y, Z>
+impl<X, Y, Z> Trace for Contour<X, Y, Z>
 where
     X: num::Num + Serialize,
     Y: num::Num + Serialize,
@@ -630,7 +630,7 @@ where
     }
 }
 
-impl<X, Y, Z> TraceSerialize for HeatMap<X, Y, Z>
+impl<X, Y, Z> Trace for HeatMap<X, Y, Z>
 where
     X: num::Num + Serialize,
     Y: num::Num + Serialize,
@@ -1139,7 +1139,7 @@ where
     }
 }
 
-impl<X, Y, Z> TraceSerialize for Surface<X, Y, Z>
+impl<X, Y, Z> Trace for Surface<X, Y, Z>
 where
     X: Serialize,
     Y: Serialize,

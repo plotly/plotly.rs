@@ -2,7 +2,7 @@ use crate::charts::{
     Calendar, Color, ConstrainText, Dim, ErrorData, Fill, Font, GroupNorm, Label, Line, Marker,
     Mode, Orientation, PlotType, Position, TextAnchor,
 };
-use crate::TraceSerialize;
+use crate::Trace;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
@@ -241,7 +241,7 @@ where
     }
 }
 
-impl<X, Y> TraceSerialize for Scatter<X, Y>
+impl<X, Y> Trace for Scatter<X, Y>
 where
     X: Serialize,
     Y: num::Num + Serialize,
@@ -534,7 +534,7 @@ where
     }
 }
 
-impl<X, Y> TraceSerialize for Bar<X, Y>
+impl<X, Y> Trace for Bar<X, Y>
 where
     X: Serialize,
     Y: num::Num + Serialize,

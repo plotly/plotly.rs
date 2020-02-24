@@ -22,7 +22,7 @@ fn grouped_bar_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -38,7 +38,7 @@ fn stacked_bar_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -69,7 +69,7 @@ fn bar_chart_with_error_bars() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 

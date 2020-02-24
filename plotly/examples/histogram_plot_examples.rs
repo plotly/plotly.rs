@@ -52,7 +52,7 @@ fn overlaid_histogram() {
     plot.add_trace(trace2);
 
     let layout = Layout::new().bar_mode(BarMode::Overlay);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -74,7 +74,7 @@ fn stacked_histograms() {
     plot.add_trace(trace2);
 
     let layout = Layout::new().bar_mode(BarMode::Stack);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
 
     plot.show();
 }

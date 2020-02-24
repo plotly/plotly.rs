@@ -1,5 +1,5 @@
 use crate::charts::{Calendar, Dim, ErrorData, Label, Marker, Orientation, PlotType};
-use crate::TraceSerialize;
+use crate::Trace;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
@@ -377,7 +377,7 @@ where
     }
 }
 
-impl<H> TraceSerialize for Histogram<H>
+impl<H> Trace for Histogram<H>
 where
     H: num::Num + Serialize,
 {

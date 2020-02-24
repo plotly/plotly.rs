@@ -1,5 +1,5 @@
 use crate::charts::{Calendar, Color, Dim, Label, Line, PlotType};
-use crate::TraceSerialize;
+use crate::Trace;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
@@ -164,7 +164,7 @@ where
     }
 }
 
-impl<X, Y> TraceSerialize for Candlestick<X, Y>
+impl<X, Y> Trace for Candlestick<X, Y>
 where
     X: Serialize,
     Y: num::Num + Serialize,
@@ -329,7 +329,7 @@ where
     }
 }
 
-impl<X, Y> TraceSerialize for Ohlc<X, Y>
+impl<X, Y> Trace for Ohlc<X, Y>
 where
     X: Serialize,
     Y: num::Num + Serialize,
