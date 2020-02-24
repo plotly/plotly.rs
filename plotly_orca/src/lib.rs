@@ -136,8 +136,8 @@ mod tests {
         assert!(!dst.exists());
         o.save_png(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        // std::fs::remove_file(&dst);
-        // assert!(!dst.exists());
+        std::fs::remove_file(&dst);
+        assert!(!dst.exists());
     }
 
     #[test]
