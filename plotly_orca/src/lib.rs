@@ -101,7 +101,16 @@ impl Orca {
 
     #[cfg(target_os = "windows")]
     fn find_orca_executable() -> Result<PathBuf, &'static str>  {
-        Ok(PathBuf::new())
+        let app_data = std::env::var_os("LOCALAPPDATA").expect("Could not expand LOCALAPPDATA");
+        let mut orca_path = PathBuf::from(app_data);
+        orca_path.push("Programs");
+        orca_path.push("orca");
+        orca_path.push("orca.exe");
+        if !orca_path.exists() {
+            return Err(ORCA_INSTALLATION_INSTRUCTIONS);
+        }
+
+        Ok(orca_path)
     }
 }
 
@@ -127,8 +136,8 @@ mod tests {
         assert!(!dst.exists());
         o.save_png(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
-        assert!(!dst.exists());
+        // std::fs::remove_file(&dst);
+        // assert!(!dst.exists());
     }
 
     #[test]

@@ -25,4 +25,4 @@ already exists an executable on RHEL 8 and Centos 8 with that name.
 TODO
 
 ### Windows
-TODO
+Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`. 
