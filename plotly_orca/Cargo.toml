@@ -1,8 +1,19 @@
 [package]
 name = "plotly_orca"
 version = "0.1.0"
+description = "Adds multiple output formats (png, jpeg etc) to plotly using Orca"
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
+license = "MIT"
+readme = "README.md"
 workspace = ".."
+homepage = "https://github.com/igiagkiozis/plotly"
+documentation = "https://docs.rs/plotly_orca"
+repository = "https://github.com/igiagkiozis/plotly"
 edition = "2018"
+keywords = ["plot", "chart", "plotly"]
+
+exclude = [
+    "target/*"
+]
 
 [dependencies]
