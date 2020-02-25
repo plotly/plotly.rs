@@ -22,7 +22,7 @@ Note, it's important that the symbolic link is named exactly as shown above. The
 already exists an executable on RHEL 8 and Centos 8 with that name. 
 
 ### MacOSX
-TODO
+Install the dmg package. After that the orca binary will be detected by plotly_orca.
 
 ### Windows
 Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`. 

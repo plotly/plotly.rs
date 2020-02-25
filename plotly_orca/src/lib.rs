@@ -96,7 +96,12 @@ impl Orca {
 
     #[cfg(target_os = "macos")]
     fn find_orca_executable() -> Result<PathBuf, &'static str>  {
-        Ok(PathBuf::new())
+        let orca_path = PathBuf::from("/Applications/orca.app/Contents/MacOS/orca");
+        if !orca_path.exists() {
+            return Err(ORCA_INSTALLATION_INSTRUCTIONS);
+        }
+
+        Ok(orca_path)
     }
 
     #[cfg(target_os = "windows")]
