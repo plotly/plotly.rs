@@ -2,6 +2,7 @@
 //!
 //! A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
+#![allow(dead_code)]
 extern crate askama;
 extern crate num;
 extern crate rand;
@@ -15,12 +16,14 @@ use rand::Rng;
 use std::env;
 use std::fs::File;
 use std::io::Write;
-use std::process::Command;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 pub mod charts;
 
 use crate::charts::Layout;
+
+const PLOTLY_JS: &str = "plotly-1.52.2.min.js";
 
 #[derive(Template)]
 #[template(path = "plotly-1.52.2.min.js", escape = "none")]
@@ -36,7 +39,6 @@ struct PlotTemplate<'a> {
     image_width: usize,
     image_height: usize,
 }
-
 
 /// A struct that implements `Trace` can be serialized in json format that is understood by Plotly.js.
 pub trait Trace {
@@ -81,7 +83,6 @@ pub struct Plot {
 }
 
 impl Plot {
-
     /// Create a new `Plot`.
     pub fn new() -> Plot {
         Plot {
@@ -123,7 +124,7 @@ impl Plot {
             let mut file = File::create(temp_path).unwrap();
             file.write_all(rendered)
                 .expect("failed to write html output");
-            file.flush();
+            file.flush().unwrap();
         }
 
         Plot::show_with_default_app(temp_path);
@@ -149,7 +150,7 @@ impl Plot {
             let mut file = File::create(temp_path).unwrap();
             file.write_all(rendered)
                 .expect("failed to write html output");
-            file.flush();
+            file.flush().unwrap();
         }
 
         Plot::show_with_default_app(temp_path);
@@ -175,7 +176,7 @@ impl Plot {
             let mut file = File::create(temp_path).unwrap();
             file.write_all(rendered)
                 .expect("failed to write html output");
-            file.flush();
+            file.flush().unwrap();
         }
 
         Plot::show_with_default_app(temp_path);
@@ -193,46 +194,59 @@ impl Plot {
             .expect("failed to write html output");
     }
 
+    /// Saves the `Plot` to png format.
     #[cfg(feature = "orca")]
     pub fn to_png<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::new();
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_png(filename.as_ref(), &rendered, width, height);
     }
 
+    /// Saves the `Plot` to jpeg format.
     #[cfg(feature = "orca")]
     pub fn to_jpeg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::new();
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_jpeg(filename.as_ref(), &rendered, width, height);
     }
 
+    /// Saves the `Plot` to webp format.
     #[cfg(feature = "orca")]
     pub fn to_webp<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::new();
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_webp(filename.as_ref(), &rendered, width, height);
     }
 
+    /// Saves the `Plot` to svg format.
     #[cfg(feature = "orca")]
     pub fn to_svg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::new();
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_svg(filename.as_ref(), &rendered, width, height);
     }
 
+    /// Saves the `Plot` to pdf format.
     #[cfg(feature = "orca")]
     pub fn to_pdf<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::new();
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_pdf(filename.as_ref(), &rendered, width, height);
     }
 
+    /// Saves the `Plot` to eps format.
     #[cfg(feature = "orca")]
     pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::new();
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_eps(filename.as_ref(), &rendered, width, height);
+    }
+
+    fn plotly_js_path() -> PathBuf {
+        let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+        let templates = root.join("templates");
+        let plotly_path = templates.join(PLOTLY_JS);
+        plotly_path
     }
 
     fn render(
@@ -287,7 +301,7 @@ impl Plot {
         }
         let layout_data = match &self.layout {
             Some(layout) => Trace::serialize(layout),
-            None => "{}".to_owned()
+            None => "{}".to_owned(),
         };
 
         let mut orca_data = String::new();
@@ -330,14 +344,12 @@ impl Plot {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     fn create_test_plot() -> Plot {
-        let trace1 = crate::charts::Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
-            .name("trace1");
+        let trace1 = crate::charts::Scatter::new(vec![0, 1, 2], vec![6, 10, 2]).name("trace1");
         let mut plot = Plot::new();
         plot.add_trace(trace1);
         plot

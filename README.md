@@ -12,6 +12,15 @@ Add this to your `Cargo.toml`:
 plotly = "0.4.0"
 ```
 
+## Crate Feature Flags
+The following feature flags are available:
+* `orca`
+    * Optional, compatible with Rust stable.
+    * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
+    * Requires some additional configuration, see [plotly_orca](https://github.com/igiagkiozis/plotly/tree/dev/plotly_orca).
+* `ndarray`
+    * Optional, compatible(?) with Rust stable.
+
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `orca` feature: 
 
 ```toml
@@ -19,7 +28,7 @@ Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by ena
 plotly = { version = "0.4.0", features = ["orca"] }
 ```
 This feature requires some manual configuration to function. For details and installation instructions
- please see the `plotly_orca` [README](plotly_orca/README.md).
+ please see the [plotly_orca](https://github.com/igiagkiozis/plotly/tree/dev/plotly_orca).
 
 ## Plotly in action
 ### Line and Scatter plot

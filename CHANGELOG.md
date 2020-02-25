@@ -9,7 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Documentation for `Plot`
 - A feature (`orca`) that enables `Plot` conversion to the following output formats: png, jpeg, webp, svg, pdf and eps
-    - This **optional** feature is implemented in the `plotly_orca` crate.  
+    - This **optional** feature is implemented in the `plotly_orca` crate
+- Box plot support
+- More histogram examples
+- Filled lines example
 ### Changed
 - Using specific Plotly.js version: https://cdn.plot.ly/plotly-1.52.2.js
 - `Plot::add_layout` changed to `Plot::set_layout` as there is only one layout per `Plot`
@@ -17,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Plot::show_jpg` renamed to `Plot::show_jpeg` for consistency
 
 ### Fixed
-- c
+- Color serialization was operating correctly only on Rgb, Rgba and Hex colors ignoring the named colors
 
 ## [0.3.0] - 2020-02-23
 ### Added

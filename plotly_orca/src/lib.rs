@@ -1,34 +1,66 @@
+//! # Plotly Orca
+//! Plotly Orca implements the `orca` feature for [Plotly for Rust](https://github.com/igiagkiozis/plotly)
+//!
+//! The `orca` feature enables `Plot` conversion to the following output formats: png, jpeg, webp, svg, pdf and eps.
+//!
+//! ## Installation instructions
+//! To use `plotly_orca` which is used by the `orca` feature for `plotly`, first you need to install the
+//! [Orca command line utility](https://github.com/plotly/orca).
+//!
+//! Download the appropriate binary of Orca for your system from [here](https://github.com/plotly/orca/releases).
+//!
+//! ### Linux
+//! Copy the orca-<version>-x86_64.AppImage anywhere in your home directory.
+//! Say you saved this in: /home/<user_name>/apps/orca-<version>-x86_64.AppImage
+//! Then simply create a symbolic link pointing to the AppImage:
+//!
+//! ```bash
+//! chmod +x /home/<user_name>/apps/orca-<version>-x86_64.AppImage
+//! sudo ln -s /home/<user_name>/apps/orca-<version>-x86_64.AppImage /usr/bin/plotly_orca
+//! ```
+//!
+//! Note, it's important that the symbolic link is named exactly as shown above. The name of the link is not `orca` as there
+//! already exists an executable on RHEL 8 and Centos 8 with that name.
+//!
+//! ### MacOSX
+//! Install the dmg package. After that the `orca` binary will be detected by `plotly_orca`.
+//!
+//! ### Windows
+//! Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`.
+
+const ORCA_INSTALLATION_INSTRUCTIONS: &str = r#"
+To use `plotly_orca` which is used by the `orca` feature for `plotly`, first you need to install the
+[Orca command line utility](https://github.com/plotly/orca).
+
+Download the appropriate binary of Orca for your system from [here](https://github.com/plotly/orca/releases).
+
+### Linux
+Copy the orca-<version>-x86_64.AppImage anywhere in your home directory.
+Say you saved this in: /home/<user_name>/apps/orca-<version>-x86_64.AppImage
+Then simply create a symbolic link pointing to the AppImage:
+
+```bash
+chmod +x /home/<user_name>/apps/orca-<version>-x86_64.AppImage
+sudo ln -s /home/<user_name>/apps/orca-<version>-x86_64.AppImage /usr/bin/plotly_orca
+```
+
+Note, it's important that the symbolic link is named exactly as shown above. The name of the link is not `orca` as there
+already exists an executable on RHEL 8 and Centos 8 with that name.
+
+### MacOSX
+Install the dmg package. After that the `orca` binary will be detected by `plotly_orca`.
+
+### Windows
+Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`.
+"#;
+
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-
 pub struct Orca {
     cmd_path: PathBuf,
+    plotly_path: Option<PathBuf>,
 }
-
-const ORCA_INSTALLATION_INSTRUCTIONS: &str = r#"
-plotly_orca requires the Orca command line utility (https://github.com/plotly/orca) to be installed.
-
-To install Orca, download the appropriate binary for your system from https://github.com/plotly/orca/releases
-
-Linux
------
-Copy the orca-XXX-x86_64.AppImage anywhere in your home directory. Say you saved this in: /home/<user_name>/apps/orca.AppImage
-Then simply create a symbolic link pointing to the AppImage:
->> sudo ln -s /home/<user_name>/apps/orca.AppImage /usr/bin/plotly_orca
-
-Note, it's important that the symbolic link is named exactly as shown above. The name is slightly modified to the more
-natural alias of `orca` as there already exists an executable on RHEL 8 and Centos 8 with that name.
-
-MacOSX
-------
-TODO
-
-Windows
--------
-TODO
-
-"#;
 
 impl Orca {
     pub fn new() -> Orca {
@@ -39,6 +71,26 @@ impl Orca {
 
         Orca {
             cmd_path: p,
+            plotly_path: None,
+        }
+    }
+
+    pub fn from<P: AsRef<Path>>(plotly_path: P) -> Orca {
+        let plotly_path = PathBuf::from(plotly_path.as_ref());
+        let p = match Orca::find_orca_executable() {
+            Ok(path) => path,
+            Err(msg) => panic!(msg),
+        };
+
+        if !plotly_path.exists() {
+            return Orca {
+                cmd_path: p,
+                plotly_path: None,
+            };
+        }
+        Orca {
+            cmd_path: p,
+            plotly_path: Some(plotly_path),
         }
     }
 
@@ -46,8 +98,9 @@ impl Orca {
         let mut dst = PathBuf::from(dst);
         dst.set_extension(image_format);
 
-        Command::new(self.cmd_path.to_str().unwrap())
-            .arg("graph")
+        let orca_executable = self.cmd_path.to_str().unwrap();
+        let mut cmd = Command::new(orca_executable);
+        cmd.arg("graph")
             .arg(plotly_data)
             .arg("-o")
             .arg(dst.to_str().unwrap())
@@ -56,9 +109,17 @@ impl Orca {
             .arg("--height")
             .arg(format!("{}", height))
             .arg("--format")
-            .arg(image_format)
-            .output()
-            .unwrap();
+            .arg(image_format);
+
+        let plotly_path = self.plotly_path.clone();
+        match plotly_path {
+            Some(p) => cmd
+                .arg("--plotly")
+                .arg(p.to_str().unwrap())
+                .output()
+                .unwrap(),
+            None => cmd.output().unwrap(),
+        };
     }
 
     pub fn save_png<P: AsRef<Path>>(&self, dst: P, plot_data: &str, width: usize, height: usize) {
@@ -86,21 +147,26 @@ impl Orca {
     }
 
     #[cfg(target_os = "linux")]
-    fn find_orca_executable() -> Result<PathBuf, &'static str>  {
+    fn find_orca_executable() -> Result<PathBuf, &'static str> {
         let p = PathBuf::from("/usr/bin/plotly_orca");
         if !p.exists() {
-            return Err(ORCA_INSTALLATION_INSTRUCTIONS)
+            return Err(ORCA_INSTALLATION_INSTRUCTIONS);
         }
         Ok(p)
     }
 
     #[cfg(target_os = "macos")]
-    fn find_orca_executable() -> Result<PathBuf, &'static str>  {
-        Ok(PathBuf::new())
+    fn find_orca_executable() -> Result<PathBuf, &'static str> {
+        let orca_path = PathBuf::from("/Applications/orca.app/Contents/MacOS/orca");
+        if !orca_path.exists() {
+            return Err(ORCA_INSTALLATION_INSTRUCTIONS);
+        }
+
+        Ok(orca_path)
     }
 
     #[cfg(target_os = "windows")]
-    fn find_orca_executable() -> Result<PathBuf, &'static str>  {
+    fn find_orca_executable() -> Result<PathBuf, &'static str> {
         let app_data = std::env::var_os("LOCALAPPDATA").expect("Could not expand LOCALAPPDATA");
         let mut orca_path = PathBuf::from(app_data);
         orca_path.push("Programs");
@@ -117,6 +183,7 @@ impl Orca {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     const TEST_PLOT: &str = r#"{
     "data": [{"type":"scatter","x":[1,2,3,4],"y":[10,15,13,17],"name":"trace1","mode":"markers"},
              {"type":"scatter","x":[2,3,4,5],"y":[16,5,11,9],"name":"trace2","mode":"lines"},
@@ -126,7 +193,7 @@ mod tests {
 
     #[test]
     fn test_can_find_plotly_executable() {
-        let o = Orca::new();
+        let _o = Orca::new();
     }
 
     #[test]
@@ -136,7 +203,10 @@ mod tests {
         assert!(!dst.exists());
         o.save_png(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        match std::fs::remove_file(&dst) {
+            Ok(_) => {}
+            Err(e) => panic!(format!("could not cleanup file, error: {}", e)),
+        };
         assert!(!dst.exists());
     }
 
@@ -147,7 +217,10 @@ mod tests {
         assert!(!dst.exists());
         o.save_jpeg(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        match std::fs::remove_file(&dst) {
+            Ok(_) => {}
+            Err(e) => panic!(format!("could not cleanup file, error: {}", e)),
+        };
         assert!(!dst.exists());
     }
 
@@ -158,7 +231,10 @@ mod tests {
         assert!(!dst.exists());
         o.save_webp(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        match std::fs::remove_file(&dst) {
+            Ok(_) => {}
+            Err(e) => panic!(format!("could not cleanup file, error: {}", e)),
+        };
         assert!(!dst.exists());
     }
 
@@ -169,7 +245,10 @@ mod tests {
         assert!(!dst.exists());
         o.save_svg(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        match std::fs::remove_file(&dst) {
+            Ok(_) => {}
+            Err(e) => panic!(format!("could not cleanup file, error: {}", e)),
+        };
         assert!(!dst.exists());
     }
 
@@ -180,7 +259,10 @@ mod tests {
         assert!(!dst.exists());
         o.save_pdf(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        match std::fs::remove_file(&dst) {
+            Ok(_) => {}
+            Err(e) => panic!(format!("could not cleanup file, error: {}", e)),
+        };
         assert!(!dst.exists());
     }
 
@@ -191,7 +273,10 @@ mod tests {
         assert!(!dst.exists());
         o.save_eps(&dst, TEST_PLOT, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        match std::fs::remove_file(&dst) {
+            Ok(_) => {}
+            Err(e) => panic!(format!("could not cleanup file, error: {}", e)),
+        };
         assert!(!dst.exists());
     }
 }

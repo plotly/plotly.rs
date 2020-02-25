@@ -1,4 +1,4 @@
-use crate::charts::{Calendar, Color, Dim, Label, Line, PlotType};
+use crate::charts::{owned_string_vector, Calendar, Color, Dim, HoverInfo, Label, Line, PlotType};
 use crate::Trace;
 use serde::Serialize;
 
@@ -36,7 +36,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
     hover_text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<String>,
+    hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "whiskerwidth")]
@@ -93,8 +93,8 @@ where
         })
     }
 
-    pub fn name(mut self, name: String) -> Box<Candlestick<T, O>> {
-        self.name = Some(name);
+    pub fn name(mut self, name: &str) -> Box<Candlestick<T, O>> {
+        self.name = Some(name.to_owned());
         Box::new(self)
     }
 
@@ -108,8 +108,8 @@ where
         Box::new(self)
     }
 
-    pub fn legend_group(mut self, legend_group: String) -> Box<Candlestick<T, O>> {
-        self.legend_group = Some(legend_group);
+    pub fn legend_group(mut self, legend_group: &str) -> Box<Candlestick<T, O>> {
+        self.legend_group = Some(legend_group.to_owned());
         Box::new(self)
     }
 
@@ -118,17 +118,29 @@ where
         Box::new(self)
     }
 
-    pub fn text(mut self, text: Dim<String>) -> Box<Candlestick<T, O>> {
-        self.text = Some(text);
+    pub fn text(mut self, text: &str) -> Box<Candlestick<T, O>> {
+        self.text = Some(Dim::Scalar(text.to_owned()));
         Box::new(self)
     }
 
-    pub fn hover_text(mut self, hover_text: Dim<String>) -> Box<Candlestick<T, O>> {
-        self.hover_text = Some(hover_text);
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Candlestick<T, O>> {
+        let text = owned_string_vector(text);
+        self.text = Some(Dim::Vector(text));
         Box::new(self)
     }
 
-    pub fn hover_info(mut self, hover_info: String) -> Box<Candlestick<T, O>> {
+    pub fn hover_text(mut self, hover_text: &str) -> Box<Candlestick<T, O>> {
+        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Candlestick<T, O>> {
+        let hover_text = owned_string_vector(hover_text);
+        self.hover_text = Some(Dim::Vector(hover_text));
+        Box::new(self)
+    }
+
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Candlestick<T, O>> {
         self.hover_info = Some(hover_info);
         Box::new(self)
     }
@@ -201,7 +213,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
     hover_text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<String>,
+    hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -283,18 +295,30 @@ where
         Box::new(self)
     }
 
-    pub fn text(mut self, text: Dim<String>) -> Box<Ohlc<T, O>> {
-        self.text = Some(text);
+    pub fn text(mut self, text: &str) -> Box<Ohlc<T, O>> {
+        self.text = Some(Dim::Scalar(text.to_owned()));
         Box::new(self)
     }
 
-    pub fn hover_text(mut self, hover_text: Dim<String>) -> Box<Ohlc<T, O>> {
-        self.hover_text = Some(hover_text);
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Ohlc<T, O>> {
+        let text = owned_string_vector(text);
+        self.text = Some(Dim::Vector(text));
         Box::new(self)
     }
 
-    pub fn hover_info(mut self, hover_info: &str) -> Box<Ohlc<T, O>> {
-        self.hover_info = Some(hover_info.to_owned());
+    pub fn hover_text(mut self, hover_text: &str) -> Box<Ohlc<T, O>> {
+        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Ohlc<T, O>> {
+        let hover_text = owned_string_vector(hover_text);
+        self.hover_text = Some(Dim::Vector(hover_text));
+        Box::new(self)
+    }
+
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Ohlc<T, O>> {
+        self.hover_info = Some(hover_info);
         Box::new(self)
     }
 

@@ -10,8 +10,14 @@ pub use basic::Bar;
 pub use basic::Scatter;
 
 pub use statistical::BoxPlot;
+pub use statistical::BoxMean;
+pub use statistical::BoxPoints;
 pub use statistical::Density;
 pub use statistical::Histogram;
+pub use statistical::HistNorm;
+pub use statistical::HistFunc;
+pub use statistical::Bins;
+pub use statistical::Cumulative;
 
 pub use scientific::Contour;
 pub use scientific::Contours;
@@ -26,16 +32,43 @@ pub use scientific::SurfaceContours;
 pub use financial::Candlestick;
 pub use financial::Ohlc;
 
+fn owned_string_vector<S: AsRef<str>>(s: Vec<S>) -> Vec<String> {
+    s.iter()
+        .map(|x| x.as_ref().to_string())
+        .collect::<Vec<String>>()
+}
+
+#[derive(Debug)]
+struct TruthyEnum<E> {
+    pub e: E,
+}
+
+impl<E> Serialize for TruthyEnum<E>
+    where E: Serialize
+{
+    fn serialize<S>(&self, serializer: S) -> Result<<S as Serializer>::Ok, <S as Serializer>::Error>
+        where
+            S: Serializer,
+    {
+        let s = serde_json::to_string(&self.e).unwrap().chars().filter(|c| *c != '"').collect::<String>();
+        if s == "true" {
+            return serializer.serialize_bool(true);
+        }
+        if s == "false" {
+            return serializer.serialize_bool(false);
+        }
+        serializer.serialize_str(&s)
+    }
+}
+
 #[derive(Debug)]
 pub struct HexColor {
-    r: u8,
-    g: u8,
-    b: u8,
+    h: String,
 }
 
 impl HexColor {
-    pub fn new(r: u8, g: u8, b: u8) -> HexColor {
-        HexColor { r, g, b }
+    pub fn new(h: &str) -> HexColor {
+        HexColor { h: h.to_owned() }
     }
 }
 
@@ -44,7 +77,7 @@ impl Serialize for HexColor {
     where
         S: Serializer,
     {
-        let s = format!("#{:X}{:X}{:X}", self.r, self.g, self.b);
+        let s = format!("#{}", self.h);
         serializer.serialize_str(s.as_str())
     }
 }
@@ -94,6 +127,46 @@ impl Serialize for RgbaColor {
         let s = format!("rgba({}, {}, {}, {})", self.r, self.g, self.b, self.a);
         serializer.serialize_str(s.as_str())
     }
+}
+
+#[derive(Serialize, Debug)]
+pub enum HoverInfo {
+    #[serde(rename = "x")]
+    X,
+    #[serde(rename = "y")]
+    Y,
+    #[serde(rename = "z")]
+    Z,
+    #[serde(rename = "x+y")]
+    XAndY,
+    #[serde(rename = "x+z")]
+    XAndZ,
+    #[serde(rename = "y+z")]
+    YAndZ,
+    #[serde(rename = "x+y+z")]
+    XAndYAndZ,
+    #[serde(rename = "text")]
+    Text,
+    #[serde(rename = "name")]
+    Name,
+    #[serde(rename = "all")]
+    All,
+    #[serde(rename = "none")]
+    None,
+    #[serde(rename = "skip")]
+    Skip,
+}
+
+#[derive(Serialize, Debug)]
+pub enum TextPosition {
+    #[serde(rename = "inside")]
+    Inside,
+    #[serde(rename = "outside")]
+    Outside,
+    #[serde(rename = "auto")]
+    Auto,
+    #[serde(rename = "none")]
+    None,
 }
 
 #[derive(Serialize, Debug)]
@@ -284,307 +357,353 @@ pub enum BarMode {
     Relative,
 }
 
-// https://www.w3.org/TR/css-color-3/#svg-color
 #[derive(Serialize, Debug)]
-#[serde(untagged)]
+pub enum BarNorm {
+    #[serde(rename = "")]
+    Empty,
+    #[serde(rename = "fraction")]
+    Fraction,
+    #[serde(rename = "percent")]
+    Percent,
+}
+
+#[derive(Serialize, Debug)]
+pub enum BoxMode {
+    #[serde(rename = "group")]
+    Group,
+    #[serde(rename = "overlay")]
+    Overlay,
+}
+
+#[derive(Serialize, Debug)]
+pub enum ViolinMode {
+    #[serde(rename = "group")]
+    Group,
+    #[serde(rename = "overlay")]
+    Overlay,
+}
+
+#[derive(Serialize, Debug)]
+pub enum WaterfallMode {
+    #[serde(rename = "group")]
+    Group,
+    #[serde(rename = "overlay")]
+    Overlay,
+}
+
+// https://www.w3.org/TR/css-color-3/#svg-color
+#[derive(Debug)]
 pub enum Color {
-    #[serde(rename = "aliceblue")]
     AliceBlue,
-    #[serde(rename = "antiquewhite")]
     AntiqueWhite,
-    #[serde(rename = "aqua")]
     Aqua,
-    #[serde(rename = "aquamarine")]
     Aquamarine,
-    #[serde(rename = "azure")]
     Azure,
-    #[serde(rename = "beige")]
     Beige,
-    #[serde(rename = "bisque")]
     Bisque,
-    #[serde(rename = "black")]
     Black,
-    #[serde(rename = "blanchedalmond")]
     BlancheDalmond,
-    #[serde(rename = "blue")]
     Blue,
-    #[serde(rename = "blueviolet")]
     BlueViolet,
-    #[serde(rename = "brown")]
     Brown,
-    #[serde(rename = "burlywood")]
     BurlyWood,
-    #[serde(rename = "cadetblue")]
     CadetBlue,
-    #[serde(rename = "chartreuse")]
     Chartreuse,
-    #[serde(rename = "chocolate")]
     Chocolate,
-    #[serde(rename = "coral")]
     Coral,
-    #[serde(rename = "cornflowerblue")]
     CornFlowerBlue,
-    #[serde(rename = "cornsilk")]
     CornSilk,
-    #[serde(rename = "crimson")]
     Crimson,
-    #[serde(rename = "cyan")]
     Cyan,
-    #[serde(rename = "darkblue")]
     DarkBlue,
-    #[serde(rename = "darkcyan")]
     DarkCyan,
-    #[serde(rename = "darkgoldenrod")]
     DarkGoldenrod,
-    #[serde(rename = "darkgray")]
     DarkGray,
-    #[serde(rename = "darkgreen")]
     DarkGreen,
-    #[serde(rename = "darkgrey")]
     DarkGrey,
-    #[serde(rename = "darkkhaki")]
     DarkKhaki,
-    #[serde(rename = "darkmagenta")]
     DarkMagenta,
-    #[serde(rename = "darkolivegreen")]
     DarkOliveGreen,
-    #[serde(rename = "darkorange")]
     DarkOrange,
-    #[serde(rename = "darkorchid")]
     DarkOrchid,
-    #[serde(rename = "darkred")]
     DarkRed,
-    #[serde(rename = "darksalmon")]
     DarkSalmon,
-    #[serde(rename = "darkseagreen")]
     DarkSeaGreen,
-    #[serde(rename = "darkslateblue")]
     DarkSlateBlue,
-    #[serde(rename = "darkslategray")]
     DarkSlateGray,
-    #[serde(rename = "darkslategrey")]
     DarkSlateGrey,
-    #[serde(rename = "darkturquoise")]
     DarkTurquoise,
-    #[serde(rename = "darkviolet")]
     DarkViolet,
-    #[serde(rename = "deeppink")]
     DeepPink,
-    #[serde(rename = "deepskyblue")]
     DeepSkyBlue,
-    #[serde(rename = "dimgray")]
     DimGray,
-    #[serde(rename = "dimgrey")]
     DimGrey,
-    #[serde(rename = "dodgerblue")]
     DodgerBlue,
-    #[serde(rename = "firebrick")]
     FireBrick,
-    #[serde(rename = "floralwhite")]
     FloralWhite,
-    #[serde(rename = "forestgreen")]
     ForestGreen,
-    #[serde(rename = "fuchsia")]
     Fuchsia,
-    #[serde(rename = "gainsboro")]
     Gainsboro,
-    #[serde(rename = "ghostwhite")]
     GhostWhite,
-    #[serde(rename = "gold")]
     Gold,
-    #[serde(rename = "goldenrod")]
     Goldenrod,
-    #[serde(rename = "gray")]
     Gray,
-    #[serde(rename = "green")]
     Green,
-    #[serde(rename = "greenyellow")]
     GreenYellow,
-    #[serde(rename = "grey")]
     Grey,
-    #[serde(rename = "honeydew")]
     Honeydew,
-    #[serde(rename = "hotpink")]
     HotPink,
-    #[serde(rename = "indianred")]
     IndianRed,
-    #[serde(rename = "indigo")]
     Indigo,
-    #[serde(rename = "ivory")]
     Ivory,
-    #[serde(rename = "khaki")]
     Khaki,
-    #[serde(rename = "lavender")]
     Lavender,
-    #[serde(rename = "lavenderblush")]
     LavenderBlush,
-    #[serde(rename = "lawngreen")]
     LawnGreen,
-    #[serde(rename = "lemonchiffon")]
     LemonChiffon,
-    #[serde(rename = "lightblue")]
     LightBlue,
-    #[serde(rename = "lightcoral")]
     LightCoral,
-    #[serde(rename = "lightcyan")]
     LightCyan,
-    #[serde(rename = "lightgoldenrodyellow")]
     LightGoldenrodYellow,
-    #[serde(rename = "lightgray")]
     LightGray,
-    #[serde(rename = "lightgreen")]
     LightGreen,
-    #[serde(rename = "lightgrey")]
     LightGrey,
-    #[serde(rename = "lightpink")]
     LightPink,
-    #[serde(rename = "lightsalmon")]
     LightSalmon,
-    #[serde(rename = "lightseagreen")]
     LightSeaGreen,
-    #[serde(rename = "lightskyblue")]
     LightSkyBlue,
-    #[serde(rename = "lightslategray")]
     LightSlateGray,
-    #[serde(rename = "lightslategrey")]
     LightSlateGrey,
-    #[serde(rename = "lightsteelblue")]
     LightSteelBlue,
-    #[serde(rename = "lightyellow")]
     LightYellow,
-    #[serde(rename = "lime")]
     Lime,
-    #[serde(rename = "limegreen")]
     LimeGreen,
-    #[serde(rename = "linen")]
     Linen,
-    #[serde(rename = "magenta")]
     Magenta,
-    #[serde(rename = "maroon")]
     Maroon,
-    #[serde(rename = "mediumaquamarine")]
     MediumAquamarine,
-    #[serde(rename = "mediumblue")]
     MediumBlue,
-    #[serde(rename = "mediumorchid")]
     MediumOrchid,
-    #[serde(rename = "mediumpurple")]
     MediumPurple,
-    #[serde(rename = "mediumseagreen")]
     MediumSeaGreen,
-    #[serde(rename = "mediumslateblue")]
     MediumSlateBlue,
-    #[serde(rename = "mediumspringgreen")]
     MediumSpringGreen,
-    #[serde(rename = "mediumturquoise")]
     MediumTurquoise,
-    #[serde(rename = "mediumvioletred")]
     MediumVioletRed,
-    #[serde(rename = "midnightblue")]
     MidnightBlue,
-    #[serde(rename = "mintcream")]
     MintCream,
-    #[serde(rename = "mistyrose")]
     MistyRose,
-    #[serde(rename = "moccasin")]
     Moccasin,
-    #[serde(rename = "navajowhite")]
     NavajoWhite,
-    #[serde(rename = "navy")]
     Navy,
-    #[serde(rename = "oldlace")]
     OldLace,
-    #[serde(rename = "olive")]
     Olive,
-    #[serde(rename = "olivedrab")]
     OliveDrab,
-    #[serde(rename = "orange")]
     Orange,
-    #[serde(rename = "orangered")]
     OrangeRed,
-    #[serde(rename = "orchid")]
     Orchid,
-    #[serde(rename = "palegoldenrod")]
     PaleGoldenrod,
-    #[serde(rename = "palegreen")]
     PaleGreen,
-    #[serde(rename = "paleturquoise")]
     PaleTurquoise,
-    #[serde(rename = "palevioletred")]
     PaleVioletRed,
-    #[serde(rename = "papayawhip")]
     PapayaWhip,
-    #[serde(rename = "peachpuff")]
     PeachPuff,
-    #[serde(rename = "peru")]
     Peru,
-    #[serde(rename = "pink")]
     Pink,
-    #[serde(rename = "plum")]
     Plum,
-    #[serde(rename = "powderblue")]
     PowderBlue,
-    #[serde(rename = "purple")]
     Purple,
-    #[serde(rename = "red")]
     Red,
-    #[serde(rename = "rosybrown")]
     RosyBrown,
-    #[serde(rename = "royalblue")]
     RoyalBlue,
-    #[serde(rename = "saddlebrown")]
     SaddleBrown,
-    #[serde(rename = "salmon")]
     Salmon,
-    #[serde(rename = "sandybrown")]
     SandyBrown,
-    #[serde(rename = "seagreen")]
     SeaGreen,
-    #[serde(rename = "seashell")]
     Seashell,
-    #[serde(rename = "sienna")]
     Sienna,
-    #[serde(rename = "silver")]
     Silver,
-    #[serde(rename = "skyblue")]
     SkyBlue,
-    #[serde(rename = "slateblue")]
     SlateBlue,
-    #[serde(rename = "slategray")]
     SlateGray,
-    #[serde(rename = "slategrey")]
     SlateGrey,
-    #[serde(rename = "snow")]
     Snow,
-    #[serde(rename = "springgreen")]
     SpringGreen,
-    #[serde(rename = "steelblue")]
     SteelBlue,
-    #[serde(rename = "tan")]
     Tan,
-    #[serde(rename = "teal")]
     Teal,
-    #[serde(rename = "thistle")]
     Thistle,
-    #[serde(rename = "tomato")]
     Tomato,
-    #[serde(rename = "turquoise")]
     Turquoise,
-    #[serde(rename = "violet")]
     Violet,
-    #[serde(rename = "wheat")]
     Wheat,
-    #[serde(rename = "white")]
     White,
-    #[serde(rename = "whitesmoke")]
     WhiteSmoke,
-    #[serde(rename = "yellow")]
     Yellow,
-    #[serde(rename = "yellowgreen")]
     YellowGreen,
+    Transparent,
     Hex(HexColor),
     Rgb(RgbColor),
     Rgba(RgbaColor),
+}
+
+impl Serialize for Color {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where S: Serializer {
+        match self {
+            Color::Rgb(c) => Serialize::serialize(&c, serializer),
+            Color::Hex(c) => Serialize::serialize(&c, serializer),
+            Color::Rgba(c) => Serialize::serialize(&c, serializer),
+            Color::AliceBlue => serializer.serialize_str("aliceblue"),
+            Color::AntiqueWhite => serializer.serialize_str("antiquewhite"),
+            Color::Aqua => serializer.serialize_str("aqua"),
+            Color::Aquamarine => serializer.serialize_str("aquamarine"),
+            Color::Azure => serializer.serialize_str("azure"),
+            Color::Beige => serializer.serialize_str("beige"),
+            Color::Bisque => serializer.serialize_str("bisque"),
+            Color::Black => serializer.serialize_str("black"),
+            Color::BlancheDalmond => serializer.serialize_str("blanchedalmond"),
+            Color::Blue => serializer.serialize_str("blue"),
+            Color::BlueViolet => serializer.serialize_str("blueviolet"),
+            Color::Brown => serializer.serialize_str("brown"),
+            Color::BurlyWood => serializer.serialize_str("burlywood"),
+            Color::CadetBlue => serializer.serialize_str("cadetblue"),
+            Color::Chartreuse => serializer.serialize_str("chartreuse"),
+            Color::Chocolate => serializer.serialize_str("chocolate"),
+            Color::Coral => serializer.serialize_str("coral"),
+            Color::CornFlowerBlue => serializer.serialize_str("cornflowerblue"),
+            Color::CornSilk => serializer.serialize_str("cornsilk"),
+            Color::Crimson => serializer.serialize_str("crimson"),
+            Color::Cyan => serializer.serialize_str("cyan"),
+            Color::DarkBlue => serializer.serialize_str("darkblue"),
+            Color::DarkCyan => serializer.serialize_str("darkcyan"),
+            Color::DarkGoldenrod => serializer.serialize_str("darkgoldenrod"),
+            Color::DarkGray => serializer.serialize_str("darkgray"),
+            Color::DarkGreen => serializer.serialize_str("darkgreen"),
+            Color::DarkGrey => serializer.serialize_str("darkgrey"),
+            Color::DarkKhaki => serializer.serialize_str("darkkhaki"),
+            Color::DarkMagenta => serializer.serialize_str("darkmagenta"),
+            Color::DarkOliveGreen => serializer.serialize_str("darkolivegreen"),
+            Color::DarkOrange => serializer.serialize_str("darkorange"),
+            Color::DarkOrchid => serializer.serialize_str("darkorchid"),
+            Color::DarkRed => serializer.serialize_str("darkred"),
+            Color::DarkSalmon => serializer.serialize_str("darksalmon"),
+            Color::DarkSeaGreen => serializer.serialize_str("darkseagreen"),
+            Color::DarkSlateBlue => serializer.serialize_str("darkslateblue"),
+            Color::DarkSlateGray => serializer.serialize_str("darkslategray"),
+            Color::DarkSlateGrey => serializer.serialize_str("darkslategrey"),
+            Color::DarkTurquoise => serializer.serialize_str("darkturquoise"),
+            Color::DarkViolet => serializer.serialize_str("darkviolet"),
+            Color::DeepPink => serializer.serialize_str("deeppink"),
+            Color::DeepSkyBlue => serializer.serialize_str("deepskyblue"),
+            Color::DimGray => serializer.serialize_str("dimgray"),
+            Color::DimGrey => serializer.serialize_str("dimgrey"),
+            Color::DodgerBlue => serializer.serialize_str("dodgerblue"),
+            Color::FireBrick => serializer.serialize_str("firebrick"),
+            Color::FloralWhite => serializer.serialize_str("floralwhite"),
+            Color::ForestGreen => serializer.serialize_str("forestgreen"),
+            Color::Fuchsia => serializer.serialize_str("fuchsia"),
+            Color::Gainsboro => serializer.serialize_str("gainsboro"),
+            Color::GhostWhite => serializer.serialize_str("ghostwhite"),
+            Color::Gold => serializer.serialize_str("gold"),
+            Color::Goldenrod => serializer.serialize_str("goldenrod"),
+            Color::Gray => serializer.serialize_str("gray"),
+            Color::Green => serializer.serialize_str("green"),
+            Color::GreenYellow => serializer.serialize_str("greenyellow"),
+            Color::Grey => serializer.serialize_str("grey"),
+            Color::Honeydew => serializer.serialize_str("honeydew"),
+            Color::HotPink => serializer.serialize_str("hotpink"),
+            Color::IndianRed => serializer.serialize_str("indianred"),
+            Color::Indigo => serializer.serialize_str("indigo"),
+            Color::Ivory => serializer.serialize_str("ivory"),
+            Color::Khaki => serializer.serialize_str("khaki"),
+            Color::Lavender => serializer.serialize_str("lavender"),
+            Color::LavenderBlush => serializer.serialize_str("lavenderblush"),
+            Color::LawnGreen => serializer.serialize_str("lawngreen"),
+            Color::LemonChiffon => serializer.serialize_str("lemonchiffon"),
+            Color::LightBlue => serializer.serialize_str("lightblue"),
+            Color::LightCoral => serializer.serialize_str("lightcoral"),
+            Color::LightCyan => serializer.serialize_str("lightcyan"),
+            Color::LightGoldenrodYellow => serializer.serialize_str("lightgoldenrodyellow"),
+            Color::LightGray => serializer.serialize_str("lightgray"),
+            Color::LightGreen => serializer.serialize_str("lightgreen"),
+            Color::LightGrey => serializer.serialize_str("lightgrey"),
+            Color::LightPink => serializer.serialize_str("lightpink"),
+            Color::LightSalmon => serializer.serialize_str("lightsalmon"),
+            Color::LightSeaGreen => serializer.serialize_str("lightseagreen"),
+            Color::LightSkyBlue => serializer.serialize_str("lightskyblue"),
+            Color::LightSlateGray => serializer.serialize_str("lightslategray"),
+            Color::LightSlateGrey => serializer.serialize_str("lightslategrey"),
+            Color::LightSteelBlue => serializer.serialize_str("lightsteelblue"),
+            Color::LightYellow => serializer.serialize_str("lightyellow"),
+            Color::Lime => serializer.serialize_str("lime"),
+            Color::LimeGreen => serializer.serialize_str("limegreen"),
+            Color::Linen => serializer.serialize_str("linen"),
+            Color::Magenta => serializer.serialize_str("magenta"),
+            Color::Maroon => serializer.serialize_str("maroon"),
+            Color::MediumAquamarine => serializer.serialize_str("mediumaquamarine"),
+            Color::MediumBlue => serializer.serialize_str("mediumblue"),
+            Color::MediumOrchid => serializer.serialize_str("mediumorchid"),
+            Color::MediumPurple => serializer.serialize_str("mediumpurple"),
+            Color::MediumSeaGreen => serializer.serialize_str("mediumseagreen"),
+            Color::MediumSlateBlue => serializer.serialize_str("mediumslateblue"),
+            Color::MediumSpringGreen => serializer.serialize_str("mediumspringgreen"),
+            Color::MediumTurquoise => serializer.serialize_str("mediumturquoise"),
+            Color::MediumVioletRed => serializer.serialize_str("mediumvioletred"),
+            Color::MidnightBlue => serializer.serialize_str("midnightblue"),
+            Color::MintCream => serializer.serialize_str("mintcream"),
+            Color::MistyRose => serializer.serialize_str("mistyrose"),
+            Color::Moccasin => serializer.serialize_str("moccasin"),
+            Color::NavajoWhite => serializer.serialize_str("navajowhite"),
+            Color::Navy => serializer.serialize_str("navy"),
+            Color::OldLace => serializer.serialize_str("oldlace"),
+            Color::Olive => serializer.serialize_str("olive"),
+            Color::OliveDrab => serializer.serialize_str("olivedrab"),
+            Color::Orange => serializer.serialize_str("orange"),
+            Color::OrangeRed => serializer.serialize_str("orangered"),
+            Color::Orchid => serializer.serialize_str("orchid"),
+            Color::PaleGoldenrod => serializer.serialize_str("palegoldenrod"),
+            Color::PaleGreen => serializer.serialize_str("palegreen"),
+            Color::PaleTurquoise => serializer.serialize_str("paleturquoise"),
+            Color::PaleVioletRed => serializer.serialize_str("palevioletred"),
+            Color::PapayaWhip => serializer.serialize_str("papayawhip"),
+            Color::PeachPuff => serializer.serialize_str("peachpuff"),
+            Color::Peru => serializer.serialize_str("peru"),
+            Color::Pink => serializer.serialize_str("pink"),
+            Color::Plum => serializer.serialize_str("plum"),
+            Color::PowderBlue => serializer.serialize_str("powderblue"),
+            Color::Purple => serializer.serialize_str("purple"),
+            Color::Red => serializer.serialize_str("red"),
+            Color::RosyBrown => serializer.serialize_str("rosybrown"),
+            Color::RoyalBlue => serializer.serialize_str("royalblue"),
+            Color::SaddleBrown => serializer.serialize_str("saddlebrown"),
+            Color::Salmon => serializer.serialize_str("salmon"),
+            Color::SandyBrown => serializer.serialize_str("sandybrown"),
+            Color::SeaGreen => serializer.serialize_str("seagreen"),
+            Color::Seashell => serializer.serialize_str("seashell"),
+            Color::Sienna => serializer.serialize_str("sienna"),
+            Color::Silver => serializer.serialize_str("silver"),
+            Color::SkyBlue => serializer.serialize_str("skyblue"),
+            Color::SlateBlue => serializer.serialize_str("slateblue"),
+            Color::SlateGray => serializer.serialize_str("slategray"),
+            Color::SlateGrey => serializer.serialize_str("slategrey"),
+            Color::Snow => serializer.serialize_str("snow"),
+            Color::SpringGreen => serializer.serialize_str("springgreen"),
+            Color::SteelBlue => serializer.serialize_str("steelblue"),
+            Color::Tan => serializer.serialize_str("tan"),
+            Color::Teal => serializer.serialize_str("teal"),
+            Color::Thistle => serializer.serialize_str("thistle"),
+            Color::Tomato => serializer.serialize_str("tomato"),
+            Color::Turquoise => serializer.serialize_str("turquoise"),
+            Color::Violet => serializer.serialize_str("violet"),
+            Color::Wheat => serializer.serialize_str("wheat"),
+            Color::White => serializer.serialize_str("white"),
+            Color::WhiteSmoke => serializer.serialize_str("whitesmoke"),
+            Color::Yellow => serializer.serialize_str("yellow"),
+            Color::YellowGreen => serializer.serialize_str("yellowgreen"),
+            Color::Transparent => serializer.serialize_str("transparent"),
+        }
+    }
 }
 
 #[derive(Serialize, Debug)]
@@ -986,6 +1105,10 @@ pub struct Line {
     auto_color_scale: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
     reverse_scale: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "outliercolor")]
+    outlier_color: Option<Color>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "outlierwidth")]
+    outlier_width: Option<usize>,
 }
 
 impl Line {
@@ -1004,6 +1127,8 @@ impl Line {
             color_scale: None,
             auto_color_scale: None,
             reverse_scale: None,
+            outlier_color: None,
+            outlier_width: None,
         }
     }
 
@@ -1069,6 +1194,16 @@ impl Line {
 
     pub fn reverse_scale(mut self, reverse_scale: bool) -> Line {
         self.reverse_scale = Some(reverse_scale);
+        self
+    }
+
+    pub fn outlier_color(mut self, outlier_color: Color) -> Line {
+        self.outlier_color = Some(outlier_color);
+        self
+    }
+
+    pub fn outlier_width(mut self, outlier_width: usize) -> Line {
+        self.outlier_width = Some(outlier_width);
         self
     }
 }
@@ -1568,21 +1703,23 @@ pub struct Marker {
     reverse_scale: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showscale")]
     show_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    colorbar: Option<ColorBar>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
+    color_bar: Option<ColorBar>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "outliercolor")]
+    outlier_color: Option<Color>,
 }
 
 impl Marker {
     pub fn new() -> Marker {
         Marker {
-            symbol: Some(MarkerSymbol::Circle),
+            symbol: None,
             opacity: None,
             size: None,
             max_displayed: None,
             size_ref: None,
             size_min: None,
-            size_mode: Some(SizeMode::Diameter),
-            line: Some(Line::new()),
+            size_mode: None,
+            line: None,
             gradient: None,
             color: None,
             cauto: None,
@@ -1593,7 +1730,8 @@ impl Marker {
             auto_color_scale: None,
             reverse_scale: None,
             show_scale: None,
-            colorbar: None,
+            color_bar: None,
+            outlier_color: None,
         }
     }
 
@@ -1607,8 +1745,13 @@ impl Marker {
         self
     }
 
-    pub fn size(mut self, size: Dim<usize>) -> Marker {
-        self.size = Some(size);
+    pub fn size(mut self, size: usize) -> Marker {
+        self.size = Some(Dim::Scalar(size));
+        self
+    }
+
+    pub fn size_array(mut self, size: Vec<usize>) -> Marker {
+        self.size = Some(Dim::Vector(size));
         self
     }
 
@@ -1642,8 +1785,13 @@ impl Marker {
         self
     }
 
-    pub fn color(mut self, color: Dim<Color>) -> Marker {
-        self.color = Some(color);
+    pub fn color(mut self, color: Color) -> Marker {
+        self.color = Some(Dim::Scalar(color));
+        self
+    }
+
+    pub fn color_array(mut self, color: Vec<Color>) -> Marker {
+        self.color = Some(Dim::Vector(color));
         self
     }
 
@@ -1687,8 +1835,13 @@ impl Marker {
         self
     }
 
-    pub fn colorbar(mut self, colorbar: ColorBar) -> Marker {
-        self.colorbar = Some(colorbar);
+    pub fn color_bar(mut self, colorbar: ColorBar) -> Marker {
+        self.color_bar = Some(colorbar);
+        self
+    }
+
+    pub fn outlier_color(mut self, outlier_color: Color) -> Marker {
+        self.outlier_color = Some(outlier_color);
         self
     }
 }
@@ -1905,10 +2058,10 @@ pub struct Title {
     font: Option<Font>,
     #[serde(skip_serializing_if = "Option::is_none")]
     side: Option<Side>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    xref: Option<Reference>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    yref: Option<Reference>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xref")]
+    x_ref: Option<Reference>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yref")]
+    y_ref: Option<Reference>,
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1927,8 +2080,8 @@ impl Title {
             text: text.to_owned(),
             font: None,
             side: None,
-            xref: None,
-            yref: None,
+            x_ref: None,
+            y_ref: None,
             x: None,
             y: None,
             x_anchor: None,
@@ -1947,13 +2100,13 @@ impl Title {
         self
     }
 
-    pub fn xref(mut self, xref: Reference) -> Title {
-        self.xref = Some(xref);
+    pub fn x_ref(mut self, xref: Reference) -> Title {
+        self.x_ref = Some(xref);
         self
     }
 
-    pub fn yref(mut self, yref: Reference) -> Title {
-        self.yref = Some(yref);
+    pub fn y_ref(mut self, yref: Reference) -> Title {
+        self.y_ref = Some(yref);
         self
     }
 
@@ -1988,6 +2141,8 @@ pub struct Margin {
     #[serde(skip_serializing_if = "Option::is_none")]
     l: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    r: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     t: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     b: Option<usize>,
@@ -2001,6 +2156,7 @@ impl Margin {
     pub fn new() -> Margin {
         Margin {
             l: None,
+            r: None,
             t: None,
             b: None,
             pad: None,
@@ -2010,6 +2166,11 @@ impl Margin {
 
     pub fn left(mut self, left: usize) -> Margin {
         self.l = Some(left);
+        self
+    }
+
+    pub fn right(mut self, right: usize) -> Margin {
+        self.r = Some(right);
         self
     }
 
@@ -2154,6 +2315,12 @@ pub struct Axis {
     tick_mode: Option<TickMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "nticks")]
     n_ticks: Option<usize>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tick0: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    dtick: Option<f64>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickvals")]
     tick_values: Option<Vec<f64>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tick_text")]
@@ -2259,6 +2426,8 @@ impl Axis {
             constrain_toward: None,
             tick_mode: None,
             n_ticks: None,
+            tick0: None,
+            dtick: None,
             tick_values: None,
             tick_text: None,
             ticks: None,
@@ -2363,6 +2532,16 @@ impl Axis {
 
     pub fn n_ticks(mut self, n_ticks: usize) -> Axis {
         self.n_ticks = Some(n_ticks);
+        self
+    }
+
+    pub fn tick0(mut self, tick0: f64) -> Axis {
+        self.tick0 = Some(tick0);
+        self
+    }
+
+    pub fn dtick(mut self, dtick: f64) -> Axis {
+        self.dtick = Some(dtick);
         self
     }
 
@@ -2627,13 +2806,18 @@ impl Label {
         self
     }
 
-    pub fn align(mut self, align: String) -> Label {
-        self.align = Some(align);
+    pub fn align(mut self, align: &str) -> Label {
+        self.align = Some(align.to_owned());
         self
     }
 
-    pub fn name_length(mut self, name_length: Dim<i32>) -> Label {
-        self.name_length = Some(name_length);
+    pub fn name_length(mut self, name_length: i32) -> Label {
+        self.name_length = Some(Dim::Scalar(name_length));
+        self
+    }
+
+    pub fn name_length_array(mut self, name_length: Vec<i32>) -> Label {
+        self.name_length = Some(Dim::Vector(name_length));
         self
     }
 }
@@ -2860,6 +3044,9 @@ pub struct Layout {
     height: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
+
+    // uniform_text: Option<UniformText>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     separators: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "paper_bgcolor")]
@@ -2873,6 +3060,9 @@ pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
     color_axis: Option<ColorAxis>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovermode")]
+
+    // mode_bar: Option<ModeBar>,
+
     hover_mode: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "clickmode")]
     click_mode: Option<String>,
@@ -2886,16 +3076,65 @@ pub struct Layout {
     spike_distance: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    template: Option<String>,
+
+    // grid: Option<LayoutGrid>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     calendar: Option<Calendar>,
     #[serde(skip_serializing_if = "Option::is_none")]
     xaxis: Option<Axis>,
     #[serde(skip_serializing_if = "Option::is_none")]
     yaxis: Option<Axis>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    template: Option<String>,
+
+    // ternary: Option<LayoutTernary>,
+    // scene: Option<LayoutScene>,
+
+    // polar: Option<LayoutPolar>,
+    // annotations: Option<LayoutAnnotations>,
+    // shapes: Option<LayoutShapes>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "boxmode")]
+    box_mode: Option<BoxMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "boxgap")]
+    box_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "boxgroupgap")]
+    box_group_gap: Option<f64>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "barmode")]
     bar_mode: Option<BarMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "barnorm")]
+    bar_norm: Option<BarNorm>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bargap")]
+    bar_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bargroupgap")]
+    bar_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "violinmode")]
+    violin_mode: Option<ViolinMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "violingap")]
+    violin_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "violingroupgap")]
+    violin_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "waterfallmode")]
+    waterfall_mode: Option<WaterfallMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "waterfallgap")]
+    waterfall_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "waterfallgroupgap")]
+    waterfall_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "piecolorway")]
+    pie_colorway: Option<Vec<Color>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "extendpiecolors")]
+    extend_pie_colors: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
+    sunburst_colorway: Option<Vec<Color>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "extendsuburstcolors")]
+    extend_sunburst_colors: Option<bool>,
 }
 
 impl Layout {
@@ -2926,7 +3165,27 @@ impl Layout {
             xaxis: None,
             yaxis: None,
             template: None,
+            box_mode: None,
+            box_gap: None,
+            box_group_gap: None,
             bar_mode: None,
+            bar_norm: None,
+            bar_gap: None,
+            bar_group_gap: None,
+
+            violin_mode: None,
+            violin_gap: None,
+            violin_group_gap: None,
+
+            waterfall_mode: None,
+            waterfall_gap: None,
+            waterfall_group_gap: None,
+
+            pie_colorway: None,
+            extend_pie_colors: None,
+
+            sunburst_colorway: None,
+            extend_sunburst_colors: None,
         }
     }
 
@@ -3055,10 +3314,92 @@ impl Layout {
         self
     }
 
+    pub fn box_mode(mut self, box_mode: BoxMode) -> Layout {
+        self.box_mode = Some(box_mode);
+        self
+    }
+
+    pub fn box_gap(mut self, box_gap: f64) -> Layout {
+        self.box_gap = Some(box_gap);
+        self
+    }
+
+    pub fn box_group_gap(mut self, box_group_gap: f64) -> Layout {
+        self.box_group_gap = Some(box_group_gap);
+        self
+    }
+
     pub fn bar_mode(mut self, bar_mode: BarMode) -> Layout {
         self.bar_mode = Some(bar_mode);
         self
     }
+
+    pub fn bar_norm(mut self, bar_norm: BarNorm) -> Layout {
+        self.bar_norm = Some(bar_norm);
+        self
+    }
+
+    pub fn bar_gap(mut self, bar_gap: f64) -> Layout {
+        self.bar_gap = Some(bar_gap);
+        self
+    }
+
+    pub fn bar_group_gap(mut self, bar_group_gap: f64) -> Layout {
+        self.bar_group_gap = Some(bar_group_gap);
+        self
+    }
+
+    pub fn violin_mode(mut self, violin_mode: ViolinMode) -> Layout {
+        self.violin_mode = Some(violin_mode);
+        self
+    }
+
+    pub fn violin_gap(mut self, violin_gap: f64) -> Layout {
+        self.violin_gap = Some(violin_gap);
+        self
+    }
+
+    pub fn violin_group_gap(mut self, violin_group_gap: f64) -> Layout {
+        self.violin_group_gap = Some(violin_group_gap);
+        self
+    }
+
+    pub fn waterfall_mode(mut self, waterfall_mode: WaterfallMode) -> Layout {
+        self.waterfall_mode = Some(waterfall_mode);
+        self
+    }
+
+    pub fn waterfall_gap(mut self, waterfall_gap: f64) -> Layout {
+        self.waterfall_gap = Some(waterfall_gap);
+        self
+    }
+
+    pub fn waterfall_group_gap(mut self, waterfall_group_gap: f64) -> Layout {
+        self.waterfall_group_gap = Some(waterfall_group_gap);
+        self
+    }
+
+    pub fn pie_colorway(mut self, pie_colorway: Vec<Color>) -> Layout {
+        self.pie_colorway = Some(pie_colorway);
+        self
+    }
+
+    pub fn extend_pie_colors(mut self, extend_pie_colors: bool) -> Layout {
+        self.extend_pie_colors = Some(extend_pie_colors);
+        self
+    }
+
+
+    pub fn sunburst_colorway(mut self, sunburst_colorway: Vec<Color>) -> Layout {
+        self.sunburst_colorway = Some(sunburst_colorway);
+        self
+    }
+
+    pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> Layout {
+        self.extend_sunburst_colors = Some(extend_sunburst_colors);
+        self
+    }
+
 }
 
 impl Trace for Layout {

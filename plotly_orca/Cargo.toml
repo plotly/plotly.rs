@@ -10,7 +10,7 @@ homepage = "https://github.com/igiagkiozis/plotly"
 documentation = "https://docs.rs/plotly_orca"
 repository = "https://github.com/igiagkiozis/plotly"
 edition = "2018"
-keywords = ["plot", "chart", "plotly"]
+keywords = ["plot", "chart", "plotly", "plotly orca", "orca"]
 
 exclude = [
     "target/*"

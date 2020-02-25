@@ -1,4 +1,7 @@
-use crate::charts::{Calendar, Color, ColorBar, ColorScale, Dim, Font, Label, Line, PlotType};
+use crate::charts::{
+    owned_string_vector, Calendar, Color, ColorBar, ColorScale, Dim, Font, HoverInfo, Label, Line,
+    PlotType,
+};
 use crate::Trace;
 use serde::Serialize;
 
@@ -105,13 +108,13 @@ impl Contours {
         self
     }
 
-    pub fn label_format(mut self, label_format: String) -> Contours {
-        self.label_format = Some(label_format);
+    pub fn label_format(mut self, label_format: &str) -> Contours {
+        self.label_format = Some(label_format.to_owned());
         self
     }
 
-    pub fn operation(mut self, operation: String) -> Contours {
-        self.operation = Some(operation);
+    pub fn operation(mut self, operation: &str) -> Contours {
+        self.operation = Some(operation.to_owned());
         self
     }
 
@@ -147,7 +150,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
     hover_text: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<String>,
+    hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -236,8 +239,8 @@ where
         })
     }
 
-    pub fn name(mut self, name: String) -> Box<Contour<X, Y, Z>> {
-        self.name = Some(name);
+    pub fn name(mut self, name: &str) -> Box<Contour<X, Y, Z>> {
+        self.name = Some(name.to_owned());
         Box::new(self)
     }
 
@@ -251,8 +254,8 @@ where
         Box::new(self)
     }
 
-    pub fn legend_group(mut self, legend_group: String) -> Box<Contour<X, Y, Z>> {
-        self.legend_group = Some(legend_group);
+    pub fn legend_group(mut self, legend_group: &str) -> Box<Contour<X, Y, Z>> {
+        self.legend_group = Some(legend_group.to_owned());
         Box::new(self)
     }
 
@@ -261,23 +264,34 @@ where
         Box::new(self)
     }
 
-    pub fn text(mut self, text: Vec<String>) -> Box<Contour<X, Y, Z>> {
+    pub fn text<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Contour<X, Y, Z>> {
+        let text = owned_string_vector(text);
         self.text = Some(text);
         Box::new(self)
     }
 
     pub fn hover_text(mut self, hover_text: Vec<String>) -> Box<Contour<X, Y, Z>> {
+        let hover_text = owned_string_vector(hover_text);
         self.hover_text = Some(hover_text);
         Box::new(self)
     }
 
-    pub fn hover_info(mut self, hover_info: String) -> Box<Contour<X, Y, Z>> {
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Contour<X, Y, Z>> {
         self.hover_info = Some(hover_info);
         Box::new(self)
     }
 
-    pub fn hover_template(mut self, hover_template: Dim<String>) -> Box<Contour<X, Y, Z>> {
-        self.hover_template = Some(hover_template);
+    pub fn hover_template(mut self, hover_template: &str) -> Box<Contour<X, Y, Z>> {
+        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn hover_template_array<S: AsRef<str>>(
+        mut self,
+        hover_template: Vec<S>,
+    ) -> Box<Contour<X, Y, Z>> {
+        let hover_template = owned_string_vector(hover_template);
+        self.hover_template = Some(Dim::Vector(hover_template));
         Box::new(self)
     }
 
@@ -316,8 +330,8 @@ where
         Box::new(self)
     }
 
-    pub fn zhover_format(mut self, zhover_format: String) -> Box<Contour<X, Y, Z>> {
-        self.zhover_format = Some(zhover_format);
+    pub fn zhover_format(mut self, zhover_format: &str) -> Box<Contour<X, Y, Z>> {
+        self.zhover_format = Some(zhover_format.to_owned());
         Box::new(self)
     }
 
@@ -419,7 +433,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
     hover_text: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<String>,
+    hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
@@ -524,23 +538,34 @@ where
         Box::new(self)
     }
 
-    pub fn text(mut self, text: Vec<String>) -> Box<HeatMap<X, Y, Z>> {
+    pub fn text<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<HeatMap<X, Y, Z>> {
+        let text = owned_string_vector(text);
         self.text = Some(text);
         Box::new(self)
     }
 
-    pub fn hover_text(mut self, hover_text: Vec<String>) -> Box<HeatMap<X, Y, Z>> {
+    pub fn hover_text<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<HeatMap<X, Y, Z>> {
+        let hover_text = owned_string_vector(hover_text);
         self.hover_text = Some(hover_text);
         Box::new(self)
     }
 
-    pub fn hover_info(mut self, hover_info: &str) -> Box<HeatMap<X, Y, Z>> {
-        self.hover_info = Some(hover_info.to_owned());
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<HeatMap<X, Y, Z>> {
+        self.hover_info = Some(hover_info);
         Box::new(self)
     }
 
-    pub fn hover_template(mut self, hover_template: Dim<String>) -> Box<HeatMap<X, Y, Z>> {
-        self.hover_template = Some(hover_template);
+    pub fn hover_template(mut self, hover_template: &str) -> Box<HeatMap<X, Y, Z>> {
+        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn hover_template_array<S: AsRef<str>>(
+        mut self,
+        hover_template: Vec<S>,
+    ) -> Box<HeatMap<X, Y, Z>> {
+        let hover_template = owned_string_vector(hover_template);
+        self.hover_template = Some(Dim::Vector(hover_template));
         Box::new(self)
     }
 
@@ -574,8 +599,8 @@ where
         Box::new(self)
     }
 
-    pub fn zhover_format(mut self, zhover_format: String) -> Box<HeatMap<X, Y, Z>> {
-        self.zhover_format = Some(zhover_format);
+    pub fn zhover_format(mut self, zhover_format: &str) -> Box<HeatMap<X, Y, Z>> {
+        self.zhover_format = Some(zhover_format.to_owned());
         Box::new(self)
     }
 
@@ -900,11 +925,11 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "surfacecolor")]
     surface_color: Option<Vec<Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    text: Option<Vec<String>>,
+    text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
-    hover_text: Option<Vec<String>>,
+    hover_text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<String>,
+    hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
@@ -998,8 +1023,8 @@ where
         Box::new(self)
     }
 
-    pub fn name(mut self, name: String) -> Box<Surface<X, Y, Z>> {
-        self.name = Some(name);
+    pub fn name(mut self, name: &str) -> Box<Surface<X, Y, Z>> {
+        self.name = Some(name.to_owned());
         Box::new(self)
     }
 
@@ -1013,8 +1038,8 @@ where
         Box::new(self)
     }
 
-    pub fn legend_group(mut self, legend_group: String) -> Box<Surface<X, Y, Z>> {
-        self.legend_group = Some(legend_group);
+    pub fn legend_group(mut self, legend_group: &str) -> Box<Surface<X, Y, Z>> {
+        self.legend_group = Some(legend_group.to_owned());
         Box::new(self)
     }
 
@@ -1028,23 +1053,44 @@ where
         Box::new(self)
     }
 
-    pub fn text(mut self, text: Vec<String>) -> Box<Surface<X, Y, Z>> {
-        self.text = Some(text);
+    pub fn text(mut self, text: &str) -> Box<Surface<X, Y, Z>> {
+        self.text = Some(Dim::Scalar(text.to_owned()));
         Box::new(self)
     }
 
-    pub fn hover_text(mut self, hover_text: Vec<String>) -> Box<Surface<X, Y, Z>> {
-        self.hover_text = Some(hover_text);
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Surface<X, Y, Z>> {
+        let text = owned_string_vector(text);
+        self.text = Some(Dim::Vector(text));
         Box::new(self)
     }
 
-    pub fn hover_info(mut self, hover_info: String) -> Box<Surface<X, Y, Z>> {
+    pub fn hover_text(mut self, hover_text: &str) -> Box<Surface<X, Y, Z>> {
+        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Surface<X, Y, Z>> {
+        let hover_text = owned_string_vector(hover_text);
+        self.hover_text = Some(Dim::Vector(hover_text));
+        Box::new(self)
+    }
+
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Surface<X, Y, Z>> {
         self.hover_info = Some(hover_info);
         Box::new(self)
     }
 
-    pub fn hover_template(mut self, hover_template: Dim<String>) -> Box<Surface<X, Y, Z>> {
-        self.hover_template = Some(hover_template);
+    pub fn hover_template(mut self, hover_template: &str) -> Box<Surface<X, Y, Z>> {
+        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn hover_template_array<S: AsRef<str>>(
+        mut self,
+        hover_template: Vec<S>,
+    ) -> Box<Surface<X, Y, Z>> {
+        let hover_template = owned_string_vector(hover_template);
+        self.hover_template = Some(Dim::Vector(hover_template));
         Box::new(self)
     }
 
