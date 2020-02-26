@@ -1,4 +1,4 @@
-# Plotly for Rust [![Crate](https://img.shields.io/crates/v/plotly.svg)](https://crates.io/crates/plotly) [![Documentation](https://docs.rs/plotly/badge.svg)](https://docs.rs/plotly) ![Minimum Rust version: 1.30](https://img.shields.io/badge/Minimum%20Rust%20Version-1.30-brightgreen.svg)
+# Plotly for Rust [![Crate](https://img.shields.io/crates/v/plotly.svg)](https://crates.io/crates/plotly) [![Documentation](https://docs.rs/plotly/badge.svg)](https://docs.rs/plotly) ![Minimum Rust version: 1.31](https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg)
 
 A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
@@ -18,8 +18,8 @@ This feature requires some manual configuration to function. For details and ins
 ## Plotly in action
 ```rust
 extern crate plotly;
-use plotly::charts::{Mode, Scatter};
-use plotly::Plot;
+use plotly::common::Mode;
+use plotly::{Plot, Scatter};
 
 fn line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])

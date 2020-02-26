@@ -5,19 +5,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.4.0] - 2020-XX-XX
+## [0.4.0] - 2020-02-26
 ### Added
 - Documentation for `Plot`
 - A feature (`orca`) that enables `Plot` conversion to the following output formats: png, jpeg, webp, svg, pdf and eps
     - This **optional** feature is implemented in the `plotly_orca` crate
 - Box plot support
+- Heat map support
+- Contour plot support
 - More histogram examples
 - Filled lines example
+
 ### Changed
 - Using specific Plotly.js version: https://cdn.plot.ly/plotly-1.52.2.js
 - `Plot::add_layout` changed to `Plot::set_layout` as there is only one layout per `Plot`
 - `TraceSerialize` renamed to `Trace`
 - `Plot::show_jpg` renamed to `Plot::show_jpeg` for consistency
+- Removed HexColor type. Hex color input is still supported using `String`s or string slices
+- Refactored project structure: 
+    - All plots `Trace`s are now accessible from the main namespace `plotly::`.
+    - Enums and structs common to more than 1 plot type and/or the `Layout` now live in `plotly::common::`
+    - Internal methods and structs that are not considered part of the public API are now in `plotly::private::` 
 
 ### Fixed
 - Color serialization was operating correctly only on Rgb, Rgba and Hex colors ignoring the named colors

@@ -1,6 +1,6 @@
 [package]
 name = "plotly_orca"
-version = "0.1.0"
+version = "0.2.0"
 description = "Additional output format support for plotly using Orca"
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"

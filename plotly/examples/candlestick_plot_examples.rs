@@ -1,5 +1,4 @@
-use plotly::charts::Candlestick;
-use plotly::Plot;
+use plotly::{Candlestick, Plot};
 use rand_distr::{Distribution, Normal};
 
 fn geometric_brownian_motion(s_0: f64, dt: f64, n: usize, drift: f64, diffusion: f64) -> Vec<f64> {

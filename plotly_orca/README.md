@@ -26,4 +26,47 @@ already exists an executable on RHEL 8 and Centos 8 with that name.
 Install the dmg package. After that the `orca` binary will be detected by `plotly_orca`.
 
 ### Windows
-Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`. 
+Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`.
+
+## Examples
+ 
+Once the `Orca` executable is installed you can give the feature a spin as follows: 
+ 
+```rust
+extern crate plotly;
+use plotly::common::Mode;
+use plotly::{Plot, Scatter};
+
+fn line_and_scatter_plot() {
+    let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
+        .name("trace1")
+        .mode(Mode::Markers);
+    let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
+        .name("trace2")
+        .mode(Mode::Lines);
+    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+
+    // The following will save the plot in all available formats and show the plot.
+    plot.to_png("scatter", 1024, 680);
+    plot.to_jpeg("scatter", 1024, 680);
+    plot.to_webp("scatter", 1024, 680);
+    plot.to_svg("scatter", 1024, 680);
+    plot.to_pdf("scatter",1024, 680);
+    plot.to_eps("scatter", 1024, 680);
+    plot.show();
+}
+
+fn main() -> std::io::Result<()> {
+    line_and_scatter_plot();
+    Ok(())
+}
+```
+
+Note that `Orca` is not particularly fast; so it may take up to a second to produce an image; this performance is consistent with 
+the Plotly package for Python which also uses `Orca` under the covers to rasterize plots. That said, it's still faster than the 
+alternative manual approach.

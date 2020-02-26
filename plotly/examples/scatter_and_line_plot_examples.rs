@@ -1,7 +1,8 @@
-use plotly::charts::{Layout, Fill, RgbaColor, TicksPosition, TicksDirection};
-use plotly::charts::{Axis, DashType, Font, Legend, Line, LineShape, RgbColor};
-use plotly::charts::{Color, ErrorData, ErrorType, Marker, Mode, Scatter, Title};
-use plotly::Plot;
+use plotly::common::{
+    DashType, ErrorData, ErrorType, Fill, Font, Line, LineShape, Marker, Mode, Title,
+};
+use plotly::layout::{Axis, Layout, Legend, TicksDirection};
+use plotly::{NamedColor, Plot, Rgb, Rgba, Scatter};
 use rand_distr::{Distribution, Normal};
 
 fn geometric_brownian_motion(s_0: f64, dt: f64, n: usize, drift: f64, diffusion: f64) -> Vec<f64> {
@@ -59,32 +60,16 @@ fn line_and_scatter_styling() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("trace1")
-        .marker(
-            Marker::new()
-                .color(Color::Rgb(RgbColor::new(219, 64, 82)))
-                .size(12),
-        );
+        .marker(Marker::new().color(Rgb::new(219, 64, 82)).size(12));
     let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
         .mode(Mode::Lines)
         .name("trace2")
-        .line(
-            Line::new()
-                .color(Color::Rgb(RgbColor::new(55, 128, 191)))
-                .width(3.0),
-        );
+        .line(Line::new().color(Rgb::new(55, 128, 191)).width(3.0));
     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
         .mode(Mode::LinesMarkers)
         .name("trace3")
-        .marker(
-            Marker::new()
-                .color(Color::Rgb(RgbColor::new(128, 0, 128)))
-                .size(12),
-        )
-        .line(
-            Line::new()
-                .color(Color::Rgb(RgbColor::new(128, 0, 128)))
-                .width(1.0),
-        );
+        .marker(Marker::new().color(Rgb::new(128, 0, 128)).size(12))
+        .line(Line::new().color(Rgb::new(128, 0, 128)).width(1.0));
 
     let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
     let mut plot = Plot::new();
@@ -99,19 +84,11 @@ fn styling_line_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Red")
-        .line(
-            Line::new()
-                .color(Color::Rgb(RgbColor::new(219, 64, 82)))
-                .width(3.0),
-        );
+        .line(Line::new().color(Rgb::new(219, 64, 82)).width(3.0));
     let trace2 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
         .mode(Mode::LinesMarkers)
         .name("Blue")
-        .line(
-            Line::new()
-                .color(Color::Rgb(RgbColor::new(55, 128, 191)))
-                .width(1.0),
-        );
+        .line(Line::new().color(Rgb::new(55, 128, 191)).width(1.0));
 
     let layout = Layout::new()
         .title(Title::new("Adding Names to Line and Scatter Plot"))
@@ -131,9 +108,9 @@ fn colored_and_styled_scatter_plot() {
         .text_array(vec!["United States", "Canada"])
         .marker(
             Marker::new()
-                .color(Color::Rgb(RgbColor::new(164, 194, 244)))
+                .color(Rgb::new(164, 194, 244))
                 .size(12)
-                .line(Line::new().color(Color::White).width(0.5)),
+                .line(Line::new().color(NamedColor::White).width(0.5)),
         );
     let trace2 = Scatter::new(
         vec![
@@ -153,11 +130,7 @@ fn colored_and_styled_scatter_plot() {
         "Greece",
         "Poland",
     ])
-    .marker(
-        Marker::new()
-            .color(Color::Rgb(RgbColor::new(255, 217, 102)))
-            .size(12),
-    );
+    .marker(Marker::new().color(Rgb::new(255, 217, 102)).size(12));
     let trace3 = Scatter::new(
         vec![42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
         vec![23, 42, 54, 89, 14, 99, 93, 70],
@@ -174,11 +147,7 @@ fn colored_and_styled_scatter_plot() {
         "Philippines",
         "India",
     ])
-    .marker(
-        Marker::new()
-            .color(Color::Rgb(RgbColor::new(234, 153, 153)))
-            .size(12),
-    );
+    .marker(Marker::new().color(Rgb::new(234, 153, 153)).size(12));
     let trace4 = Scatter::new(
         vec![19097, 18601, 15595, 13546, 12026, 7434, 5419],
         vec![43, 47, 56, 80, 86, 93, 80],
@@ -194,11 +163,7 @@ fn colored_and_styled_scatter_plot() {
         "El Salvador",
         "Bolivia",
     ])
-    .marker(
-        Marker::new()
-            .color(Color::Rgb(RgbColor::new(142, 124, 195)))
-            .size(12),
-    );
+    .marker(Marker::new().color(Rgb::new(142, 124, 195)).size(12));
 
     let layout = Layout::new()
         .title(Title::new("Quarter 1 Growth"))
@@ -380,56 +345,90 @@ fn basic_symmetric_error_bars() {
 }
 
 fn filled_lines() {
-    let x1 = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0];
+    let x1 = vec![
+        1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0,
+        2.0, 1.0,
+    ];
     let x2 = (1..=10).map(|iv| iv as f64).collect::<Vec<f64>>();
-    let trace1 = Scatter::new(x1.clone(), vec![2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0])
-        .fill(Fill::ToZeroX)
-        .fill_color(Color::Rgba(RgbaColor::new(0, 100, 80, 0.2)))
-        .line(Line::new().color(Color::Transparent))
-        .name("Fair")
-        .show_legend(false);
-    let trace2 = Scatter::new(x1.clone(), vec![5.5, 3.0, 5.5, 8.0, 6.0, 3.0, 8.0, 5.0, 6.0, 5.5, 4.75, 5.0, 4.0, 7.0, 2.0, 4.0, 7.0, 4.4, 2.0, 4.5])
-        .fill(Fill::ToZeroX)
-        .fill_color(Color::Rgba(RgbaColor::new(0, 176, 246, 0.2)))
-        .line(Line::new().color(Color::Transparent))
-        .name("Premium")
-        .show_legend(false);
-    let trace3 = Scatter::new(x1.clone(), vec![11.0, 9.0, 7.0, 5.0, 3.0, 1.0, 3.0, 5.0, 3.0, 1.0, -1.0, 1.0, 3.0, 1.0, -0.5, 1.0, 3.0, 5.0, 7.0, 9.0])
-        .fill(Fill::ToZeroX)
-        .fill_color(Color::Rgba(RgbaColor::new(231, 107, 243, 0.2)))
-        .line(Line::new().color(Color::Transparent))
-        .name("Fair")
-        .show_legend(false);
-    let trace4 = Scatter::new(x2.clone(), vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])
-        .line(Line::new().color(Color::Rgb(RgbColor::new(0, 100, 80))))
-        .name("Fair");
-    let trace5 = Scatter::new(x2.clone(), vec![5.0, 2.5, 5.0, 7.5, 5.0, 2.5, 7.5, 4.5, 5.5, 5.0])
-        .line(Line::new().color(Color::Rgb(RgbColor::new(0, 176, 246))))
-        .name("Premium");
-    let trace6 = Scatter::new(x2.clone(), vec![10.0, 8.0, 6.0, 4.0, 2.0, 0.0, 2.0, 4.0, 2.0, 0.0])
-        .line(Line::new().color(Color::Rgb(RgbColor::new(231, 107, 243))))
-        .name("Ideal");
+    let trace1 = Scatter::new(
+        x1.clone(),
+        vec![
+            2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0,
+            2.0, 1.0, 0.0,
+        ],
+    )
+    .fill(Fill::ToZeroX)
+    .fill_color(Rgba::new(0, 100, 80, 0.2))
+    .line(Line::new().color(NamedColor::Transparent))
+    .name("Fair")
+    .show_legend(false);
+    let trace2 = Scatter::new(
+        x1.clone(),
+        vec![
+            5.5, 3.0, 5.5, 8.0, 6.0, 3.0, 8.0, 5.0, 6.0, 5.5, 4.75, 5.0, 4.0, 7.0, 2.0, 4.0, 7.0,
+            4.4, 2.0, 4.5,
+        ],
+    )
+    .fill(Fill::ToZeroX)
+    .fill_color(Rgba::new(0, 176, 246, 0.2))
+    .line(Line::new().color(NamedColor::Transparent))
+    .name("Premium")
+    .show_legend(false);
+    let trace3 = Scatter::new(
+        x1.clone(),
+        vec![
+            11.0, 9.0, 7.0, 5.0, 3.0, 1.0, 3.0, 5.0, 3.0, 1.0, -1.0, 1.0, 3.0, 1.0, -0.5, 1.0, 3.0,
+            5.0, 7.0, 9.0,
+        ],
+    )
+    .fill(Fill::ToZeroX)
+    .fill_color(Rgba::new(231, 107, 243, 0.2))
+    .line(Line::new().color(NamedColor::Transparent))
+    .name("Fair")
+    .show_legend(false);
+    let trace4 = Scatter::new(
+        x2.clone(),
+        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+    )
+    .line(Line::new().color(Rgb::new(0, 100, 80)))
+    .name("Fair");
+    let trace5 = Scatter::new(
+        x2.clone(),
+        vec![5.0, 2.5, 5.0, 7.5, 5.0, 2.5, 7.5, 4.5, 5.5, 5.0],
+    )
+    .line(Line::new().color(Rgb::new(0, 176, 246)))
+    .name("Premium");
+    let trace6 = Scatter::new(
+        x2.clone(),
+        vec![10.0, 8.0, 6.0, 4.0, 2.0, 0.0, 2.0, 4.0, 2.0, 0.0],
+    )
+    .line(Line::new().color(Rgb::new(231, 107, 243)))
+    .name("Ideal");
 
     let layout = Layout::new()
-        .paper_background_color(Color::Rgb(RgbColor::new(255, 255, 255)))
-        .plot_background_color(Color::Rgb(RgbColor::new(229, 229, 229)))
-        .xaxis(Axis::new()
-            .grid_color(Color::Rgb(RgbColor::new(255, 255, 255)))
-            .range(vec![1.0, 10.0])
-            .show_grid(true)
-            .show_line(false)
-            .show_tick_labels(true)
-            .tick_color(Color::Rgb(RgbColor::new(127, 127, 127)))
-            .ticks(TicksDirection::Outside)
-            .zero_line(false))
-        .yaxis(Axis::new()
-            .grid_color(Color::Rgb(RgbColor::new(255, 255, 255)))
-            .show_grid(true)
-            .show_line(false)
-            .show_tick_labels(true)
-            .tick_color(Color::Rgb(RgbColor::new(127, 127, 127)))
-            .ticks(TicksDirection::Outside)
-            .zero_line(false));
+        .paper_background_color(Rgb::new(255, 255, 255))
+        .plot_background_color(Rgb::new(229, 229, 229))
+        .xaxis(
+            Axis::new()
+                .grid_color(Rgb::new(255, 255, 255))
+                .range(vec![1.0, 10.0])
+                .show_grid(true)
+                .show_line(false)
+                .show_tick_labels(true)
+                .tick_color(Rgb::new(127, 127, 127))
+                .ticks(TicksDirection::Outside)
+                .zero_line(false),
+        )
+        .yaxis(
+            Axis::new()
+                .grid_color(Rgb::new(255, 255, 255))
+                .show_grid(true)
+                .show_line(false)
+                .show_tick_labels(true)
+                .tick_color(Rgb::new(127, 127, 127))
+                .ticks(TicksDirection::Outside)
+                .zero_line(false),
+        );
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -443,18 +442,17 @@ fn filled_lines() {
 }
 
 fn main() -> std::io::Result<()> {
-    // line_and_scatter_plot();
-    // data_labels_hover();
-    // data_labels_on_the_plot();
-    // gbm_scatter_plot();
-    // adding_names_to_line_and_scatter_plot();
-    // line_and_scatter_styling();
-    // styling_line_plot();
-    // colored_and_styled_scatter_plot();
-    // line_shape_options_for_interpolation();
-    // line_dash();
-    // basic_symmetric_error_bars();
-
+    line_and_scatter_plot();
+    data_labels_hover();
+    data_labels_on_the_plot();
+    gbm_scatter_plot();
+    adding_names_to_line_and_scatter_plot();
+    line_and_scatter_styling();
+    styling_line_plot();
+    colored_and_styled_scatter_plot();
+    line_shape_options_for_interpolation();
+    line_dash();
+    basic_symmetric_error_bars();
     filled_lines();
     Ok(())
 }

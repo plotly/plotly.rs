@@ -1,6 +1,7 @@
-use plotly::charts::{Layout, HistFunc, RgbaColor, Line, Title, Axis, Cumulative};
-use plotly::charts::{BarMode, Color, Histogram, HistNorm, Bins, Marker};
-use plotly::Plot;
+use plotly::common::{Line, Marker, Title};
+use plotly::histogram::{Bins, Cumulative, HistFunc, HistNorm};
+use plotly::layout::{Axis, BarMode, Layout};
+use plotly::{Histogram, NamedColor, Plot, Rgba};
 use rand_distr::{Distribution, Normal, Uniform};
 
 fn sample_normal_distribution(n: usize, mean: f64, std_dev: f64) -> Vec<f64> {
@@ -36,7 +37,7 @@ fn horizontal_histogram() {
     let samples = sample_normal_distribution(10_000, 0.0, 1.0);
     let trace = Histogram::new_horizontal(samples)
         .name("h")
-        .marker(Marker::new().color(Color::Pink));
+        .marker(Marker::new().color(NamedColor::Pink));
     let mut plot = Plot::new();
 
     plot.add_trace(trace);
@@ -49,13 +50,13 @@ fn overlaid_histogram() {
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
         .opacity(0.5)
-        .marker(Marker::new().color(Color::Green));
+        .marker(Marker::new().color(NamedColor::Green));
 
     let samples2 = sample_normal_distribution(500, 0.0, 1.0);
     let trace2 = Histogram::new(samples2)
         .name("trace 2")
         .opacity(0.6)
-        .marker(Marker::new().color(Color::Red));
+        .marker(Marker::new().color(NamedColor::Red));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -71,13 +72,13 @@ fn stacked_histograms() {
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
         .opacity(0.5)
-        .marker(Marker::new().color(Color::Green));
+        .marker(Marker::new().color(NamedColor::Green));
 
     let samples2 = sample_normal_distribution(500, 0.0, 1.0);
     let trace2 = Histogram::new(samples2)
         .name("trace 2")
         .opacity(0.6)
-        .marker(Marker::new().color(Color::Red));
+        .marker(Marker::new().color(NamedColor::Red));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -99,16 +100,22 @@ fn colored_and_styled_histograms() {
     let trace1 = Histogram::new_xy(x1, y1)
         .name("control")
         .hist_func(HistFunc::Count)
-        .marker(Marker::new().color(Color::Rgba(RgbaColor::new(255, 100, 102, 0.7)))
-            .line(Line::new().color(Color::Rgba(RgbaColor::new(255, 100, 102, 1.0))).width(1.0)))
+        .marker(
+            Marker::new()
+                .color(Rgba::new(255, 100, 102, 0.7))
+                .line(Line::new().color(Rgba::new(255, 100, 102, 1.0)).width(1.0)),
+        )
         .opacity(0.5)
         .auto_bin_x(false)
         .x_bins(Bins::new(0.5, 2.8, 0.06));
     let trace2 = Histogram::new_xy(x2, y2)
         .name("experimental")
         .hist_func(HistFunc::Count)
-        .marker(Marker::new().color(Color::Rgba(RgbaColor::new(100, 200, 102, 0.7)))
-            .line(Line::new().color(Color::Rgba(RgbaColor::new(100, 200, 102, 1.0))).width(1.0)))
+        .marker(
+            Marker::new()
+                .color(Rgba::new(100, 200, 102, 0.7))
+                .line(Line::new().color(Rgba::new(100, 200, 102, 1.0)).width(1.0)),
+        )
         .opacity(0.75)
         .auto_bin_x(false)
         .x_bins(Bins::new(-3.2, 4.0, 0.06));
@@ -132,7 +139,7 @@ fn cumulative_histogram() {
     let x = sample_uniform_distribution(n, 0.0, 1.0);
     let trace = Histogram::new(x)
         .cumulative(Cumulative::new().enabled(true))
-        .marker(Marker::new().color(Color::BurlyWood));
+        .marker(Marker::new().color(NamedColor::BurlyWood));
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.show();
@@ -143,15 +150,15 @@ fn normalized_histogram() {
     let x = sample_uniform_distribution(n, 0.0, 1.0);
     let trace = Histogram::new(x)
         .hist_norm(HistNorm::Probability)
-        .marker(Marker::new().color(Color::SeaGreen));
+        .marker(Marker::new().color(NamedColor::SeaGreen));
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.show();
 }
 
 fn specify_binning_function() {
-    let x = vec!["Apples","Apples","Apples","Organges", "Bananas"];
-    let y = vec!["5","10","3","10","5"];
+    let x = vec!["Apples", "Apples", "Apples", "Organges", "Bananas"];
+    let y = vec!["5", "10", "3", "10", "5"];
 
     let trace1 = Histogram::new_xy(x.clone(), y.clone())
         .name("count")

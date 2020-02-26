@@ -1,6 +1,5 @@
-use plotly::charts::Layout;
-use plotly::charts::{Lighting, PlaneContours, PlaneProject, Surface, SurfaceContours};
-use plotly::Plot;
+use plotly::surface::{Lighting, PlaneContours, PlaneProject, SurfaceContours};
+use plotly::{Layout, Plot, Surface};
 
 fn spectral_surface_plot() {
     let mut x: Vec<f64> = Vec::new();
@@ -46,6 +45,5 @@ fn spectral_surface_plot() {
 
 fn main() -> std::io::Result<()> {
     spectral_surface_plot();
-
     Ok(())
 }

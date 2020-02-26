@@ -12,14 +12,14 @@ Add this to your `Cargo.toml`:
 plotly = "0.4.0"
 ```
 
+For changes since the last version please consult the [change log](CHANGELOG.md).
+
 ## Crate Feature Flags
 The following feature flags are available:
 * `orca`
     * Optional, compatible with Rust stable.
     * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
-    * Requires some additional configuration, see [plotly_orca](https://github.com/igiagkiozis/plotly/tree/dev/plotly_orca).
-* `ndarray`
-    * Optional, compatible(?) with Rust stable.
+    * Requires some additional configuration, see [plotly_orca](https://github.com/igiagkiozis/plotly/tree/master/plotly_orca).
 
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `orca` feature: 
 
@@ -34,8 +34,8 @@ This feature requires some manual configuration to function. For details and ins
 ### Line and Scatter plot
 ```rust
 extern crate plotly;
-use plotly::charts::{Mode, Scatter};
-use plotly::Plot;
+use plotly::common::Mode;
+use plotly::{Plot, Scatter};
 
 fn line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
@@ -62,10 +62,9 @@ fn main() -> std::io::Result<()> {
 
 ```rust
 extern crate plotly;
-use plotly::charts::{Line, LineShape, Legend, Font};
-use plotly::charts::Layout;
-use plotly::charts::{Mode, Scatter};
-use plotly::Plot;
+use plotly::{Plot, Scatter, Layout};
+use plotly::common::{Mode, Line, LineShape, Font};
+use plotly::layout::Legend;
 
 fn line_shape_options_for_interpolation() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
@@ -97,7 +96,7 @@ fn line_shape_options_for_interpolation() {
     let layout = Layout::new()
         .legend(Legend::new().y(0.5).trace_order("reversed")
             .font(Font::new().size(16)));
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -117,11 +116,9 @@ fn main() -> std::io::Result<()> {
 
 ```rust
 extern crate plotly;
-use plotly::charts::{Line, LineShape, Legend, Font, DashType};
-use plotly::charts::Layout;
-use plotly::charts::{Mode, Scatter};
-use plotly::Plot;
-
+use plotly::{Plot, Scatter, Layout};
+use plotly::common::{Mode, Line, DashType, Font};
+use plotly::layout::{Legend, Axis};
 
 fn line_dash() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
@@ -155,7 +152,7 @@ fn line_dash() {
             .font(Font::new().size(16)))
         .xaxis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
         .yaxis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -175,57 +172,90 @@ fn main() -> std::io::Result<()> {
 
 ```rust
 extern crate plotly;
-use plotly::charts::{Layout, RgbColor, Line, Color, Dim, Marker, Mode, Scatter, Title};
-use plotly::Plot;
+use plotly::{Plot, Scatter, Rgb, NamedColor, Layout};
+use plotly::common::{Mode, Marker, Line, Title};
+use plotly::layout::Axis;
 
 fn colored_and_styled_scatter_plot() {
     let trace1 = Scatter::new(vec![52698, 43117], vec![53, 31])
         .mode(Mode::Markers)
         .name("North America")
-        .text(vec!["United States".to_owned(), "Canada".to_owned()])
-        .marker(Marker::new()
-            .color(Dim::Scalar(Color::Rgb(RgbColor::new(164, 194, 244))))
-            .size(Dim::Scalar(12))
-            .line(Line::new().color(Color::White).width(0.5)));
-    let trace2 = Scatter::new(vec![39317, 37236, 35650, 30066, 29570, 27159, 23557, 21046, 18007],
-                              vec![33, 20, 13, 19, 27, 19, 49, 44, 38])
+        .text_array(vec!["United States", "Canada"])
+        .marker(
+            Marker::new()
+                .color(Rgb::new(164, 194, 244))
+                .size(12)
+                .line(Line::new().color(NamedColor::White).width(0.5)),
+        );
+    let trace2 = Scatter::new(
+        vec![
+            39317, 37236, 35650, 30066, 29570, 27159, 23557, 21046, 18007,
+        ],
+        vec![33, 20, 13, 19, 27, 19, 49, 44, 38],
+    )
         .mode(Mode::Markers)
         .name("Europe")
-        .text(vec!["Germany".to_owned(), "Britain".to_owned(), "France".to_owned(), "Spain".to_owned(),
-                   "Italy".to_owned(), "Czech Rep.".to_owned(), "Greece".to_owned(), "Poland".to_owned()])
-        .marker(Marker::new()
-            .color(Dim::Scalar(Color::Rgb(RgbColor::new(255, 217, 102))))
-            .size(Dim::Scalar(12)));
-    let trace3 = Scatter::new(vec![42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
-                              vec![23, 42, 54, 89, 14, 99, 93, 70])
+        .text_array(vec![
+            "Germany",
+            "Britain",
+            "France",
+            "Spain",
+            "Italy",
+            "Czech Rep.",
+            "Greece",
+            "Poland",
+        ])
+        .marker(Marker::new().color(Rgb::new(255, 217, 102)).size(12));
+    let trace3 = Scatter::new(
+        vec![42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
+        vec![23, 42, 54, 89, 14, 99, 93, 70],
+    )
         .mode(Mode::Markers)
         .name("Asia/Pacific")
-        .text(vec!["Australia".to_owned(), "Japan".to_owned(),
-                   "South Korea".to_owned(), "Malaysia".to_owned(),
-                   "China".to_owned(), "Indonesia".to_owned(), "Philippines".to_owned(), "India".to_owned()])
-        .marker(Marker::new()
-            .color(Dim::Scalar(Color::Rgb(RgbColor::new(234, 153, 153))))
-            .size(Dim::Scalar(12)));
-    let trace4 = Scatter::new(vec![19097, 18601, 15595, 13546, 12026, 7434, 5419],
-                              vec![43, 47, 56, 80, 86, 93, 80])
+        .text_array(vec![
+            "Australia",
+            "Japan",
+            "South Korea",
+            "Malaysia",
+            "China",
+            "Indonesia",
+            "Philippines",
+            "India",
+        ])
+        .marker(Marker::new().color(Rgb::new(234, 153, 153)).size(12));
+    let trace4 = Scatter::new(
+        vec![19097, 18601, 15595, 13546, 12026, 7434, 5419],
+        vec![43, 47, 56, 80, 86, 93, 80],
+    )
         .mode(Mode::Markers)
         .name("Latin America")
-        .text(vec!["Chile".to_owned(), "Argentina".to_owned(), "Mexico".to_owned(),
-                   "Venezuela".to_owned(), "Venezuela".to_owned(), "El Salvador".to_owned(), "Bolivia".to_owned()])
-        .marker(Marker::new()
-            .color(Dim::Scalar(Color::Rgb(RgbColor::new(142, 124, 195))))
-            .size(Dim::Scalar(12)));
+        .text_array(vec![
+            "Chile",
+            "Argentina",
+            "Mexico",
+            "Venezuela",
+            "Venezuela",
+            "El Salvador",
+            "Bolivia",
+        ])
+        .marker(Marker::new().color(Rgb::new(142, 124, 195)).size(12));
 
     let layout = Layout::new()
         .title(Title::new("Quarter 1 Growth"))
-        .xaxis(Axis::new().title(Title::new("GDP per Capita")).show_grid(false).zero_line(false))
+        .xaxis(
+            Axis::new()
+                .title(Title::new("GDP per Capita"))
+                .show_grid(false)
+                .zero_line(false),
+        )
         .yaxis(Axis::new().title(Title::new("Percent")).show_line(false));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     plot.add_trace(trace4);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
+    plot.show_png(1024, 680);
     plot.show();
 }
 
@@ -241,28 +271,19 @@ For more examples see [scatter_and_line_plot_examples.rs](examples/scatter_and_l
 ### Bar plot
 ```rust
 extern crate plotly;
-use plotly::charts::Layout;
-use plotly::charts::{Bar, BarMode, ErrorData, ErrorType};
-use plotly::Plot;
+use plotly::{Plot, Bar, Layout};
+use plotly::common::{ErrorData, ErrorType};
 
 fn bar_chart_with_error_bars() {
     let trace1 = Bar::new(
-        vec![
-            "Trial 1".to_owned(),
-            "Trial 2".to_owned(),
-            "Trial 3".to_owned(),
-        ],
+        vec!["Trial 1", "Trial 2", "Trial 3"],
         vec![3, 6, 4],
     )
         .name("Control")
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 0.5, 1.5]));
 
     let trace2 = Bar::new(
-        vec![
-            "Trial 1".to_owned(),
-            "Trial 2".to_owned(),
-            "Trial 3".to_owned(),
-        ],
+        vec!["Trial 1", "Trial 2", "Trial 3"],
         vec![4, 7, 3],
     )
         .name("LA Zoo")
@@ -272,7 +293,7 @@ fn bar_chart_with_error_bars() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -288,29 +309,40 @@ For more examples see [bar_plot_examples.rs](examples/bar_plot_examples.rs).
 ### Histogram plot
 ```rust
 extern crate plotly;
-use plotly::charts::Layout;
-use plotly::charts::{BarMode, Color, Dim, Histogram, Marker};
-use plotly::Plot;
+use plotly::{Plot, Histogram, NamedColor, Layout};
+use plotly::common::Marker;
+use plotly::layout::BarMode;
+use rand_distr::{Distribution, Normal};
+
+fn sample_normal_distribution(n: usize, mean: f64, std_dev: f64) -> Vec<f64> {
+    let mut rng = rand::thread_rng();
+    let dist = Normal::new(mean, std_dev).unwrap();
+    let mut v = Vec::<f64>::with_capacity(n);
+    for _idx in 1..n {
+        v.push(dist.sample(&mut rng));
+    }
+    v
+}
 
 fn overlaid_histogram() {
     let samples1 = sample_normal_distribution(500, 0.0, 1.0);
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
         .opacity(0.5)
-        .marker(Marker::new().color(Dim::Scalar(Color::Green)));
+        .marker(Marker::new().color(NamedColor::Green));
 
     let samples2 = sample_normal_distribution(500, 0.0, 1.0);
     let trace2 = Histogram::new(samples2)
         .name("trace 2")
         .opacity(0.6)
-        .marker(Marker::new().color(Dim::Scalar(Color::Red)));
+        .marker(Marker::new().color(NamedColor::Red));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
     let layout = Layout::new().bar_mode(BarMode::Overlay);
-    plot.add_layout(layout);
+    plot.set_layout(layout);
     plot.show();
 }
 
@@ -327,8 +359,7 @@ For more examples see [histogram_plot_examples.rs](examples/histogram_plot_examp
 ### Candlestick plot
 ```rust
 extern crate plotly;
-use plotly::charts::Candlestick;
-use plotly::Plot;
+use plotly::{Plot, Candlestick};
 
 fn simple_candlestick_chart() {
     let x = vec![
@@ -381,8 +412,7 @@ For more examples see [candlestick_plot_examples.rs](examples/candlestick_plot_e
 ### OHLC plot
 ```rust
 extern crate plotly;
-use plotly::charts::Ohlc;
-use plotly::Plot;
+use plotly::{Plot, Ohlc};
 
 fn simple_ohlc_chart() {
     let x = vec![
@@ -434,10 +464,8 @@ For more examples see [ohlc_plot_examples.rs](examples/ohlc_plot_examples.rs).
 
 ### Surface plot
 ```rust
-use plotly::charts::{Surface, Lighting, PlaneContours, PlaneProject, SurfaceContours};
-use plotly::charts::Layout;
-use plotly::Plot;
-
+use plotly::{Plot, Surface, Layout};
+use plotly::surface::{Lighting, PlaneContours, PlaneProject, SurfaceContours};
 
 fn spectral_surface_plot() {
     let mut x: Vec<f64> = Vec::new();
@@ -467,14 +495,13 @@ fn spectral_surface_plot() {
         .contours(SurfaceContours::new().z(PlaneContours::new()
             .show(true).use_colormap(true).project(PlaneProject::new().z(true))));
     let mut plot = Plot::new();
-    plot.add_layout(Layout::new());
+    plot.set_layout(Layout::new());
     plot.add_trace(trace);
     plot.show();
 }
 
 fn main() -> std::io::Result<()> {
     spectral_surface_plot();
-
     Ok(())
 }
 ```
@@ -488,8 +515,8 @@ following code:
 
 ```rust
 extern crate plotly;
-use plotly::charts::{Mode, Scatter};
-use plotly::Plot;
+use plotly::common::Mode;
+use plotly::{Plot, Scatter};
 
 fn line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
@@ -504,9 +531,9 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    // The following will generate the plot in PNG format (width: 1024, height: 680) and display it in the browser. 
+    // The following will generate the plot in PNG format (width: 1024, height: 680) and display it in the browser.
     plot.show_png(1024, 680);
-    // Similarly to the above line but with a JPEG format output. 
+    // Similarly to the above line but with a JPEG format output.
     plot.show_jpeg(1024, 680);
     // Save the resulting plot in `filename.html`
     plot.to_html("filename.html");
@@ -519,11 +546,11 @@ fn main() -> std::io::Result<()> {
 }
 ``` 
 will open 3 tabs in the browser with the first two containing the *PNG* and *JPEG* outputs respectively. Then these must be saved manually 
-by right clicking and selecting `Save As...` in the context menu of the browser. This is somewhat cumbersome, however, I haven't found a 
-more elegant solution. **Suggestions are most welcome!** 
-
-At present the method `to_html` is the only available way to persist the plots programmatically. 
-
+by right clicking and selecting `Save As...` in the context menu of the browser. This is somewhat cumbersome. 
+An alternative is to use the `orca` feature which draws on the [Orca](https://github.com/plotly/orca) package to directly convert
+plot data to several formats. The `orca` feature enables `to_*` methods where`*` is one of the supported formats: png, jpeg, webp, svg, pdf and eps.
+The **caveat** is that there is a manual installation step required for this to work. For instructions please see:
+[plotly_orca](https://github.com/igiagkiozis/plotly/tree/master/plotly_orca). 
 
 # License
 
