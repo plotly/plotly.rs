@@ -19,7 +19,7 @@ The following feature flags are available:
 * `orca`
     * Optional, compatible with Rust stable.
     * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
-    * Requires some additional configuration, see [plotly_orca](https://github.com/igiagkiozis/plotly/tree/master/plotly_orca).
+    * Requires some additional configuration, see [plotly_orca](plotly_orca).
 
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `orca` feature: 
 
@@ -28,7 +28,7 @@ Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by ena
 plotly = { version = "0.4.0", features = ["orca"] }
 ```
 This feature requires some manual configuration to function. For details and installation instructions
- please see the [plotly_orca](https://github.com/igiagkiozis/plotly/tree/dev/plotly_orca).
+ please see the [plotly_orca](plotly_orca).
 
 ## Plotly in action
 ### Line and Scatter plot
@@ -621,7 +621,7 @@ by right clicking and selecting `Save As...` in the context menu of the browser.
 An alternative is to use the `orca` feature which draws on the [Orca](https://github.com/plotly/orca) package to directly convert
 plot data to several formats. The `orca` feature enables `to_*` methods where`*` is one of the supported formats: png, jpeg, webp, svg, pdf and eps.
 The **caveat** is that there is a manual installation step required for this to work. For instructions please see:
-[plotly_orca](https://github.com/igiagkiozis/plotly/tree/master/plotly_orca). 
+[plotly_orca](plotly_orca). 
 
 # License
 
