@@ -625,6 +625,6 @@ The **caveat** is that there is a manual installation step required for this to 
 
 # License
 
-Plotly for Rust is distributed under the terms the MIT license.
+Plotly for Rust is distributed under the terms of the MIT license.
 
 See [LICENSE-MIT](LICENSE-MIT), and [COPYRIGHT](COPYRIGHT) for details.
