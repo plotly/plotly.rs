@@ -29,7 +29,6 @@ fn simple_contour_plot() {
     let mut plot = Plot::new();
 
     plot.add_trace(trace);
-    plot.to_png("simple_contour_plot", 1024, 680);
     plot.show();
 }
 
