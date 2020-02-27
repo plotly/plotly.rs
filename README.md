@@ -266,7 +266,7 @@ fn main() -> std::io::Result<()> {
 ```
 ![colored_and_styled_scatter_plot](docs/images/colored_and_styled_scatter_plot.png)
 
-For more examples see [scatter_and_line_plot_examples.rs](examples/scatter_and_line_plot_examples.rs).
+For more examples see [scatter_and_line_plot_examples.rs](plotly/examples/scatter_and_line_plot_examples.rs).
 
 ### Bar plot
 ```rust
@@ -304,7 +304,7 @@ fn main() -> std::io::Result<()> {
 ```
 ![colored_and_styled_scatter_plot](docs/images/bar_chart_with_error_bars.png)
 
-For more examples see [bar_plot_examples.rs](examples/bar_plot_examples.rs).
+For more examples see [bar_plot_examples.rs](plotly/examples/bar_plot_examples.rs).
 
 ### Histogram plot
 ```rust
@@ -353,7 +353,7 @@ fn main() -> std::io::Result<()> {
 ```
 ![colored_and_styled_scatter_plot](docs/images/overlaid_histogram.png)
 
-For more examples see [histogram_plot_examples.rs](examples/histogram_plot_examples.rs).
+For more examples see [histogram_plot_examples.rs](plotly/examples/histogram_plot_examples.rs).
 
 
 ### Candlestick plot
@@ -407,7 +407,7 @@ fn main() -> std::io::Result<()> {
 ```
 ![colored_and_styled_scatter_plot](docs/images/simple_candlestick_chart.png)
 
-For more examples see [candlestick_plot_examples.rs](examples/candlestick_plot_examples.rs).
+For more examples see [candlestick_plot_examples.rs](plotly/examples/candlestick_plot_examples.rs).
 
 ### OHLC plot
 ```rust
@@ -460,10 +460,81 @@ fn main() -> std::io::Result<()> {
 ```
 ![colored_and_styled_scatter_plot](docs/images/simple_ohlc_chart.png)
 
-For more examples see [ohlc_plot_examples.rs](examples/ohlc_plot_examples.rs).
+For more examples see [ohlc_plot_examples.rs](plotly/examples/ohlc_plot_examples.rs).
+
+### Contour plot
+```rust
+extern crate plotly;
+use plotly::{Plot, Contour, Layout};
+use std::f64::consts::PI;
+use plotly::common::{Title, ColorScale, ColorScalePalette, Mode};
+use plotly::contour::Contours;
+
+fn simple_contour_plot() {
+    let n = 200;
+    let mut x = Vec::<f64>::new();
+    let mut y = Vec::<f64>::new();
+    let mut z: Vec<Vec<f64>> = Vec::new();
+
+    for index in 0..n {
+        let value = -2.0 * PI + 4.0 * PI * (index as f64) / (n as f64);
+        x.push(value);
+        y.push(value);
+    }
+
+    for xi in 0..n {
+        let mut row = Vec::<f64>::new();
+        for yi in 0..n {
+            let radius_squared = x[xi].powf(2.0) + y[yi].powf(2.0);
+            let zv = x[xi].sin() * y[yi].cos() * radius_squared.sin() / (radius_squared + 1.0).log10();
+            row.push(zv);
+        }
+        z.push(row);
+    }
+
+    let trace = Contour::new(x, y,z);
+    let mut plot = Plot::new();
+
+    plot.add_trace(trace);
+    plot.show();
+}
+
+
+fn main() -> std::io::Result<()> {
+    simple_contour_plot();
+    Ok(())
+}
+```
+![simple_contour_plot](docs/images/simple_contour_plot.png)
+
+For more examples see [contour_examples.rs](plotly/examples/contour_examples.rs). 
+
+
+### Heat-map Plot
+```rust
+extern crate plotly;
+use plotly::{Plot, HeatMap};
+
+fn basic_heat_map() {
+    let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
+    let trace = HeatMap::new_z(z);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.show();
+}
+
+fn main() -> std::io::Result<()> {
+    basic_heat_map();
+    Ok(())
+}
+```
+![simple_contour_plot](docs/images/basic_heat_map.png)
+
+For more examples see [heat_map_examples.rs](plotly/examples/heat_map_examples.rs). 
 
 ### Surface plot
 ```rust
+extern crate plotly;
 use plotly::{Plot, Surface, Layout};
 use plotly::surface::{Lighting, PlaneContours, PlaneProject, SurfaceContours};
 
@@ -507,7 +578,7 @@ fn main() -> std::io::Result<()> {
 ```
 ![colored_and_styled_scatter_plot](docs/images/spectral_surface_plot.png)
 
-For more examples see [surface_plot_examples.rs](examples/surface_plot_examples.rs). 
+For more examples see [surface_plot_examples.rs](plotly/examples/surface_plot_examples.rs). 
 
 ### Save plots
 At present it is only possible to save plots in *PNG*, *JPEG* and *HTML* format with the help of the browser. For example the 

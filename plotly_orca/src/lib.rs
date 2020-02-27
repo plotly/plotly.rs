@@ -54,6 +54,11 @@ Install the dmg package. After that the `orca` binary will be detected by `plotl
 Run the installation executable with the default target path. After that `plotly_orca` will be able to find the `orca.exe`.
 "#;
 
+extern crate rand;
+use rand::Rng;
+use std::env;
+use std::fs::File;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -98,10 +103,26 @@ impl Orca {
         let mut dst = PathBuf::from(dst);
         dst.set_extension(image_format);
 
+        let mut plot_data_path = rand::thread_rng()
+            .sample_iter(&rand::distributions::Alphanumeric)
+            .take(22)
+            .collect::<String>();
+        plot_data_path.push_str(".json");
+
+        let mut temp = env::temp_dir();
+        temp.push(plot_data_path);
+        let temp_path = temp.to_str().unwrap();
+        {
+            let mut file = File::create(temp_path).unwrap();
+            file.write_all(plotly_data.as_bytes())
+                .expect("failed to write html output");
+            file.flush().unwrap();
+        }
+
         let orca_executable = self.cmd_path.to_str().unwrap();
         let mut cmd = Command::new(orca_executable);
         cmd.arg("graph")
-            .arg(plotly_data)
+            .arg(&temp_path)
             .arg("-o")
             .arg(dst.to_str().unwrap())
             .arg("--width")
@@ -111,8 +132,7 @@ impl Orca {
             .arg("--format")
             .arg(image_format);
 
-        let plotly_path = self.plotly_path.clone();
-        match plotly_path {
+        match &self.plotly_path {
             Some(p) => cmd
                 .arg("--plotly")
                 .arg(p.to_str().unwrap())
@@ -120,6 +140,9 @@ impl Orca {
                 .unwrap(),
             None => cmd.output().unwrap(),
         };
+
+        // Cleanup
+        std::fs::remove_file(temp_path).unwrap();
     }
 
     pub fn save_png<P: AsRef<Path>>(&self, dst: P, plot_data: &str, width: usize, height: usize) {
