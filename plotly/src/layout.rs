@@ -935,6 +935,176 @@ impl Axis {
 }
 
 #[derive(Serialize, Debug)]
+pub enum RowOrder {
+    #[serde(rename="top to bottom")]
+    TopToBottom,
+    #[serde(rename="bottom to top")]
+    BottomToTop,
+}
+
+#[derive(Serialize, Debug)]
+pub enum GridPattern {
+    #[serde(rename="independent")]
+    Independent,
+    #[serde(rename="independent")]
+    Coupled,
+}
+
+#[derive(Serialize, Debug)]
+pub enum GridXSide {
+    #[serde(rename="bottom")]
+    Bottom,
+    #[serde(rename="bottom plot")]
+    BottomPlot,
+    #[serde(rename="top plot")]
+    TopPlot,
+    #[serde(rename="top")]
+    Top,
+}
+
+#[derive(Serialize, Debug)]
+pub enum GridYSide {
+    #[serde(rename="left")]
+    Left,
+    #[serde(rename="left plot")]
+    LeftPlot,
+    #[serde(rename="right plot")]
+    RightPlot,
+    #[serde(rename="right")]
+    Right,
+}
+
+#[derive(Serialize, Debug)]
+pub struct GridDomain {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<Vec<f64>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<Vec<f64>>,
+}
+
+impl GridDomain {
+    pub fn new() -> GridDomain {
+        GridDomain {x: None, y: None}
+    }
+
+    pub fn x(mut self, x: Vec<f64>) -> GridDomain {
+        self.x = Some(x);
+        self
+    }
+
+    pub fn y(mut self, y: Vec<f64>) -> GridDomain {
+        self.y = Some(y);
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub struct LayoutGrid {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    rows: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="roworder")]
+    row_order: Option<RowOrder>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    columns: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="subplots")]
+    sub_plots: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="xaxes")]
+    x_axes: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="yaxes")]
+    y_axes: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pattern: Option<GridPattern>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="xgap")]
+    x_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="ygap")]
+    y_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    domain: Option<GridDomain>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="xside")]
+    x_side: Option<GridXSide>,
+    #[serde(skip_serializing_if = "Option::is_none", rename="yside")]
+    y_side: Option<GridYSide>,
+}
+
+impl LayoutGrid {
+    pub fn new() -> LayoutGrid {
+        LayoutGrid {
+            rows: None,
+            row_order: None,
+            columns: None,
+            sub_plots: None,
+            x_axes: None,
+            y_axes: None,
+            pattern: None,
+            x_gap: None,
+            y_gap: None,
+            domain: None,
+            x_side: None,
+            y_side: None,
+        }
+    }
+
+    pub fn rows(mut self, rows: usize) -> LayoutGrid {
+        self.rows = Some(rows);
+        self
+    }
+
+    pub fn row_order(mut self, row_order: RowOrder) -> LayoutGrid {
+        self.row_order = Some(row_order);
+        self
+    }
+
+    pub fn columns(mut self, columns: usize) -> LayoutGrid {
+        self.columns = Some(columns);
+        self
+    }
+
+    pub fn sub_plots(mut self, sub_plots: Vec<String>) -> LayoutGrid {
+        self.sub_plots = Some(sub_plots);
+        self
+    }
+
+    pub fn x_axes(mut self, x_axes: Vec<String>) -> LayoutGrid {
+        self.x_axes = Some(x_axes);
+        self
+    }
+
+    pub fn y_axes(mut self, y_axes: Vec<String>) -> LayoutGrid {
+        self.y_axes = Some(y_axes);
+        self
+    }
+
+    pub fn pattern(mut self, pattern: GridPattern) -> LayoutGrid {
+        self.pattern = Some(pattern);
+        self
+    }
+
+    pub fn x_gap(mut self, x_gap: f64) -> LayoutGrid {
+        self.x_gap = Some(x_gap);
+        self
+    }
+
+    pub fn y_gap(mut self, y_gap: f64) -> LayoutGrid {
+        self.y_gap = Some(y_gap);
+        self
+    }
+
+    pub fn domain(mut self, domain: GridDomain) -> LayoutGrid {
+        self.domain = Some(domain);
+        self
+    }
+
+    pub fn x_side(mut self, x_side: GridXSide) -> LayoutGrid {
+        self.x_side = Some(x_side);
+        self
+    }
+    pub fn y_side(mut self, y_side: GridYSide) -> LayoutGrid {
+        self.y_side = Some(y_side);
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
@@ -985,7 +1155,8 @@ pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     template: Option<String>,
 
-    // grid: Option<LayoutGrid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    grid: Option<LayoutGrid>,
     #[serde(skip_serializing_if = "Option::is_none")]
     calendar: Option<Calendar>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1036,10 +1207,7 @@ pub struct Layout {
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
     sunburst_colorway: Option<Vec<String>>,
-    #[serde(
-        skip_serializing_if = "Option::is_none",
-        rename = "extendsuburstcolors"
-    )]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "extendsuburstcolors")]
     extend_sunburst_colors: Option<bool>,
 }
 
@@ -1067,6 +1235,7 @@ impl Layout {
             hover_distance: None,
             spike_distance: None,
             hover_label: None,
+            grid: None,
             calendar: None,
             xaxis: None,
             yaxis: None,
@@ -1198,6 +1367,11 @@ impl Layout {
 
     pub fn hover_label(mut self, hover_label: Label) -> Layout {
         self.hover_label = Some(hover_label);
+        self
+    }
+
+    pub fn grid(mut self, grid: LayoutGrid) -> Layout {
+        self.grid = Some(grid);
         self
     }
 

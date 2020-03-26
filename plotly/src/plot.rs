@@ -70,6 +70,17 @@ pub struct Plot {
     layout: Option<Layout>,
 }
 
+const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
+Consider using the `to_html` method to save the plot instead. If using the `orca` feature the following
+additional formats are available accessed by following methods:
+- to_png
+- to_jpeg
+- to_webp
+- to_svg
+- to_pdf
+- to_eps
+"#;
+
 impl Plot {
     /// Create a new `Plot`.
     pub fn new() -> Plot {
@@ -314,12 +325,12 @@ impl Plot {
         Command::new("xdg-open")
             .args(&[temp_path])
             .output()
-            .unwrap();
+            .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
     #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
-        Command::new("open").args(&[temp_path]).output().unwrap();
+        Command::new("open").args(&[temp_path]).output().expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
     #[cfg(target_os = "windows")]
@@ -328,7 +339,7 @@ impl Plot {
             .arg("/C")
             .arg(format!(r#"start {}"#, temp_path))
             .output()
-            .unwrap();
+            .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 }
 

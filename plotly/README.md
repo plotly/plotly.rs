@@ -9,11 +9,8 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.4.0"
+plotly = "0.4.1"
 ```
-
-This feature requires some manual configuration to function. For details and installation instructions
- please see the `plotly_orca` [README](plotly_orca/README.md).
 
 ## Plotly in action
 ```rust
