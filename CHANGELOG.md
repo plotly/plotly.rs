@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.1] - 2020-03-26
 ### Fixed
-- Added error message to capture the scenario when there is no default browser (or no browser at all) on a machine. The message suggests a few alternatives.
+- Added error message to capture the scenario when there is no default browser (or no browser at all) on a machine. 
+The message suggests a few alternatives.
 
 ## [0.4.0] - 2020-02-27
 ### Added
