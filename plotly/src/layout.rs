@@ -131,7 +131,7 @@ pub enum WaterfallMode {
     Overlay,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
     background_color: Option<String>,
@@ -280,7 +280,7 @@ pub enum Align {
     Bottom,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Margin {
     #[serde(skip_serializing_if = "Option::is_none")]
     l: Option<usize>,
@@ -339,7 +339,7 @@ impl Margin {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct LayoutColorScale {
     #[serde(skip_serializing_if = "Option::is_none")]
     sequential: Option<ColorScale>,
@@ -374,7 +374,7 @@ impl LayoutColorScale {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct ColorAxis {
     #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
@@ -457,7 +457,7 @@ impl ColorAxis {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -974,7 +974,7 @@ pub enum GridYSide {
     Right,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct GridDomain {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<f64>>,
@@ -998,31 +998,31 @@ impl GridDomain {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct LayoutGrid {
     #[serde(skip_serializing_if = "Option::is_none")]
     rows: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="roworder")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "roworder")]
     row_order: Option<RowOrder>,
     #[serde(skip_serializing_if = "Option::is_none")]
     columns: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="subplots")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "subplots")]
     sub_plots: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xaxes")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxes")]
     x_axes: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="yaxes")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxes")]
     y_axes: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pattern: Option<GridPattern>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xgap")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xgap")]
     x_gap: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="ygap")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "ygap")]
     y_gap: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     domain: Option<GridDomain>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xside")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xside")]
     x_side: Option<GridXSide>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="yside")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yside")]
     y_side: Option<GridYSide>,
 }
 
@@ -1104,7 +1104,7 @@ impl LayoutGrid {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,

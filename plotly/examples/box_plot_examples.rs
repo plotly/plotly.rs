@@ -110,7 +110,7 @@ fn box_plot_styling_outliers() {
                 ),
         )
         .box_points(BoxPoints::SuspectedOutliers);
-    let trace4 = BoxPlot::new(y.clone())
+    let trace4 = BoxPlot::new(y)
         .name("Whiskers and Outliers")
         .marker(Marker::new().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
@@ -136,7 +136,7 @@ fn box_plot_styling_mean_and_standard_deviation() {
         .name("Only Mean")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::True);
-    let trace2 = BoxPlot::new(y.clone())
+    let trace2 = BoxPlot::new(y)
         .name("Mean and Standard Deviation")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);

@@ -375,7 +375,7 @@ fn filled_lines() {
     .name("Premium")
     .show_legend(false);
     let trace3 = Scatter::new(
-        x1.clone(),
+        x1,
         vec![
             11.0, 9.0, 7.0, 5.0, 3.0, 1.0, 3.0, 5.0, 3.0, 1.0, -1.0, 1.0, 3.0, 1.0, -0.5, 1.0, 3.0,
             5.0, 7.0, 9.0,
@@ -399,7 +399,7 @@ fn filled_lines() {
     .line(Line::new().color(Rgb::new(0, 176, 246)))
     .name("Premium");
     let trace6 = Scatter::new(
-        x2.clone(),
+        x2,
         vec![10.0, 8.0, 6.0, 4.0, 2.0, 0.0, 2.0, 4.0, 2.0, 0.0],
     )
     .line(Line::new().color(Rgb::new(231, 107, 243)))

@@ -196,7 +196,7 @@ pub enum NamedColor {
 
 impl Color for NamedColor {
     fn to_color_string(&self) -> String {
-        let color = match self {
+        match self {
             NamedColor::AliceBlue => "aliceblue".to_owned(),
             NamedColor::AntiqueWhite => "antiquewhite".to_owned(),
             NamedColor::Aqua => "aqua".to_owned(),
@@ -345,8 +345,7 @@ impl Color for NamedColor {
             NamedColor::Yellow => "yellow".to_owned(),
             NamedColor::YellowGreen => "yellowgreen".to_owned(),
             NamedColor::Transparent => "transparent".to_owned(),
-        };
-        color
+        }
     }
 }
 
@@ -364,10 +363,10 @@ where
         if self.as_ref().len() < 6 || self.as_ref().len() > 7 {
             panic!(format!("{} is not a valid hex color!", self));
         }
-        if self.as_ref().len() == 6 && self.as_ref().chars().next().unwrap() == '#' {
+        if self.as_ref().len() == 6 && self.as_ref().starts_with('#')  {
             panic!(format!("{} is not a valid hex color!", self));
         }
-        if self.as_ref().len() == 7 && self.as_ref().chars().next().unwrap() != '#' {
+        if self.as_ref().len() == 7 && !self.as_ref().starts_with('#') {
             panic!(format!("{} is not a valid hex color!", self));
         }
         let valid_characters = "#ABCDEF0123456789";
@@ -401,12 +400,12 @@ mod tests {
 
     #[test]
     fn hex_color_normalization_string() {
-        assert_eq!(String::from("#aabbcc").to_color_string(), "#AABBCC");
-        assert_eq!(String::from("aabbcc".to_color_string()), "#AABBCC");
-        assert_eq!(String::from("aaBBcc".to_color_string()), "#AABBCC");
-        assert_eq!(String::from("FABCDe".to_color_string()), "#FABCDE");
-        assert_eq!(String::from("123456".to_color_string()), "#123456");
-        assert_eq!(String::from("7890EE".to_color_string()), "#7890EE");
+        assert_eq!("#aabbcc".to_color_string(), "#AABBCC");
+        assert_eq!("aabbcc".to_color_string(), "#AABBCC");
+        assert_eq!("aaBBcc".to_color_string(), "#AABBCC");
+        assert_eq!("FABCDe".to_color_string(), "#FABCDE");
+        assert_eq!("123456".to_color_string(), "#123456");
+        assert_eq!("7890EE".to_color_string(), "#7890EE");
     }
 
     #[test]

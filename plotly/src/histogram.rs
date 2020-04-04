@@ -65,7 +65,7 @@ pub enum CurrentBin {
     Half,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Cumulative {
     #[serde(skip_serializing_if = "Option::is_none")]
     enabled: Option<bool>,

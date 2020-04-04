@@ -15,11 +15,11 @@ fn simple_contour_plot() {
         y.push(value);
     }
 
-    for xi in 0..n {
+    for x in &x {
         let mut row = Vec::<f64>::new();
-        for yi in 0..n {
-            let radius_squared = x[xi].powf(2.0) + y[yi].powf(2.0);
-            let zv = x[xi].sin() * y[yi].cos() * radius_squared.sin() / (radius_squared + 1.0).log10();
+        for y in &y {
+            let radius_squared = x.powf(2.0) + y.powf(2.0);
+            let zv = x.sin() * y.cos() * radius_squared.sin() / (radius_squared + 1.0).log10();
             row.push(zv);
         }
         z.push(row);
