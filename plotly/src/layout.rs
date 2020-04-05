@@ -6,6 +6,8 @@ use crate::common::{
 use crate::plot::Trace;
 use crate::private;
 use serde::Serialize;
+use crate::private::TruthyEnum;
+use rand::distributions::Uniform;
 
 #[derive(Serialize, Debug)]
 pub enum AxisType {
@@ -936,41 +938,41 @@ impl Axis {
 
 #[derive(Serialize, Debug)]
 pub enum RowOrder {
-    #[serde(rename="top to bottom")]
+    #[serde(rename = "top to bottom")]
     TopToBottom,
-    #[serde(rename="bottom to top")]
+    #[serde(rename = "bottom to top")]
     BottomToTop,
 }
 
 #[derive(Serialize, Debug)]
 pub enum GridPattern {
-    #[serde(rename="independent")]
+    #[serde(rename = "independent")]
     Independent,
-    #[serde(rename="independent")]
+    #[serde(rename = "independent")]
     Coupled,
 }
 
 #[derive(Serialize, Debug)]
 pub enum GridXSide {
-    #[serde(rename="bottom")]
+    #[serde(rename = "bottom")]
     Bottom,
-    #[serde(rename="bottom plot")]
+    #[serde(rename = "bottom plot")]
     BottomPlot,
-    #[serde(rename="top plot")]
+    #[serde(rename = "top plot")]
     TopPlot,
-    #[serde(rename="top")]
+    #[serde(rename = "top")]
     Top,
 }
 
 #[derive(Serialize, Debug)]
 pub enum GridYSide {
-    #[serde(rename="left")]
+    #[serde(rename = "left")]
     Left,
-    #[serde(rename="left plot")]
+    #[serde(rename = "left plot")]
     LeftPlot,
-    #[serde(rename="right plot")]
+    #[serde(rename = "right plot")]
     RightPlot,
-    #[serde(rename="right")]
+    #[serde(rename = "right")]
     Right,
 }
 
@@ -984,7 +986,7 @@ pub struct GridDomain {
 
 impl GridDomain {
     pub fn new() -> GridDomain {
-        GridDomain {x: None, y: None}
+        GridDomain { x: None, y: None }
     }
 
     pub fn x(mut self, x: Vec<f64>) -> GridDomain {
@@ -1002,27 +1004,27 @@ impl GridDomain {
 pub struct LayoutGrid {
     #[serde(skip_serializing_if = "Option::is_none")]
     rows: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="roworder")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "roworder")]
     row_order: Option<RowOrder>,
     #[serde(skip_serializing_if = "Option::is_none")]
     columns: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="subplots")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "subplots")]
     sub_plots: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xaxes")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxes")]
     x_axes: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="yaxes")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxes")]
     y_axes: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pattern: Option<GridPattern>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xgap")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xgap")]
     x_gap: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="ygap")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "ygap")]
     y_gap: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     domain: Option<GridDomain>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xside")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xside")]
     x_side: Option<GridXSide>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="yside")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yside")]
     y_side: Option<GridYSide>,
 }
 
@@ -1105,6 +1107,102 @@ impl LayoutGrid {
 }
 
 #[derive(Serialize, Debug)]
+pub enum UniformTextMode {
+    #[serde(rename = "false")]
+    False,
+    #[serde(rename = "hide")]
+    Hide,
+    #[serde(rename = "show")]
+    Show,
+}
+
+#[derive(Serialize, Debug)]
+pub struct UniformText {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    mode: Option<TruthyEnum<UniformTextMode>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    min_size: Option<usize>,
+}
+
+impl UniformText {
+    pub fn new() -> UniformText {
+        UniformText {
+            mode: None,
+            min_size: None,
+        }
+    }
+
+    pub fn mode(mut self, mode: UniformTextMode) -> UniformText {
+        self.mode = Some(TruthyEnum { e: mode });
+        self
+    }
+
+    pub fn min_size(mut self, min_size: usize) -> UniformText {
+        self.min_size = Some(min_size);
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub enum HoverMode {
+    #[serde(rename = "x")]
+    X,
+    #[serde(rename = "y")]
+    Y,
+    #[serde(rename = "closest")]
+    Closest,
+    #[serde(rename = "false")]
+    False,
+    #[serde(rename = "x unified")]
+    XUnified,
+    #[serde(rename = "y unified")]
+    YUnified,
+}
+
+#[derive(Serialize, Debug)]
+pub struct ModeBar {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    orientation: Option<Orientation>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    background_color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "activecolor")]
+    active_color: Option<String>,
+}
+
+impl ModeBar {
+    pub fn new() -> ModeBar {
+        ModeBar {
+            orientation: None,
+            background_color: None,
+            color: None,
+            active_color: None,
+        }
+    }
+
+    pub fn orientation<C: Color>(mut self, orientation: Orientation) -> ModeBar {
+        self.orientation = Some(orientation);
+        self
+    }
+
+    pub fn background_color<C: Color>(mut self, background_color: C) -> ModeBar {
+        self.background_color = Some(background_color.to_color_string());
+        self
+    }
+
+    pub fn color<C: Color>(mut self, color: C) -> ModeBar {
+        self.color = Some(color.to_color_string());
+        self
+    }
+
+    pub fn active_color<C: Color>(mut self, active_color: C) -> ModeBar {
+        self.active_color = Some(active_color.to_color_string());
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
@@ -1122,8 +1220,8 @@ pub struct Layout {
     height: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
-
-    // uniform_text: Option<UniformText>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    uniform_text: Option<UniformText>,
     #[serde(skip_serializing_if = "Option::is_none")]
     separators: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "paper_bgcolor")]
@@ -1136,9 +1234,10 @@ pub struct Layout {
     colorway: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
     color_axis: Option<ColorAxis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
+    mode_bar: Option<ModeBar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovermode")]
-    // mode_bar: Option<ModeBar>,
-    hover_mode: Option<String>,
+    hover_mode: Option<TruthyEnum<HoverMode>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "clickmode")]
     click_mode: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dragmode")]
@@ -1222,12 +1321,14 @@ impl Layout {
             width: None,
             height: None,
             font: None,
+            uniform_text: None,
             separators: None,
             paper_background_color: None,
             plot_background_color: None,
             color_scale: None,
             colorway: None,
             color_axis: None,
+            mode_bar: None,
             hover_mode: None,
             click_mode: None,
             drag_mode: None,
@@ -1304,6 +1405,11 @@ impl Layout {
         self
     }
 
+    pub fn uniform_text(mut self, uniform_text: UniformText) -> Layout {
+        self.uniform_text = Some(uniform_text);
+        self
+    }
+
     pub fn separators(mut self, separators: &str) -> Layout {
         self.separators = Some(separators.to_owned());
         self
@@ -1335,8 +1441,23 @@ impl Layout {
         self
     }
 
-    pub fn hover_mode(mut self, hover_mode: &str) -> Layout {
-        self.hover_mode = Some(hover_mode.to_owned());
+    pub fn mode_bar(mut self, mode_bar: ModeBar) -> Layout {
+        self.mode_bar = Some(mode_bar);
+        self
+    }
+
+    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
+    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
+    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
+    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
+    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
+    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
+    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
+    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
+    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
+    /// else the default value is "closest".
+    pub fn hover_mode(mut self, hover_mode: HoverMode) -> Layout {
+        self.hover_mode = Some(TruthyEnum { e: hover_mode });
         self
     }
 

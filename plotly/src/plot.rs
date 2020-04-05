@@ -95,6 +95,13 @@ impl Plot {
         self.traces.push(trace);
     }
 
+    /// Add multiple `Trace`s to the `Plot`.
+    pub fn add_traces(&mut self, traces: Vec<Box<dyn Trace>>) {
+        for trace in traces {
+            self.add_trace(trace);
+        }
+    }
+
     /// Set the `Layout` to be used by `Plot`.
     pub fn set_layout(&mut self, layout: Layout) {
         self.layout = Some(layout);
