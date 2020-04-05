@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "plotly",
-    "plotly_orca"
+    "plotly_orca",
+    "plotly_ndarray"
 ]

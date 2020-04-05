@@ -9,7 +9,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.4.1"
+plotly = "0.5.0"
 ```
 
 For changes since the last version please consult the [change log](CHANGELOG.md).
@@ -25,7 +25,7 @@ Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by ena
 
 ```toml
 [dependencies]
-plotly = { version = "0.4.1", features = ["orca"] }
+plotly = { version = "0.5.0", features = ["orca"] }
 ```
 This feature requires some manual configuration to function. For details and installation instructions
  please see the [plotly_orca](plotly_orca).

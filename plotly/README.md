@@ -9,7 +9,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.4.1"
+plotly = "0.5.0"
 ```
 
 ## Plotly in action
