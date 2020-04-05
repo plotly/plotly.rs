@@ -1,0 +1,21 @@
+[book]
+title = "Plotly for Rust Book"
+author = "Ioannis Giagkiozis"
+language = "en"
+multilingual = false
+src = "src"
+
+[build]
+build-dir = "../../gh-pages/content"
+create-missing = false
+
+[output.html]
+default-theme = "Ayu"
+mathjax-support = true
+additional-css = ["ferris.css"]
+additional-js = ["ferris.js"]
+
+
+[output.html.fold]
+enable = false
+level = 0
