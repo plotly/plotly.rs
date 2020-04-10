@@ -60,8 +60,8 @@ where
         low: Vec<O>,
         close: Vec<O>,
     ) -> Box<Ohlc<T, O>> {
-        let iline = Line::new().width(2.0).color(NamedColor::Green);
-        let dline = Line::new().width(2.0).color(NamedColor::Red);
+        let iline = Line::default().width(2.0).color(NamedColor::Green);
+        let dline = Line::default().width(2.0).color(NamedColor::Red);
         Box::new(Ohlc {
             r#type: PlotType::Ohlc,
             x,

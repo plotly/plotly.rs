@@ -62,7 +62,6 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-#[derive(Default)]
 pub struct Orca {
     cmd_path: PathBuf,
     plotly_path: Option<PathBuf>,

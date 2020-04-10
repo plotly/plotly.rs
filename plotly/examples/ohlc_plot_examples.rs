@@ -76,7 +76,7 @@ fn simple_ohlc_chart() {
 
     let trace1 = Ohlc::new(x, open, high, low, close);
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.show();
 }
@@ -104,7 +104,7 @@ fn gbm_simple_ohlc_chart() {
     }
 
     let trace = Ohlc::new(x, open, high, low, close);
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace);
     plot.show();
 }

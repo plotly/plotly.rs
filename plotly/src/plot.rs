@@ -53,7 +53,7 @@ pub trait Trace {
 ///         .mode(Mode::Lines);
 ///     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
 ///
-///     let mut plot = Plot::new();
+///     let mut plot = Plot::default();
 ///     plot.add_trace(trace1);
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
@@ -65,10 +65,18 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default)]
 pub struct Plot {
     traces: Vec<Box<dyn Trace>>,
     layout: Option<Layout>,
+}
+
+impl Default for Plot {
+    fn default() -> Self {
+        Self {
+            traces: Vec::with_capacity(1),
+            layout: None,
+        }
+    }
 }
 
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
@@ -350,7 +358,7 @@ mod tests {
 
     fn create_test_plot() -> Plot {
         let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2]).name("trace1");
-        let mut plot = Plot::new();
+        let mut plot = Plot::default();
         plot.add_trace(trace1);
         plot
     }

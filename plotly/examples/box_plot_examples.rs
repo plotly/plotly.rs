@@ -20,7 +20,7 @@ fn basic_box_plot() {
 
     let trace1 = BoxPlot::<f64, f64>::new(y0);
     let trace2 = BoxPlot::<f64, f64>::new(y1);
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.show();
@@ -31,7 +31,7 @@ fn box_plot_that_displays_the_underlying_data() {
         .box_points(BoxPoints::All)
         .jitter(0.3)
         .point_pos(-1.8);
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.show();
 }
@@ -40,7 +40,7 @@ fn horizontal_box_plot() {
     let trace1 = BoxPlot::new(vec![1, 2, 3, 4, 4, 4, 8, 9, 10]).name("Set 1");
     let trace2 = BoxPlot::new(vec![2, 3, 3, 3, 3, 5, 6, 6, 7]).name("Set 2");
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.show();
@@ -65,14 +65,14 @@ fn grouped_box_plot() {
         vec![0.1, 0.3, 0.1, 0.9, 0.6, 0.6, 0.9, 1.0, 0.3, 0.6, 0.8, 0.5],
     );
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .yaxis(
-            Axis::new()
+            Axis::default()
                 .title(Title::new("normalized moisture"))
                 .zero_line(false),
         )
@@ -91,20 +91,20 @@ fn box_plot_styling_outliers() {
         .name("All Points")
         .jitter(0.3)
         .point_pos(-1.8)
-        .marker(Marker::new().color(Rgb::new(7, 40, 89)))
+        .marker(Marker::default().color(Rgb::new(7, 40, 89)))
         .box_points(BoxPoints::All);
     let trace2 = BoxPlot::new(y.clone())
         .name("Only Whiskers")
-        .marker(Marker::new().color(Rgb::new(9, 56, 125)))
+        .marker(Marker::default().color(Rgb::new(9, 56, 125)))
         .box_points(BoxPoints::False);
     let trace3 = BoxPlot::new(y.clone())
         .name("Suspected Outlier")
         .marker(
-            Marker::new()
+            Marker::default()
                 .color(Rgb::new(8, 81, 156))
                 .outlier_color(Rgba::new(219, 64, 82, 0.6))
                 .line(
-                    Line::new()
+                    Line::default()
                         .outlier_color(Rgba::new(219, 64, 82, 1.0))
                         .outlier_width(2),
                 ),
@@ -112,12 +112,12 @@ fn box_plot_styling_outliers() {
         .box_points(BoxPoints::SuspectedOutliers);
     let trace4 = BoxPlot::new(y)
         .name("Whiskers and Outliers")
-        .marker(Marker::new().color(Rgb::new(107, 174, 214)))
+        .marker(Marker::default().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
 
-    let layout = Layout::new().title(Title::new("Box Plot Styling Outliers"));
+    let layout = Layout::default().title(Title::new("Box Plot Styling Outliers"));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -134,15 +134,15 @@ fn box_plot_styling_mean_and_standard_deviation() {
 
     let trace1 = BoxPlot::new(y.clone())
         .name("Only Mean")
-        .marker(Marker::new().color(Rgb::new(8, 81, 156)))
+        .marker(Marker::default().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::True);
     let trace2 = BoxPlot::new(y)
         .name("Mean and Standard Deviation")
-        .marker(Marker::new().color(Rgb::new(8, 81, 156)))
+        .marker(Marker::default().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);
-    let layout = Layout::new().title(Title::new("Box Plot Styling Mean and Standard Deviation"));
+    let layout = Layout::default().title(Title::new("Box Plot Styling Mean and Standard Deviation"));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -160,7 +160,7 @@ fn grouped_horizontal_box_plot() {
         x.clone(),
     )
     .name("Kale")
-    .marker(Marker::new().color("3D9970"))
+    .marker(Marker::default().color("3D9970"))
     .box_mean(BoxMean::False)
     .orientation(Orientation::Horizontal);
     let trace2 = BoxPlot::new_xy(
@@ -168,7 +168,7 @@ fn grouped_horizontal_box_plot() {
         x.clone(),
     )
     .name("Radishes")
-    .marker(Marker::new().color("FF4136"))
+    .marker(Marker::default().color("FF4136"))
     .box_mean(BoxMean::False)
     .orientation(Orientation::Horizontal);
     let trace3 = BoxPlot::new_xy(
@@ -176,19 +176,19 @@ fn grouped_horizontal_box_plot() {
         x.clone(),
     )
     .name("Carrots")
-    .marker(Marker::new().color("FF851B"))
+    .marker(Marker::default().color("FF851B"))
     .box_mean(BoxMean::False)
     .orientation(Orientation::Horizontal);
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .title(Title::new("Grouped Horizontal Box Plot"))
         .xaxis(
-            Axis::new()
+            Axis::default()
                 .title(Title::new("normalized moisture"))
                 .zero_line(false),
         )
@@ -232,13 +232,13 @@ fn fully_styled_box_plot() {
         rnd_sample(30, 43.0),
     ];
 
-    let mut plot = Plot::new();
-    let layout = Layout::new()
+    let mut plot = Plot::default();
+    let layout = Layout::default()
         .title(Title::new(
             "Points Scored by the Top 9 Scoring NBA Players in 2012",
         ))
         .yaxis(
-            Axis::new()
+            Axis::default()
                 .auto_range(true)
                 .show_grid(true)
                 .zero_line(true)
@@ -248,7 +248,7 @@ fn fully_styled_box_plot() {
                 .zero_line_color(Rgb::new(255, 255, 255))
                 .zero_line_width(2),
         )
-        .margin(Margin::new().left(40).right(30).bottom(80).top(100))
+        .margin(Margin::default().left(40).right(30).bottom(80).top(100))
         .paper_background_color(Rgb::new(243, 243, 243))
         .plot_background_color(Rgb::new(243, 243, 243))
         .show_legend(false);
@@ -260,8 +260,8 @@ fn fully_styled_box_plot() {
             .box_points(BoxPoints::All)
             .jitter(0.5)
             .whisker_width(0.2)
-            .marker(Marker::new().size(6))
-            .line(Line::new().width(2.0));
+            .marker(Marker::default().size(6))
+            .line(Line::default().width(2.0));
         plot.add_trace(trace);
     }
     plot.show();

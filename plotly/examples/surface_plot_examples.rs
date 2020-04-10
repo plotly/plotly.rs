@@ -30,15 +30,15 @@ fn spectral_surface_plot() {
         .y(y)
         .visible(true)
         .hide_surface(false)
-        .lighting(Lighting::new())
+        .lighting(Lighting::default())
         .contours(
-            SurfaceContours::new().z(PlaneContours::new()
+            SurfaceContours::default().z(PlaneContours::new()
                 .show(true)
                 .use_colormap(true)
-                .project(PlaneProject::new().z(true))),
+                .project(PlaneProject::default().z(true))),
         );
-    let mut plot = Plot::new();
-    plot.set_layout(Layout::new());
+    let mut plot = Plot::default();
+    plot.set_layout(Layout::default());
     plot.add_trace(trace);
     plot.show();
 }

@@ -27,7 +27,7 @@ fn sample_uniform_distribution(n: usize, lb: f64, ub: f64) -> Vec<f64> {
 fn basic_histogram() {
     let samples = sample_normal_distribution(10_000, 0.0, 1.0);
     let trace = Histogram::new(samples).name("h");
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace);
 
     plot.show();
@@ -37,8 +37,8 @@ fn horizontal_histogram() {
     let samples = sample_normal_distribution(10_000, 0.0, 1.0);
     let trace = Histogram::new_horizontal(samples)
         .name("h")
-        .marker(Marker::new().color(NamedColor::Pink));
-    let mut plot = Plot::new();
+        .marker(Marker::default().color(NamedColor::Pink));
+    let mut plot = Plot::default();
 
     plot.add_trace(trace);
 
@@ -50,19 +50,19 @@ fn overlaid_histogram() {
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
         .opacity(0.5)
-        .marker(Marker::new().color(NamedColor::Green));
+        .marker(Marker::default().color(NamedColor::Green));
 
     let samples2 = sample_normal_distribution(500, 0.0, 1.0);
     let trace2 = Histogram::new(samples2)
         .name("trace 2")
         .opacity(0.6)
-        .marker(Marker::new().color(NamedColor::Red));
+        .marker(Marker::default().color(NamedColor::Red));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
-    let layout = Layout::new().bar_mode(BarMode::Overlay);
+    let layout = Layout::default().bar_mode(BarMode::Overlay);
     plot.set_layout(layout);
     plot.show();
 }
@@ -72,19 +72,19 @@ fn stacked_histograms() {
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
         .opacity(0.5)
-        .marker(Marker::new().color(NamedColor::Green));
+        .marker(Marker::default().color(NamedColor::Green));
 
     let samples2 = sample_normal_distribution(500, 0.0, 1.0);
     let trace2 = Histogram::new(samples2)
         .name("trace 2")
         .opacity(0.6)
-        .marker(Marker::new().color(NamedColor::Red));
+        .marker(Marker::default().color(NamedColor::Red));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
-    let layout = Layout::new().bar_mode(BarMode::Stack);
+    let layout = Layout::default().bar_mode(BarMode::Stack);
     plot.set_layout(layout);
 
     plot.show();
@@ -101,9 +101,9 @@ fn colored_and_styled_histograms() {
         .name("control")
         .hist_func(HistFunc::Count)
         .marker(
-            Marker::new()
+            Marker::default()
                 .color(Rgba::new(255, 100, 102, 0.7))
-                .line(Line::new().color(Rgba::new(255, 100, 102, 1.0)).width(1.0)),
+                .line(Line::default().color(Rgba::new(255, 100, 102, 1.0)).width(1.0)),
         )
         .opacity(0.5)
         .auto_bin_x(false)
@@ -112,22 +112,22 @@ fn colored_and_styled_histograms() {
         .name("experimental")
         .hist_func(HistFunc::Count)
         .marker(
-            Marker::new()
+            Marker::default()
                 .color(Rgba::new(100, 200, 102, 0.7))
-                .line(Line::new().color(Rgba::new(100, 200, 102, 1.0)).width(1.0)),
+                .line(Line::default().color(Rgba::new(100, 200, 102, 1.0)).width(1.0)),
         )
         .opacity(0.75)
         .auto_bin_x(false)
         .x_bins(Bins::new(-3.2, 4.0, 0.06));
-    let layout = Layout::new()
+    let layout = Layout::default()
         .title(Title::new("Sampled Results"))
-        .xaxis(Axis::new().title(Title::new("Value")))
-        .yaxis(Axis::new().title(Title::new("Count")))
+        .xaxis(Axis::default().title(Title::new("Value")))
+        .yaxis(Axis::default().title(Title::new("Count")))
         .bar_mode(BarMode::Overlay)
         .bar_gap(0.05)
         .bar_group_gap(0.2);
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -138,9 +138,9 @@ fn cumulative_histogram() {
     let n = 500;
     let x = sample_uniform_distribution(n, 0.0, 1.0);
     let trace = Histogram::new(x)
-        .cumulative(Cumulative::new().enabled(true))
-        .marker(Marker::new().color(NamedColor::BurlyWood));
-    let mut plot = Plot::new();
+        .cumulative(Cumulative::default().enabled(true))
+        .marker(Marker::default().color(NamedColor::BurlyWood));
+    let mut plot = Plot::default();
     plot.add_trace(trace);
     plot.show();
 }
@@ -150,8 +150,8 @@ fn normalized_histogram() {
     let x = sample_uniform_distribution(n, 0.0, 1.0);
     let trace = Histogram::new(x)
         .hist_norm(HistNorm::Probability)
-        .marker(Marker::new().color(NamedColor::SeaGreen));
-    let mut plot = Plot::new();
+        .marker(Marker::default().color(NamedColor::SeaGreen));
+    let mut plot = Plot::default();
     plot.add_trace(trace);
     plot.show();
 }
@@ -167,7 +167,7 @@ fn specify_binning_function() {
         .name("sum")
         .hist_func(HistFunc::Sum);
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.show();

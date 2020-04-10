@@ -29,7 +29,7 @@ fn line_and_scatter_plot() {
         .mode(Mode::Lines);
     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -47,8 +47,8 @@ fn adding_names_to_line_and_scatter_plot() {
         .mode(Mode::LinesMarkers)
         .name("Scatter + Lines");
 
-    let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
-    let mut plot = Plot::new();
+    let layout = Layout::default().title(Title::new("Adding Names to Line and Scatter Plot"));
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -60,19 +60,19 @@ fn line_and_scatter_styling() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("trace1")
-        .marker(Marker::new().color(Rgb::new(219, 64, 82)).size(12));
+        .marker(Marker::default().color(Rgb::new(219, 64, 82)).size(12));
     let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
         .mode(Mode::Lines)
         .name("trace2")
-        .line(Line::new().color(Rgb::new(55, 128, 191)).width(3.0));
+        .line(Line::default().color(Rgb::new(55, 128, 191)).width(3.0));
     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
         .mode(Mode::LinesMarkers)
         .name("trace3")
-        .marker(Marker::new().color(Rgb::new(128, 0, 128)).size(12))
-        .line(Line::new().color(Rgb::new(128, 0, 128)).width(1.0));
+        .marker(Marker::default().color(Rgb::new(128, 0, 128)).size(12))
+        .line(Line::default().color(Rgb::new(128, 0, 128)).width(1.0));
 
-    let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
-    let mut plot = Plot::new();
+    let layout = Layout::default().title(Title::new("Adding Names to Line and Scatter Plot"));
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -84,17 +84,17 @@ fn styling_line_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Red")
-        .line(Line::new().color(Rgb::new(219, 64, 82)).width(3.0));
+        .line(Line::default().color(Rgb::new(219, 64, 82)).width(3.0));
     let trace2 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
         .mode(Mode::LinesMarkers)
         .name("Blue")
-        .line(Line::new().color(Rgb::new(55, 128, 191)).width(1.0));
+        .line(Line::default().color(Rgb::new(55, 128, 191)).width(1.0));
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .title(Title::new("Adding Names to Line and Scatter Plot"))
         .width(500)
         .height(500);
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
@@ -107,10 +107,10 @@ fn colored_and_styled_scatter_plot() {
         .name("North America")
         .text_array(vec!["United States", "Canada"])
         .marker(
-            Marker::new()
+            Marker::default()
                 .color(Rgb::new(164, 194, 244))
                 .size(12)
-                .line(Line::new().color(NamedColor::White).width(0.5)),
+                .line(Line::default().color(NamedColor::White).width(0.5)),
         );
     let trace2 = Scatter::new(
         vec![
@@ -130,7 +130,7 @@ fn colored_and_styled_scatter_plot() {
         "Greece",
         "Poland",
     ])
-    .marker(Marker::new().color(Rgb::new(255, 217, 102)).size(12));
+    .marker(Marker::default().color(Rgb::new(255, 217, 102)).size(12));
     let trace3 = Scatter::new(
         vec![42952, 37037, 33106, 17478, 9813, 5253, 4692, 3899],
         vec![23, 42, 54, 89, 14, 99, 93, 70],
@@ -147,7 +147,7 @@ fn colored_and_styled_scatter_plot() {
         "Philippines",
         "India",
     ])
-    .marker(Marker::new().color(Rgb::new(234, 153, 153)).size(12));
+    .marker(Marker::default().color(Rgb::new(234, 153, 153)).size(12));
     let trace4 = Scatter::new(
         vec![19097, 18601, 15595, 13546, 12026, 7434, 5419],
         vec![43, 47, 56, 80, 86, 93, 80],
@@ -163,18 +163,18 @@ fn colored_and_styled_scatter_plot() {
         "El Salvador",
         "Bolivia",
     ])
-    .marker(Marker::new().color(Rgb::new(142, 124, 195)).size(12));
+    .marker(Marker::default().color(Rgb::new(142, 124, 195)).size(12));
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .title(Title::new("Quarter 1 Growth"))
         .xaxis(
-            Axis::new()
+            Axis::default()
                 .title(Title::new("GDP per Capita"))
                 .show_grid(false)
                 .zero_line(false),
         )
-        .yaxis(Axis::new().title(Title::new("Percent")).show_line(false));
-    let mut plot = Plot::new();
+        .yaxis(Axis::default().title(Title::new("Percent")).show_line(false));
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
@@ -188,34 +188,34 @@ fn line_shape_options_for_interpolation() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("linear")
-        .line(Line::new().shape(LineShape::Linear));
+        .line(Line::default().shape(LineShape::Linear));
     let trace2 = Scatter::new(vec![1, 2, 3, 4, 5], vec![6, 8, 7, 8, 6])
         .mode(Mode::LinesMarkers)
         .name("spline")
-        .line(Line::new().shape(LineShape::Spline));
+        .line(Line::default().shape(LineShape::Spline));
     let trace3 = Scatter::new(vec![1, 2, 3, 4, 5], vec![11, 13, 12, 13, 11])
         .mode(Mode::LinesMarkers)
         .name("vhv")
-        .line(Line::new().shape(LineShape::Vhv));
+        .line(Line::default().shape(LineShape::Vhv));
     let trace4 = Scatter::new(vec![1, 2, 3, 4, 5], vec![16, 18, 17, 18, 16])
         .mode(Mode::LinesMarkers)
         .name("hvh")
-        .line(Line::new().shape(LineShape::Hvh));
+        .line(Line::default().shape(LineShape::Hvh));
     let trace5 = Scatter::new(vec![1, 2, 3, 4, 5], vec![21, 23, 22, 23, 21])
         .mode(Mode::LinesMarkers)
         .name("vh")
-        .line(Line::new().shape(LineShape::Vh));
+        .line(Line::default().shape(LineShape::Vh));
     let trace6 = Scatter::new(vec![1, 2, 3, 4, 5], vec![26, 28, 27, 28, 26])
         .mode(Mode::LinesMarkers)
         .name("hv")
-        .line(Line::new().shape(LineShape::Hv));
+        .line(Line::default().shape(LineShape::Hv));
 
-    let mut plot = Plot::new();
-    let layout = Layout::new().legend(
-        Legend::new()
+    let mut plot = Plot::default();
+    let layout = Layout::default().legend(
+        Legend::default()
             .y(0.5)
             .trace_order("reversed")
-            .font(Font::new().size(16)),
+            .font(Font::default().size(16)),
     );
     plot.set_layout(layout);
     plot.add_trace(trace1);
@@ -232,38 +232,38 @@ fn line_dash() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("solid")
-        .line(Line::new().dash(DashType::Solid));
+        .line(Line::default().dash(DashType::Solid));
     let trace2 = Scatter::new(vec![1, 2, 3, 4, 5], vec![6, 8, 7, 8, 6])
         .mode(Mode::LinesMarkers)
         .name("dashdot")
-        .line(Line::new().dash(DashType::DashDot));
+        .line(Line::default().dash(DashType::DashDot));
     let trace3 = Scatter::new(vec![1, 2, 3, 4, 5], vec![11, 13, 12, 13, 11])
         .mode(Mode::LinesMarkers)
         .name("dash")
-        .line(Line::new().dash(DashType::Dash));
+        .line(Line::default().dash(DashType::Dash));
     let trace4 = Scatter::new(vec![1, 2, 3, 4, 5], vec![16, 18, 17, 18, 16])
         .mode(Mode::LinesMarkers)
         .name("dot")
-        .line(Line::new().dash(DashType::Dot));
+        .line(Line::default().dash(DashType::Dot));
     let trace5 = Scatter::new(vec![1, 2, 3, 4, 5], vec![21, 23, 22, 23, 21])
         .mode(Mode::LinesMarkers)
         .name("longdash")
-        .line(Line::new().dash(DashType::LongDash));
+        .line(Line::default().dash(DashType::LongDash));
     let trace6 = Scatter::new(vec![1, 2, 3, 4, 5], vec![26, 28, 27, 28, 26])
         .mode(Mode::LinesMarkers)
         .name("longdashdot")
-        .line(Line::new().dash(DashType::LongDashDot));
+        .line(Line::default().dash(DashType::LongDashDot));
 
-    let mut plot = Plot::new();
-    let layout = Layout::new()
+    let mut plot = Plot::default();
+    let layout = Layout::default()
         .legend(
-            Legend::new()
+            Legend::default()
                 .y(0.5)
                 .trace_order("reversed")
-                .font(Font::new().size(16)),
+                .font(Font::default().size(16)),
         )
-        .xaxis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
-        .yaxis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
+        .xaxis(Axis::default().range(vec![0.95, 5.05]).auto_range(false))
+        .yaxis(Axis::default().range(vec![0.0, 28.5]).auto_range(false));
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -278,20 +278,20 @@ fn data_labels_hover() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 6, 3, 6, 1])
         .mode(Mode::Markers)
         .name("Team A")
-        .marker(Marker::new().size(12));
+        .marker(Marker::default().size(12));
     let trace2 = Scatter::new(vec![1.5, 2.5, 3.5, 4.5, 5.5], vec![4, 1, 7, 1, 4])
         .mode(Mode::Markers)
         .name("Team B")
-        .marker(Marker::new().size(12));
+        .marker(Marker::default().size(12));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .title(Title::new("Data Labels Hover"))
-        .xaxis(Axis::new().title(Title::new("x")).range(vec![0.75, 5.25]))
-        .yaxis(Axis::new().title(Title::new("y")).range(vec![0., 8.]));
+        .xaxis(Axis::default().title(Title::new("x")).range(vec![0.75, 5.25]))
+        .yaxis(Axis::default().title(Title::new("y")).range(vec![0., 8.]));
     plot.set_layout(layout);
     plot.show();
 }
@@ -300,22 +300,22 @@ fn data_labels_on_the_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 6, 3, 6, 1])
         .mode(Mode::Markers)
         .name("Team A")
-        .marker(Marker::new().size(12))
+        .marker(Marker::default().size(12))
         .text_array(vec!["A-1", "A-2", "A-3", "A-4", "A-5"]);
     let trace2 = Scatter::new(vec![1.5, 2.5, 3.5, 4.5, 5.5], vec![4, 1, 7, 1, 4])
         .mode(Mode::Markers)
         .name("Team B")
         .text_array(vec!["B-a", "B-b", "B-c", "B-d", "B-e"])
-        .marker(Marker::new().size(12));
+        .marker(Marker::default().size(12));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .title(Title::new("Data Labels on the Plot"))
-        .xaxis(Axis::new().range(vec![0.75, 5.25]))
-        .yaxis(Axis::new().range(vec![0., 8.]));
+        .xaxis(Axis::default().range(vec![0.75, 5.25]))
+        .yaxis(Axis::default().range(vec![0., 8.]));
     plot.set_layout(layout);
     plot.show();
 }
@@ -329,7 +329,7 @@ fn gbm_scatter_plot() {
     let x = (0..n).collect();
     let y = geometric_brownian_motion(100.0, 1.0 / 365.0, n, 0.15, 0.5);
     let t = Scatter::new(x, y).name("path_0");
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(t);
     plot.show();
 }
@@ -339,7 +339,7 @@ fn basic_symmetric_error_bars() {
         .name("trace1")
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 2.0, 3.0]));
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.show();
 }
@@ -359,7 +359,7 @@ fn filled_lines() {
     )
     .fill(Fill::ToZeroX)
     .fill_color(Rgba::new(0, 100, 80, 0.2))
-    .line(Line::new().color(NamedColor::Transparent))
+    .line(Line::default().color(NamedColor::Transparent))
     .name("Fair")
     .show_legend(false);
     let trace2 = Scatter::new(
@@ -371,7 +371,7 @@ fn filled_lines() {
     )
     .fill(Fill::ToZeroX)
     .fill_color(Rgba::new(0, 176, 246, 0.2))
-    .line(Line::new().color(NamedColor::Transparent))
+    .line(Line::default().color(NamedColor::Transparent))
     .name("Premium")
     .show_legend(false);
     let trace3 = Scatter::new(
@@ -383,33 +383,33 @@ fn filled_lines() {
     )
     .fill(Fill::ToZeroX)
     .fill_color(Rgba::new(231, 107, 243, 0.2))
-    .line(Line::new().color(NamedColor::Transparent))
+    .line(Line::default().color(NamedColor::Transparent))
     .name("Fair")
     .show_legend(false);
     let trace4 = Scatter::new(
         x2.clone(),
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
     )
-    .line(Line::new().color(Rgb::new(0, 100, 80)))
+    .line(Line::default().color(Rgb::new(0, 100, 80)))
     .name("Fair");
     let trace5 = Scatter::new(
         x2.clone(),
         vec![5.0, 2.5, 5.0, 7.5, 5.0, 2.5, 7.5, 4.5, 5.5, 5.0],
     )
-    .line(Line::new().color(Rgb::new(0, 176, 246)))
+    .line(Line::default().color(Rgb::new(0, 176, 246)))
     .name("Premium");
     let trace6 = Scatter::new(
         x2,
         vec![10.0, 8.0, 6.0, 4.0, 2.0, 0.0, 2.0, 4.0, 2.0, 0.0],
     )
-    .line(Line::new().color(Rgb::new(231, 107, 243)))
+    .line(Line::default().color(Rgb::new(231, 107, 243)))
     .name("Ideal");
 
-    let layout = Layout::new()
+    let layout = Layout::default()
         .paper_background_color(Rgb::new(255, 255, 255))
         .plot_background_color(Rgb::new(229, 229, 229))
         .xaxis(
-            Axis::new()
+            Axis::default()
                 .grid_color(Rgb::new(255, 255, 255))
                 .range(vec![1.0, 10.0])
                 .show_grid(true)
@@ -420,7 +420,7 @@ fn filled_lines() {
                 .zero_line(false),
         )
         .yaxis(
-            Axis::new()
+            Axis::default()
                 .grid_color(Rgb::new(255, 255, 255))
                 .show_grid(true)
                 .show_line(false)
@@ -430,7 +430,7 @@ fn filled_lines() {
                 .zero_line(false),
         );
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);

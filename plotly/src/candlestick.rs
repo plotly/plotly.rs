@@ -60,8 +60,8 @@ where
         low: Vec<O>,
         close: Vec<O>,
     ) -> Box<Candlestick<T, O>> {
-        let iline = Line::new().width(1.0).color(NamedColor::Green);
-        let dline = Line::new().width(1.0).color(NamedColor::Red);
+        let iline = Line::default().width(1.0).color(NamedColor::Green);
+        let dline = Line::default().width(1.0).color(NamedColor::Red);
         Box::new(Candlestick {
             r#type: PlotType::Candlestick,
             x,

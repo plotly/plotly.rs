@@ -5,7 +5,7 @@ use plotly::{Bar, Plot};
 fn basic_bar_chart() {
     let animals = vec!["giraffes", "orangutans", "monkeys"];
     let t = Bar::new(animals, vec![20, 14, 23]);
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(t);
     plot.show();
 }
@@ -17,9 +17,9 @@ fn grouped_bar_chart() {
     let animals2 = vec!["giraffes", "orangutans", "monkeys"];
     let trace2 = Bar::new(animals2, vec![12, 18, 29]).name("LA Zoo");
 
-    let layout = Layout::new().bar_mode(BarMode::Group);
+    let layout = Layout::default().bar_mode(BarMode::Group);
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
@@ -33,9 +33,9 @@ fn stacked_bar_chart() {
     let animals2 = vec!["giraffes", "orangutans", "monkeys"];
     let trace2 = Bar::new(animals2, vec![12, 18, 29]).name("LA Zoo");
 
-    let layout = Layout::new().bar_mode(BarMode::Stack);
+    let layout = Layout::default().bar_mode(BarMode::Stack);
 
-    let mut plot = Plot::new();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
@@ -58,8 +58,8 @@ fn bar_chart_with_error_bars() {
     .name("LA Zoo")
     .error_y(ErrorData::new(ErrorType::Data).array(vec![0.5, 1.0, 2.0]));
 
-    let layout = Layout::new();
-    let mut plot = Plot::new();
+    let layout = Layout::default();
+    let mut plot = Plot::default();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
