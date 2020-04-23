@@ -32,7 +32,7 @@ fn spectral_surface_plot() {
         .hide_surface(false)
         .lighting(Lighting::default())
         .contours(
-            SurfaceContours::default().z(PlaneContours::new()
+            SurfaceContours::default().z(PlaneContours::default()
                 .show(true)
                 .use_colormap(true)
                 .project(PlaneProject::default().z(true))),

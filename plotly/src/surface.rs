@@ -21,15 +21,6 @@ pub struct Lighting {
 }
 
 impl Lighting {
-    pub fn new() -> Lighting {
-        Lighting {
-            ambient: None,
-            diffuse: None,
-            specular: None,
-            roughness: None,
-            fresnel: None,
-        }
-    }
 
     pub fn ambient(mut self, ambient: f64) -> Lighting {
         self.ambient = Some(ambient);
@@ -81,13 +72,6 @@ pub struct PlaneProject {
 }
 
 impl PlaneProject {
-    pub fn new() -> PlaneProject {
-        PlaneProject {
-            x: None,
-            y: None,
-            z: None,
-        }
-    }
 
     pub fn x(mut self, x: bool) -> PlaneProject {
         self.x = Some(x);
@@ -132,21 +116,6 @@ pub struct PlaneContours {
 }
 
 impl PlaneContours {
-    pub fn new() -> PlaneContours {
-        PlaneContours {
-            show: None,
-            start: None,
-            end: None,
-            size: None,
-            project: None,
-            color: None,
-            use_colormap: None,
-            width: None,
-            highlight: None,
-            highlight_color: None,
-            highlight_width: None,
-        }
-    }
 
     pub fn show(mut self, show: bool) -> PlaneContours {
         self.show = Some(show);
@@ -215,13 +184,6 @@ pub struct SurfaceContours {
 }
 
 impl SurfaceContours {
-    pub fn new() -> SurfaceContours {
-        SurfaceContours {
-            x: None,
-            y: None,
-            z: None,
-        }
-    }
 
     pub fn x(mut self, x: PlaneContours) -> SurfaceContours {
         self.x = Some(x);

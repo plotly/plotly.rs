@@ -53,21 +53,6 @@ pub struct Contours {
 }
 
 impl Contours {
-    pub fn new() -> Contours {
-        Contours {
-            r#type: None,
-            start: None,
-            end: None,
-            size: None,
-            coloring: None,
-            show_lines: None,
-            show_labels: None,
-            label_font: None,
-            label_format: None,
-            operation: None,
-            value: None,
-        }
-    }
 
     pub fn type_(mut self, t: ContoursType) -> Contours {
         self.r#type = Some(t);

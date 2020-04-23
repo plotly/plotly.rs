@@ -168,26 +168,6 @@ pub struct Legend {
 }
 
 impl Legend {
-    pub fn new() -> Legend {
-        Legend {
-            background_color: None,
-            border_color: None,
-            border_width: None,
-            font: None,
-            orientation: None,
-            trace_order: None,
-            trace_group_gap: None,
-            item_sizing: None,
-            item_click: None,
-            item_double_click: None,
-            x: None,
-            x_anchor: None,
-            y: None,
-            y_anchor: None,
-            valign: None,
-            title: None,
-        }
-    }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Legend {
         self.background_color = Some(background_color.to_color_string());
@@ -297,16 +277,6 @@ pub struct Margin {
 }
 
 impl Margin {
-    pub fn new() -> Margin {
-        Margin {
-            l: None,
-            r: None,
-            t: None,
-            b: None,
-            pad: None,
-            auto_expand: None,
-        }
-    }
 
     pub fn left(mut self, left: usize) -> Margin {
         self.l = Some(left);
@@ -350,13 +320,6 @@ pub struct LayoutColorScale {
 }
 
 impl LayoutColorScale {
-    pub fn new() -> LayoutColorScale {
-        LayoutColorScale {
-            sequential: None,
-            sequential_minus: None,
-            diverging: None,
-        }
-    }
 
     pub fn sequential(mut self, sequential: ColorScale) -> LayoutColorScale {
         self.sequential = Some(sequential);
@@ -397,19 +360,6 @@ pub struct ColorAxis {
 }
 
 impl ColorAxis {
-    pub fn new() -> ColorAxis {
-        ColorAxis {
-            cauto: None,
-            cmin: None,
-            cmax: None,
-            cmid: None,
-            color_scale: None,
-            auto_color_scale: None,
-            reverse_scale: None,
-            show_scale: None,
-            color_bar: None,
-        }
-    }
 
     pub fn cauto(mut self, cauto: bool) -> ColorAxis {
         self.cauto = Some(cauto);
@@ -580,68 +530,6 @@ pub struct Axis {
 }
 
 impl Axis {
-    pub fn new() -> Axis {
-        Axis {
-            visible: None,
-            color: None,
-            title: None,
-            r#type: None,
-            auto_range: None,
-            range_mode: None,
-            range: None,
-            fixed_range: None,
-            constrain: None,
-            constrain_toward: None,
-            tick_mode: None,
-            n_ticks: None,
-            tick0: None,
-            dtick: None,
-            tick_values: None,
-            tick_text: None,
-            ticks: None,
-            ticks_on: None,
-            mirror: None,
-            tick_length: None,
-            tick_width: None,
-            tick_color: None,
-            show_tick_labels: None,
-            auto_margin: None,
-            show_spikes: None,
-            spike_color: None,
-            spike_thickness: None,
-            spike_dash: None,
-            spike_mode: None,
-            spike_snap: None,
-            tick_font: None,
-            tick_angle: None,
-            tick_prefix: None,
-            show_tick_prefix: None,
-            tick_suffix: None,
-            show_tick_suffix: None,
-            show_exponent: None,
-            exponent_format: None,
-            separate_thousands: None,
-            tick_format: None,
-            tick_format_stops: None,
-            hover_format: None,
-            show_line: None,
-            line_color: None,
-            line_width: None,
-            show_grid: None,
-            grid_color: None,
-            grid_width: None,
-            zero_line: None,
-            zero_line_color: None,
-            zero_line_width: None,
-            show_dividers: None,
-            divider_color: None,
-            divider_width: None,
-            side: None,
-            domain: None,
-            position: None,
-            calendar: None,
-        }
-    }
 
     pub fn visible(mut self, visible: bool) -> Axis {
         self.visible = Some(visible);
@@ -983,9 +871,6 @@ pub struct GridDomain {
 }
 
 impl GridDomain {
-    pub fn new() -> GridDomain {
-        GridDomain {x: None, y: None}
-    }
 
     pub fn x(mut self, x: Vec<f64>) -> GridDomain {
         self.x = Some(x);
@@ -1027,22 +912,6 @@ pub struct LayoutGrid {
 }
 
 impl LayoutGrid {
-    pub fn new() -> LayoutGrid {
-        LayoutGrid {
-            rows: None,
-            row_order: None,
-            columns: None,
-            sub_plots: None,
-            x_axes: None,
-            y_axes: None,
-            pattern: None,
-            x_gap: None,
-            y_gap: None,
-            domain: None,
-            x_side: None,
-            y_side: None,
-        }
-    }
 
     pub fn rows(mut self, rows: usize) -> LayoutGrid {
         self.rows = Some(rows);
@@ -1212,57 +1081,6 @@ pub struct Layout {
 }
 
 impl Layout {
-    pub fn new() -> Layout {
-        Layout {
-            title: None,
-            show_legend: None,
-            legend: None,
-            margin: None,
-            auto_size: None,
-            width: None,
-            height: None,
-            font: None,
-            separators: None,
-            paper_background_color: None,
-            plot_background_color: None,
-            color_scale: None,
-            colorway: None,
-            color_axis: None,
-            hover_mode: None,
-            click_mode: None,
-            drag_mode: None,
-            select_direction: None,
-            hover_distance: None,
-            spike_distance: None,
-            hover_label: None,
-            grid: None,
-            calendar: None,
-            xaxis: None,
-            yaxis: None,
-            template: None,
-            box_mode: None,
-            box_gap: None,
-            box_group_gap: None,
-            bar_mode: None,
-            bar_norm: None,
-            bar_gap: None,
-            bar_group_gap: None,
-
-            violin_mode: None,
-            violin_gap: None,
-            violin_group_gap: None,
-
-            waterfall_mode: None,
-            waterfall_gap: None,
-            waterfall_group_gap: None,
-
-            pie_colorway: None,
-            extend_pie_colors: None,
-
-            sunburst_colorway: None,
-            extend_sunburst_colors: None,
-        }
-    }
 
     pub fn title(mut self, title: Title) -> Layout {
         self.title = Some(title);

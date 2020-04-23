@@ -76,13 +76,6 @@ pub struct Cumulative {
 }
 
 impl Cumulative {
-    pub fn new() -> Cumulative {
-        Cumulative {
-            enabled: None,
-            direction: None,
-            current_bin: None,
-        }
-    }
 
     pub fn enabled(mut self, enabled: bool) -> Cumulative {
         self.enabled = Some(enabled);

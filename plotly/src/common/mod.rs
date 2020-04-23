@@ -611,25 +611,6 @@ pub struct Line {
 }
 
 impl Line {
-    pub fn new() -> Line {
-        Line {
-            width: None,
-            shape: None,
-            smoothing: None,
-            dash: None,
-            simplify: None,
-            color: None,
-            cauto: None,
-            cmin: None,
-            cmax: None,
-            cmid: None,
-            color_scale: None,
-            auto_color_scale: None,
-            reverse_scale: None,
-            outlier_color: None,
-            outlier_width: None,
-        }
-    }
 
     pub fn width(mut self, width: f64) -> Line {
         self.width = Some(width);
@@ -812,13 +793,9 @@ pub struct TickFormatStops {
 }
 
 impl TickFormatStops {
-    pub fn new() -> TickFormatStops {
-        TickFormatStops {
-            enabled: true,
-            dtick_range: None,
-            value: None,
-            name: None,
-            template_item_name: None,
+    pub fn new() -> Self {
+        Self {
+            enabled: true, ..Self::default()
         }
     }
 
@@ -970,46 +947,7 @@ impl Default for ColorBar {
 
 impl ColorBar {
     pub fn new() -> ColorBar {
-        ColorBar {
-            thickness_mode: None,
-            thickness: 30,
-            len_mode: None,
-            len: 1,
-            x: 1.02,
-            x_anchor: Anchor::Left,
-            x_pad: 10.0,
-            y: 0.5,
-            y_anchor: Anchor::Middle,
-            y_pad: 10.0,
-            outline_color: None,
-            outline_width: 1,
-            border_color: None,
-            border_width: 0,
-            background_color: None,
-            tick_mode: None,
-            n_ticks: 0,
-            tick0: None,
-            dtick: None,
-            tick_vals: None,
-            tick_text: None,
-            ticks: None,
-            tick_len: 5,
-            tick_width: 1,
-            tick_color: None,
-            show_tick_labels: true,
-            tick_font: None,
-            tick_angle: None,
-            tick_format: None,
-            tick_format_stops: None,
-            tick_prefix: None,
-            show_tick_prefix: None,
-            tick_suffix: None,
-            show_tick_suffix: None,
-            separate_thousands: true,
-            exponent_format: None,
-            show_exponent: None,
-            title: None,
-        }
+        ColorBar::default()
     }
 
     pub fn thickness_mode(mut self, thickness_mode: ThicknessMode) -> ColorBar {
@@ -1248,30 +1186,6 @@ pub struct Marker {
 }
 
 impl Marker {
-    pub fn new() -> Marker {
-        Marker {
-            symbol: None,
-            opacity: None,
-            size: None,
-            max_displayed: None,
-            size_ref: None,
-            size_min: None,
-            size_mode: None,
-            line: None,
-            gradient: None,
-            color: None,
-            cauto: None,
-            cmin: None,
-            cmax: None,
-            cmid: None,
-            color_scale: None,
-            auto_color_scale: None,
-            reverse_scale: None,
-            show_scale: None,
-            color_bar: None,
-            outlier_color: None,
-        }
-    }
 
     pub fn symbol(mut self, symbol: MarkerSymbol) -> Marker {
         self.symbol = Some(symbol);
@@ -1396,13 +1310,6 @@ pub struct Font {
 }
 
 impl Font {
-    pub fn new() -> Font {
-        Font {
-            family: None,
-            size: None,
-            color: None,
-        }
-    }
 
     pub fn family(mut self, family: &str) -> Font {
         self.family = Some(family.to_owned());
@@ -1555,15 +1462,6 @@ pub struct Label {
 }
 
 impl Label {
-    pub fn new() -> Label {
-        Label {
-            background_color: None,
-            border_color: None,
-            font: None,
-            align: None,
-            name_length: None,
-        }
-    }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Label {
         self.background_color = Some(background_color.to_color_string());
