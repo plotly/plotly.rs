@@ -18,7 +18,7 @@ pub enum AxisType {
     #[serde(rename = "date")]
     Date,
     #[serde(rename = "category")]
-    Cetegory,
+    Category,
     #[serde(rename = "multicategory")]
     MultiCategory,
 }
@@ -936,41 +936,41 @@ impl Axis {
 
 #[derive(Serialize, Debug)]
 pub enum RowOrder {
-    #[serde(rename="top to bottom")]
+    #[serde(rename = "top to bottom")]
     TopToBottom,
-    #[serde(rename="bottom to top")]
+    #[serde(rename = "bottom to top")]
     BottomToTop,
 }
 
 #[derive(Serialize, Debug)]
 pub enum GridPattern {
-    #[serde(rename="independent")]
+    #[serde(rename = "independent")]
     Independent,
-    #[serde(rename="independent")]
+    #[serde(rename = "independent")]
     Coupled,
 }
 
 #[derive(Serialize, Debug)]
 pub enum GridXSide {
-    #[serde(rename="bottom")]
+    #[serde(rename = "bottom")]
     Bottom,
-    #[serde(rename="bottom plot")]
+    #[serde(rename = "bottom plot")]
     BottomPlot,
-    #[serde(rename="top plot")]
+    #[serde(rename = "top plot")]
     TopPlot,
-    #[serde(rename="top")]
+    #[serde(rename = "top")]
     Top,
 }
 
 #[derive(Serialize, Debug)]
 pub enum GridYSide {
-    #[serde(rename="left")]
+    #[serde(rename = "left")]
     Left,
-    #[serde(rename="left plot")]
+    #[serde(rename = "left plot")]
     LeftPlot,
-    #[serde(rename="right plot")]
+    #[serde(rename = "right plot")]
     RightPlot,
-    #[serde(rename="right")]
+    #[serde(rename = "right")]
     Right,
 }
 
@@ -984,7 +984,7 @@ pub struct GridDomain {
 
 impl GridDomain {
     pub fn new() -> GridDomain {
-        GridDomain {x: None, y: None}
+        GridDomain { x: None, y: None }
     }
 
     pub fn x(mut self, x: Vec<f64>) -> GridDomain {
@@ -1002,27 +1002,27 @@ impl GridDomain {
 pub struct LayoutGrid {
     #[serde(skip_serializing_if = "Option::is_none")]
     rows: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="roworder")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "roworder")]
     row_order: Option<RowOrder>,
     #[serde(skip_serializing_if = "Option::is_none")]
     columns: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="subplots")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "subplots")]
     sub_plots: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xaxes")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxes")]
     x_axes: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="yaxes")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxes")]
     y_axes: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pattern: Option<GridPattern>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xgap")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xgap")]
     x_gap: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="ygap")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "ygap")]
     y_gap: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     domain: Option<GridDomain>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="xside")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xside")]
     x_side: Option<GridXSide>,
-    #[serde(skip_serializing_if = "Option::is_none", rename="yside")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yside")]
     y_side: Option<GridYSide>,
 }
 
@@ -1207,7 +1207,10 @@ pub struct Layout {
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
     sunburst_colorway: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "extendsuburstcolors")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename = "extendsuburstcolors"
+    )]
     extend_sunburst_colors: Option<bool>,
 }
 
