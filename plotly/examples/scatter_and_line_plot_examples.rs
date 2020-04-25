@@ -326,7 +326,7 @@ fn data_labels_on_the_plot() {
 
 fn gbm_scatter_plot() {
     let n = 3_000;
-    let x = (0..n).collect();
+    let x: Vec<_> = (0..n).collect();
     let y = geometric_brownian_motion(100.0, 1.0 / 365.0, n, 0.15, 0.5);
     let t = Scatter::new(x, y).name("path_0");
     let mut plot = Plot::new();
