@@ -213,7 +213,9 @@ where
 }
 
 impl<Z> Contour<Z, f64, f64>
-where Z: Serialize {
+where
+    Z: Serialize,
+{
     pub fn new_z(z: Vec<Z>) -> Box<Contour<Z, f64, f64>> {
         Box::new(Contour {
             r#type: PlotType::Contour,
@@ -257,7 +259,6 @@ where Z: Serialize {
         })
     }
 }
-
 
 impl<Z, X, Y> Contour<Z, X, Y>
 where
@@ -317,17 +318,17 @@ where
         self.x0 = Some(x0);
         Box::new(self)
     }
-    
+
     pub fn dx(mut self, dx: X) -> Box<Contour<Z, X, Y>> {
         self.dx = Some(dx);
         Box::new(self)
     }
-    
+
     pub fn y0(mut self, y0: Y) -> Box<Contour<Z, X, Y>> {
         self.y0 = Some(y0);
         Box::new(self)
     }
-    
+
     pub fn dy(mut self, dy: Y) -> Box<Contour<Z, X, Y>> {
         self.dy = Some(dy);
         Box::new(self)

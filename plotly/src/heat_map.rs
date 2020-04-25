@@ -71,7 +71,9 @@ where
 }
 
 impl<Z> HeatMap<Z, f64, f64>
-where Z: Serialize {
+where
+    Z: Serialize,
+{
     pub fn new_z(z: Vec<Z>) -> Box<HeatMap<Z, f64, f64>> {
         Box::new(HeatMap {
             x: None,

@@ -43,20 +43,13 @@ fn stacked_bar_chart() {
 }
 
 fn bar_chart_with_error_bars() {
-    let trace1 = Bar::new(
-        vec![
-            "Trial 1", "Trial 2", "Trial 3"],
-        vec![3, 6, 4],
-    )
-    .name("Control")
-    .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 0.5, 1.5]));
+    let trace1 = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![3, 6, 4])
+        .name("Control")
+        .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 0.5, 1.5]));
 
-    let trace2 = Bar::new(
-        vec!["Trial 1", "Trial 2", "Trial 3"],
-        vec![4, 7, 3],
-    )
-    .name("LA Zoo")
-    .error_y(ErrorData::new(ErrorType::Data).array(vec![0.5, 1.0, 2.0]));
+    let trace2 = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![4, 7, 3])
+        .name("LA Zoo")
+        .error_y(ErrorData::new(ErrorType::Data).array(vec![0.5, 1.0, 2.0]));
 
     let layout = Layout::new();
     let mut plot = Plot::new();
