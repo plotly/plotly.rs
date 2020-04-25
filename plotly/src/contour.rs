@@ -216,8 +216,8 @@ impl<Z> Contour<Z, f64, f64>
 where
     Z: Serialize,
 {
-    pub fn new_z(z: Vec<Z>) -> Box<Contour<Z, f64, f64>> {
-        Box::new(Contour {
+    pub fn new_z(z: Vec<Z>) -> Contour<Z, f64, f64> {
+        Contour {
             r#type: PlotType::Contour,
             x: None,
             x0: None,
@@ -256,7 +256,7 @@ where
             transpose: None,
             x_calendar: None,
             y_calendar: None,
-        })
+        }
     }
 }
 
@@ -266,8 +266,8 @@ where
     Y: Serialize,
     Z: Serialize,
 {
-    pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Contour<Z, X, Y>> {
-        Box::new(Contour {
+    pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Contour<Z, X, Y> {
+        Contour {
             r#type: PlotType::Contour,
             x: Some(x),
             x0: None,
@@ -306,198 +306,198 @@ where
             transpose: None,
             x_calendar: None,
             y_calendar: None,
-        })
+        }
     }
 
-    pub fn x(mut self, x: Vec<X>) -> Box<Contour<Z, X, Y>> {
+    pub fn x(mut self, x: Vec<X>) -> Contour<Z, X, Y> {
         self.x = Some(x);
-        Box::new(self)
+        self
     }
 
-    pub fn x0(mut self, x0: X) -> Box<Contour<Z, X, Y>> {
+    pub fn x0(mut self, x0: X) -> Contour<Z, X, Y> {
         self.x0 = Some(x0);
-        Box::new(self)
+        self
     }
 
-    pub fn dx(mut self, dx: X) -> Box<Contour<Z, X, Y>> {
+    pub fn dx(mut self, dx: X) -> Contour<Z, X, Y> {
         self.dx = Some(dx);
-        Box::new(self)
+        self
     }
 
-    pub fn y0(mut self, y0: Y) -> Box<Contour<Z, X, Y>> {
+    pub fn y0(mut self, y0: Y) -> Contour<Z, X, Y> {
         self.y0 = Some(y0);
-        Box::new(self)
+        self
     }
 
-    pub fn dy(mut self, dy: Y) -> Box<Contour<Z, X, Y>> {
+    pub fn dy(mut self, dy: Y) -> Contour<Z, X, Y> {
         self.dy = Some(dy);
-        Box::new(self)
+        self
     }
 
-    pub fn y(mut self, y: Vec<Y>) -> Box<Contour<Z, X, Y>> {
+    pub fn y(mut self, y: Vec<Y>) -> Contour<Z, X, Y> {
         self.y = Some(y);
-        Box::new(self)
+        self
     }
 
-    pub fn name(mut self, name: &str) -> Box<Contour<Z, X, Y>> {
+    pub fn name(mut self, name: &str) -> Contour<Z, X, Y> {
         self.name = Some(name.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn visible(mut self, visible: bool) -> Contour<Z, X, Y> {
         self.visible = Some(visible);
-        Box::new(self)
+        self
     }
 
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn show_legend(mut self, show_legend: bool) -> Contour<Z, X, Y> {
         self.show_legend = Some(show_legend);
-        Box::new(self)
+        self
     }
 
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Contour<Z, X, Y>> {
+    pub fn legend_group(mut self, legend_group: &str) -> Contour<Z, X, Y> {
         self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn opacity(mut self, opacity: f64) -> Box<Contour<Z, X, Y>> {
+    pub fn opacity(mut self, opacity: f64) -> Contour<Z, X, Y> {
         self.opacity = Some(opacity);
-        Box::new(self)
+        self
     }
 
-    pub fn text<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Contour<Z, X, Y>> {
+    pub fn text<S: AsRef<str>>(mut self, text: Vec<S>) -> Contour<Z, X, Y> {
         let text = private::owned_string_vector(text);
         self.text = Some(text);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text(mut self, hover_text: Vec<String>) -> Box<Contour<Z, X, Y>> {
+    pub fn hover_text(mut self, hover_text: Vec<String>) -> Contour<Z, X, Y> {
         let hover_text = private::owned_string_vector(hover_text);
         self.hover_text = Some(hover_text);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Contour<Z, X, Y>> {
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Contour<Z, X, Y> {
         self.hover_info = Some(hover_info);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Contour<Z, X, Y>> {
+    pub fn hover_template(mut self, hover_template: &str) -> Contour<Z, X, Y> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
-        Box::new(self)
+        self
     }
 
     pub fn hover_template_array<S: AsRef<str>>(
         mut self,
         hover_template: Vec<S>,
-    ) -> Box<Contour<Z, X, Y>> {
+    ) -> Contour<Z, X, Y> {
         let hover_template = private::owned_string_vector(hover_template);
         self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
+        self
     }
 
-    pub fn line(mut self, line: Line) -> Box<Contour<Z, X, Y>> {
+    pub fn line(mut self, line: Line) -> Contour<Z, X, Y> {
         self.line = Some(line);
-        Box::new(self)
+        self
     }
 
-    pub fn color_bar(mut self, color_bar: ColorBar) -> Box<Contour<Z, X, Y>> {
+    pub fn color_bar(mut self, color_bar: ColorBar) -> Contour<Z, X, Y> {
         self.color_bar = Some(color_bar);
-        Box::new(self)
+        self
     }
 
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Contour<Z, X, Y> {
         self.auto_color_scale = Some(auto_color_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Box<Contour<Z, X, Y>> {
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Contour<Z, X, Y> {
         self.color_scale = Some(color_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn show_scale(mut self, show_scale: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn show_scale(mut self, show_scale: bool) -> Contour<Z, X, Y> {
         self.show_scale = Some(show_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn reverse_scale(mut self, reverse_scale: bool) -> Contour<Z, X, Y> {
         self.reverse_scale = Some(reverse_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn zauto(mut self, zauto: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn zauto(mut self, zauto: bool) -> Contour<Z, X, Y> {
         self.zauto = Some(zauto);
-        Box::new(self)
+        self
     }
 
-    pub fn zhover_format(mut self, zhover_format: &str) -> Box<Contour<Z, X, Y>> {
+    pub fn zhover_format(mut self, zhover_format: &str) -> Contour<Z, X, Y> {
         self.zhover_format = Some(zhover_format.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn zmax(mut self, zmax: Z) -> Box<Contour<Z, X, Y>> {
+    pub fn zmax(mut self, zmax: Z) -> Contour<Z, X, Y> {
         self.zmax = Some(zmax);
-        Box::new(self)
+        self
     }
 
-    pub fn zmid(mut self, zmid: Z) -> Box<Contour<Z, X, Y>> {
+    pub fn zmid(mut self, zmid: Z) -> Contour<Z, X, Y> {
         self.zmid = Some(zmid);
-        Box::new(self)
+        self
     }
 
-    pub fn zmin(mut self, zmin: Z) -> Box<Contour<Z, X, Y>> {
+    pub fn zmin(mut self, zmin: Z) -> Contour<Z, X, Y> {
         self.zmin = Some(zmin);
-        Box::new(self)
+        self
     }
 
-    pub fn auto_contour(mut self, auto_contour: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn auto_contour(mut self, auto_contour: bool) -> Contour<Z, X, Y> {
         self.auto_contour = Some(auto_contour);
-        Box::new(self)
+        self
     }
 
-    pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn connect_gaps(mut self, connect_gaps: bool) -> Contour<Z, X, Y> {
         self.connect_gaps = Some(connect_gaps);
-        Box::new(self)
+        self
     }
 
-    pub fn contours(mut self, contours: Contours) -> Box<Contour<Z, X, Y>> {
+    pub fn contours(mut self, contours: Contours) -> Contour<Z, X, Y> {
         self.contours = Some(contours);
-        Box::new(self)
+        self
     }
 
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Contour<Z, X, Y>> {
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Contour<Z, X, Y> {
         self.fill_color = Some(fill_color.to_color_string());
-        Box::new(self)
+        self
     }
 
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Contour<Z, X, Y>> {
+    pub fn hover_label(mut self, hover_label: Label) -> Contour<Z, X, Y> {
         self.hover_label = Some(hover_label);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_on_gaps(mut self, hover_on_gaps: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn hover_on_gaps(mut self, hover_on_gaps: bool) -> Contour<Z, X, Y> {
         self.hover_on_gaps = Some(hover_on_gaps);
-        Box::new(self)
+        self
     }
 
-    pub fn n_contours(mut self, n_contours: usize) -> Box<Contour<Z, X, Y>> {
+    pub fn n_contours(mut self, n_contours: usize) -> Contour<Z, X, Y> {
         self.n_contours = Some(n_contours);
-        Box::new(self)
+        self
     }
 
-    pub fn transpose(mut self, transpose: bool) -> Box<Contour<Z, X, Y>> {
+    pub fn transpose(mut self, transpose: bool) -> Contour<Z, X, Y> {
         self.transpose = Some(transpose);
-        Box::new(self)
+        self
     }
 
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Contour<Z, X, Y>> {
+    pub fn x_calendar(mut self, x_calendar: Calendar) -> Contour<Z, X, Y> {
         self.x_calendar = Some(x_calendar);
-        Box::new(self)
+        self
     }
 
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Contour<Z, X, Y>> {
+    pub fn y_calendar(mut self, y_calendar: Calendar) -> Contour<Z, X, Y> {
         self.y_calendar = Some(y_calendar);
-        Box::new(self)
+        self
     }
 }
 

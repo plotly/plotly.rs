@@ -85,8 +85,8 @@ where
     X: Serialize,
     Y: num::Num + Serialize,
 {
-    pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Scatter<X, Y>> {
-        Box::new(Scatter {
+    pub fn new(x: Vec<X>, y: Vec<Y>) -> Scatter<X, Y> {
+        Scatter {
             x,
             y,
             r#type: PlotType::Scatter,
@@ -120,193 +120,187 @@ where
             stack_gaps: None,
             x_calendar: None,
             y_calendar: None,
-        })
+        }
     }
 
-    pub fn name(mut self, name: &str) -> Box<Scatter<X, Y>> {
+    pub fn name(mut self, name: &str) -> Scatter<X, Y> {
         self.name = Some(name.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Scatter<X, Y>> {
+    pub fn visible(mut self, visible: bool) -> Scatter<X, Y> {
         self.visible = Some(visible);
-        Box::new(self)
+        self
     }
 
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Scatter<X, Y>> {
+    pub fn show_legend(mut self, show_legend: bool) -> Scatter<X, Y> {
         self.show_legend = Some(show_legend);
-        Box::new(self)
+        self
     }
 
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Scatter<X, Y>> {
+    pub fn legend_group(mut self, legend_group: &str) -> Scatter<X, Y> {
         self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn opacity(mut self, opacity: f64) -> Box<Scatter<X, Y>> {
+    pub fn opacity(mut self, opacity: f64) -> Scatter<X, Y> {
         self.opacity = Some(opacity);
-        Box::new(self)
+        self
     }
 
-    pub fn mode(mut self, mode: Mode) -> Box<Scatter<X, Y>> {
+    pub fn mode(mut self, mode: Mode) -> Scatter<X, Y> {
         self.mode = Some(mode);
-        Box::new(self)
+        self
     }
 
-    pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Box<Scatter<X, Y>> {
+    pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Scatter<X, Y> {
         let ids = private::owned_string_vector(ids);
         self.ids = Some(ids);
-        Box::new(self)
+        self
     }
 
-    pub fn text(mut self, text: &str) -> Box<Scatter<X, Y>> {
+    pub fn text(mut self, text: &str) -> Scatter<X, Y> {
         self.text = Some(Dim::Scalar(text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Scatter<X, Y>> {
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Scatter<X, Y> {
         let text = private::owned_string_vector(text);
         self.text = Some(Dim::Vector(text));
-        Box::new(self)
+        self
     }
 
-    pub fn text_position(mut self, text_position: Position) -> Box<Scatter<X, Y>> {
+    pub fn text_position(mut self, text_position: Position) -> Scatter<X, Y> {
         self.text_position = Some(Dim::Scalar(text_position));
-        Box::new(self)
+        self
     }
 
-    pub fn text_position_array(mut self, text_position: Vec<Position>) -> Box<Scatter<X, Y>> {
+    pub fn text_position_array(mut self, text_position: Vec<Position>) -> Scatter<X, Y> {
         self.text_position = Some(Dim::Vector(text_position));
-        Box::new(self)
+        self
     }
 
-    pub fn text_template(mut self, text_template: &str) -> Box<Scatter<X, Y>> {
+    pub fn text_template(mut self, text_template: &str) -> Scatter<X, Y> {
         self.text_template = Some(Dim::Scalar(text_template.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn text_template_array<S: AsRef<str>>(
-        mut self,
-        text_template: Vec<S>,
-    ) -> Box<Scatter<X, Y>> {
+    pub fn text_template_array<S: AsRef<str>>(mut self, text_template: Vec<S>) -> Scatter<X, Y> {
         let text_template = private::owned_string_vector(text_template);
         self.text_template = Some(Dim::Vector(text_template));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Scatter<X, Y>> {
+    pub fn hover_text(mut self, hover_text: &str) -> Scatter<X, Y> {
         self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Scatter<X, Y>> {
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Scatter<X, Y> {
         let hover_text = private::owned_string_vector(hover_text);
         self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Scatter<X, Y>> {
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Scatter<X, Y> {
         self.hover_info = Some(hover_info);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Scatter<X, Y>> {
+    pub fn hover_template(mut self, hover_template: &str) -> Scatter<X, Y> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_template_array<S: AsRef<str>>(
-        mut self,
-        hover_template: Vec<S>,
-    ) -> Box<Scatter<X, Y>> {
+    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Scatter<X, Y> {
         let hover_template = private::owned_string_vector(hover_template);
         self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
+        self
     }
 
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Scatter<X, Y>> {
+    pub fn orientation(mut self, orientation: Orientation) -> Scatter<X, Y> {
         self.orientation = Some(orientation);
-        Box::new(self)
+        self
     }
 
-    pub fn group_norm(mut self, group_norm: GroupNorm) -> Box<Scatter<X, Y>> {
+    pub fn group_norm(mut self, group_norm: GroupNorm) -> Scatter<X, Y> {
         self.group_norm = Some(group_norm);
-        Box::new(self)
+        self
     }
 
-    pub fn stack_group(mut self, stack_group: &str) -> Box<Scatter<X, Y>> {
+    pub fn stack_group(mut self, stack_group: &str) -> Scatter<X, Y> {
         self.stack_group = Some(stack_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn marker(mut self, marker: Marker) -> Box<Scatter<X, Y>> {
+    pub fn marker(mut self, marker: Marker) -> Scatter<X, Y> {
         self.marker = Some(marker);
-        Box::new(self)
+        self
     }
 
-    pub fn line(mut self, line: Line) -> Box<Scatter<X, Y>> {
+    pub fn line(mut self, line: Line) -> Scatter<X, Y> {
         self.line = Some(line);
-        Box::new(self)
+        self
     }
 
-    pub fn text_font(mut self, text_font: Font) -> Box<Scatter<X, Y>> {
+    pub fn text_font(mut self, text_font: Font) -> Scatter<X, Y> {
         self.text_font = Some(text_font);
-        Box::new(self)
+        self
     }
 
-    pub fn error_x(mut self, error_x: ErrorData) -> Box<Scatter<X, Y>> {
+    pub fn error_x(mut self, error_x: ErrorData) -> Scatter<X, Y> {
         self.error_x = Some(error_x);
-        Box::new(self)
+        self
     }
 
-    pub fn error_y(mut self, error_y: ErrorData) -> Box<Scatter<X, Y>> {
+    pub fn error_y(mut self, error_y: ErrorData) -> Scatter<X, Y> {
         self.error_y = Some(error_y);
-        Box::new(self)
+        self
     }
 
-    pub fn clip_on_axis(mut self, clip_on_axis: bool) -> Box<Scatter<X, Y>> {
+    pub fn clip_on_axis(mut self, clip_on_axis: bool) -> Scatter<X, Y> {
         self.clip_on_axis = Some(clip_on_axis);
-        Box::new(self)
+        self
     }
 
-    pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Scatter<X, Y>> {
+    pub fn connect_gaps(mut self, connect_gaps: bool) -> Scatter<X, Y> {
         self.connect_gaps = Some(connect_gaps);
-        Box::new(self)
+        self
     }
 
-    pub fn fill(mut self, fill: Fill) -> Box<Scatter<X, Y>> {
+    pub fn fill(mut self, fill: Fill) -> Scatter<X, Y> {
         self.fill = Some(fill);
-        Box::new(self)
+        self
     }
 
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Scatter<X, Y>> {
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Scatter<X, Y> {
         self.fill_color = Some(fill_color.to_color_string());
-        Box::new(self)
+        self
     }
 
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Scatter<X, Y>> {
+    pub fn hover_label(mut self, hover_label: Label) -> Scatter<X, Y> {
         self.hover_label = Some(hover_label);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_on(mut self, hover_on: &str) -> Box<Scatter<X, Y>> {
+    pub fn hover_on(mut self, hover_on: &str) -> Scatter<X, Y> {
         self.hover_on = Some(hover_on.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn stack_gaps(mut self, stack_gaps: &str) -> Box<Scatter<X, Y>> {
+    pub fn stack_gaps(mut self, stack_gaps: &str) -> Scatter<X, Y> {
         self.stack_gaps = Some(stack_gaps.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Scatter<X, Y>> {
+    pub fn x_calendar(mut self, x_calendar: Calendar) -> Scatter<X, Y> {
         self.x_calendar = Some(x_calendar);
-        Box::new(self)
+        self
     }
 
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Scatter<X, Y>> {
+    pub fn y_calendar(mut self, y_calendar: Calendar) -> Scatter<X, Y> {
         self.y_calendar = Some(y_calendar);
-        Box::new(self)
+        self
     }
 }
 

@@ -59,10 +59,10 @@ where
         high: Vec<O>,
         low: Vec<O>,
         close: Vec<O>,
-    ) -> Box<Candlestick<T, O>> {
+    ) -> Candlestick<T, O> {
         let iline = Line::new().width(1.0).color(NamedColor::Green);
         let dline = Line::new().width(1.0).color(NamedColor::Red);
-        Box::new(Candlestick {
+        Candlestick {
             r#type: PlotType::Candlestick,
             x,
             open,
@@ -83,89 +83,89 @@ where
             decreasing: Some(Direction::Decreasing { line: dline }),
             hover_label: None,
             x_calendar: None,
-        })
+        }
     }
 
-    pub fn name(mut self, name: &str) -> Box<Candlestick<T, O>> {
+    pub fn name(mut self, name: &str) -> Candlestick<T, O> {
         self.name = Some(name.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Candlestick<T, O>> {
+    pub fn visible(mut self, visible: bool) -> Candlestick<T, O> {
         self.visible = Some(visible);
-        Box::new(self)
+        self
     }
 
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Candlestick<T, O>> {
+    pub fn show_legend(mut self, show_legend: bool) -> Candlestick<T, O> {
         self.show_legend = Some(show_legend);
-        Box::new(self)
+        self
     }
 
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Candlestick<T, O>> {
+    pub fn legend_group(mut self, legend_group: &str) -> Candlestick<T, O> {
         self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn opacity(mut self, opacity: f64) -> Box<Candlestick<T, O>> {
+    pub fn opacity(mut self, opacity: f64) -> Candlestick<T, O> {
         self.opacity = Some(opacity);
-        Box::new(self)
+        self
     }
 
-    pub fn text(mut self, text: &str) -> Box<Candlestick<T, O>> {
+    pub fn text(mut self, text: &str) -> Candlestick<T, O> {
         self.text = Some(Dim::Scalar(text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Candlestick<T, O>> {
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Candlestick<T, O> {
         let text = private::owned_string_vector(text);
         self.text = Some(Dim::Vector(text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Candlestick<T, O>> {
+    pub fn hover_text(mut self, hover_text: &str) -> Candlestick<T, O> {
         self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Candlestick<T, O>> {
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Candlestick<T, O> {
         let hover_text = private::owned_string_vector(hover_text);
         self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Candlestick<T, O>> {
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Candlestick<T, O> {
         self.hover_info = Some(hover_info);
-        Box::new(self)
+        self
     }
 
-    pub fn line(mut self, line: Line) -> Box<Candlestick<T, O>> {
+    pub fn line(mut self, line: Line) -> Candlestick<T, O> {
         self.line = Some(line);
-        Box::new(self)
+        self
     }
 
-    pub fn whisker_width(mut self, whisker_width: f64) -> Box<Candlestick<T, O>> {
+    pub fn whisker_width(mut self, whisker_width: f64) -> Candlestick<T, O> {
         self.whisker_width = Some(whisker_width);
-        Box::new(self)
+        self
     }
 
-    pub fn increasing(mut self, increasing: Direction) -> Box<Candlestick<T, O>> {
+    pub fn increasing(mut self, increasing: Direction) -> Candlestick<T, O> {
         self.increasing = Some(increasing);
-        Box::new(self)
+        self
     }
 
-    pub fn decreasing(mut self, decreasing: Direction) -> Box<Candlestick<T, O>> {
+    pub fn decreasing(mut self, decreasing: Direction) -> Candlestick<T, O> {
         self.decreasing = Some(decreasing);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Candlestick<T, O>> {
+    pub fn hover_label(mut self, hover_label: Label) -> Candlestick<T, O> {
         self.hover_label = Some(hover_label);
-        Box::new(self)
+        self
     }
 
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Candlestick<T, O>> {
+    pub fn x_calendar(mut self, x_calendar: Calendar) -> Candlestick<T, O> {
         self.x_calendar = Some(x_calendar);
-        Box::new(self)
+        self
     }
 }
 

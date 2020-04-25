@@ -316,8 +316,8 @@ where
     Y: Serialize,
     Z: num::Num + Serialize,
 {
-    pub fn new(z: Vec<Vec<Z>>) -> Box<Surface<X, Y, Z>> {
-        Box::new(Surface {
+    pub fn new(z: Vec<Vec<Z>>) -> Surface<X, Y, Z> {
+        Surface {
             r#type: PlotType::Surface,
             x: None,
             y: None,
@@ -350,179 +350,179 @@ where
             x_calendar: None,
             y_calendar: None,
             z_calendar: None,
-        })
+        }
     }
 
-    pub fn x(mut self, x: Vec<X>) -> Box<Surface<X, Y, Z>> {
+    pub fn x(mut self, x: Vec<X>) -> Surface<X, Y, Z> {
         self.x = Some(x);
-        Box::new(self)
+        self
     }
 
-    pub fn y(mut self, y: Vec<Y>) -> Box<Surface<X, Y, Z>> {
+    pub fn y(mut self, y: Vec<Y>) -> Surface<X, Y, Z> {
         self.y = Some(y);
-        Box::new(self)
+        self
     }
 
-    pub fn name(mut self, name: &str) -> Box<Surface<X, Y, Z>> {
+    pub fn name(mut self, name: &str) -> Surface<X, Y, Z> {
         self.name = Some(name.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn visible(mut self, visible: bool) -> Surface<X, Y, Z> {
         self.visible = Some(visible);
-        Box::new(self)
+        self
     }
 
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn show_legend(mut self, show_legend: bool) -> Surface<X, Y, Z> {
         self.show_legend = Some(show_legend);
-        Box::new(self)
+        self
     }
 
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Surface<X, Y, Z>> {
+    pub fn legend_group(mut self, legend_group: &str) -> Surface<X, Y, Z> {
         self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn opacity(mut self, opacity: f64) -> Box<Surface<X, Y, Z>> {
+    pub fn opacity(mut self, opacity: f64) -> Surface<X, Y, Z> {
         self.opacity = Some(opacity);
-        Box::new(self)
+        self
     }
 
-    pub fn surface_color<C: Color>(mut self, surface_color: Vec<C>) -> Box<Surface<X, Y, Z>> {
+    pub fn surface_color<C: Color>(mut self, surface_color: Vec<C>) -> Surface<X, Y, Z> {
         let surface_color = private::to_color_array(surface_color);
         self.surface_color = Some(surface_color);
-        Box::new(self)
+        self
     }
 
-    pub fn text(mut self, text: &str) -> Box<Surface<X, Y, Z>> {
+    pub fn text(mut self, text: &str) -> Surface<X, Y, Z> {
         self.text = Some(Dim::Scalar(text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Surface<X, Y, Z>> {
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Surface<X, Y, Z> {
         let text = private::owned_string_vector(text);
         self.text = Some(Dim::Vector(text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Surface<X, Y, Z>> {
+    pub fn hover_text(mut self, hover_text: &str) -> Surface<X, Y, Z> {
         self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Surface<X, Y, Z>> {
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Surface<X, Y, Z> {
         let hover_text = private::owned_string_vector(hover_text);
         self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Surface<X, Y, Z>> {
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Surface<X, Y, Z> {
         self.hover_info = Some(hover_info);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Surface<X, Y, Z>> {
+    pub fn hover_template(mut self, hover_template: &str) -> Surface<X, Y, Z> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
-        Box::new(self)
+        self
     }
 
     pub fn hover_template_array<S: AsRef<str>>(
         mut self,
         hover_template: Vec<S>,
-    ) -> Box<Surface<X, Y, Z>> {
+    ) -> Surface<X, Y, Z> {
         let hover_template = private::owned_string_vector(hover_template);
         self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
+        self
     }
 
-    pub fn color_bar(mut self, color_bar: ColorBar) -> Box<Surface<X, Y, Z>> {
+    pub fn color_bar(mut self, color_bar: ColorBar) -> Surface<X, Y, Z> {
         self.color_bar = Some(color_bar);
-        Box::new(self)
+        self
     }
 
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Surface<X, Y, Z> {
         self.auto_color_scale = Some(auto_color_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Box<Surface<X, Y, Z>> {
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Surface<X, Y, Z> {
         self.color_scale = Some(color_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn show_scale(mut self, show_scale: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn show_scale(mut self, show_scale: bool) -> Surface<X, Y, Z> {
         self.show_scale = Some(show_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn reverse_scale(mut self, reverse_scale: bool) -> Surface<X, Y, Z> {
         self.reverse_scale = Some(reverse_scale);
-        Box::new(self)
+        self
     }
 
-    pub fn cauto(mut self, cauto: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn cauto(mut self, cauto: bool) -> Surface<X, Y, Z> {
         self.cauto = Some(cauto);
-        Box::new(self)
+        self
     }
 
-    pub fn cmin(mut self, cmin: f64) -> Box<Surface<X, Y, Z>> {
+    pub fn cmin(mut self, cmin: f64) -> Surface<X, Y, Z> {
         self.cmin = Some(cmin);
-        Box::new(self)
+        self
     }
 
-    pub fn cmax(mut self, cmax: f64) -> Box<Surface<X, Y, Z>> {
+    pub fn cmax(mut self, cmax: f64) -> Surface<X, Y, Z> {
         self.cmax = Some(cmax);
-        Box::new(self)
+        self
     }
 
-    pub fn cmid(mut self, cmid: f64) -> Box<Surface<X, Y, Z>> {
+    pub fn cmid(mut self, cmid: f64) -> Surface<X, Y, Z> {
         self.cmid = Some(cmid);
-        Box::new(self)
+        self
     }
 
-    pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn connect_gaps(mut self, connect_gaps: bool) -> Surface<X, Y, Z> {
         self.connect_gaps = Some(connect_gaps);
-        Box::new(self)
+        self
     }
 
-    pub fn contours(mut self, contours: SurfaceContours) -> Box<Surface<X, Y, Z>> {
+    pub fn contours(mut self, contours: SurfaceContours) -> Surface<X, Y, Z> {
         self.contours = Some(contours);
-        Box::new(self)
+        self
     }
 
-    pub fn hide_surface(mut self, hide_surface: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn hide_surface(mut self, hide_surface: bool) -> Surface<X, Y, Z> {
         self.hide_surface = Some(hide_surface);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Surface<X, Y, Z>> {
+    pub fn hover_label(mut self, hover_label: Label) -> Surface<X, Y, Z> {
         self.hover_label = Some(hover_label);
-        Box::new(self)
+        self
     }
 
-    pub fn lighting(mut self, lighting: Lighting) -> Box<Surface<X, Y, Z>> {
+    pub fn lighting(mut self, lighting: Lighting) -> Surface<X, Y, Z> {
         self.lighting = Some(lighting);
-        Box::new(self)
+        self
     }
 
-    pub fn light_position(mut self, light_position: Position) -> Box<Surface<X, Y, Z>> {
+    pub fn light_position(mut self, light_position: Position) -> Surface<X, Y, Z> {
         self.light_position = Some(light_position);
-        Box::new(self)
+        self
     }
 
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Surface<X, Y, Z>> {
+    pub fn x_calendar(mut self, x_calendar: Calendar) -> Surface<X, Y, Z> {
         self.x_calendar = Some(x_calendar);
-        Box::new(self)
+        self
     }
 
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Surface<X, Y, Z>> {
+    pub fn y_calendar(mut self, y_calendar: Calendar) -> Surface<X, Y, Z> {
         self.y_calendar = Some(y_calendar);
-        Box::new(self)
+        self
     }
 
-    pub fn z_calendar(mut self, z_calendar: Calendar) -> Box<Surface<X, Y, Z>> {
+    pub fn z_calendar(mut self, z_calendar: Calendar) -> Surface<X, Y, Z> {
         self.z_calendar = Some(z_calendar);
-        Box::new(self)
+        self
     }
 }
 

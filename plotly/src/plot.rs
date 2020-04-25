@@ -65,8 +65,8 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-pub struct Plot {
-    traces: Vec<Box<dyn Trace>>,
+pub struct Plot<'a> {
+    traces: Vec<Box<dyn Trace + 'a>>,
     layout: Option<Layout>,
 }
 
@@ -81,9 +81,9 @@ additional formats are available accessed by following methods:
 - to_eps
 "#;
 
-impl Plot {
+impl<'a> Plot<'a> {
     /// Create a new `Plot`.
-    pub fn new() -> Plot {
+    pub fn new() -> Plot<'a> {
         Plot {
             traces: Vec::with_capacity(1),
             layout: None,
@@ -91,8 +91,11 @@ impl Plot {
     }
 
     /// Add a `Trace` to the `Plot`.
-    pub fn add_trace(&mut self, trace: Box<dyn Trace>) {
-        self.traces.push(trace);
+    pub fn add_trace<T>(&mut self, trace: T)
+    where
+        T: Trace + 'a,
+    {
+        self.traces.push(Box::new(trace))
     }
 
     /// Set the `Layout` to be used by `Plot`.
@@ -351,7 +354,7 @@ mod tests {
     use super::*;
     use crate::Scatter;
 
-    fn create_test_plot() -> Plot {
+    fn create_test_plot<'a>() -> Plot<'a> {
         let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2]).name("trace1");
         let mut plot = Plot::new();
         plot.add_trace(trace1);

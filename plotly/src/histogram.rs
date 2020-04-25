@@ -171,8 +171,8 @@ impl<H> Histogram<H>
 where
     H: Serialize,
 {
-    pub fn new(x: Vec<H>) -> Box<Histogram<H>> {
-        Box::new(Histogram {
+    pub fn new(x: Vec<H>) -> Histogram<H> {
+        Histogram {
             r#type: PlotType::Histogram,
             x: Some(x),
             y: None,
@@ -204,11 +204,11 @@ where
             hover_label: None,
             x_calendar: None,
             y_calendar: None,
-        })
+        }
     }
 
-    pub fn new_xy(x: Vec<H>, y: Vec<H>) -> Box<Histogram<H>> {
-        Box::new(Histogram {
+    pub fn new_xy(x: Vec<H>, y: Vec<H>) -> Histogram<H> {
+        Histogram {
             r#type: PlotType::Histogram,
             x: Some(x),
             y: Some(y),
@@ -240,11 +240,11 @@ where
             hover_label: None,
             x_calendar: None,
             y_calendar: None,
-        })
+        }
     }
 
-    pub fn new_horizontal(y: Vec<H>) -> Box<Histogram<H>> {
-        Box::new(Histogram {
+    pub fn new_horizontal(y: Vec<H>) -> Histogram<H> {
+        Histogram {
             r#type: PlotType::Histogram,
             x: None,
             y: Some(y),
@@ -276,168 +276,165 @@ where
             hover_label: None,
             x_calendar: None,
             y_calendar: None,
-        })
+        }
     }
 
-    pub fn name(mut self, name: &str) -> Box<Histogram<H>> {
+    pub fn name(mut self, name: &str) -> Histogram<H> {
         self.name = Some(name.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Histogram<H>> {
+    pub fn visible(mut self, visible: bool) -> Histogram<H> {
         self.visible = Some(visible);
-        Box::new(self)
+        self
     }
 
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Histogram<H>> {
+    pub fn show_legend(mut self, show_legend: bool) -> Histogram<H> {
         self.show_legend = Some(show_legend);
-        Box::new(self)
+        self
     }
 
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Histogram<H>> {
+    pub fn legend_group(mut self, legend_group: &str) -> Histogram<H> {
         self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn opacity(mut self, opacity: f64) -> Box<Histogram<H>> {
+    pub fn opacity(mut self, opacity: f64) -> Histogram<H> {
         self.opacity = Some(opacity);
-        Box::new(self)
+        self
     }
 
-    pub fn text(mut self, text: &str) -> Box<Histogram<H>> {
+    pub fn text(mut self, text: &str) -> Histogram<H> {
         self.text = Some(Dim::Scalar(text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Histogram<H>> {
+    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Histogram<H> {
         let text = private::owned_string_vector(text);
         self.text = Some(Dim::Vector(text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Histogram<H>> {
+    pub fn hover_text(mut self, hover_text: &str) -> Histogram<H> {
         self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Histogram<H>> {
+    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Histogram<H> {
         let hover_text = private::owned_string_vector(hover_text);
         self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Histogram<H>> {
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Histogram<H> {
         self.hover_info = Some(hover_info);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Histogram<H>> {
+    pub fn hover_template(mut self, hover_template: &str) -> Histogram<H> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
-        Box::new(self)
+        self
     }
 
-    pub fn hover_template_array<S: AsRef<str>>(
-        mut self,
-        hover_template: Vec<S>,
-    ) -> Box<Histogram<H>> {
+    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Histogram<H> {
         let hover_template = private::owned_string_vector(hover_template);
         self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
+        self
     }
 
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Histogram<H>> {
+    pub fn orientation(mut self, orientation: Orientation) -> Histogram<H> {
         self.orientation = Some(orientation);
-        Box::new(self)
+        self
     }
 
-    pub fn hist_func(mut self, hist_func: HistFunc) -> Box<Histogram<H>> {
+    pub fn hist_func(mut self, hist_func: HistFunc) -> Histogram<H> {
         self.hist_func = Some(hist_func);
-        Box::new(self)
+        self
     }
 
-    pub fn hist_norm(mut self, hist_norm: HistNorm) -> Box<Histogram<H>> {
+    pub fn hist_norm(mut self, hist_norm: HistNorm) -> Histogram<H> {
         self.hist_norm = Some(hist_norm);
-        Box::new(self)
+        self
     }
 
-    pub fn alignment_group(mut self, alignment_group: &str) -> Box<Histogram<H>> {
+    pub fn alignment_group(mut self, alignment_group: &str) -> Histogram<H> {
         self.alignment_group = Some(alignment_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn offset_group(mut self, offset_group: &str) -> Box<Histogram<H>> {
+    pub fn offset_group(mut self, offset_group: &str) -> Histogram<H> {
         self.offset_group = Some(offset_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn n_bins_x(mut self, n_bins_x: usize) -> Box<Histogram<H>> {
+    pub fn n_bins_x(mut self, n_bins_x: usize) -> Histogram<H> {
         self.n_bins_x = Some(n_bins_x);
-        Box::new(self)
+        self
     }
 
-    pub fn n_bins_y(mut self, n_bins_y: usize) -> Box<Histogram<H>> {
+    pub fn n_bins_y(mut self, n_bins_y: usize) -> Histogram<H> {
         self.n_bins_y = Some(n_bins_y);
-        Box::new(self)
+        self
     }
 
-    pub fn auto_bin_x(mut self, auto_bin_x: bool) -> Box<Histogram<H>> {
+    pub fn auto_bin_x(mut self, auto_bin_x: bool) -> Histogram<H> {
         self.auto_bin_x = Some(auto_bin_x);
-        Box::new(self)
+        self
     }
 
-    pub fn auto_bin_y(mut self, auto_bin_y: bool) -> Box<Histogram<H>> {
+    pub fn auto_bin_y(mut self, auto_bin_y: bool) -> Histogram<H> {
         self.auto_bin_y = Some(auto_bin_y);
-        Box::new(self)
+        self
     }
 
-    pub fn bin_group(mut self, bin_group: &str) -> Box<Histogram<H>> {
+    pub fn bin_group(mut self, bin_group: &str) -> Histogram<H> {
         self.bin_group = Some(bin_group.to_owned());
-        Box::new(self)
+        self
     }
 
-    pub fn x_bins(mut self, x_bins: Bins) -> Box<Histogram<H>> {
+    pub fn x_bins(mut self, x_bins: Bins) -> Histogram<H> {
         self.x_bins = Some(x_bins);
-        Box::new(self)
+        self
     }
 
-    pub fn y_bins(mut self, y_bins: Bins) -> Box<Histogram<H>> {
+    pub fn y_bins(mut self, y_bins: Bins) -> Histogram<H> {
         self.y_bins = Some(y_bins);
-        Box::new(self)
+        self
     }
 
-    pub fn marker(mut self, marker: Marker) -> Box<Histogram<H>> {
+    pub fn marker(mut self, marker: Marker) -> Histogram<H> {
         self.marker = Some(marker);
-        Box::new(self)
+        self
     }
 
-    pub fn error_x(mut self, error_x: ErrorData) -> Box<Histogram<H>> {
+    pub fn error_x(mut self, error_x: ErrorData) -> Histogram<H> {
         self.error_x = Some(error_x);
-        Box::new(self)
+        self
     }
 
-    pub fn error_y(mut self, error_y: ErrorData) -> Box<Histogram<H>> {
+    pub fn error_y(mut self, error_y: ErrorData) -> Histogram<H> {
         self.error_y = Some(error_y);
-        Box::new(self)
+        self
     }
 
-    pub fn cumulative(mut self, cumulative: Cumulative) -> Box<Histogram<H>> {
+    pub fn cumulative(mut self, cumulative: Cumulative) -> Histogram<H> {
         self.cumulative = Some(cumulative);
-        Box::new(self)
+        self
     }
 
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Histogram<H>> {
+    pub fn hover_label(mut self, hover_label: Label) -> Histogram<H> {
         self.hover_label = Some(hover_label);
-        Box::new(self)
+        self
     }
 
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Histogram<H>> {
+    pub fn x_calendar(mut self, x_calendar: Calendar) -> Histogram<H> {
         self.x_calendar = Some(x_calendar);
-        Box::new(self)
+        self
     }
 
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Histogram<H>> {
+    pub fn y_calendar(mut self, y_calendar: Calendar) -> Histogram<H> {
         self.y_calendar = Some(y_calendar);
-        Box::new(self)
+        self
     }
 }
 
