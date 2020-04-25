@@ -33,6 +33,11 @@ pub trait Trace {
     fn serialize(&self) -> String;
 }
 
+enum TraceItem<'a, 'b> {
+    Val(Box<dyn Trace + 'a>),
+    Ref(&'b (dyn Trace + 'b)),
+}
+
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
 /// also be specified. Its function is to serialize `Trace`s and the `Layout` in html format and
 /// display and/or persist the resulting plot.
@@ -65,8 +70,8 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-pub struct Plot<'a> {
-    traces: Vec<Box<dyn Trace + 'a>>,
+pub struct Plot<'a, 'b> {
+    traces: Vec<TraceItem<'a, 'b>>,
     layout: Option<Layout>,
 }
 
@@ -81,9 +86,9 @@ additional formats are available accessed by following methods:
 - to_eps
 "#;
 
-impl<'a> Plot<'a> {
+impl<'a, 'b> Plot<'a, 'b> {
     /// Create a new `Plot`.
-    pub fn new() -> Plot<'a> {
+    pub fn new() -> Plot<'a, 'b> {
         Plot {
             traces: Vec::with_capacity(1),
             layout: None,
@@ -95,7 +100,15 @@ impl<'a> Plot<'a> {
     where
         T: Trace + 'a,
     {
-        self.traces.push(Box::new(trace))
+        self.traces.push(TraceItem::Val(Box::new(trace)))
+    }
+
+    /// Add a `Trace` reference to the `Plot`.
+    pub fn add_trace_ref<T>(&mut self, trace: &'b T)
+    where
+        T: Trace + 'b,
+    {
+        self.traces.push(TraceItem::Ref(trace))
     }
 
     /// Set the `Layout` to be used by `Plot`.
@@ -260,7 +273,10 @@ impl<'a> Plot<'a> {
     ) -> String {
         let mut plot_data = String::new();
         for (idx, trace) in self.traces.iter().enumerate() {
-            let s = trace.serialize();
+            let s = match &trace {
+                TraceItem::Val(v) => v.serialize(),
+                TraceItem::Ref(v) => v.serialize(),
+            };
             plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
         }
         plot_data.push_str("\n");
@@ -298,7 +314,10 @@ impl<'a> Plot<'a> {
     fn render_orca_format(&self) -> String {
         let mut plot_data: Vec<String> = Vec::new();
         for trace in self.traces.iter() {
-            let s = trace.serialize();
+            let s = match &trace {
+                TraceItem::Val(v) => v.serialize(),
+                TraceItem::Ref(v) => v.serialize(),
+            };
             plot_data.push(s);
         }
         let layout_data = match &self.layout {
@@ -354,7 +373,7 @@ mod tests {
     use super::*;
     use crate::Scatter;
 
-    fn create_test_plot<'a>() -> Plot<'a> {
+    fn create_test_plot<'a, 'b>() -> Plot<'a, 'b> {
         let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2]).name("trace1");
         let mut plot = Plot::new();
         plot.add_trace(trace1);
