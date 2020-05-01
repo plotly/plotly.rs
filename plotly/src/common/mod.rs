@@ -1433,6 +1433,12 @@ pub struct Title {
     pad: Option<Pad>,
 }
 
+impl From<&str> for Title {
+    fn from(title: &str) -> Self {
+        Self::new(title.into())
+    }
+}
+
 impl Title {
     pub fn new(text: &str) -> Title {
         Title {
