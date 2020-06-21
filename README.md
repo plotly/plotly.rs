@@ -623,6 +623,10 @@ plot data to several formats. The `orca` feature enables `to_*` methods where`*`
 The **caveat** is that there is a manual installation step required for this to work. For instructions please see:
 [plotly_orca](plotly_orca). 
 
+# Contributing
+
+Please consult the [contributing guide](CONTRIBUTING.md).
+
 # License
 
 Plotly for Rust is distributed under the terms of the MIT license.
