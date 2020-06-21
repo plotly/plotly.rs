@@ -20,7 +20,7 @@ pub enum AxisType {
     #[serde(rename = "date")]
     Date,
     #[serde(rename = "category")]
-    Cetegory,
+    Category,
     #[serde(rename = "multicategory")]
     MultiCategory,
 }
