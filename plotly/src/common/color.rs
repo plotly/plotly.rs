@@ -196,7 +196,7 @@ pub enum NamedColor {
 
 impl Color for NamedColor {
     fn to_color_string(&self) -> String {
-        let color = match self {
+        match self {
             NamedColor::AliceBlue => "aliceblue".to_owned(),
             NamedColor::AntiqueWhite => "antiquewhite".to_owned(),
             NamedColor::Aqua => "aqua".to_owned(),
@@ -345,8 +345,7 @@ impl Color for NamedColor {
             NamedColor::Yellow => "yellow".to_owned(),
             NamedColor::YellowGreen => "yellowgreen".to_owned(),
             NamedColor::Transparent => "transparent".to_owned(),
-        };
-        color
+        }
     }
 }
 
@@ -364,10 +363,10 @@ where
         if self.as_ref().len() < 6 || self.as_ref().len() > 7 {
             panic!(format!("{} is not a valid hex color!", self));
         }
-        if self.as_ref().len() == 6 && self.as_ref().chars().next().unwrap() == '#' {
+        if self.as_ref().len() == 6 && self.as_ref().starts_with('#') {
             panic!(format!("{} is not a valid hex color!", self));
         }
-        if self.as_ref().len() == 7 && self.as_ref().chars().next().unwrap() != '#' {
+        if self.as_ref().len() == 7 && !self.as_ref().starts_with('#') {
             panic!(format!("{} is not a valid hex color!", self));
         }
         let valid_characters = "#ABCDEF0123456789";

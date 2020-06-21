@@ -576,7 +576,7 @@ pub enum LineShape {
     Vhv,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Line {
     #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
@@ -798,7 +798,7 @@ impl Gradient {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct TickFormatStops {
     enabled: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
@@ -921,6 +921,12 @@ pub struct ColorBar {
     show_exponent: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
+}
+
+impl Default for ColorBar {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl ColorBar {
@@ -1158,7 +1164,7 @@ impl ColorBar {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Marker {
     #[serde(skip_serializing_if = "Option::is_none")]
     symbol: Option<MarkerSymbol>,
@@ -1340,7 +1346,7 @@ impl Marker {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Font {
     #[serde(skip_serializing_if = "Option::is_none")]
     family: Option<String>,
@@ -1495,7 +1501,7 @@ impl Title {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Label {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
     background_color: Option<String>,

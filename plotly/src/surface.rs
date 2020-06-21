@@ -6,7 +6,7 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Lighting {
     #[serde(skip_serializing_if = "Option::is_none")]
     ambient: Option<f64>,
@@ -70,7 +70,7 @@ impl Position {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct PlaneProject {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<bool>,
@@ -105,7 +105,7 @@ impl PlaneProject {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct PlaneContours {
     #[serde(skip_serializing_if = "Option::is_none")]
     show: Option<bool>,
@@ -204,7 +204,7 @@ impl PlaneContours {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct SurfaceContours {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<PlaneContours>,

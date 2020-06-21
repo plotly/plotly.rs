@@ -26,7 +26,7 @@ pub enum ContoursColoring {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Contours {
     #[serde(skip_serializing_if = "Option::is_none")]
     r#type: Option<ContoursType>,

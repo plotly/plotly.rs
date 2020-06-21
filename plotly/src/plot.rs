@@ -65,6 +65,7 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
+#[derive(Default)]
 pub struct Plot {
     traces: Vec<Box<dyn Trace>>,
     layout: Option<Layout>,
@@ -251,8 +252,7 @@ impl Plot {
     fn plotly_js_path() -> PathBuf {
         let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let templates = root.join("templates");
-        let plotly_path = templates.join(PLOTLY_JS);
-        plotly_path
+        templates.join(PLOTLY_JS)
     }
 
     fn render(

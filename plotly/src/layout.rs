@@ -7,7 +7,7 @@ use crate::plot::Trace;
 use crate::private;
 use serde::Serialize;
 use crate::private::TruthyEnum;
-use rand::distributions::Uniform;
+
 
 #[derive(Serialize, Debug)]
 pub enum AxisType {
@@ -133,7 +133,7 @@ pub enum WaterfallMode {
     Overlay,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
     background_color: Option<String>,
@@ -282,7 +282,7 @@ pub enum Align {
     Bottom,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Margin {
     #[serde(skip_serializing_if = "Option::is_none")]
     l: Option<usize>,
@@ -341,7 +341,7 @@ impl Margin {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct LayoutColorScale {
     #[serde(skip_serializing_if = "Option::is_none")]
     sequential: Option<ColorScale>,
@@ -376,7 +376,7 @@ impl LayoutColorScale {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct ColorAxis {
     #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
@@ -459,7 +459,7 @@ impl ColorAxis {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -976,7 +976,7 @@ pub enum GridYSide {
     Right,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct GridDomain {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<f64>>,
@@ -1000,7 +1000,7 @@ impl GridDomain {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct LayoutGrid {
     #[serde(skip_serializing_if = "Option::is_none")]
     rows: Option<usize>,
@@ -1116,7 +1116,7 @@ pub enum UniformTextMode {
     Show,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct UniformText {
     #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<TruthyEnum<UniformTextMode>>,
@@ -1159,7 +1159,7 @@ pub enum HoverMode {
     YUnified,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct ModeBar {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
@@ -1202,7 +1202,7 @@ impl ModeBar {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
