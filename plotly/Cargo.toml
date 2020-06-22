@@ -19,6 +19,7 @@ exclude = [
 [features]
 # Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
 orca = ["plotly_orca"]
+ndarray_scatter = ["ndarray"]
 
 [dependencies]
 plotly_orca = { version = "0.2.1", path = "../plotly_orca", optional = true }
@@ -28,6 +29,7 @@ askama = "0.9.0"
 rand = "0.7.3"
 rand_distr = "0.2.2"
 num = "0.2.1"
+ndarray = { version = "0.13.0", optional = true }
 
 [dev-dependencies]
 plotly_orca = { version = "0.2.1", path = "../plotly_orca" }

@@ -10,11 +10,7 @@ use crate::Trace;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
-pub struct Scatter<X, Y>
-where
-    X: Serialize,
-    Y: num::Num + Serialize,
-{
+pub struct Scatter<X, Y> {
     r#type: PlotType,
     x: Vec<X>,
     y: Vec<Y>,
@@ -317,5 +313,20 @@ where
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+impl<'a, N> Scatter<N, N>
+where
+    N: num::Num + Clone + Serialize + 'a,
+{
+    #[cfg(feature = "ndarray_scatter")]
+    pub fn from_ndarray<A>(arr: A) -> Box<Self>
+    where
+        N: ,
+        A: ndarray::AsArray<'a, N, ndarray::Ix2>,
+    {
+        let v = arr.into();
+        Scatter::new(v.row(0).to_vec(), v.row(1).to_vec())
     }
 }
