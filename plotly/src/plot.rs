@@ -2,7 +2,7 @@
 extern crate plotly_orca;
 
 use askama::Template;
-use rand::Rng;
+use rand::{Rng, thread_rng};
 use std::env;
 use std::fs::File;
 use std::io::Write;
@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use crate::Layout;
+use rand_distr::Alphanumeric;
 
 const PLOTLY_JS: &str = "plotly-1.52.2.min.js";
 
@@ -26,6 +27,13 @@ struct PlotTemplate<'a> {
     image_type: &'a str,
     image_width: usize,
     image_height: usize,
+}
+
+#[derive(Template)]
+#[template(path = "inline_plot.html", escape = "none")]
+struct InlinePlotTemplate<'a> {
+    plot_data: &'a str,
+    plot_div_id: &'a str,
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
@@ -194,7 +202,7 @@ impl Plot {
     /// In contrast to `Plot::show()` this will save the resulting html in a user specified location
     /// instead of the system temp directory.
     pub fn to_html<P: AsRef<Path>>(&self, filename: P) {
-        let rendered = self.to_inline_html();
+        let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
         let mut file = File::create(filename.as_ref()).unwrap();
         file.write_all(rendered)
@@ -202,9 +210,21 @@ impl Plot {
     }
 
     /// Renders the contents of the `Plot` and returns it as a String, for embedding in
-    /// webpages or Jupyter notebooks.
-    pub fn to_inline_html(&self) -> String {
-        self.render(false, "", 0, 0)
+    /// web-pages or Jupyter notebooks. A `div` is generated with the supplied id followed by the
+    /// script that generates the plot. The assumption is that plotly.js is available within the
+    /// html page that this element is embedded. If that assumption is violated then the plot will
+    /// not be displayed.
+    ///
+    /// If `plot_div_id` is `None` the plot div id will be randomly generated, otherwise the user
+    /// supplied div id is used.
+    pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
+        match plot_div_id {
+            Some(id) => self.render_inline(id),
+            None => {
+                let rand_id: String = thread_rng().sample_iter(&Alphanumeric).take(20).collect();
+                self.render_inline(rand_id.as_str())
+            }
+        }
     }
 
     /// Saves the `Plot` to png format.
@@ -261,13 +281,7 @@ impl Plot {
         templates.join(PLOTLY_JS)
     }
 
-    fn render(
-        &self,
-        export_image: bool,
-        image_type: &str,
-        image_width: usize,
-        image_height: usize,
-    ) -> String {
+    fn render_plot_data(&self) -> String {
         let mut plot_data = String::new();
         for (idx, trace) in self.traces.iter().enumerate() {
             let s = trace.serialize();
@@ -292,7 +306,17 @@ impl Plot {
             }
         };
         plot_data.push_str(layout_data.as_str());
+        plot_data
+    }
 
+    fn render(
+        &self,
+        export_image: bool,
+        image_type: &str,
+        image_width: usize,
+        image_height: usize,
+    ) -> String {
+        let plot_data = self.render_plot_data();
         let plotly_js = PlotlyJs {}.render().unwrap();
         let tmpl = PlotTemplate {
             plot_data: plot_data.as_str(),
@@ -301,6 +325,16 @@ impl Plot {
             image_type,
             image_width,
             image_height,
+        };
+        tmpl.render().unwrap()
+    }
+
+    fn render_inline(&self, plot_div_id: &str) -> String {
+        let plot_data = self.render_plot_data();
+
+        let tmpl = InlinePlotTemplate {
+            plot_data: plot_data.as_str(),
+            plot_div_id,
         };
         tmpl.render().unwrap()
     }
@@ -369,6 +403,16 @@ mod tests {
         let mut plot = Plot::new();
         plot.add_trace(trace1);
         plot
+    }
+
+    #[test]
+    fn test_inline_plot() {
+        let plot = create_test_plot();
+        let inline_plot_data = plot.to_inline_html(Some("replace_this_with_the_div_id"));
+        assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
+        println!("{}", inline_plot_data);
+        let random_div_id = plot.to_inline_html(None);
+        println!("{}", random_div_id);
     }
 
     #[test]
