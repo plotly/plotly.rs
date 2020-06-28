@@ -194,11 +194,17 @@ impl Plot {
     /// In contrast to `Plot::show()` this will save the resulting html in a user specified location
     /// instead of the system temp directory.
     pub fn to_html<P: AsRef<Path>>(&self, filename: P) {
-        let rendered = self.render(false, "", 0, 0);
+        let rendered = self.to_inline_html();
         let rendered = rendered.as_bytes();
         let mut file = File::create(filename.as_ref()).unwrap();
         file.write_all(rendered)
             .expect("failed to write html output");
+    }
+
+    /// Renders the contents of the `Plot` and returns it as a String, for embedding in
+    /// webpages or Jupyter notebooks.
+    pub fn to_inline_html(&self) -> String {
+        self.render(false, "", 0, 0)
     }
 
     /// Saves the `Plot` to png format.
@@ -337,7 +343,10 @@ impl Plot {
 
     #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
-        Command::new("open").args(&[temp_path]).output().expect(DEFAULT_HTML_APP_NOT_FOUND);
+        Command::new("open")
+            .args(&[temp_path])
+            .output()
+            .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
     #[cfg(target_os = "windows")]
