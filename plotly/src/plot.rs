@@ -1,6 +1,9 @@
 #[cfg(feature = "orca")]
 extern crate plotly_orca;
 
+#[cfg(feature = "kaleido")]
+extern crate plotly_kaleido;
+
 use askama::Template;
 use rand::{Rng, thread_rng};
 use std::env;
@@ -35,6 +38,18 @@ struct InlinePlotTemplate<'a> {
     plot_data: &'a str,
     plot_div_id: &'a str,
 }
+
+
+/// Image format for
+pub enum ImageFormat {
+    PNG,
+    JPEG,
+    WEBP,
+    SVG,
+    PDF,
+    EPS,
+}
+
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
 pub trait Trace {
@@ -270,9 +285,27 @@ impl Plot {
     /// Saves the `Plot` to eps format.
     #[cfg(feature = "orca")]
     pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
         let rendered = self.render_orca_format();
         orca.save_eps(filename.as_ref(), &rendered, width, height);
+    }
+
+    /// Saves the `Plot` to the selected image format.
+    #[cfg(feature = "kaleido")]
+    pub fn save<P: AsRef<Path>>(&self, filename: P, format: ImageFormat, width: usize, height: usize, scale: f64) {
+        let kaleido = plotly_kaleido::Kaleido::new();
+        let plot_data = self.render_orca_format();
+        let image_format = match format {
+            ImageFormat::PNG => "png",
+            ImageFormat::JPEG => "jpeg",
+            ImageFormat::SVG => "svg",
+            ImageFormat::PDF => "pdf",
+            ImageFormat::EPS => "eps",
+            ImageFormat::WEBP => "webp",
+        };
+        kaleido.save(filename.as_ref(), plot_data.as_str(), image_format, width, height, scale)
+            .expect(format!("failed to export plot to {:?}", filename.as_ref()).as_str());
     }
 
     fn plotly_js_path() -> PathBuf {
@@ -416,13 +449,79 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_save_to_png() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.png");
+        plot.save(&dst, ImageFormat::PNG,  1024, 680, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_save_to_jpeg() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.jpeg");
+        plot.save(&dst, ImageFormat::JPEG,  1024, 680, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_save_to_svg() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.svg");
+        plot.save(&dst, ImageFormat::SVG,  1024, 680, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_save_to_eps() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.eps");
+        plot.save(&dst, ImageFormat::EPS,  1024, 680, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_save_to_pdf() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.pdf");
+        plot.save(&dst, ImageFormat::PDF,  1024, 680, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_save_to_webp() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.webp");
+        plot.save(&dst, ImageFormat::WEBP,  1024, 680, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
     #[cfg(feature = "orca")]
     fn test_to_png() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.png");
         plot.to_png(&dst, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 
@@ -433,7 +532,7 @@ mod tests {
         let dst = PathBuf::from("example.jpeg");
         plot.to_jpeg(&dst, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 
@@ -444,7 +543,7 @@ mod tests {
         let dst = PathBuf::from("example.webp");
         plot.to_webp(&dst, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 
@@ -455,7 +554,7 @@ mod tests {
         let dst = PathBuf::from("example.svg");
         plot.to_svg(&dst, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 
@@ -466,7 +565,7 @@ mod tests {
         let dst = PathBuf::from("example.pdf");
         plot.to_pdf(&dst, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 
@@ -477,7 +576,7 @@ mod tests {
         let dst = PathBuf::from("example.eps");
         plot.to_eps(&dst, 1024, 680);
         assert!(dst.exists());
-        std::fs::remove_file(&dst);
+        assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 }

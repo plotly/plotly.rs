@@ -20,6 +20,7 @@ fn geometric_brownian_motion(s_0: f64, dt: f64, n: usize, drift: f64, diffusion:
     v
 }
 
+
 fn line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .name("trace1")

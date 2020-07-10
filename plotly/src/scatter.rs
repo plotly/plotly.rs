@@ -9,6 +9,7 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
+
 #[derive(Serialize, Debug)]
 pub struct Scatter<X, Y>
 where
