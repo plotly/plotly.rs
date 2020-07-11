@@ -20,7 +20,6 @@ fn geometric_brownian_motion(s_0: f64, dt: f64, n: usize, drift: f64, diffusion:
     v
 }
 
-
 fn line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .name("trace1")
@@ -168,13 +167,13 @@ fn colored_and_styled_scatter_plot() {
 
     let layout = Layout::new()
         .title(Title::new("Quarter 1 Growth"))
-        .xaxis(
+        .x_axis(
             Axis::new()
                 .title(Title::new("GDP per Capita"))
                 .show_grid(false)
                 .zero_line(false),
         )
-        .yaxis(Axis::new().title(Title::new("Percent")).show_line(false));
+        .y_axis(Axis::new().title(Title::new("Percent")).show_line(false));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -263,8 +262,8 @@ fn line_dash() {
                 .trace_order("reversed")
                 .font(Font::new().size(16)),
         )
-        .xaxis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
-        .yaxis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
+        .x_axis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
+        .y_axis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -291,8 +290,8 @@ fn data_labels_hover() {
 
     let layout = Layout::new()
         .title(Title::new("Data Labels Hover"))
-        .xaxis(Axis::new().title(Title::new("x")).range(vec![0.75, 5.25]))
-        .yaxis(Axis::new().title(Title::new("y")).range(vec![0., 8.]));
+        .x_axis(Axis::new().title(Title::new("x")).range(vec![0.75, 5.25]))
+        .y_axis(Axis::new().title(Title::new("y")).range(vec![0., 8.]));
     plot.set_layout(layout);
     plot.show();
 }
@@ -315,8 +314,8 @@ fn data_labels_on_the_plot() {
 
     let layout = Layout::new()
         .title(Title::new("Data Labels on the Plot"))
-        .xaxis(Axis::new().range(vec![0.75, 5.25]))
-        .yaxis(Axis::new().range(vec![0., 8.]));
+        .x_axis(Axis::new().range(vec![0.75, 5.25]))
+        .y_axis(Axis::new().range(vec![0., 8.]));
     plot.set_layout(layout);
     plot.show();
 }
@@ -409,7 +408,7 @@ fn filled_lines() {
     let layout = Layout::new()
         .paper_background_color(Rgb::new(255, 255, 255))
         .plot_background_color(Rgb::new(229, 229, 229))
-        .xaxis(
+        .x_axis(
             Axis::new()
                 .grid_color(Rgb::new(255, 255, 255))
                 .range(vec![1.0, 10.0])
@@ -420,7 +419,7 @@ fn filled_lines() {
                 .ticks(TicksDirection::Outside)
                 .zero_line(false),
         )
-        .yaxis(
+        .y_axis(
             Axis::new()
                 .grid_color(Rgb::new(255, 255, 255))
                 .show_grid(true)

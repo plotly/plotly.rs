@@ -5,7 +5,7 @@ extern crate plotly_orca;
 extern crate plotly_kaleido;
 
 use askama::Template;
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 use std::env;
 use std::fs::File;
 use std::io::Write;
@@ -15,10 +15,10 @@ use std::process::Command;
 use crate::Layout;
 use rand_distr::Alphanumeric;
 
-const PLOTLY_JS: &str = "plotly-1.52.2.min.js";
+const PLOTLY_JS: &str = "plotly-1.54.6.min.js";
 
 #[derive(Template)]
-#[template(path = "plotly-1.52.2.min.js", escape = "none")]
+#[template(path = "plotly-1.54.6.min.js", escape = "none")]
 struct PlotlyJs;
 
 #[derive(Template)]
@@ -26,6 +26,7 @@ struct PlotlyJs;
 struct PlotTemplate<'a> {
     plot_data: &'a str,
     plotly_javascript: &'a str,
+    remote_plotly_js: bool,
     export_image: bool,
     image_type: &'a str,
     image_width: usize,
@@ -39,7 +40,6 @@ struct InlinePlotTemplate<'a> {
     plot_div_id: &'a str,
 }
 
-
 /// Image format for
 pub enum ImageFormat {
     PNG,
@@ -49,7 +49,6 @@ pub enum ImageFormat {
     PDF,
     EPS,
 }
-
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
 pub trait Trace {
@@ -92,6 +91,7 @@ pub trait Trace {
 pub struct Plot {
     traces: Vec<Box<dyn Trace>>,
     layout: Option<Layout>,
+    remote_plotly_js: bool,
 }
 
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
@@ -111,7 +111,14 @@ impl Plot {
         Plot {
             traces: Vec::with_capacity(1),
             layout: None,
+            remote_plotly_js: true,
         }
+    }
+
+    /// This option results in the plotly.js library being written directly in the html output. The benefit is that the
+    /// plot will load faster in the browser and the downside is that the resulting html will be much larger.
+    pub fn use_local_plotly(&mut self) {
+        self.remote_plotly_js = false;
     }
 
     /// Add a `Trace` to the `Plot`.
@@ -246,7 +253,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     pub fn to_png<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.render_orca_format();
+        let rendered = self.to_json();
         orca.save_png(filename.as_ref(), &rendered, width, height);
     }
 
@@ -254,7 +261,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     pub fn to_jpeg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.render_orca_format();
+        let rendered = self.to_json();
         orca.save_jpeg(filename.as_ref(), &rendered, width, height);
     }
 
@@ -262,7 +269,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     pub fn to_webp<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.render_orca_format();
+        let rendered = self.to_json();
         orca.save_webp(filename.as_ref(), &rendered, width, height);
     }
 
@@ -270,7 +277,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     pub fn to_svg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.render_orca_format();
+        let rendered = self.to_json();
         orca.save_svg(filename.as_ref(), &rendered, width, height);
     }
 
@@ -278,24 +285,30 @@ impl Plot {
     #[cfg(feature = "orca")]
     pub fn to_pdf<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.render_orca_format();
+        let rendered = self.to_json();
         orca.save_pdf(filename.as_ref(), &rendered, width, height);
     }
 
     /// Saves the `Plot` to eps format.
     #[cfg(feature = "orca")]
     pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.render_orca_format();
+        let rendered = self.to_json();
         orca.save_eps(filename.as_ref(), &rendered, width, height);
     }
 
     /// Saves the `Plot` to the selected image format.
     #[cfg(feature = "kaleido")]
-    pub fn save<P: AsRef<Path>>(&self, filename: P, format: ImageFormat, width: usize, height: usize, scale: f64) {
+    pub fn save<P: AsRef<Path>>(
+        &self,
+        filename: P,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) {
         let kaleido = plotly_kaleido::Kaleido::new();
-        let plot_data = self.render_orca_format();
+        let plot_data = self.to_json();
         let image_format = match format {
             ImageFormat::PNG => "png",
             ImageFormat::JPEG => "jpeg",
@@ -304,7 +317,15 @@ impl Plot {
             ImageFormat::EPS => "eps",
             ImageFormat::WEBP => "webp",
         };
-        kaleido.save(filename.as_ref(), plot_data.as_str(), image_format, width, height, scale)
+        kaleido
+            .save(
+                filename.as_ref(),
+                plot_data.as_str(),
+                image_format,
+                width,
+                height,
+                scale,
+            )
             .expect(format!("failed to export plot to {:?}", filename.as_ref()).as_str());
     }
 
@@ -354,6 +375,7 @@ impl Plot {
         let tmpl = PlotTemplate {
             plot_data: plot_data.as_str(),
             plotly_javascript: plotly_js.as_str(),
+            remote_plotly_js: self.remote_plotly_js,
             export_image,
             image_type,
             image_width,
@@ -372,7 +394,7 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
-    fn render_orca_format(&self) -> String {
+    fn to_json(&self) -> String {
         let mut plot_data: Vec<String> = Vec::new();
         for trace in self.traces.iter() {
             let s = trace.serialize();
@@ -383,21 +405,21 @@ impl Plot {
             None => "{}".to_owned(),
         };
 
-        let mut orca_data = String::new();
-        orca_data.push_str(r#"{"data": ["#);
+        let mut json_data = String::new();
+        json_data.push_str(r#"{"data": ["#);
 
         for (index, data) in plot_data.iter().enumerate() {
             if index < plot_data.len() - 1 {
-                orca_data.push_str(data);
-                orca_data.push_str(r#","#);
+                json_data.push_str(data);
+                json_data.push_str(r#","#);
             } else {
-                orca_data.push_str(data);
-                orca_data.push_str("]");
+                json_data.push_str(data);
+                json_data.push_str("]");
             }
         }
-        orca_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
-        orca_data.push_str("}");
-        orca_data
+        json_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
+        json_data.push_str("}");
+        json_data
     }
 
     #[cfg(target_os = "linux")]
@@ -453,7 +475,7 @@ mod tests {
     fn test_save_to_png() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.png");
-        plot.save(&dst, ImageFormat::PNG,  1024, 680, 1.0);
+        plot.save(&dst, ImageFormat::PNG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -464,7 +486,7 @@ mod tests {
     fn test_save_to_jpeg() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.jpeg");
-        plot.save(&dst, ImageFormat::JPEG,  1024, 680, 1.0);
+        plot.save(&dst, ImageFormat::JPEG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -475,7 +497,7 @@ mod tests {
     fn test_save_to_svg() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.svg");
-        plot.save(&dst, ImageFormat::SVG,  1024, 680, 1.0);
+        plot.save(&dst, ImageFormat::SVG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -486,7 +508,7 @@ mod tests {
     fn test_save_to_eps() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.eps");
-        plot.save(&dst, ImageFormat::EPS,  1024, 680, 1.0);
+        plot.save(&dst, ImageFormat::EPS, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -497,7 +519,7 @@ mod tests {
     fn test_save_to_pdf() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.pdf");
-        plot.save(&dst, ImageFormat::PDF,  1024, 680, 1.0);
+        plot.save(&dst, ImageFormat::PDF, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -508,7 +530,7 @@ mod tests {
     fn test_save_to_webp() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.webp");
-        plot.save(&dst, ImageFormat::WEBP,  1024, 680, 1.0);
+        plot.save(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());

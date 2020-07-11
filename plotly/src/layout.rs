@@ -5,9 +5,8 @@ use crate::common::{
 };
 use crate::plot::Trace;
 use crate::private;
-use serde::Serialize;
 use crate::private::TruthyEnum;
-
+use serde::Serialize;
 
 #[derive(Serialize, Debug)]
 pub enum AxisType {
@@ -572,7 +571,11 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "dividerwidth")]
     divider_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    anchor: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     side: Option<Side>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    overlaying: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     domain: Option<Vec<f64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -638,7 +641,9 @@ impl Axis {
             show_dividers: None,
             divider_color: None,
             divider_width: None,
+            anchor: None,
             side: None,
+            overlaying: None,
             domain: None,
             position: None,
             calendar: None,
@@ -915,13 +920,23 @@ impl Axis {
         self
     }
 
+    pub fn anchor(mut self, anchor: &str) -> Axis {
+        self.anchor = Some(anchor.to_owned());
+        self
+    }
+
     pub fn side(mut self, side: Side) -> Axis {
         self.side = Some(side);
         self
     }
 
-    pub fn domain(mut self, domain: Vec<f64>) -> Axis {
-        self.domain = Some(domain);
+    pub fn overlaying(mut self, overlaying: &str) -> Axis {
+        self.overlaying = Some(overlaying.to_owned());
+        self
+    }
+
+    pub fn domain(mut self, domain: &[f64]) -> Axis {
+        self.domain = Some(domain.to_vec());
         self
     }
 
@@ -1258,10 +1273,39 @@ pub struct Layout {
     grid: Option<LayoutGrid>,
     #[serde(skip_serializing_if = "Option::is_none")]
     calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    xaxis: Option<Axis>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    yaxis: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<Axis>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis2")]
+    x_axis2: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis2")]
+    y_axis2: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis3")]
+    x_axis3: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis3")]
+    y_axis3: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis4")]
+    x_axis4: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis4")]
+    y_axis4: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis5")]
+    x_axis5: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis5")]
+    y_axis5: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis6")]
+    x_axis6: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis6")]
+    y_axis6: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis7")]
+    x_axis7: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis7")]
+    y_axis7: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis8")]
+    x_axis8: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis8")]
+    y_axis8: Option<Axis>,
 
     // ternary: Option<LayoutTernary>,
     // scene: Option<LayoutScene>,
@@ -1306,7 +1350,10 @@ pub struct Layout {
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
     sunburst_colorway: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "extendsuburstcolors")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename = "extendsuburstcolors"
+    )]
     extend_sunburst_colors: Option<bool>,
 }
 
@@ -1338,8 +1385,22 @@ impl Layout {
             hover_label: None,
             grid: None,
             calendar: None,
-            xaxis: None,
-            yaxis: None,
+            x_axis: None,
+            y_axis: None,
+            x_axis2: None,
+            y_axis2: None,
+            x_axis3: None,
+            y_axis3: None,
+            x_axis4: None,
+            y_axis4: None,
+            x_axis5: None,
+            y_axis5: None,
+            x_axis6: None,
+            y_axis6: None,
+            x_axis7: None,
+            y_axis7: None,
+            x_axis8: None,
+            y_axis8: None,
             template: None,
             box_mode: None,
             box_gap: None,
@@ -1501,13 +1562,83 @@ impl Layout {
         self
     }
 
-    pub fn xaxis(mut self, xaxis: Axis) -> Layout {
-        self.xaxis = Some(xaxis);
+    pub fn x_axis(mut self, xaxis: Axis) -> Layout {
+        self.x_axis = Some(xaxis);
         self
     }
 
-    pub fn yaxis(mut self, yaxis: Axis) -> Layout {
-        self.yaxis = Some(yaxis);
+    pub fn y_axis(mut self, yaxis: Axis) -> Layout {
+        self.y_axis = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis2(mut self, xaxis: Axis) -> Layout {
+        self.x_axis2 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis2(mut self, yaxis: Axis) -> Layout {
+        self.y_axis2 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis3(mut self, xaxis: Axis) -> Layout {
+        self.x_axis3 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis3(mut self, yaxis: Axis) -> Layout {
+        self.y_axis3 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis4(mut self, xaxis: Axis) -> Layout {
+        self.x_axis4 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis4(mut self, yaxis: Axis) -> Layout {
+        self.y_axis4 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis5(mut self, xaxis: Axis) -> Layout {
+        self.x_axis5 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis5(mut self, yaxis: Axis) -> Layout {
+        self.y_axis5 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis6(mut self, xaxis: Axis) -> Layout {
+        self.x_axis6 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis6(mut self, yaxis: Axis) -> Layout {
+        self.y_axis6 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis7(mut self, xaxis: Axis) -> Layout {
+        self.x_axis7 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis7(mut self, yaxis: Axis) -> Layout {
+        self.y_axis7 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis8(mut self, xaxis: Axis) -> Layout {
+        self.x_axis8 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis8(mut self, yaxis: Axis) -> Layout {
+        self.y_axis8 = Some(yaxis);
         self
     }
 

@@ -9,15 +9,14 @@
 //! Note that [plotly/Kaleido](https://github.com/plotly/Kaleido) is still in pre-release and as such the `kaleido`
 //! feature should be considered in pre-release mode as well.
 
-
-use std::env;
-use std::path::{Path, PathBuf};
-use std::io::prelude::*;
-use std::process::{Command, Stdio};
+use serde::{Deserialize, Serialize};
 use serde_json;
-use serde::{Serialize, Deserialize};
-use std::io::BufReader;
+use std::env;
 use std::fs::File;
+use std::io::prelude::*;
+use std::io::BufReader;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
 
 #[derive(Serialize)]
 struct PlotData {
@@ -32,7 +31,8 @@ struct PlotData {
 struct KaleidoResult {
     code: i32,
     message: Option<String>,
-    pdfBgColor: Option<String>,
+    #[serde(rename = "pdfBgColor")]
+    pdf_background_color: Option<String>,
     format: Option<String>,
     result: Option<String>,
     width: Option<usize>,
@@ -59,8 +59,15 @@ impl PlotData {
     }
 
     fn to_json(&self) -> String {
-        let data = format!(r##"{{"format":"{}","width":{},"height":{},"scale":{},"data":{}}}"##, self.format, self.width, self.height, self.scale, self.data);
-        let data = data.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "");
+        let data = format!(
+            r##"{{"format":"{}","width":{},"height":{},"scale":{},"data":{}}}"##,
+            self.format, self.width, self.height, self.scale, self.data
+        );
+        let data = data
+            .replace(" ", "")
+            .replace("\n", "")
+            .replace("\t", "")
+            .replace("\r", "");
         data
     }
 }
@@ -77,9 +84,7 @@ impl Kaleido {
             Err(msg) => panic!(msg),
         };
 
-        Kaleido {
-            cmd_path: path
-        }
+        Kaleido { cmd_path: path }
     }
 
     fn root_dir() -> Result<PathBuf, &'static str> {
@@ -92,7 +97,12 @@ impl Kaleido {
     #[cfg(target_os = "linux")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("linux").join("bin").join("kaleido").canonicalize().unwrap();
+        p = p
+            .join("kaleido")
+            .join("linux")
+            .join("kaleido")
+            .canonicalize()
+            .unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -102,7 +112,12 @@ impl Kaleido {
     #[cfg(target_os = "macos")]
     fn kaleido_binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("macos").join("bin").join("kaleido").canonicalize().unwrap();
+        p = p
+            .join("kaleido")
+            .join("macos")
+            .join("kaleido")
+            .canonicalize()
+            .unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -112,14 +127,27 @@ impl Kaleido {
     #[cfg(target_os = "windows")]
     fn kaleido_binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("windows").join("bin").join("kaleido.exe").canonicalize().unwrap();
+        p = p
+            .join("kaleido")
+            .join("windows")
+            .join("kaleido.cmd")
+            .canonicalize()
+            .unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
         Ok(p)
     }
 
-    pub fn save(&self, dst: &Path, plotly_data: &str, image_format: &str, width: usize, height: usize, scale: f64) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn save(
+        &self,
+        dst: &Path,
+        plotly_data: &str,
+        image_format: &str,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         let mut dst = PathBuf::from(dst);
         dst.set_extension(image_format);
 
@@ -132,12 +160,17 @@ impl Kaleido {
             .args(&["plotly", "--disable-gpu"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .spawn().expect("failed to spawn Kaleido binary");
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("failed to spawn Kaleido binary");
 
         {
-            let plot_data = PlotData::new(plotly_data, image_format, width, height, scale).to_json();
+            let plot_data =
+                PlotData::new(plotly_data, image_format, width, height, scale).to_json();
             let mut process_stdin = process.stdin.unwrap();
-            process_stdin.write_all(plot_data.as_bytes()).expect("couldn't write to Kaleido stdin");
+            process_stdin
+                .write_all(plot_data.as_bytes())
+                .expect("couldn't write to Kaleido stdin");
             process_stdin.flush()?;
         }
 
@@ -160,7 +193,6 @@ impl Kaleido {
         Ok(())
     }
 }
-
 
 #[cfg(test)]
 mod tests {

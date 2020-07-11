@@ -128,6 +128,10 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<String>,
     orientation: Option<Orientation>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "histfunc")]
     hist_func: Option<HistFunc>,
@@ -185,6 +189,8 @@ where
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            x_axis: None,
+            y_axis: None,
             orientation: None,
             hist_func: None,
             hist_norm: None,
@@ -221,6 +227,8 @@ where
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            x_axis: None,
+            y_axis: None,
             orientation: None,
             hist_func: None,
             hist_norm: None,
@@ -257,6 +265,8 @@ where
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            x_axis: None,
+            y_axis: None,
             orientation: None,
             hist_func: None,
             hist_norm: None,
@@ -333,6 +343,16 @@ where
 
     pub fn hover_template(mut self, hover_template: &str) -> Box<Histogram<H>> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn x_axis(mut self, axis: &str) -> Box<Histogram<H>> {
+        self.x_axis = Some(axis.to_owned());
+        Box::new(self)
+    }
+
+    pub fn y_axis(mut self, axis: &str) -> Box<Histogram<H>> {
+        self.y_axis = Some(axis.to_owned());
         Box::new(self)
     }
 

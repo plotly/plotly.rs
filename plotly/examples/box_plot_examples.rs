@@ -71,7 +71,7 @@ fn grouped_box_plot() {
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .yaxis(
+        .y_axis(
             Axis::new()
                 .title(Title::new("normalized moisture"))
                 .zero_line(false),
@@ -187,7 +187,7 @@ fn grouped_horizontal_box_plot() {
 
     let layout = Layout::new()
         .title(Title::new("Grouped Horizontal Box Plot"))
-        .xaxis(
+        .x_axis(
             Axis::new()
                 .title(Title::new("normalized moisture"))
                 .zero_line(false),
@@ -237,7 +237,7 @@ fn fully_styled_box_plot() {
         .title(Title::new(
             "Points Scored by the Top 9 Scoring NBA Players in 2012",
         ))
-        .yaxis(
+        .y_axis(
             Axis::new()
                 .auto_range(true)
                 .show_grid(true)

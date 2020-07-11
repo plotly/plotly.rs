@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.0] - 2020-XX-XX
 ### Added
 - [Plotly for Rust Book](https://igiagkiozis.github.io/plotly/)
-- TODO Add support for linking the plotly.js library to the remote source.
-- Plot rasterization to `png`, `jpg`, `eps`, `pdf`, `webp` and `svg` using [plotly/Kaleido](https://github.com/plotly/Kaleido), enabled using the `kaleido` feature. 
+- Using plotly.js from the official CDN is now the default. To use the local version use the `Plot::use_local_plotly` method.
+- Plot rasterization to `png`, `jpg`, `eps`, `pdf`, `webp` and `svg` using [plotly/Kaleido](https://github.com/plotly/Kaleido), enabled using the `kaleido` feature.
+- Multi-axis support and examples.
+- Subplot support and examples. 
 ### Changed
 - `Layout` complete.
+- Updated `plotly` version to `1.54.6`.
 ### Fixed
 - f
 

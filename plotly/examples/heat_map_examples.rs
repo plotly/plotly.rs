@@ -1,4 +1,4 @@
-use plotly::{Plot, HeatMap};
+use plotly::{HeatMap, Plot};
 
 fn basic_heat_map() {
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];

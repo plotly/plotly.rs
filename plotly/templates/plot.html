@@ -7,7 +7,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
     <script type="text/javascript">if (window.MathJax) {MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>
     <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+    {% if remote_plotly_js -%}
+    <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
+    {% else -%}
     <script type="text/javascript">{{ plotly_javascript }}</script>
+    {% endif -%}
     {% if  export_image -%}
     <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;" hidden></div>
     <div ><img id="image-export" class="plotly-graph-div"></img></div>

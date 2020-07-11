@@ -121,8 +121,8 @@ fn colored_and_styled_histograms() {
         .x_bins(Bins::new(-3.2, 4.0, 0.06));
     let layout = Layout::new()
         .title(Title::new("Sampled Results"))
-        .xaxis(Axis::new().title(Title::new("Value")))
-        .yaxis(Axis::new().title(Title::new("Count")))
+        .x_axis(Axis::new().title(Title::new("Value")))
+        .y_axis(Axis::new().title(Title::new("Count")))
         .bar_mode(BarMode::Overlay)
         .bar_gap(0.05)
         .bar_group_gap(0.2);

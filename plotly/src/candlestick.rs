@@ -34,6 +34,10 @@ where
     hover_text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "whiskerwidth")]
@@ -77,6 +81,8 @@ where
             text: None,
             hover_text: None,
             hover_info: None,
+            x_axis: None,
+            y_axis: None,
             line: None,
             whisker_width: None,
             increasing: Some(Direction::Increasing { line: iline }),
@@ -135,6 +141,16 @@ where
 
     pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Candlestick<T, O>> {
         self.hover_info = Some(hover_info);
+        Box::new(self)
+    }
+
+    pub fn x_axis(mut self, axis: &str) -> Box<Candlestick<T, O>> {
+        self.x_axis = Some(axis.to_owned());
+        Box::new(self)
+    }
+
+    pub fn y_axis(mut self, axis: &str) -> Box<Candlestick<T, O>> {
+        self.y_axis = Some(axis.to_owned());
         Box::new(self)
     }
 

@@ -23,6 +23,7 @@ pub mod scatter;
 pub mod surface;
 
 pub use crate::layout::Layout;
+pub use crate::plot::ImageFormat;
 pub use crate::plot::Plot;
 
 pub use crate::bar::Bar;

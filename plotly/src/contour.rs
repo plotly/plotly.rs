@@ -168,6 +168,12 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<String>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
@@ -213,7 +219,9 @@ where
 }
 
 impl<Z> Contour<Z, f64, f64>
-where Z: Serialize {
+where
+    Z: Serialize,
+{
     pub fn new_z(z: Vec<Z>) -> Box<Contour<Z, f64, f64>> {
         Box::new(Contour {
             r#type: PlotType::Contour,
@@ -233,6 +241,8 @@ where Z: Serialize {
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            x_axis: None,
+            y_axis: None,
             line: None,
             color_bar: None,
             auto_color_scale: None,
@@ -257,7 +267,6 @@ where Z: Serialize {
         })
     }
 }
-
 
 impl<Z, X, Y> Contour<Z, X, Y>
 where
@@ -284,6 +293,8 @@ where
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            x_axis: None,
+            y_axis: None,
             line: None,
             color_bar: None,
             auto_color_scale: None,
@@ -317,17 +328,17 @@ where
         self.x0 = Some(x0);
         Box::new(self)
     }
-    
+
     pub fn dx(mut self, dx: X) -> Box<Contour<Z, X, Y>> {
         self.dx = Some(dx);
         Box::new(self)
     }
-    
+
     pub fn y0(mut self, y0: Y) -> Box<Contour<Z, X, Y>> {
         self.y0 = Some(y0);
         Box::new(self)
     }
-    
+
     pub fn dy(mut self, dy: Y) -> Box<Contour<Z, X, Y>> {
         self.dy = Some(dy);
         Box::new(self)
@@ -382,6 +393,16 @@ where
 
     pub fn hover_template(mut self, hover_template: &str) -> Box<Contour<Z, X, Y>> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn x_axis(mut self, axis: &str) -> Box<Contour<Z, X, Y>> {
+        self.x_axis = Some(axis.to_owned());
+        Box::new(self)
+    }
+
+    pub fn y_axis(mut self, axis: &str) -> Box<Contour<Z, X, Y>> {
+        self.y_axis = Some(axis.to_owned());
         Box::new(self)
     }
 

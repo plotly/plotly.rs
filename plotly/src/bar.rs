@@ -46,6 +46,10 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "alignmentgroup")]
@@ -104,6 +108,8 @@ where
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            x_axis: None,
+            y_axis: None,
             orientation: None,
             alignment_group: None,
             offset_group: None,
@@ -219,6 +225,16 @@ where
 
     pub fn hover_template(mut self, hover_template: &str) -> Box<Bar<X, Y>> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    pub fn x_axis(mut self, axis: &str) -> Box<Bar<X, Y>> {
+        self.x_axis = Some(axis.to_owned());
+        Box::new(self)
+    }
+
+    pub fn y_axis(mut self, axis: &str) -> Box<Bar<X, Y>> {
+        self.y_axis = Some(axis.to_owned());
         Box::new(self)
     }
 
