@@ -181,10 +181,7 @@ impl Kaleido {
                 }
             }
         }
-
-        let mut errors = String::new();
-        process.stderr.unwrap().read_to_string(&mut errors);
-        println!("errors {}", errors);
+        
         Ok(())
     }
 }
