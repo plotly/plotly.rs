@@ -181,7 +181,7 @@ impl Kaleido {
                 }
             }
         }
-        
+
         Ok(())
     }
 }
