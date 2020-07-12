@@ -259,6 +259,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(any(target_os = "linux", target_os = "windows"))]
     fn test_save_eps() {
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");

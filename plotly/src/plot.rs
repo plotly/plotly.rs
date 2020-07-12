@@ -529,6 +529,7 @@ mod tests {
 
     #[test]
     #[cfg(feature = "kaleido")]
+    #[cfg(any(target_os = "linux", target_os = "windows"))]
     fn test_save_to_eps() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.eps");
@@ -617,6 +618,7 @@ mod tests {
 
     #[test]
     #[cfg(feature = "orca")]
+    #[cfg(any(target_os = "linux", target_os = "windows"))]
     fn test_to_eps() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.eps");
