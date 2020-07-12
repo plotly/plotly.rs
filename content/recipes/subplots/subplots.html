@@ -1,0 +1,528 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Subplots - Plotly.rs Book</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+        <link rel="stylesheet" href="../../ferris.css">
+        
+
+        
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes_root.html"><strong aria-hidden="true">2.</strong> Recipes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">2.1.</strong> Basic Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">2.1.1.</strong> Scatter Plots</a></li><li class="chapter-item expanded "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">2.1.2.</strong> Line Charts</a></li><li class="chapter-item expanded "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">2.1.3.</strong> Bar Charts</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">2.2.</strong> Statistical Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">2.2.1.</strong> Error Bars</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">2.2.2.</strong> Box Plots</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">2.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">2.3.</strong> Scientific Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">2.3.1.</strong> Contour Plots</a></li><li class="chapter-item expanded "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">2.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">2.4.</strong> Financial Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">2.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item expanded "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">2.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item expanded "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">2.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/subplots.html"><strong aria-hidden="true">2.5.</strong> Subplots</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/subplots/subplots.html" class="active"><strong aria-hidden="true">2.5.1.</strong> Subplots</a></li><li class="chapter-item expanded "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">2.5.2.</strong> Multiple Axes</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../gallery_root.html"><strong aria-hidden="true">3.</strong> Gallery</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../gallery/financial_charts.html"><strong aria-hidden="true">3.1.</strong> Financial Charts</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Plotly.rs Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#subplots" id="subplots">Subplots</a></h1>
+<h2><a class="header" href="#simple-subplot" id="simple-subplot">Simple Subplot</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn simple_subplot(show: bool) {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name(&quot;trace1&quot;);
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name(&quot;trace2&quot;)
+        .x_axis(&quot;x2&quot;)
+        .y_axis(&quot;y2&quot;);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+        if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;simple_subplot&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="simple_subplot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("simple_subplot")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"scatter","x":[1,2,3],"y":[4,5,6],"name":"trace1"};
+var trace_1 = {"type":"scatter","x":[20,30,40],"y":[50,60,70],"name":"trace2","xaxis":"x2","yaxis":"y2"};
+var data = [trace_0,trace_1];
+var layout = {"grid":{"rows":1,"columns":2,"pattern":"independent"}};
+        Plotly.newPlot('simple_subplot', data, layout, {"responsive": true});
+    };
+</script>
+<h2><a class="header" href="#custom-sized-subplot" id="custom-sized-subplot">Custom Sized Subplot</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn custom_sized_subplot(show: bool) {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name(&quot;trace1&quot;);
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name(&quot;trace2&quot;)
+        .x_axis(&quot;x2&quot;)
+        .y_axis(&quot;y2&quot;);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new()
+        .x_axis(Axis::new().domain(&amp;[0., 0.7]))
+        .y_axis2(Axis::new().anchor(&quot;x2&quot;))
+        .x_axis2(Axis::new().domain(&amp;[0.8, 1.]));
+    plot.set_layout(layout);
+        if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;custom_sized_subplot&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="custom_sized_subplot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("custom_sized_subplot")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"scatter","x":[1,2,3],"y":[4,5,6],"name":"trace1"};
+var trace_1 = {"type":"scatter","x":[20,30,40],"y":[50,60,70],"name":"trace2","xaxis":"x2","yaxis":"y2"};
+var data = [trace_0,trace_1];
+var layout = {"xaxis":{"domain":[0.0,0.7]},"xaxis2":{"domain":[0.8,1.0]},"yaxis2":{"anchor":"x2"}};
+        Plotly.newPlot('custom_sized_subplot', data, layout, {"responsive": true});
+    };
+</script>
+<h2><a class="header" href="#multiple-subplots" id="multiple-subplots">Multiple Subplots</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn multiple_subplots(show: bool) {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name(&quot;trace1&quot;);
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name(&quot;trace2&quot;)
+        .x_axis(&quot;x2&quot;)
+        .y_axis(&quot;y2&quot;);
+    let trace3 = Scatter::new(vec![300, 400, 500], vec![600, 700, 800])
+        .x_axis(&quot;x3&quot;)
+        .y_axis(&quot;y3&quot;);
+    let trace4 = Scatter::new(vec![4000, 5000, 6000], vec![7000, 8000, 9000])
+        .x_axis(&quot;x4&quot;)
+        .y_axis(&quot;y4&quot;);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+    plot.add_trace(trace4);
+
+    let layout = Layout::new().grid(
+        LayoutGrid::new()
+            .rows(2)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+        if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;multiple_subplots&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="multiple_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("multiple_subplots")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"scatter","x":[1,2,3],"y":[4,5,6],"name":"trace1"};
+var trace_1 = {"type":"scatter","x":[20,30,40],"y":[50,60,70],"name":"trace2","xaxis":"x2","yaxis":"y2"};
+var trace_2 = {"type":"scatter","x":[300,400,500],"y":[600,700,800],"xaxis":"x3","yaxis":"y3"};
+var trace_3 = {"type":"scatter","x":[4000,5000,6000],"y":[7000,8000,9000],"xaxis":"x4","yaxis":"y4"};
+var data = [trace_0,trace_1,trace_2,trace_3];
+var layout = {"grid":{"rows":2,"columns":2,"pattern":"independent"}};
+        Plotly.newPlot('multiple_subplots', data, layout, {"responsive": true});
+    };
+</script>
+<h2><a class="header" href="#stacked-subplots" id="stacked-subplots">Stacked Subplots</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn stacked_subplots(show: bool) {
+    let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name(&quot;trace1&quot;);
+    let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
+        .name(&quot;trace2&quot;)
+        .x_axis(&quot;x2&quot;)
+        .y_axis(&quot;y2&quot;);
+    let trace3 = Scatter::new(vec![3, 4, 5], vec![1000, 1100, 1200])
+        .x_axis(&quot;x3&quot;)
+        .y_axis(&quot;y3&quot;);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+
+    let layout = Layout::new().grid(
+        LayoutGrid::new()
+            .rows(3)
+            .columns(1)
+            .pattern(GridPattern::Independent)
+            .row_order(RowOrder::BottomToTop),
+    );
+    plot.set_layout(layout);
+        if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;stacked_subplots&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="stacked_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("stacked_subplots")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"scatter","x":[0,1,2],"y":[10,11,12],"name":"trace1"};
+var trace_1 = {"type":"scatter","x":[2,3,4],"y":[100,110,120],"name":"trace2","xaxis":"x2","yaxis":"y2"};
+var trace_2 = {"type":"scatter","x":[3,4,5],"y":[1000,1100,1200],"xaxis":"x3","yaxis":"y3"};
+var data = [trace_0,trace_1,trace_2];
+var layout = {"grid":{"rows":3,"roworder":"bottom to top","columns":1,"pattern":"independent"}};
+        Plotly.newPlot('stacked_subplots', data, layout, {"responsive": true});
+    };
+</script>
+<h2><a class="header" href="#stacked-subplots-with-shared-x-axis" id="stacked-subplots-with-shared-x-axis">Stacked Subplots with Shared X Axis</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn stacked_subplots_with_shared_x_axis(show: bool) {
+    let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name(&quot;trace1&quot;);
+    let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
+        .name(&quot;trace2&quot;)
+        .y_axis(&quot;y2&quot;);
+    let trace3 = Scatter::new(vec![3, 4, 5], vec![1000, 1100, 1200]).y_axis(&quot;y3&quot;);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+
+    let layout = Layout::new()
+        .y_axis(Axis::new().domain(&amp;[0., 0.33]))
+        .legend(Legend::new().trace_order(&quot;reversed&quot;))
+        .y_axis2(Axis::new().domain(&amp;[0.33, 0.66]))
+        .y_axis3(Axis::new().domain(&amp;[0.66, 1.]));
+    plot.set_layout(layout);
+        if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;stacked_subplots_with_shared_x_axis&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="stacked_subplots_with_shared_x_axis" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("stacked_subplots_with_shared_x_axis")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"scatter","x":[0,1,2],"y":[10,11,12],"name":"trace1"};
+var trace_1 = {"type":"scatter","x":[2,3,4],"y":[100,110,120],"name":"trace2","yaxis":"y2"};
+var trace_2 = {"type":"scatter","x":[3,4,5],"y":[1000,1100,1200],"yaxis":"y3"};
+var data = [trace_0,trace_1,trace_2];
+var layout = {"legend":{"traceorder":"reversed"},"yaxis":{"domain":[0.0,0.33]},"yaxis2":{"domain":[0.33,0.66]},"yaxis3":{"domain":[0.66,1.0]}};
+        Plotly.newPlot('stacked_subplots_with_shared_x_axis', data, layout, {"responsive": true});
+    };
+</script>
+<h2><a class="header" href="#multiple-custom-sized-subplots" id="multiple-custom-sized-subplots">Multiple Custom Sized Subplots</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn multiple_custom_sized_subplots(show: bool) {
+    let trace1 = Scatter::new(vec![1, 2], vec![1, 2]).name(&quot;(1,1)&quot;);
+    let trace2 = Scatter::new(vec![1, 2], vec![1, 2])
+        .name(&quot;(1,2,1)&quot;)
+        .x_axis(&quot;x2&quot;)
+        .y_axis(&quot;y2&quot;);
+    let trace3 = Scatter::new(vec![1, 2], vec![1, 2])
+        .name(&quot;(1,2,2)&quot;)
+        .x_axis(&quot;x3&quot;)
+        .y_axis(&quot;y3&quot;);
+    let trace4 = Scatter::new(vec![1, 2], vec![1, 2])
+        .name(&quot;{(2,1), (2,2)}&quot;)
+        .x_axis(&quot;x4&quot;)
+        .y_axis(&quot;y4&quot;);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+    plot.add_trace(trace4);
+
+    let layout = Layout::new()
+        .title(Title::new(&quot;Multiple Custom Sized Subplots&quot;))
+        .x_axis(Axis::new().domain(&amp;[0., 0.45]).anchor(&quot;y1&quot;))
+        .y_axis(Axis::new().domain(&amp;[0.5, 1.]).anchor(&quot;x1&quot;))
+        .x_axis2(Axis::new().domain(&amp;[0.55, 1.]).anchor(&quot;y2&quot;))
+        .y_axis2(Axis::new().domain(&amp;[0.8, 1.]).anchor(&quot;x2&quot;))
+        .x_axis3(Axis::new().domain(&amp;[0.55, 1.]).anchor(&quot;y3&quot;))
+        .y_axis3(Axis::new().domain(&amp;[0.5, 0.75]).anchor(&quot;x3&quot;))
+        .x_axis4(Axis::new().domain(&amp;[0., 1.]).anchor(&quot;y4&quot;))
+        .y_axis4(Axis::new().domain(&amp;[0., 0.45]).anchor(&quot;x4&quot;));
+    plot.set_layout(layout);
+        if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;multiple_custom_sized_subplots&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="multiple_custom_sized_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("multiple_custom_sized_subplots")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"(1,1)"};
+var trace_1 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"(1,2,1)","xaxis":"x2","yaxis":"y2"};
+var trace_2 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"(1,2,2)","xaxis":"x3","yaxis":"y3"};
+var trace_3 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"{(2,1), (2,2)}","xaxis":"x4","yaxis":"y4"};
+var data = [trace_0,trace_1,trace_2,trace_3];
+var layout = {"title":{"text":"Multiple Custom Sized Subplots"},"xaxis":{"anchor":"y1","domain":[0.0,0.45]},"yaxis":{"anchor":"x1","domain":[0.5,1.0]},"xaxis2":{"anchor":"y2","domain":[0.55,1.0]},"yaxis2":{"anchor":"x2","domain":[0.8,1.0]},"xaxis3":{"anchor":"y3","domain":[0.55,1.0]},"yaxis3":{"anchor":"x3","domain":[0.5,0.75]},"xaxis4":{"anchor":"y4","domain":[0.0,1.0]},"yaxis4":{"anchor":"x4","domain":[0.0,0.45]}};
+        Plotly.newPlot('multiple_custom_sized_subplots', data, layout, {"responsive": true});
+    };
+</script>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../../recipes/subplots.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../../recipes/subplots/multiple_axes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="../../recipes/subplots.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="../../recipes/subplots/multiple_axes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+        <script type="text/javascript" src="../../ferris.js"></script>
+        
+        <script type="text/javascript" src="../../plotly-1.54.6.min.js"></script>
+        
+
+        
+
+    </body>
+</html>

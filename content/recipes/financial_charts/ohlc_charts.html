@@ -1,0 +1,315 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>OHLC Charts - Plotly.rs Book</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+        <link rel="stylesheet" href="../../ferris.css">
+        
+
+        
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes_root.html"><strong aria-hidden="true">2.</strong> Recipes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">2.1.</strong> Basic Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">2.1.1.</strong> Scatter Plots</a></li><li class="chapter-item expanded "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">2.1.2.</strong> Line Charts</a></li><li class="chapter-item expanded "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">2.1.3.</strong> Bar Charts</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">2.2.</strong> Statistical Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">2.2.1.</strong> Error Bars</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">2.2.2.</strong> Box Plots</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">2.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">2.3.</strong> Scientific Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">2.3.1.</strong> Contour Plots</a></li><li class="chapter-item expanded "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">2.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">2.4.</strong> Financial Charts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">2.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item expanded "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">2.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item expanded "><a href="../../recipes/financial_charts/ohlc_charts.html" class="active"><strong aria-hidden="true">2.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/subplots.html"><strong aria-hidden="true">2.5.</strong> Subplots</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">2.5.1.</strong> Subplots</a></li><li class="chapter-item expanded "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">2.5.2.</strong> Multiple Axes</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../gallery_root.html"><strong aria-hidden="true">3.</strong> Gallery</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../gallery/financial_charts.html"><strong aria-hidden="true">3.1.</strong> Financial Charts</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Plotly.rs Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#ohlc-charts" id="ohlc-charts">OHLC Charts</a></h1>
+<h2><a class="header" href="#simple-ohlc-chart" id="simple-ohlc-chart">Simple OHLC Chart</a></h2>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn simple_ohlc_chart(show: bool) {
+    let x = vec![
+        &quot;2017-01-04&quot;,
+        &quot;2017-01-05&quot;,
+        &quot;2017-01-06&quot;,
+        &quot;2017-01-09&quot;,
+        &quot;2017-01-10&quot;,
+        &quot;2017-01-11&quot;,
+        &quot;2017-01-12&quot;,
+        &quot;2017-01-13&quot;,
+        &quot;2017-01-17&quot;,
+        &quot;2017-01-18&quot;,
+        &quot;2017-01-19&quot;,
+        &quot;2017-01-20&quot;,
+        &quot;2017-01-23&quot;,
+        &quot;2017-01-24&quot;,
+        &quot;2017-01-25&quot;,
+        &quot;2017-01-26&quot;,
+        &quot;2017-01-27&quot;,
+        &quot;2017-01-30&quot;,
+        &quot;2017-01-31&quot;,
+        &quot;2017-02-01&quot;,
+        &quot;2017-02-02&quot;,
+        &quot;2017-02-03&quot;,
+        &quot;2017-02-06&quot;,
+        &quot;2017-02-07&quot;,
+        &quot;2017-02-08&quot;,
+        &quot;2017-02-09&quot;,
+        &quot;2017-02-10&quot;,
+        &quot;2017-02-13&quot;,
+        &quot;2017-02-14&quot;,
+        &quot;2017-02-15&quot;,
+    ];
+    let open = vec![
+        115.849998, 115.919998, 116.779999, 117.949997, 118.769997, 118.739998, 118.900002,
+        119.110001, 118.339996, 120.0, 119.400002, 120.449997, 120.0, 119.550003, 120.419998,
+        121.669998, 122.139999, 120.93, 121.150002, 127.029999, 127.980003, 128.309998, 129.130005,
+        130.539993, 131.350006, 131.649994, 132.460007, 133.080002, 133.470001, 135.520004,
+    ];
+    let high = vec![
+        116.510002, 116.860001, 118.160004, 119.43, 119.379997, 119.93, 119.300003, 119.620003,
+        120.239998, 120.5, 120.089996, 120.449997, 120.809998, 120.099998, 122.099998, 122.440002,
+        122.349998, 121.629997, 121.389999, 130.490005, 129.389999, 129.190002, 130.5, 132.089996,
+        132.220001, 132.449997, 132.940002, 133.820007, 135.089996, 136.270004,
+    ];
+    let low = vec![
+        115.75, 115.809998, 116.470001, 117.940002, 118.300003, 118.599998, 118.209999, 118.809998,
+        118.220001, 119.709999, 119.370003, 119.730003, 119.769997, 119.5, 120.279999, 121.599998,
+        121.599998, 120.660004, 120.620003, 127.010002, 127.779999, 128.160004, 128.899994,
+        130.449997, 131.220001, 131.119995, 132.050003, 132.75, 133.25, 134.619995,
+    ];
+    let close = vec![
+        116.019997, 116.610001, 117.910004, 118.989998, 119.110001, 119.75, 119.25, 119.040001,
+        120.0, 119.989998, 119.779999, 120.0, 120.080002, 119.970001, 121.879997, 121.940002,
+        121.949997, 121.629997, 121.349998, 128.75, 128.529999, 129.080002, 130.289993, 131.529999,
+        132.039993, 132.419998, 132.119995, 133.289993, 135.020004, 135.509995,
+    ];
+
+    let trace1 = Ohlc::new(x, open, high, low, close);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    if show {
+        plot.show();
+    }
+    println!(
+        &quot;{}&quot;,
+        plot.to_inline_html(Some(&quot;simple_ohlc_chart&quot;))
+    );
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div id="simple_ohlc_chart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    window.PLOTLYENV=window.PLOTLYENV || {};
+    if (document.getElementById("simple_ohlc_chart")) {
+        var d3 = Plotly.d3;
+        var image_element= d3.select('#image-export');
+        var trace_0 = {"type":"ohlc","x":["2017-01-04","2017-01-05","2017-01-06","2017-01-09","2017-01-10","2017-01-11","2017-01-12","2017-01-13","2017-01-17","2017-01-18","2017-01-19","2017-01-20","2017-01-23","2017-01-24","2017-01-25","2017-01-26","2017-01-27","2017-01-30","2017-01-31","2017-02-01","2017-02-02","2017-02-03","2017-02-06","2017-02-07","2017-02-08","2017-02-09","2017-02-10","2017-02-13","2017-02-14","2017-02-15"],"open":[115.849998,115.919998,116.779999,117.949997,118.769997,118.739998,118.900002,119.110001,118.339996,120.0,119.400002,120.449997,120.0,119.550003,120.419998,121.669998,122.139999,120.93,121.150002,127.029999,127.980003,128.309998,129.130005,130.539993,131.350006,131.649994,132.460007,133.080002,133.470001,135.520004],"high":[116.510002,116.860001,118.160004,119.43,119.379997,119.93,119.300003,119.620003,120.239998,120.5,120.089996,120.449997,120.809998,120.099998,122.099998,122.440002,122.349998,121.629997,121.389999,130.490005,129.389999,129.190002,130.5,132.089996,132.220001,132.449997,132.940002,133.820007,135.089996,136.270004],"low":[115.75,115.809998,116.470001,117.940002,118.300003,118.599998,118.209999,118.809998,118.220001,119.709999,119.370003,119.730003,119.769997,119.5,120.279999,121.599998,121.599998,120.660004,120.620003,127.010002,127.779999,128.160004,128.899994,130.449997,131.220001,131.119995,132.050003,132.75,133.25,134.619995],"close":[116.019997,116.610001,117.910004,118.989998,119.110001,119.75,119.25,119.040001,120.0,119.989998,119.779999,120.0,120.080002,119.970001,121.879997,121.940002,121.949997,121.629997,121.349998,128.75,128.529999,129.080002,130.289993,131.529999,132.039993,132.419998,132.119995,133.289993,135.020004,135.509995],"increasing":{"line":{"width":2.0,"color":"green"}},"decreasing":{"line":{"width":2.0,"color":"red"}}};
+var data = [trace_0];
+var layout = {};
+        Plotly.newPlot('simple_ohlc_chart', data, layout, {"responsive": true});
+    };
+</script>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../../recipes/financial_charts/candlestick_charts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../../recipes/subplots.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="../../recipes/financial_charts/candlestick_charts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="../../recipes/subplots.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+        <script type="text/javascript" src="../../ferris.js"></script>
+        
+        <script type="text/javascript" src="../../plotly-1.54.6.min.js"></script>
+        
+
+        
+
+    </body>
+</html>
