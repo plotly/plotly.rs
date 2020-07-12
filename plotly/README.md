@@ -1,4 +1,31 @@
-# Plotly for Rust [![Crate](https://img.shields.io/crates/v/plotly.svg)](https://crates.io/crates/plotly) [![Documentation](https://docs.rs/plotly/badge.svg)](https://docs.rs/plotly) ![Minimum Rust version: 1.31](https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg)
+<h1 align="center">Plotly.<span></span>rs</h1>
+
+<div align="center">Plotly for Rust</div>
+
+<div align="center">
+	<a href="https://igiagkiozis.github.io/plotly/content/getting_started.html">Getting Started</a>
+    |
+    <a href="https://igiagkiozis.github.io/plotly/content/recipes.html">Recipes</a>
+    |
+    <a href="https://docs.rs/crate/plotly/">API Docs</a>
+    |
+    <a href="https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md">Changelog</a>
+</div>
+
+<div align="center">
+    <a href="https://crates.io/crates/plotly">
+        <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
+    </a>
+    |
+	<a href="https://docs.rs/plotly">
+        <img src="https://docs.rs/plotly/badge.svg" alt="Documentation">
+    </a>
+    |
+    <a href="">
+        <img src="https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg" alt="Minimum Version">
+    </a>
+
+</div>
 
 A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
@@ -12,39 +39,31 @@ Add this to your `Cargo.toml`:
 plotly = "0.5.0"
 ```
 
-## Plotly in action
-```rust
-extern crate plotly;
-use plotly::common::Mode;
-use plotly::{Plot, Scatter};
+For changes since the last version please consult the [change log](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
 
-fn line_and_scatter_plot() {
-    let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
-        .name("trace1")
-        .mode(Mode::Markers);
-    let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
-        .name("trace2")
-        .mode(Mode::Lines);
-    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
+## Crate Feature Flags
+The following feature flags are available:
+* `kaleido`
+    * Optional, compatible with Rust stable.
+    * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
+    * Requires some additional configuration, see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
+* `orca` - This feature is **Deprecated**, please use `kaleido` instead.
 
-    let mut plot = Plot::new();
-    plot.add_trace(trace1);
-    plot.add_trace(trace2);
-    plot.add_trace(trace3);
-    plot.show();
-}
+Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `kaleido` feature: 
 
-fn main() -> std::io::Result<()> {
-    line_and_scatter_plot();
-    Ok(())
-}
+```toml
+[dependencies]
+plotly = { version = "0.5.0", features = ["kaleido"] }
 ```
+For further details please see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
 
-For more examples and more detailed installation instructions please see [README](https://github.com/igiagkiozis/plotly).
 
+# Contributing
+
+Please consult the [contributing guide](https://github.com/igiagkiozis/plotly/blob/master/CONTRIBUTING.md).
 
 # License
 
-Plotly for Rust is distributed under the terms of both the MIT license.
+Plotly for Rust is distributed under the terms of the MIT license.
 
-See [LICENSE-MIT](LICENSE-MIT), and [COPYRIGHT](COPYRIGHT) for details.
+See [LICENSE-MIT](https://github.com/igiagkiozis/plotly/blob/master/LICENSE-MIT), and [COPYRIGHT](https://github.com/igiagkiozis/plotly/blob/master/COPYRIGHT) for details.

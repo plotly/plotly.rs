@@ -4,18 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - 2020-XX-XX
+## [0.5.0] - 2020-07-12
 ### Added
-- [Plotly for Rust Book](https://igiagkiozis.github.io/plotly/)
+- [Plotly.rs Book](https://igiagkiozis.github.io/plotly/).
 - Using plotly.js from the official CDN is now the default. To use the local version use the `Plot::use_local_plotly` method.
 - Plot rasterization to `png`, `jpg`, `eps`, `pdf`, `webp` and `svg` using [plotly/Kaleido](https://github.com/plotly/Kaleido), enabled using the `kaleido` feature.
 - Multi-axis support and examples.
-- Subplot support and examples. 
+- Subplot support and examples.
+- Colors can now be floating values within the color-scale range.
+- OpenGL support for scatter plots (`Scatter::open_gl_mode`); useful for displaying large data-sets.
 ### Changed
 - `Layout` complete.
 - Updated `plotly` version to `1.54.6`.
-### Fixed
-- f
+- `plotly_orca` and the `orca` feature are deprecated; use `kaleido` instead.
+- All examples have been grouped to mirror the Plotly.rs book.
+
 
 ## [0.4.1] - 2020-03-26
 ### Fixed

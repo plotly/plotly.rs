@@ -10,7 +10,6 @@
 //! feature should be considered in pre-release mode as well.
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -63,12 +62,10 @@ impl PlotData {
             r##"{{"format":"{}","width":{},"height":{},"scale":{},"data":{}}}"##,
             self.format, self.width, self.height, self.scale, self.data
         );
-        let data = data
-            .replace(" ", "")
+        data.replace(" ", "")
             .replace("\n", "")
             .replace("\t", "")
-            .replace("\r", "");
-        data
+            .replace("\r", "")
     }
 }
 

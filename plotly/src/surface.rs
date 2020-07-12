@@ -1,6 +1,6 @@
 //! Surface plot
 
-use crate::common::color::Color;
+use crate::common::color::{Color, ColorWrapper};
 use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType};
 use crate::private;
 use crate::Trace;
@@ -118,7 +118,7 @@ pub struct PlaneContours {
     #[serde(skip_serializing_if = "Option::is_none")]
     project: Option<PlaneProject>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<String>,
+    color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "usecolormap")]
     use_colormap: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -126,7 +126,7 @@ pub struct PlaneContours {
     #[serde(skip_serializing_if = "Option::is_none")]
     highlight: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "highlightcolor")]
-    highlight_color: Option<String>,
+    highlight_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "highlightwidth")]
     highlight_width: Option<usize>,
 }
@@ -174,7 +174,7 @@ impl PlaneContours {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> PlaneContours {
-        self.color = Some(color.to_color_string());
+        self.color = Some(color.to_color());
         self
     }
 
@@ -194,7 +194,7 @@ impl PlaneContours {
     }
 
     pub fn highlight_color<C: Color>(mut self, highlight_color: C) -> PlaneContours {
-        self.highlight_color = Some(highlight_color.to_color_string());
+        self.highlight_color = Some(highlight_color.to_color());
         self
     }
 
@@ -263,7 +263,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "surfacecolor")]
-    surface_color: Option<Vec<String>>,
+    surface_color: Option<Vec<ColorWrapper>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]

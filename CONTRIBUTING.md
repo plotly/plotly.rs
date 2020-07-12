@@ -1,4 +1,4 @@
-# Contributing to Ploty for Rust
+# Contributing to Ploty.rs
 
 Contribution in the form of suggestions, bug reports, pull requests and feedback is welcome from everyone. In this document
 you'll find guidance if you are considering to offer your help to this project.

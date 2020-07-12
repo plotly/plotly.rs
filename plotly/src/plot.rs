@@ -249,54 +249,6 @@ impl Plot {
         }
     }
 
-    /// Saves the `Plot` to png format.
-    #[cfg(feature = "orca")]
-    pub fn to_png<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_png(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to jpeg format.
-    #[cfg(feature = "orca")]
-    pub fn to_jpeg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_jpeg(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to webp format.
-    #[cfg(feature = "orca")]
-    pub fn to_webp<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_webp(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to svg format.
-    #[cfg(feature = "orca")]
-    pub fn to_svg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_svg(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to pdf format.
-    #[cfg(feature = "orca")]
-    pub fn to_pdf<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_pdf(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to eps format.
-    #[cfg(feature = "orca")]
-    pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_eps(filename.as_ref(), &rendered, width, height);
-    }
-
     /// Saves the `Plot` to the selected image format.
     #[cfg(feature = "kaleido")]
     pub fn save<P: AsRef<Path>>(
@@ -329,6 +281,78 @@ impl Plot {
             .expect(format!("failed to export plot to {:?}", filename.as_ref()).as_str());
     }
 
+    /// Saves the `Plot` to png format.
+    #[cfg(feature = "orca")]
+    #[deprecated(
+        since = "0.5.0",
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+    )]
+    pub fn to_png<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
+        let rendered = self.to_json();
+        orca.save_png(filename.as_ref(), &rendered, width, height);
+    }
+
+    /// Saves the `Plot` to jpeg format.
+    #[cfg(feature = "orca")]
+    #[deprecated(
+        since = "0.5.0",
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+    )]
+    pub fn to_jpeg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
+        let rendered = self.to_json();
+        orca.save_jpeg(filename.as_ref(), &rendered, width, height);
+    }
+
+    /// Saves the `Plot` to webp format.
+    #[cfg(feature = "orca")]
+    #[deprecated(
+        since = "0.5.0",
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+    )]
+    pub fn to_webp<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
+        let rendered = self.to_json();
+        orca.save_webp(filename.as_ref(), &rendered, width, height);
+    }
+
+    /// Saves the `Plot` to svg format.
+    #[cfg(feature = "orca")]
+    #[deprecated(
+        since = "0.5.0",
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+    )]
+    pub fn to_svg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
+        let rendered = self.to_json();
+        orca.save_svg(filename.as_ref(), &rendered, width, height);
+    }
+
+    /// Saves the `Plot` to pdf format.
+    #[cfg(feature = "orca")]
+    #[deprecated(
+        since = "0.5.0",
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+    )]
+    pub fn to_pdf<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
+        let rendered = self.to_json();
+        orca.save_pdf(filename.as_ref(), &rendered, width, height);
+    }
+
+    /// Saves the `Plot` to eps format.
+    #[cfg(feature = "orca")]
+    #[deprecated(
+        since = "0.5.0",
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+    )]
+    pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
+        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
+        let rendered = self.to_json();
+        orca.save_eps(filename.as_ref(), &rendered, width, height);
+    }
+
     fn plotly_js_path() -> PathBuf {
         let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         let templates = root.join("templates");
@@ -341,7 +365,7 @@ impl Plot {
             let s = trace.serialize();
             plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
         }
-        plot_data.push_str("\n");
+        // plot_data.push_str("\n");
         plot_data.push_str("var data = [");
         for idx in 0..self.traces.len() {
             if idx != self.traces.len() - 1 {
@@ -352,10 +376,10 @@ impl Plot {
         }
         plot_data.push_str("];\n");
         let layout_data = match &self.layout {
-            Some(layout) => format!("var layout = {};\n", Trace::serialize(layout)),
+            Some(layout) => format!("var layout = {};", Trace::serialize(layout)),
             None => {
                 let mut s = String::from("var layout = {");
-                s.push_str("};\n");
+                s.push_str("};");
                 s
             }
         };

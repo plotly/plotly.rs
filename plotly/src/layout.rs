@@ -1,11 +1,11 @@
-use crate::common::color::Color;
+use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
     Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Side,
-    TickFormatStops, TickMode, Title,
+    TickFormatStop, TickMode, Title,
 };
 use crate::plot::Trace;
 use crate::private;
-use crate::private::TruthyEnum;
+use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
@@ -135,9 +135,9 @@ pub enum WaterfallMode {
 #[derive(Serialize, Debug, Default)]
 pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<String>,
+    background_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<String>,
+    border_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
     border_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -170,33 +170,16 @@ pub struct Legend {
 
 impl Legend {
     pub fn new() -> Legend {
-        Legend {
-            background_color: None,
-            border_color: None,
-            border_width: None,
-            font: None,
-            orientation: None,
-            trace_order: None,
-            trace_group_gap: None,
-            item_sizing: None,
-            item_click: None,
-            item_double_click: None,
-            x: None,
-            x_anchor: None,
-            y: None,
-            y_anchor: None,
-            valign: None,
-            title: None,
-        }
+        Default::default()
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Legend {
-        self.background_color = Some(background_color.to_color_string());
+        self.background_color = Some(background_color.to_color());
         self
     }
 
     pub fn border_color<C: Color>(mut self, border_color: C) -> Legend {
-        self.border_color = Some(border_color.to_color_string());
+        self.border_color = Some(border_color.to_color());
         self
     }
 
@@ -299,14 +282,7 @@ pub struct Margin {
 
 impl Margin {
     pub fn new() -> Margin {
-        Margin {
-            l: None,
-            r: None,
-            t: None,
-            b: None,
-            pad: None,
-            auto_expand: None,
-        }
+        Default::default()
     }
 
     pub fn left(mut self, left: usize) -> Margin {
@@ -352,11 +328,7 @@ pub struct LayoutColorScale {
 
 impl LayoutColorScale {
     pub fn new() -> LayoutColorScale {
-        LayoutColorScale {
-            sequential: None,
-            sequential_minus: None,
-            diverging: None,
-        }
+        Default::default()
     }
 
     pub fn sequential(mut self, sequential: ColorScale) -> LayoutColorScale {
@@ -371,6 +343,280 @@ impl LayoutColorScale {
 
     pub fn diverging(mut self, diverging: ColorScale) -> LayoutColorScale {
         self.diverging = Some(diverging);
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub enum SliderRangeMode {
+    #[serde(rename = "auto")]
+    Auto,
+    #[serde(rename = "fixed")]
+    Fixed,
+    #[serde(rename = "match")]
+    Match,
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct RangeSliderYAxis {
+    #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
+    range_mode: Option<SliderRangeMode>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    range: Option<Vec<NumOrStringWrapper>>,
+}
+
+impl RangeSliderYAxis {
+    pub fn new() -> RangeSliderYAxis {
+        Default::default()
+    }
+
+    pub fn range_mode(mut self, range_mode: SliderRangeMode) -> RangeSliderYAxis {
+        self.range_mode = Some(range_mode);
+        self
+    }
+
+    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> RangeSliderYAxis {
+        let wrapped = to_num_or_string_wrapper(range);
+        self.range = Some(wrapped);
+        self
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct RangeSlider {
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    background_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
+    border_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
+    border_width: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "autorange")]
+    auto_range: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    range: Option<Vec<NumOrStringWrapper>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    thickness: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    visible: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<RangeSliderYAxis>,
+}
+
+impl RangeSlider {
+    pub fn new() -> RangeSlider {
+        Default::default()
+    }
+
+    pub fn background_color<C: Color>(mut self, background_color: C) -> RangeSlider {
+        self.background_color = Some(background_color.to_color());
+        self
+    }
+
+    pub fn border_color<C: Color>(mut self, border_color: C) -> RangeSlider {
+        self.border_color = Some(border_color.to_color());
+        self
+    }
+
+    pub fn border_width(mut self, border_width: u64) -> RangeSlider {
+        self.border_width = Some(border_width);
+        self
+    }
+
+    pub fn auto_range(mut self, auto_range: bool) -> RangeSlider {
+        self.auto_range = Some(auto_range);
+        self
+    }
+
+    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> RangeSlider {
+        let wrapped = to_num_or_string_wrapper(range);
+        self.range = Some(wrapped);
+        self
+    }
+
+    pub fn thickness(mut self, thickness: f64) -> RangeSlider {
+        self.thickness = Some(thickness);
+        self
+    }
+
+    pub fn visible(mut self, visible: bool) -> RangeSlider {
+        self.visible = Some(visible);
+        self
+    }
+
+    pub fn y_axis(mut self, axis: RangeSliderYAxis) -> RangeSlider {
+        self.y_axis = Some(axis);
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub enum SelectorStep {
+    #[serde(rename = "month")]
+    Month,
+    #[serde(rename = "year")]
+    Year,
+    #[serde(rename = "day")]
+    Day,
+    #[serde(rename = "hour")]
+    Hour,
+    #[serde(rename = "minute")]
+    Minute,
+    #[serde(rename = "second")]
+    Second,
+    #[serde(rename = "all")]
+    All,
+}
+
+#[derive(Serialize, Debug)]
+pub enum StepMode {
+    #[serde(rename = "backward")]
+    Backward,
+    #[serde(rename = "todate")]
+    ToDate,
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct SelectorButton {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    visible: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    step: Option<SelectorStep>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "stepmode")]
+    step_mode: Option<StepMode>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    count: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    label: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "templateitemname")]
+    template_item_name: Option<String>,
+}
+
+impl SelectorButton {
+    pub fn new() -> SelectorButton {
+        Default::default()
+    }
+
+    pub fn visible(mut self, visible: bool) -> SelectorButton {
+        self.visible = Some(visible);
+        self
+    }
+
+    pub fn step(mut self, step: SelectorStep) -> SelectorButton {
+        self.step = Some(step);
+        self
+    }
+
+    pub fn step_mode(mut self, step_mode: StepMode) -> SelectorButton {
+        self.step_mode = Some(step_mode);
+        self
+    }
+
+    pub fn count(mut self, count: usize) -> SelectorButton {
+        self.count = Some(count);
+        self
+    }
+
+    pub fn label(mut self, label: &str) -> SelectorButton {
+        self.label = Some(label.to_owned());
+        self
+    }
+
+    pub fn name(mut self, name: &str) -> SelectorButton {
+        self.name = Some(name.to_owned());
+        self
+    }
+
+    pub fn template_item_name(mut self, template_item_name: &str) -> SelectorButton {
+        self.template_item_name = Some(template_item_name.to_owned());
+        self
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct RangeSelector {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    visible: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    buttons: Option<Vec<SelectorButton>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
+    x_anchor: Option<Anchor>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
+    y_anchor: Option<Anchor>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    font: Option<Font>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    background_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "activecolor")]
+    active_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
+    border_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
+    border_width: Option<usize>,
+}
+
+impl RangeSelector {
+    pub fn new() -> RangeSelector {
+        Default::default()
+    }
+
+    pub fn visible(mut self, visible: bool) -> RangeSelector {
+        self.visible = Some(visible);
+        self
+    }
+
+    pub fn buttons(mut self, buttons: Vec<SelectorButton>) -> RangeSelector {
+        self.buttons = Some(buttons);
+        self
+    }
+
+    pub fn x(mut self, x: f64) -> RangeSelector {
+        self.x = Some(x);
+        self
+    }
+
+    pub fn x_anchor(mut self, x_anchor: Anchor) -> RangeSelector {
+        self.x_anchor = Some(x_anchor);
+        self
+    }
+
+    pub fn y(mut self, y: f64) -> RangeSelector {
+        self.y = Some(y);
+        self
+    }
+
+    pub fn y_anchor(mut self, y_anchor: Anchor) -> RangeSelector {
+        self.y_anchor = Some(y_anchor);
+        self
+    }
+
+    pub fn font(mut self, font: Font) -> RangeSelector {
+        self.font = Some(font);
+        self
+    }
+
+    pub fn background_color<C: Color>(mut self, background_color: C) -> RangeSelector {
+        self.background_color = Some(background_color.to_color());
+        self
+    }
+
+    pub fn active_color<C: Color>(mut self, active_color: C) -> RangeSelector {
+        self.background_color = Some(active_color.to_color());
+        self
+    }
+
+    pub fn border_color<C: Color>(mut self, border_color: C) -> RangeSelector {
+        self.border_color = Some(border_color.to_color());
+        self
+    }
+
+    pub fn border_width(mut self, border_width: usize) -> RangeSelector {
+        self.border_width = Some(border_width);
         self
     }
 }
@@ -399,17 +645,7 @@ pub struct ColorAxis {
 
 impl ColorAxis {
     pub fn new() -> ColorAxis {
-        ColorAxis {
-            cauto: None,
-            cmin: None,
-            cmax: None,
-            cmid: None,
-            color_scale: None,
-            auto_color_scale: None,
-            reverse_scale: None,
-            show_scale: None,
-            color_bar: None,
-        }
+        Default::default()
     }
 
     pub fn cauto(mut self, cauto: bool) -> ColorAxis {
@@ -463,7 +699,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<String>,
+    color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -473,7 +709,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
     range_mode: Option<RangeMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    range: Option<Vec<f64>>,
+    range: Option<Vec<NumOrStringWrapper>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fixedrange")]
     fixed_range: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -505,7 +741,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickwidth")]
     tick_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickcolor")]
-    tick_color: Option<String>,
+    tick_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showticklabels")]
     show_tick_labels: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "automargin")]
@@ -513,7 +749,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "showspikes")]
     show_spikes: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikecolor")]
-    spike_color: Option<String>,
+    spike_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikethickness")]
     spike_thickness: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikedash")]
@@ -543,31 +779,31 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickformat")]
     tick_format: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickformatstops")]
-    tick_format_stops: Option<TickFormatStops>,
+    tick_format_stops: Option<Vec<TickFormatStop>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverformat")]
     hover_format: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showline")]
     show_line: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "linecolor")]
-    line_color: Option<String>,
+    line_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "linewidth")]
     line_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showgrid")]
     show_grid: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "gridcolor")]
-    grid_color: Option<String>,
+    grid_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "gridwidth")]
     grid_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zeroline")]
     zero_line: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zerolinecolor")]
-    zero_line_color: Option<String>,
+    zero_line_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zerolinewidth")]
     zero_line_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showdividers")]
     show_dividers: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dividercolor")]
-    divider_color: Option<String>,
+    divider_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dividerwidth")]
     divider_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -580,74 +816,17 @@ pub struct Axis {
     domain: Option<Vec<f64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     position: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "rangeslider")]
+    range_slider: Option<RangeSlider>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "rangeselector")]
+    range_selector: Option<RangeSelector>,
     #[serde(skip_serializing_if = "Option::is_none")]
     calendar: Option<Calendar>,
 }
 
 impl Axis {
     pub fn new() -> Axis {
-        Axis {
-            visible: None,
-            color: None,
-            title: None,
-            r#type: None,
-            auto_range: None,
-            range_mode: None,
-            range: None,
-            fixed_range: None,
-            constrain: None,
-            constrain_toward: None,
-            tick_mode: None,
-            n_ticks: None,
-            tick0: None,
-            dtick: None,
-            tick_values: None,
-            tick_text: None,
-            ticks: None,
-            ticks_on: None,
-            mirror: None,
-            tick_length: None,
-            tick_width: None,
-            tick_color: None,
-            show_tick_labels: None,
-            auto_margin: None,
-            show_spikes: None,
-            spike_color: None,
-            spike_thickness: None,
-            spike_dash: None,
-            spike_mode: None,
-            spike_snap: None,
-            tick_font: None,
-            tick_angle: None,
-            tick_prefix: None,
-            show_tick_prefix: None,
-            tick_suffix: None,
-            show_tick_suffix: None,
-            show_exponent: None,
-            exponent_format: None,
-            separate_thousands: None,
-            tick_format: None,
-            tick_format_stops: None,
-            hover_format: None,
-            show_line: None,
-            line_color: None,
-            line_width: None,
-            show_grid: None,
-            grid_color: None,
-            grid_width: None,
-            zero_line: None,
-            zero_line_color: None,
-            zero_line_width: None,
-            show_dividers: None,
-            divider_color: None,
-            divider_width: None,
-            anchor: None,
-            side: None,
-            overlaying: None,
-            domain: None,
-            position: None,
-            calendar: None,
-        }
+        Default::default()
     }
 
     pub fn visible(mut self, visible: bool) -> Axis {
@@ -656,7 +835,7 @@ impl Axis {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Axis {
-        self.color = Some(color.to_color_string());
+        self.color = Some(color.to_color());
         self
     }
 
@@ -680,8 +859,9 @@ impl Axis {
         self
     }
 
-    pub fn range(mut self, range: Vec<f64>) -> Axis {
-        self.range = Some(range);
+    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> Axis {
+        let wrapped = to_num_or_string_wrapper(range);
+        self.range = Some(wrapped);
         self
     }
 
@@ -756,7 +936,7 @@ impl Axis {
     }
 
     pub fn tick_color<C: Color>(mut self, tick_color: C) -> Axis {
-        self.tick_color = Some(tick_color.to_color_string());
+        self.tick_color = Some(tick_color.to_color());
         self
     }
 
@@ -776,7 +956,7 @@ impl Axis {
     }
 
     pub fn spike_color<C: Color>(mut self, spike_color: C) -> Axis {
-        self.spike_color = Some(spike_color.to_color_string());
+        self.spike_color = Some(spike_color.to_color());
         self
     }
 
@@ -850,7 +1030,7 @@ impl Axis {
         self
     }
 
-    pub fn tick_format_stops(mut self, tick_format_stops: TickFormatStops) -> Axis {
+    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> Axis {
         self.tick_format_stops = Some(tick_format_stops);
         self
     }
@@ -866,7 +1046,7 @@ impl Axis {
     }
 
     pub fn line_color<C: Color>(mut self, line_color: C) -> Axis {
-        self.line_color = Some(line_color.to_color_string());
+        self.line_color = Some(line_color.to_color());
         self
     }
 
@@ -881,7 +1061,7 @@ impl Axis {
     }
 
     pub fn grid_color<C: Color>(mut self, grid_color: C) -> Axis {
-        self.grid_color = Some(grid_color.to_color_string());
+        self.grid_color = Some(grid_color.to_color());
         self
     }
 
@@ -896,7 +1076,7 @@ impl Axis {
     }
 
     pub fn zero_line_color<C: Color>(mut self, zero_line_color: C) -> Axis {
-        self.zero_line_color = Some(zero_line_color.to_color_string());
+        self.zero_line_color = Some(zero_line_color.to_color());
         self
     }
 
@@ -911,7 +1091,7 @@ impl Axis {
     }
 
     pub fn divider_color<C: Color>(mut self, divider_color: C) -> Axis {
-        self.divider_color = Some(divider_color.to_color_string());
+        self.divider_color = Some(divider_color.to_color());
         self
     }
 
@@ -942,6 +1122,16 @@ impl Axis {
 
     pub fn position(mut self, position: f64) -> Axis {
         self.position = Some(position);
+        self
+    }
+
+    pub fn range_slider(mut self, slider: RangeSlider) -> Axis {
+        self.range_slider = Some(slider);
+        self
+    }
+
+    pub fn range_selector(mut self, range_selector: RangeSelector) -> Axis {
+        self.range_selector = Some(range_selector);
         self
     }
 
@@ -1001,7 +1191,7 @@ pub struct GridDomain {
 
 impl GridDomain {
     pub fn new() -> GridDomain {
-        GridDomain { x: None, y: None }
+        Default::default()
     }
 
     pub fn x(mut self, x: Vec<f64>) -> GridDomain {
@@ -1045,20 +1235,7 @@ pub struct LayoutGrid {
 
 impl LayoutGrid {
     pub fn new() -> LayoutGrid {
-        LayoutGrid {
-            rows: None,
-            row_order: None,
-            columns: None,
-            sub_plots: None,
-            x_axes: None,
-            y_axes: None,
-            pattern: None,
-            x_gap: None,
-            y_gap: None,
-            domain: None,
-            x_side: None,
-            y_side: None,
-        }
+        Default::default()
     }
 
     pub fn rows(mut self, rows: usize) -> LayoutGrid {
@@ -1141,10 +1318,7 @@ pub struct UniformText {
 
 impl UniformText {
     pub fn new() -> UniformText {
-        UniformText {
-            mode: None,
-            min_size: None,
-        }
+        Default::default()
     }
 
     pub fn mode(mut self, mode: UniformTextMode) -> UniformText {
@@ -1179,21 +1353,16 @@ pub struct ModeBar {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<String>,
+    background_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<String>,
+    color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "activecolor")]
-    active_color: Option<String>,
+    active_color: Option<ColorWrapper>,
 }
 
 impl ModeBar {
     pub fn new() -> ModeBar {
-        ModeBar {
-            orientation: None,
-            background_color: None,
-            color: None,
-            active_color: None,
-        }
+        Default::default()
     }
 
     pub fn orientation<C: Color>(mut self, orientation: Orientation) -> ModeBar {
@@ -1202,17 +1371,17 @@ impl ModeBar {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> ModeBar {
-        self.background_color = Some(background_color.to_color_string());
+        self.background_color = Some(background_color.to_color());
         self
     }
 
     pub fn color<C: Color>(mut self, color: C) -> ModeBar {
-        self.color = Some(color.to_color_string());
+        self.color = Some(color.to_color());
         self
     }
 
     pub fn active_color<C: Color>(mut self, active_color: C) -> ModeBar {
-        self.active_color = Some(active_color.to_color_string());
+        self.active_color = Some(active_color.to_color());
         self
     }
 }
@@ -1240,13 +1409,13 @@ pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     separators: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "paper_bgcolor")]
-    paper_background_color: Option<String>,
+    paper_background_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "plot_bgcolor")]
-    plot_background_color: Option<String>,
+    plot_background_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
     color_scale: Option<LayoutColorScale>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    colorway: Option<Vec<String>>,
+    colorway: Option<Vec<ColorWrapper>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
     color_axis: Option<ColorAxis>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
@@ -1344,12 +1513,12 @@ pub struct Layout {
     waterfall_group_gap: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "piecolorway")]
-    pie_colorway: Option<Vec<String>>,
+    pie_colorway: Option<Vec<ColorWrapper>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "extendpiecolors")]
     extend_pie_colors: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
-    sunburst_colorway: Option<Vec<String>>,
+    sunburst_colorway: Option<Vec<ColorWrapper>>,
     #[serde(
         skip_serializing_if = "Option::is_none",
         rename = "extendsuburstcolors"
@@ -1359,71 +1528,7 @@ pub struct Layout {
 
 impl Layout {
     pub fn new() -> Layout {
-        Layout {
-            title: None,
-            show_legend: None,
-            legend: None,
-            margin: None,
-            auto_size: None,
-            width: None,
-            height: None,
-            font: None,
-            uniform_text: None,
-            separators: None,
-            paper_background_color: None,
-            plot_background_color: None,
-            color_scale: None,
-            colorway: None,
-            color_axis: None,
-            mode_bar: None,
-            hover_mode: None,
-            click_mode: None,
-            drag_mode: None,
-            select_direction: None,
-            hover_distance: None,
-            spike_distance: None,
-            hover_label: None,
-            grid: None,
-            calendar: None,
-            x_axis: None,
-            y_axis: None,
-            x_axis2: None,
-            y_axis2: None,
-            x_axis3: None,
-            y_axis3: None,
-            x_axis4: None,
-            y_axis4: None,
-            x_axis5: None,
-            y_axis5: None,
-            x_axis6: None,
-            y_axis6: None,
-            x_axis7: None,
-            y_axis7: None,
-            x_axis8: None,
-            y_axis8: None,
-            template: None,
-            box_mode: None,
-            box_gap: None,
-            box_group_gap: None,
-            bar_mode: None,
-            bar_norm: None,
-            bar_gap: None,
-            bar_group_gap: None,
-
-            violin_mode: None,
-            violin_gap: None,
-            violin_group_gap: None,
-
-            waterfall_mode: None,
-            waterfall_gap: None,
-            waterfall_group_gap: None,
-
-            pie_colorway: None,
-            extend_pie_colors: None,
-
-            sunburst_colorway: None,
-            extend_sunburst_colors: None,
-        }
+        Default::default()
     }
 
     pub fn title(mut self, title: Title) -> Layout {
@@ -1477,12 +1582,12 @@ impl Layout {
     }
 
     pub fn paper_background_color<C: Color>(mut self, paper_background_color: C) -> Layout {
-        self.paper_background_color = Some(paper_background_color.to_color_string());
+        self.paper_background_color = Some(paper_background_color.to_color());
         self
     }
 
     pub fn plot_background_color<C: Color>(mut self, plot_background_color: C) -> Layout {
-        self.plot_background_color = Some(plot_background_color.to_color_string());
+        self.plot_background_color = Some(plot_background_color.to_color());
         self
     }
 

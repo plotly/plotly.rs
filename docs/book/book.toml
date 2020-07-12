@@ -1,5 +1,5 @@
 [book]
-title = "Plotly for Rust Book"
+title = "Plotly.rs Book"
 author = "Ioannis Giagkiozis"
 language = "en"
 multilingual = false
@@ -13,7 +13,7 @@ create-missing = false
 default-theme = "Ayu"
 mathjax-support = true
 additional-css = ["ferris.css"]
-additional-js = ["ferris.js"]
+additional-js = ["ferris.js", "plotly-1.54.6.min.js"]
 
 
 [output.html.fold]

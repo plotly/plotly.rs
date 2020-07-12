@@ -1,5 +1,28 @@
+use serde::Serialize;
+
+#[serde(untagged)]
+#[derive(Serialize, Debug)]
+pub enum ColorWrapper {
+    S(String),
+    F(f64),
+}
+
+impl PartialEq for ColorWrapper {
+    fn eq(&self, other: &Self) -> bool {
+        let lhs = match self {
+            ColorWrapper::S(v) => v.to_owned(),
+            ColorWrapper::F(v) => format!("{}", v),
+        };
+        let rhs = match other {
+            ColorWrapper::S(v) => v.to_owned(),
+            ColorWrapper::F(v) => format!("{}", v),
+        };
+        lhs == rhs
+    }
+}
+
 pub trait Color {
-    fn to_color_string(&self) -> String;
+    fn to_color(&self) -> ColorWrapper;
 }
 
 #[derive(Debug)]
@@ -16,8 +39,8 @@ impl Rgb {
 }
 
 impl Color for Rgb {
-    fn to_color_string(&self) -> String {
-        format!("rgb({}, {}, {})", self.r, self.g, self.b)
+    fn to_color(&self) -> ColorWrapper {
+        ColorWrapper::S(format!("rgb({}, {}, {})", self.r, self.g, self.b))
     }
 }
 
@@ -36,8 +59,11 @@ impl Rgba {
 }
 
 impl Color for Rgba {
-    fn to_color_string(&self) -> String {
-        format!("rgba({}, {}, {}, {})", self.r, self.g, self.b, self.a)
+    fn to_color(&self) -> ColorWrapper {
+        ColorWrapper::S(format!(
+            "rgba({}, {}, {}, {})",
+            self.r, self.g, self.b, self.a
+        ))
     }
 }
 
@@ -195,192 +221,219 @@ pub enum NamedColor {
 }
 
 impl Color for NamedColor {
-    fn to_color_string(&self) -> String {
+    fn to_color(&self) -> ColorWrapper {
         match self {
-            NamedColor::AliceBlue => "aliceblue".to_owned(),
-            NamedColor::AntiqueWhite => "antiquewhite".to_owned(),
-            NamedColor::Aqua => "aqua".to_owned(),
-            NamedColor::Aquamarine => "aquamarine".to_owned(),
-            NamedColor::Azure => "azure".to_owned(),
-            NamedColor::Beige => "beige".to_owned(),
-            NamedColor::Bisque => "bisque".to_owned(),
-            NamedColor::Black => "black".to_owned(),
-            NamedColor::BlancheDalmond => "blanchedalmond".to_owned(),
-            NamedColor::Blue => "blue".to_owned(),
-            NamedColor::BlueViolet => "blueviolet".to_owned(),
-            NamedColor::Brown => "brown".to_owned(),
-            NamedColor::BurlyWood => "burlywood".to_owned(),
-            NamedColor::CadetBlue => "cadetblue".to_owned(),
-            NamedColor::Chartreuse => "chartreuse".to_owned(),
-            NamedColor::Chocolate => "chocolate".to_owned(),
-            NamedColor::Coral => "coral".to_owned(),
-            NamedColor::CornFlowerBlue => "cornflowerblue".to_owned(),
-            NamedColor::CornSilk => "cornsilk".to_owned(),
-            NamedColor::Crimson => "crimson".to_owned(),
-            NamedColor::Cyan => "cyan".to_owned(),
-            NamedColor::DarkBlue => "darkblue".to_owned(),
-            NamedColor::DarkCyan => "darkcyan".to_owned(),
-            NamedColor::DarkGoldenrod => "darkgoldenrod".to_owned(),
-            NamedColor::DarkGray => "darkgray".to_owned(),
-            NamedColor::DarkGreen => "darkgreen".to_owned(),
-            NamedColor::DarkGrey => "darkgrey".to_owned(),
-            NamedColor::DarkKhaki => "darkkhaki".to_owned(),
-            NamedColor::DarkMagenta => "darkmagenta".to_owned(),
-            NamedColor::DarkOliveGreen => "darkolivegreen".to_owned(),
-            NamedColor::DarkOrange => "darkorange".to_owned(),
-            NamedColor::DarkOrchid => "darkorchid".to_owned(),
-            NamedColor::DarkRed => "darkred".to_owned(),
-            NamedColor::DarkSalmon => "darksalmon".to_owned(),
-            NamedColor::DarkSeaGreen => "darkseagreen".to_owned(),
-            NamedColor::DarkSlateBlue => "darkslateblue".to_owned(),
-            NamedColor::DarkSlateGray => "darkslategray".to_owned(),
-            NamedColor::DarkSlateGrey => "darkslategrey".to_owned(),
-            NamedColor::DarkTurquoise => "darkturquoise".to_owned(),
-            NamedColor::DarkViolet => "darkviolet".to_owned(),
-            NamedColor::DeepPink => "deeppink".to_owned(),
-            NamedColor::DeepSkyBlue => "deepskyblue".to_owned(),
-            NamedColor::DimGray => "dimgray".to_owned(),
-            NamedColor::DimGrey => "dimgrey".to_owned(),
-            NamedColor::DodgerBlue => "dodgerblue".to_owned(),
-            NamedColor::FireBrick => "firebrick".to_owned(),
-            NamedColor::FloralWhite => "floralwhite".to_owned(),
-            NamedColor::ForestGreen => "forestgreen".to_owned(),
-            NamedColor::Fuchsia => "fuchsia".to_owned(),
-            NamedColor::Gainsboro => "gainsboro".to_owned(),
-            NamedColor::GhostWhite => "ghostwhite".to_owned(),
-            NamedColor::Gold => "gold".to_owned(),
-            NamedColor::Goldenrod => "goldenrod".to_owned(),
-            NamedColor::Gray => "gray".to_owned(),
-            NamedColor::Green => "green".to_owned(),
-            NamedColor::GreenYellow => "greenyellow".to_owned(),
-            NamedColor::Grey => "grey".to_owned(),
-            NamedColor::Honeydew => "honeydew".to_owned(),
-            NamedColor::HotPink => "hotpink".to_owned(),
-            NamedColor::IndianRed => "indianred".to_owned(),
-            NamedColor::Indigo => "indigo".to_owned(),
-            NamedColor::Ivory => "ivory".to_owned(),
-            NamedColor::Khaki => "khaki".to_owned(),
-            NamedColor::Lavender => "lavender".to_owned(),
-            NamedColor::LavenderBlush => "lavenderblush".to_owned(),
-            NamedColor::LawnGreen => "lawngreen".to_owned(),
-            NamedColor::LemonChiffon => "lemonchiffon".to_owned(),
-            NamedColor::LightBlue => "lightblue".to_owned(),
-            NamedColor::LightCoral => "lightcoral".to_owned(),
-            NamedColor::LightCyan => "lightcyan".to_owned(),
-            NamedColor::LightGoldenrodYellow => "lightgoldenrodyellow".to_owned(),
-            NamedColor::LightGray => "lightgray".to_owned(),
-            NamedColor::LightGreen => "lightgreen".to_owned(),
-            NamedColor::LightGrey => "lightgrey".to_owned(),
-            NamedColor::LightPink => "lightpink".to_owned(),
-            NamedColor::LightSalmon => "lightsalmon".to_owned(),
-            NamedColor::LightSeaGreen => "lightseagreen".to_owned(),
-            NamedColor::LightSkyBlue => "lightskyblue".to_owned(),
-            NamedColor::LightSlateGray => "lightslategray".to_owned(),
-            NamedColor::LightSlateGrey => "lightslategrey".to_owned(),
-            NamedColor::LightSteelBlue => "lightsteelblue".to_owned(),
-            NamedColor::LightYellow => "lightyellow".to_owned(),
-            NamedColor::Lime => "lime".to_owned(),
-            NamedColor::LimeGreen => "limegreen".to_owned(),
-            NamedColor::Linen => "linen".to_owned(),
-            NamedColor::Magenta => "magenta".to_owned(),
-            NamedColor::Maroon => "maroon".to_owned(),
-            NamedColor::MediumAquamarine => "mediumaquamarine".to_owned(),
-            NamedColor::MediumBlue => "mediumblue".to_owned(),
-            NamedColor::MediumOrchid => "mediumorchid".to_owned(),
-            NamedColor::MediumPurple => "mediumpurple".to_owned(),
-            NamedColor::MediumSeaGreen => "mediumseagreen".to_owned(),
-            NamedColor::MediumSlateBlue => "mediumslateblue".to_owned(),
-            NamedColor::MediumSpringGreen => "mediumspringgreen".to_owned(),
-            NamedColor::MediumTurquoise => "mediumturquoise".to_owned(),
-            NamedColor::MediumVioletRed => "mediumvioletred".to_owned(),
-            NamedColor::MidnightBlue => "midnightblue".to_owned(),
-            NamedColor::MintCream => "mintcream".to_owned(),
-            NamedColor::MistyRose => "mistyrose".to_owned(),
-            NamedColor::Moccasin => "moccasin".to_owned(),
-            NamedColor::NavajoWhite => "navajowhite".to_owned(),
-            NamedColor::Navy => "navy".to_owned(),
-            NamedColor::OldLace => "oldlace".to_owned(),
-            NamedColor::Olive => "olive".to_owned(),
-            NamedColor::OliveDrab => "olivedrab".to_owned(),
-            NamedColor::Orange => "orange".to_owned(),
-            NamedColor::OrangeRed => "orangered".to_owned(),
-            NamedColor::Orchid => "orchid".to_owned(),
-            NamedColor::PaleGoldenrod => "palegoldenrod".to_owned(),
-            NamedColor::PaleGreen => "palegreen".to_owned(),
-            NamedColor::PaleTurquoise => "paleturquoise".to_owned(),
-            NamedColor::PaleVioletRed => "palevioletred".to_owned(),
-            NamedColor::PapayaWhip => "papayawhip".to_owned(),
-            NamedColor::PeachPuff => "peachpuff".to_owned(),
-            NamedColor::Peru => "peru".to_owned(),
-            NamedColor::Pink => "pink".to_owned(),
-            NamedColor::Plum => "plum".to_owned(),
-            NamedColor::PowderBlue => "powderblue".to_owned(),
-            NamedColor::Purple => "purple".to_owned(),
-            NamedColor::Red => "red".to_owned(),
-            NamedColor::RosyBrown => "rosybrown".to_owned(),
-            NamedColor::RoyalBlue => "royalblue".to_owned(),
-            NamedColor::SaddleBrown => "saddlebrown".to_owned(),
-            NamedColor::Salmon => "salmon".to_owned(),
-            NamedColor::SandyBrown => "sandybrown".to_owned(),
-            NamedColor::SeaGreen => "seagreen".to_owned(),
-            NamedColor::Seashell => "seashell".to_owned(),
-            NamedColor::Sienna => "sienna".to_owned(),
-            NamedColor::Silver => "silver".to_owned(),
-            NamedColor::SkyBlue => "skyblue".to_owned(),
-            NamedColor::SlateBlue => "slateblue".to_owned(),
-            NamedColor::SlateGray => "slategray".to_owned(),
-            NamedColor::SlateGrey => "slategrey".to_owned(),
-            NamedColor::Snow => "snow".to_owned(),
-            NamedColor::SpringGreen => "springgreen".to_owned(),
-            NamedColor::SteelBlue => "steelblue".to_owned(),
-            NamedColor::Tan => "tan".to_owned(),
-            NamedColor::Teal => "teal".to_owned(),
-            NamedColor::Thistle => "thistle".to_owned(),
-            NamedColor::Tomato => "tomato".to_owned(),
-            NamedColor::Turquoise => "turquoise".to_owned(),
-            NamedColor::Violet => "violet".to_owned(),
-            NamedColor::Wheat => "wheat".to_owned(),
-            NamedColor::White => "white".to_owned(),
-            NamedColor::WhiteSmoke => "whitesmoke".to_owned(),
-            NamedColor::Yellow => "yellow".to_owned(),
-            NamedColor::YellowGreen => "yellowgreen".to_owned(),
-            NamedColor::Transparent => "transparent".to_owned(),
+            NamedColor::AliceBlue => ColorWrapper::S("aliceblue".to_owned()),
+            NamedColor::AntiqueWhite => ColorWrapper::S("antiquewhite".to_owned()),
+            NamedColor::Aqua => ColorWrapper::S("aqua".to_owned()),
+            NamedColor::Aquamarine => ColorWrapper::S("aquamarine".to_owned()),
+            NamedColor::Azure => ColorWrapper::S("azure".to_owned()),
+            NamedColor::Beige => ColorWrapper::S("beige".to_owned()),
+            NamedColor::Bisque => ColorWrapper::S("bisque".to_owned()),
+            NamedColor::Black => ColorWrapper::S("black".to_owned()),
+            NamedColor::BlancheDalmond => ColorWrapper::S("blanchedalmond".to_owned()),
+            NamedColor::Blue => ColorWrapper::S("blue".to_owned()),
+            NamedColor::BlueViolet => ColorWrapper::S("blueviolet".to_owned()),
+            NamedColor::Brown => ColorWrapper::S("brown".to_owned()),
+            NamedColor::BurlyWood => ColorWrapper::S("burlywood".to_owned()),
+            NamedColor::CadetBlue => ColorWrapper::S("cadetblue".to_owned()),
+            NamedColor::Chartreuse => ColorWrapper::S("chartreuse".to_owned()),
+            NamedColor::Chocolate => ColorWrapper::S("chocolate".to_owned()),
+            NamedColor::Coral => ColorWrapper::S("coral".to_owned()),
+            NamedColor::CornFlowerBlue => ColorWrapper::S("cornflowerblue".to_owned()),
+            NamedColor::CornSilk => ColorWrapper::S("cornsilk".to_owned()),
+            NamedColor::Crimson => ColorWrapper::S("crimson".to_owned()),
+            NamedColor::Cyan => ColorWrapper::S("cyan".to_owned()),
+            NamedColor::DarkBlue => ColorWrapper::S("darkblue".to_owned()),
+            NamedColor::DarkCyan => ColorWrapper::S("darkcyan".to_owned()),
+            NamedColor::DarkGoldenrod => ColorWrapper::S("darkgoldenrod".to_owned()),
+            NamedColor::DarkGray => ColorWrapper::S("darkgray".to_owned()),
+            NamedColor::DarkGreen => ColorWrapper::S("darkgreen".to_owned()),
+            NamedColor::DarkGrey => ColorWrapper::S("darkgrey".to_owned()),
+            NamedColor::DarkKhaki => ColorWrapper::S("darkkhaki".to_owned()),
+            NamedColor::DarkMagenta => ColorWrapper::S("darkmagenta".to_owned()),
+            NamedColor::DarkOliveGreen => ColorWrapper::S("darkolivegreen".to_owned()),
+            NamedColor::DarkOrange => ColorWrapper::S("darkorange".to_owned()),
+            NamedColor::DarkOrchid => ColorWrapper::S("darkorchid".to_owned()),
+            NamedColor::DarkRed => ColorWrapper::S("darkred".to_owned()),
+            NamedColor::DarkSalmon => ColorWrapper::S("darksalmon".to_owned()),
+            NamedColor::DarkSeaGreen => ColorWrapper::S("darkseagreen".to_owned()),
+            NamedColor::DarkSlateBlue => ColorWrapper::S("darkslateblue".to_owned()),
+            NamedColor::DarkSlateGray => ColorWrapper::S("darkslategray".to_owned()),
+            NamedColor::DarkSlateGrey => ColorWrapper::S("darkslategrey".to_owned()),
+            NamedColor::DarkTurquoise => ColorWrapper::S("darkturquoise".to_owned()),
+            NamedColor::DarkViolet => ColorWrapper::S("darkviolet".to_owned()),
+            NamedColor::DeepPink => ColorWrapper::S("deeppink".to_owned()),
+            NamedColor::DeepSkyBlue => ColorWrapper::S("deepskyblue".to_owned()),
+            NamedColor::DimGray => ColorWrapper::S("dimgray".to_owned()),
+            NamedColor::DimGrey => ColorWrapper::S("dimgrey".to_owned()),
+            NamedColor::DodgerBlue => ColorWrapper::S("dodgerblue".to_owned()),
+            NamedColor::FireBrick => ColorWrapper::S("firebrick".to_owned()),
+            NamedColor::FloralWhite => ColorWrapper::S("floralwhite".to_owned()),
+            NamedColor::ForestGreen => ColorWrapper::S("forestgreen".to_owned()),
+            NamedColor::Fuchsia => ColorWrapper::S("fuchsia".to_owned()),
+            NamedColor::Gainsboro => ColorWrapper::S("gainsboro".to_owned()),
+            NamedColor::GhostWhite => ColorWrapper::S("ghostwhite".to_owned()),
+            NamedColor::Gold => ColorWrapper::S("gold".to_owned()),
+            NamedColor::Goldenrod => ColorWrapper::S("goldenrod".to_owned()),
+            NamedColor::Gray => ColorWrapper::S("gray".to_owned()),
+            NamedColor::Green => ColorWrapper::S("green".to_owned()),
+            NamedColor::GreenYellow => ColorWrapper::S("greenyellow".to_owned()),
+            NamedColor::Grey => ColorWrapper::S("grey".to_owned()),
+            NamedColor::Honeydew => ColorWrapper::S("honeydew".to_owned()),
+            NamedColor::HotPink => ColorWrapper::S("hotpink".to_owned()),
+            NamedColor::IndianRed => ColorWrapper::S("indianred".to_owned()),
+            NamedColor::Indigo => ColorWrapper::S("indigo".to_owned()),
+            NamedColor::Ivory => ColorWrapper::S("ivory".to_owned()),
+            NamedColor::Khaki => ColorWrapper::S("khaki".to_owned()),
+            NamedColor::Lavender => ColorWrapper::S("lavender".to_owned()),
+            NamedColor::LavenderBlush => ColorWrapper::S("lavenderblush".to_owned()),
+            NamedColor::LawnGreen => ColorWrapper::S("lawngreen".to_owned()),
+            NamedColor::LemonChiffon => ColorWrapper::S("lemonchiffon".to_owned()),
+            NamedColor::LightBlue => ColorWrapper::S("lightblue".to_owned()),
+            NamedColor::LightCoral => ColorWrapper::S("lightcoral".to_owned()),
+            NamedColor::LightCyan => ColorWrapper::S("lightcyan".to_owned()),
+            NamedColor::LightGoldenrodYellow => ColorWrapper::S("lightgoldenrodyellow".to_owned()),
+            NamedColor::LightGray => ColorWrapper::S("lightgray".to_owned()),
+            NamedColor::LightGreen => ColorWrapper::S("lightgreen".to_owned()),
+            NamedColor::LightGrey => ColorWrapper::S("lightgrey".to_owned()),
+            NamedColor::LightPink => ColorWrapper::S("lightpink".to_owned()),
+            NamedColor::LightSalmon => ColorWrapper::S("lightsalmon".to_owned()),
+            NamedColor::LightSeaGreen => ColorWrapper::S("lightseagreen".to_owned()),
+            NamedColor::LightSkyBlue => ColorWrapper::S("lightskyblue".to_owned()),
+            NamedColor::LightSlateGray => ColorWrapper::S("lightslategray".to_owned()),
+            NamedColor::LightSlateGrey => ColorWrapper::S("lightslategrey".to_owned()),
+            NamedColor::LightSteelBlue => ColorWrapper::S("lightsteelblue".to_owned()),
+            NamedColor::LightYellow => ColorWrapper::S("lightyellow".to_owned()),
+            NamedColor::Lime => ColorWrapper::S("lime".to_owned()),
+            NamedColor::LimeGreen => ColorWrapper::S("limegreen".to_owned()),
+            NamedColor::Linen => ColorWrapper::S("linen".to_owned()),
+            NamedColor::Magenta => ColorWrapper::S("magenta".to_owned()),
+            NamedColor::Maroon => ColorWrapper::S("maroon".to_owned()),
+            NamedColor::MediumAquamarine => ColorWrapper::S("mediumaquamarine".to_owned()),
+            NamedColor::MediumBlue => ColorWrapper::S("mediumblue".to_owned()),
+            NamedColor::MediumOrchid => ColorWrapper::S("mediumorchid".to_owned()),
+            NamedColor::MediumPurple => ColorWrapper::S("mediumpurple".to_owned()),
+            NamedColor::MediumSeaGreen => ColorWrapper::S("mediumseagreen".to_owned()),
+            NamedColor::MediumSlateBlue => ColorWrapper::S("mediumslateblue".to_owned()),
+            NamedColor::MediumSpringGreen => ColorWrapper::S("mediumspringgreen".to_owned()),
+            NamedColor::MediumTurquoise => ColorWrapper::S("mediumturquoise".to_owned()),
+            NamedColor::MediumVioletRed => ColorWrapper::S("mediumvioletred".to_owned()),
+            NamedColor::MidnightBlue => ColorWrapper::S("midnightblue".to_owned()),
+            NamedColor::MintCream => ColorWrapper::S("mintcream".to_owned()),
+            NamedColor::MistyRose => ColorWrapper::S("mistyrose".to_owned()),
+            NamedColor::Moccasin => ColorWrapper::S("moccasin".to_owned()),
+            NamedColor::NavajoWhite => ColorWrapper::S("navajowhite".to_owned()),
+            NamedColor::Navy => ColorWrapper::S("navy".to_owned()),
+            NamedColor::OldLace => ColorWrapper::S("oldlace".to_owned()),
+            NamedColor::Olive => ColorWrapper::S("olive".to_owned()),
+            NamedColor::OliveDrab => ColorWrapper::S("olivedrab".to_owned()),
+            NamedColor::Orange => ColorWrapper::S("orange".to_owned()),
+            NamedColor::OrangeRed => ColorWrapper::S("orangered".to_owned()),
+            NamedColor::Orchid => ColorWrapper::S("orchid".to_owned()),
+            NamedColor::PaleGoldenrod => ColorWrapper::S("palegoldenrod".to_owned()),
+            NamedColor::PaleGreen => ColorWrapper::S("palegreen".to_owned()),
+            NamedColor::PaleTurquoise => ColorWrapper::S("paleturquoise".to_owned()),
+            NamedColor::PaleVioletRed => ColorWrapper::S("palevioletred".to_owned()),
+            NamedColor::PapayaWhip => ColorWrapper::S("papayawhip".to_owned()),
+            NamedColor::PeachPuff => ColorWrapper::S("peachpuff".to_owned()),
+            NamedColor::Peru => ColorWrapper::S("peru".to_owned()),
+            NamedColor::Pink => ColorWrapper::S("pink".to_owned()),
+            NamedColor::Plum => ColorWrapper::S("plum".to_owned()),
+            NamedColor::PowderBlue => ColorWrapper::S("powderblue".to_owned()),
+            NamedColor::Purple => ColorWrapper::S("purple".to_owned()),
+            NamedColor::Red => ColorWrapper::S("red".to_owned()),
+            NamedColor::RosyBrown => ColorWrapper::S("rosybrown".to_owned()),
+            NamedColor::RoyalBlue => ColorWrapper::S("royalblue".to_owned()),
+            NamedColor::SaddleBrown => ColorWrapper::S("saddlebrown".to_owned()),
+            NamedColor::Salmon => ColorWrapper::S("salmon".to_owned()),
+            NamedColor::SandyBrown => ColorWrapper::S("sandybrown".to_owned()),
+            NamedColor::SeaGreen => ColorWrapper::S("seagreen".to_owned()),
+            NamedColor::Seashell => ColorWrapper::S("seashell".to_owned()),
+            NamedColor::Sienna => ColorWrapper::S("sienna".to_owned()),
+            NamedColor::Silver => ColorWrapper::S("silver".to_owned()),
+            NamedColor::SkyBlue => ColorWrapper::S("skyblue".to_owned()),
+            NamedColor::SlateBlue => ColorWrapper::S("slateblue".to_owned()),
+            NamedColor::SlateGray => ColorWrapper::S("slategray".to_owned()),
+            NamedColor::SlateGrey => ColorWrapper::S("slategrey".to_owned()),
+            NamedColor::Snow => ColorWrapper::S("snow".to_owned()),
+            NamedColor::SpringGreen => ColorWrapper::S("springgreen".to_owned()),
+            NamedColor::SteelBlue => ColorWrapper::S("steelblue".to_owned()),
+            NamedColor::Tan => ColorWrapper::S("tan".to_owned()),
+            NamedColor::Teal => ColorWrapper::S("teal".to_owned()),
+            NamedColor::Thistle => ColorWrapper::S("thistle".to_owned()),
+            NamedColor::Tomato => ColorWrapper::S("tomato".to_owned()),
+            NamedColor::Turquoise => ColorWrapper::S("turquoise".to_owned()),
+            NamedColor::Violet => ColorWrapper::S("violet".to_owned()),
+            NamedColor::Wheat => ColorWrapper::S("wheat".to_owned()),
+            NamedColor::White => ColorWrapper::S("white".to_owned()),
+            NamedColor::WhiteSmoke => ColorWrapper::S("whitesmoke".to_owned()),
+            NamedColor::Yellow => ColorWrapper::S("yellow".to_owned()),
+            NamedColor::YellowGreen => ColorWrapper::S("yellowgreen".to_owned()),
+            NamedColor::Transparent => ColorWrapper::S("transparent".to_owned()),
         }
     }
 }
 
+impl Color for f64 {
+    fn to_color(&self) -> ColorWrapper {
+        ColorWrapper::F(*self)
+    }
+}
+
+fn string_types_to_color_wrapper<S: AsRef<str> + std::fmt::Display + Sized>(v: S) -> ColorWrapper {
+    if v.as_ref().len() < 6 || v.as_ref().len() > 7 {
+        panic!(format!("{} is not a valid hex color!", v));
+    }
+    if v.as_ref().len() == 6 && v.as_ref().starts_with('#') {
+        panic!(format!("{} is not a valid hex color!", v));
+    }
+    if v.as_ref().len() == 7 && !v.as_ref().starts_with('#') {
+        panic!(format!("{} is not a valid hex color!", v));
+    }
+    let valid_characters = "#ABCDEF0123456789";
+    let mut s = v.as_ref().to_uppercase();
+    if s.len() == 6 {
+        s = format!("#{}", s);
+    }
+    for c in s.chars() {
+        if !valid_characters.contains(c) {
+            panic!(format!("{} is not a valid hex color!", v));
+        }
+    }
+
+    ColorWrapper::S(s)
+}
+
+// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
+// as it `may` implement AsRef<str> in the future.
 impl Color for str {
-    fn to_color_string(&self) -> String {
-        String::from(self).to_color_string()
+    fn to_color(&self) -> ColorWrapper {
+        string_types_to_color_wrapper(self)
     }
 }
 
-impl<T> Color for T
-where
-    T: AsRef<str> + std::fmt::Display + Sized,
-{
-    fn to_color_string(&self) -> String {
-        if self.as_ref().len() < 6 || self.as_ref().len() > 7 {
-            panic!(format!("{} is not a valid hex color!", self));
-        }
-        if self.as_ref().len() == 6 && self.as_ref().starts_with('#') {
-            panic!(format!("{} is not a valid hex color!", self));
-        }
-        if self.as_ref().len() == 7 && !self.as_ref().starts_with('#') {
-            panic!(format!("{} is not a valid hex color!", self));
-        }
-        let valid_characters = "#ABCDEF0123456789";
-        let mut s = self.as_ref().to_uppercase();
-        if s.len() == 6 {
-            s = format!("#{}", s);
-        }
-        for c in s.chars() {
-            if !valid_characters.contains(c) {
-                panic!(format!("{} is not a valid hex color!", self));
-            }
-        }
+// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
+// as it `may` implement AsRef<str> in the future.
+impl Color for &str {
+    fn to_color(&self) -> ColorWrapper {
+        string_types_to_color_wrapper(self)
+    }
+}
 
-        s
+// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
+// as it `may` implement AsRef<str> in the future.
+impl Color for String {
+    fn to_color(&self) -> ColorWrapper {
+        string_types_to_color_wrapper(self)
+    }
+}
+
+// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
+// as it `may` implement AsRef<str> in the future.
+impl Color for &String {
+    fn to_color(&self) -> ColorWrapper {
+        string_types_to_color_wrapper(self)
     }
 }
 
@@ -390,57 +443,80 @@ mod tests {
 
     #[test]
     fn hex_color_normalization_str() {
-        assert_eq!("#aabbcc".to_color_string(), "#AABBCC");
-        assert_eq!("aabbcc".to_color_string(), "#AABBCC");
-        assert_eq!("aaBBcc".to_color_string(), "#AABBCC");
-        assert_eq!("FABCDe".to_color_string(), "#FABCDE");
-        assert_eq!("123456".to_color_string(), "#123456");
-        assert_eq!("7890EE".to_color_string(), "#7890EE");
+        assert_eq!("#aabbcc".to_color(), ColorWrapper::S("#AABBCC".to_owned()));
+        assert_eq!("aabbcc".to_color(), ColorWrapper::S("#AABBCC".to_owned()));
+        assert_eq!("aaBBcc".to_color(), ColorWrapper::S("#AABBCC".to_owned()));
+        assert_eq!("FABCDe".to_color(), ColorWrapper::S("#FABCDE".to_owned()));
+        assert_eq!("123456".to_color(), ColorWrapper::S("#123456".to_owned()));
+        assert_eq!("7890EE".to_color(), ColorWrapper::S("#7890EE".to_owned()));
     }
 
     #[test]
     fn hex_color_normalization_string() {
-        assert_eq!(String::from("#aabbcc").to_color_string(), "#AABBCC");
-        assert_eq!(String::from("aabbcc".to_color_string()), "#AABBCC");
-        assert_eq!(String::from("aaBBcc".to_color_string()), "#AABBCC");
-        assert_eq!(String::from("FABCDe".to_color_string()), "#FABCDE");
-        assert_eq!(String::from("123456".to_color_string()), "#123456");
-        assert_eq!(String::from("7890EE".to_color_string()), "#7890EE");
+        assert_eq!(
+            String::from("#aabbcc").to_color(),
+            ColorWrapper::S("#AABBCC".to_owned())
+        );
+        assert_eq!(
+            String::from("aabbcc").to_color(),
+            ColorWrapper::S("#AABBCC".to_owned())
+        );
+        assert_eq!(
+            String::from("aaBBcc").to_color(),
+            ColorWrapper::S("#AABBCC".to_owned())
+        );
+        assert_eq!(
+            String::from("FABCDe").to_color(),
+            ColorWrapper::S("#FABCDE".to_owned())
+        );
+        assert_eq!(
+            String::from("123456").to_color(),
+            ColorWrapper::S("#123456".to_owned())
+        );
+        assert_eq!(
+            String::from("7890EE").to_color(),
+            ColorWrapper::S("#7890EE".to_owned())
+        );
+    }
+
+    fn color_from_f64() {
+        assert_eq!(1.54.to_color(), ColorWrapper::F(1.54));
+        assert_eq!(0.1.to_color(), ColorWrapper::F(0.1));
     }
 
     #[test]
     #[should_panic]
     fn too_short_str() {
-        "abc".to_color_string();
+        "abc".to_color();
     }
 
     #[test]
     #[should_panic]
     fn too_short_string() {
-        String::from("abc").to_color_string();
+        String::from("abc").to_color();
     }
 
     #[test]
     #[should_panic]
     fn too_long_str() {
-        "abcdef0".to_color_string();
+        "abcdef0".to_color();
     }
 
     #[test]
     #[should_panic]
     fn too_long_string() {
-        String::from("abcdef0").to_color_string();
+        String::from("abcdef0").to_color();
     }
 
     #[test]
     #[should_panic]
     fn invalid_characters_str() {
-        "abdefg".to_color_string();
+        "abdefg".to_color();
     }
 
     #[test]
     #[should_panic]
     fn invalid_characters_string() {
-        String::from("abdefg").to_color_string();
+        String::from("abdefg").to_color();
     }
 }

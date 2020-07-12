@@ -1,6 +1,6 @@
 //! Scatter plot
 
-use crate::common::color::Color;
+use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
     Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position,
@@ -71,7 +71,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     fill: Option<Fill>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<String>,
+    fill_color: Option<ColorWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoveron")]
@@ -127,6 +127,15 @@ where
             x_calendar: None,
             y_calendar: None,
         })
+    }
+
+    pub fn open_gl_mode(mut self, on: bool) -> Box<Scatter<X, Y>> {
+        self.r#type = if on {
+            PlotType::ScatterGL
+        } else {
+            PlotType::Scatter
+        };
+        Box::new(self)
     }
 
     pub fn name(mut self, name: &str) -> Box<Scatter<X, Y>> {
@@ -296,7 +305,7 @@ where
     }
 
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Scatter<X, Y>> {
-        self.fill_color = Some(fill_color.to_color_string());
+        self.fill_color = Some(fill_color.to_color());
         Box::new(self)
     }
 

@@ -1,6 +1,6 @@
 # Plotly Kaleido
 
-Plotly Kaleido implements the `kaleido` feature for [Plotly for Rust](https://github.com/igiagkiozis/plotly)
+Plotly Kaleido implements the `kaleido` feature for [Plotly.rs](https://github.com/igiagkiozis/plotly)
  
 The `kaleido` feature enables `Plot` conversion to the following output formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. 
 
