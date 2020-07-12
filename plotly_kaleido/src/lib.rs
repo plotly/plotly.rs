@@ -77,7 +77,7 @@ pub struct Kaleido {
 impl Kaleido {
     pub fn new() -> Kaleido {
         let path = match Kaleido::binary_path() {
-            Ok(path) => std::fs::canonicalize(path).unwrap(),
+            Ok(path) => path,
             Err(msg) => panic!(msg),
         };
 
@@ -107,7 +107,7 @@ impl Kaleido {
     }
 
     #[cfg(target_os = "macos")]
-    fn kaleido_binary_path() -> Result<PathBuf, &'static str> {
+    fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
         p = p
             .join("kaleido")
@@ -122,14 +122,9 @@ impl Kaleido {
     }
 
     #[cfg(target_os = "windows")]
-    fn kaleido_binary_path() -> Result<PathBuf, &'static str> {
+    fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p
-            .join("kaleido")
-            .join("windows")
-            .join("kaleido.cmd")
-            .canonicalize()
-            .unwrap();
+        p = p.join("kaleido").join("windows").join("kaleido.cmd");
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -157,7 +152,7 @@ impl Kaleido {
             .args(&["plotly", "--disable-gpu"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::null())
+            .stderr(Stdio::piped())
             .spawn()
             .expect("failed to spawn Kaleido binary");
 
@@ -177,7 +172,7 @@ impl Kaleido {
                 let res = KaleidoResult::from(l.as_str());
                 if let Some(image_data) = res.result {
                     let data: Vec<u8> = match image_format {
-                        "svg" => image_data.as_bytes().to_vec(),
+                        "svg" | "eps" => image_data.as_bytes().to_vec(),
                         _ => base64::decode(image_data).unwrap(),
                     };
                     let mut file = File::create(dst.as_path())?;
@@ -187,6 +182,9 @@ impl Kaleido {
             }
         }
 
+        let mut errors = String::new();
+        process.stderr.unwrap().read_to_string(&mut errors);
+        println!("errors {}", errors);
         Ok(())
     }
 }
