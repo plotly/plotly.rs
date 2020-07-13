@@ -1,22 +1,18 @@
 extern crate zip;
-use std::fs::File;
-use std::str::FromStr;
 use std::io::Result;
 use std::env;
-
-use std::io::BufReader;
-use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::path::PathBuf;
+use std::process::Command;
 
 use std::fs;
 use std::io;
 
 #[cfg(target_os = "linux")]
-const KALEIDO_URL: &'static str = "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_linux-0.0.1rc9.zip";
+const KALEIDO_URL: &str = "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_linux-0.0.1rc9.zip";
 #[cfg(target_os = "windows")]
-const KALEIDO_URL: &'static str= "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_win-0.0.1rc9.zip";
+const KALEIDO_URL: &str= "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_win-0.0.1rc9.zip";
 #[cfg(target_os = "macos")]
-const KALEIDO_URL: &'static str = "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_mac-0.0.1rc9.zip";
+const KALEIDO_URL: &str = "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_mac-0.0.1rc9.zip";
 
 
 fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
@@ -70,28 +66,28 @@ fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
             }
     }
 
-    fs::remove_file(zip_file);
+    fs::remove_file(zip_file)?;
     Ok(())
 }
 
 
 fn main() -> Result<()> {
-    let mut p = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let p = PathBuf::from(env::var("OUT_DIR").unwrap());
     let mut dst = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     dst = dst.parent().unwrap().to_path_buf();
     dst = dst.join("plotly_kaleido");
 
 
-    let mut kaleido_zip_file = p.join("kaleido.zip");
+    let kaleido_zip_file = p.join("kaleido.zip");
 
     let mut cmd = Command::new("cargo")
         .args(&["install", "ruget"]).spawn().unwrap();
-    cmd.wait();
+    cmd.wait()?;
 
     let mut cmd = Command::new("ruget")
         .args(&[KALEIDO_URL, "-o", kaleido_zip_file.as_path().to_str().unwrap()])
         .spawn().unwrap();
-    cmd.wait();
+    cmd.wait()?;
 
     extract_zip(&dst, &kaleido_zip_file)?;
     Ok(())

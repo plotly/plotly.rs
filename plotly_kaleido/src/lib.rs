@@ -187,8 +187,7 @@ impl Kaleido {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::env;
-    use std::path::{Path, PathBuf};
+    use std::path::PathBuf;
 
     const TEST_PLOT: &str = r#"{
     "data": [{"type":"scatter","x":[1,2,3,4],"y":[10,15,13,17],"name":"trace1","mode":"markers"},
