@@ -13,7 +13,9 @@ edition = "2018"
 keywords = ["plot", "chart", "plotly", "ndarray"]
 
 exclude = [
-    "target/*"
+    "target/*",
+    "kaleido/*",
+    "examples/*"
 ]
 
 [dependencies]

@@ -72,6 +72,7 @@ fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
 
 
 fn main() -> Result<()> {
+    println!("cargo:rerun-if-changed=src/lib.rs");
     let p = PathBuf::from(env::var("OUT_DIR").unwrap());
     let mut dst = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     dst = dst.parent().unwrap().to_path_buf();
