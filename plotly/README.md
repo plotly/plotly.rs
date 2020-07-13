@@ -68,6 +68,6 @@ Please consult the [contributing guide](https://github.com/igiagkiozis/plotly/bl
 
 # License
 
-Plotly for Rust is distributed under the terms of the MIT license.
+Plotly.rs is distributed under the terms of the MIT license.
 
 See [LICENSE-MIT](https://github.com/igiagkiozis/plotly/blob/master/LICENSE-MIT), and [COPYRIGHT](https://github.com/igiagkiozis/plotly/blob/master/COPYRIGHT) for details.

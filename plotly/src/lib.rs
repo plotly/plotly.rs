@@ -1,4 +1,4 @@
-//! # Plotly for Rust
+//! # Plotly.rs
 //!
 //! A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 

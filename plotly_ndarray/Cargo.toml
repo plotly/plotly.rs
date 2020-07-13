@@ -1,0 +1,21 @@
+[package]
+name = "plotly_ndarray"
+version = "0.1.0"
+authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
+edition = "2018"
+description = "ndarray support for Plotly.rs"
+license = "MIT"
+readme = "README.md"
+workspace = ".."
+homepage = "https://github.com/igiagkiozis/plotly"
+documentation = "https://docs.rs/plotly_ndarray"
+repository = "https://github.com/igiagkiozis/plotly"
+keywords = ["plot", "chart", "plotly", "ndarray"]
+
+exclude = [
+    "target/*",
+    "examples/*"
+]
+
+[dependencies]
+ndarray = "0.13.1"

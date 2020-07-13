@@ -124,3 +124,10 @@ where
         serializer.serialize_str(&s)
     }
 }
+
+pub fn copy_iterable_to_vec<'a, T, I>(iterable: I) -> Vec<T>
+where
+    I: IntoIterator<Item = T>,
+{
+    iterable.into_iter().collect::<Vec<T>>()
+}

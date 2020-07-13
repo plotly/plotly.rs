@@ -2,17 +2,107 @@ use itertools_num::linspace;
 use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
-use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
+use plotly::layout::ActiveShape;
+use plotly::layout::{Axis, BarMode, Layout, LayoutGrid, Legend, TicksDirection};
 use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly_ndarray::{Array, Ix1};
 use rand_distr::{Distribution, Normal, Uniform};
+use serde::Serialize;
+
+fn copy_iterator<'a, T, I>(x: I) -> Vec<T>
+where
+    I: IntoIterator<Item = T>,
+{
+    x.into_iter().collect::<Vec<T>>()
+}
+
+#[derive(Serialize, Debug)]
+pub struct Mutter<X, Y>
+where
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+{
+    x: Option<Vec<X>>,
+    y: Option<Vec<Y>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+}
+
+impl<X, Y> Mutter<X, Y>
+where
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+{
+    pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Self> {
+        Box::new(Mutter {
+            x: Some(x),
+            y: Some(y),
+            ..Default::default()
+        })
+    }
+
+    pub fn new2<'a, 'b, I: 'a, K: 'b>(x: I, y: K) -> Box<Self>
+    where
+        I: IntoIterator<Item = X>,
+        K: IntoIterator<Item = Y>,
+    {
+        let x = copy_iterator(x);
+        let y = copy_iterator(y);
+        Box::new(Mutter {
+            x: Some(x),
+            y: Some(y),
+            ..Default::default()
+        })
+    }
+
+    pub fn new3<'a, 'b, I: 'a, K: 'b>(x: I, y: K) -> Box<Self>
+    where
+        I: IntoIterator<Item = X>,
+        K: IntoIterator<Item = Y>,
+    {
+        let x = copy_iterator(x);
+        let y = copy_iterator(y);
+        Box::new(Mutter {
+            x: Some(x),
+            y: Some(y),
+            ..Default::default()
+        })
+    }
+}
+
+impl<X, Y> Default for Mutter<X, Y>
+where
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+{
+    fn default() -> Self {
+        Mutter {
+            x: None,
+            y: None,
+            name: None,
+        }
+    }
+}
 
 // Scatter Plots
 fn simple_scatter_plot(show: bool) {
+    let s = ActiveShape::new();
+    let mut l = Layout::new();
     let n: usize = 100;
-    let t: Vec<f64> = linspace(0., 10., n).collect();
-    let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
+    let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
+    let y: Array<f64, _> = t.iter().map(|x| x.sin()).collect();
+    // let t: Vec<String> = t.iter().map(|x| format!("{}", *x)).collect();
 
-    let trace = Scatter::new(t, y).mode(Mode::Markers);
+    let m = Mutter::new3(&t, &y);
+    let m = Mutter::new3(vec![1, 2], vec![3, 4]);
+    let m = Mutter::new3(&[1, 2, 4], &[3, 4, 9]);
+
+    let v = vec![None, Some(1.), Some(2.), Some(3.), None, Some(5.)];
+
+    // let trace = Scatter::from_array(t.clone(), y.clone()).mode(Mode::Markers);
+    // let trace = Scatter::new(v.clone(), v.clone()).mode(Mode::Markers);
+    let trace = Scatter::new(t.clone(), y.clone()).mode(Mode::Markers);
+    // let trace = Scatter::new(t.iter(), y.iter()).mode(Mode::Markers);
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
@@ -595,24 +685,24 @@ fn stacked_bar_chart(show: bool) {
 fn main() -> std::io::Result<()> {
     // Scatter Plots
     simple_scatter_plot(true);
-    line_and_scatter_plots(true);
-    bubble_scatter_plots(true);
-    data_labels_hover(true);
-    data_labels_on_the_plot(true);
-    colored_and_styled_scatter_plot(true);
-    large_data_sets(true);
-
-    // Line Charts
-    adding_names_to_line_and_scatter_plot(true);
-    line_and_scatter_styling(true);
-    styling_line_plot(true);
-    line_shape_options_for_interpolation(true);
-    line_dash(true);
-    filled_lines(true);
-
-    // Bar Charts
-    basic_bar_chart(true);
-    grouped_bar_chart(true);
-    stacked_bar_chart(true);
+    // line_and_scatter_plots(true);
+    // bubble_scatter_plots(true);
+    // data_labels_hover(true);
+    // data_labels_on_the_plot(true);
+    // colored_and_styled_scatter_plot(true);
+    // large_data_sets(true);
+    //
+    // // Line Charts
+    // adding_names_to_line_and_scatter_plot(true);
+    // line_and_scatter_styling(true);
+    // styling_line_plot(true);
+    // line_shape_options_for_interpolation(true);
+    // line_dash(true);
+    // filled_lines(true);
+    //
+    // // Bar Charts
+    // basic_bar_chart(true);
+    // grouped_bar_chart(true);
+    // stacked_bar_chart(true);
     Ok(())
 }

@@ -1386,6 +1386,409 @@ impl ModeBar {
     }
 }
 
+#[derive(Serialize, Debug)]
+pub enum ShapeType {
+    #[serde(rename = "circle")]
+    Circle,
+    #[serde(rename = "rect")]
+    Rect,
+    #[serde(rename = "path")]
+    Path,
+    #[serde(rename = "line")]
+    Line,
+}
+
+#[derive(Serialize, Debug)]
+pub enum ShapeLayer {
+    #[serde(rename = "below")]
+    Below,
+    #[serde(rename = "above")]
+    Above,
+}
+
+#[derive(Serialize, Debug)]
+pub enum ShapeSizeMode {
+    #[serde(rename = "scaled")]
+    Scaled,
+    #[serde(rename = "pixel")]
+    Pixel,
+}
+
+#[derive(Serialize, Debug)]
+pub enum FillRule {
+    #[serde(rename = "evenodd")]
+    EvenOdd,
+    #[serde(rename = "nonzero")]
+    NonZero,
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct ShapeLine {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    dash: Option<String>,
+}
+
+impl ShapeLine {
+    pub fn new() -> ShapeLine {
+        Default::default()
+    }
+
+    /// Sets the line color.
+    pub fn color<C: Color>(mut self, color: C) -> ShapeLine {
+        self.color = Some(color.to_color());
+        self
+    }
+
+    /// Sets the line width (in px).
+    pub fn width(mut self, width: f64) -> ShapeLine {
+        self.width = Some(width);
+        self
+    }
+
+    /// Sets the dash style of lines. Set to a dash type string ("solid", "dot", "dash", "longdash",
+    /// "dashdot", or "longdashdot") or a dash length list in px (eg "5px,10px,2px,2px").
+    pub fn dash(mut self, dash: &str) -> ShapeLine {
+        self.dash = Some(dash.to_owned());
+        self
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct Shape {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    visible: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    r#type: Option<ShapeType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    layer: Option<ShapeLayer>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xref")]
+    x_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xsizemode")]
+    x_size_mode: Option<ShapeSizeMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
+    x_anchor: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x0: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x1: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yref")]
+    y_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "ysizemode")]
+    y_size_mode: Option<ShapeSizeMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
+    y_anchor: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y0: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y1: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    path: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    opacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    line: Option<ShapeLine>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
+    fill_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "fillrule")]
+    fill_rule: Option<FillRule>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    editable: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "templateitemname")]
+    template_item_name: Option<String>,
+}
+
+impl Shape {
+    pub fn new() -> Shape {
+        Default::default()
+    }
+
+    /// Determines whether or not this shape is visible.
+    pub fn visible(mut self, visible: bool) -> Shape {
+        self.visible = Some(visible);
+        self
+    }
+
+    /// Specifies the shape type to be drawn. If "line", a line is drawn from (`x0`,`y0`) to
+    /// (`x1`,`y1`) with respect to the axes' sizing mode. If "circle", a circle is drawn from
+    /// ((`x0`+`x1`)/2, (`y0`+`y1`)/2)) with radius (|(`x0`+`x1`)/2 - `x0`|, |(`y0`+`y1`)/2 -`y0`)|)
+    /// with respect to the axes' sizing mode. If "rect", a rectangle is drawn linking
+    /// (`x0`,`y0`), (`x1`,`y0`), (`x1`,`y1`), (`x0`,`y1`), (`x0`,`y0`) with respect to the axes'
+    /// sizing mode. If "path", draw a custom SVG path using `path`. with respect to the axes'
+    /// sizing mode.
+    pub fn shape_type(mut self, shape_type: ShapeType) -> Shape {
+        self.r#type = Some(shape_type);
+        self
+    }
+
+    /// Specifies whether shapes are drawn below or above traces.
+    pub fn layer(mut self, layer: ShapeLayer) -> Shape {
+        self.layer = Some(layer);
+        self
+    }
+
+    /// Sets the shape's x coordinate axis. If set to an x axis id (e.g. "x" or "x2"), the `x`
+    /// position refers to an x coordinate. If set to "paper", the `x` position refers to the
+    /// distance from the left side of the plotting area in normalized coordinates where "0" ("1")
+    /// corresponds to the left (right) side. If the axis `type` is "log", then you must take the
+    /// log of your desired range. If the axis `type` is "date", then you must convert the date to
+    /// unix time in milliseconds.
+    pub fn x_ref(mut self, x_ref: &str) -> Shape {
+        self.x_ref = Some(x_ref.to_owned());
+        self
+    }
+
+    /// Sets the shapes's sizing mode along the x axis. If set to "scaled", `x0`, `x1` and x
+    /// coordinates within `path` refer to data values on the x axis or a fraction of the plot
+    /// area's width (`xref` set to "paper"). If set to "pixel", `xanchor` specifies the x position
+    /// in terms of data or plot fraction but `x0`, `x1` and x coordinates within `path` are pixels
+    /// relative to `xanchor`. This way, the shape can have a fixed width while maintaining a
+    /// position relative to data or plot fraction.
+    pub fn x_size_mode(mut self, x_size_mode: ShapeSizeMode) -> Shape {
+        self.x_size_mode = Some(x_size_mode);
+        self
+    }
+
+    /// Only relevant in conjunction with `xsizemode` set to "pixel". Specifies the anchor point on
+    /// the x axis to which `x0`, `x1` and x coordinates within `path` are relative to. E.g. useful
+    /// to attach a pixel sized shape to a certain data value. No effect when `xsizemode` not set
+    /// to "pixel".
+    pub fn x_anchor<C: NumOrString>(mut self, x_anchor: C) -> Shape {
+        self.x_anchor = Some(x_anchor.to_num_or_string());
+        self
+    }
+
+    /// Sets the shape's starting x position. See `type` and `xsizemode` for more info.
+    pub fn x0<C: NumOrString>(mut self, x0: C) -> Shape {
+        self.x0 = Some(x0.to_num_or_string());
+        self
+    }
+
+    /// Sets the shape's end x position. See `type` and `xsizemode` for more info.
+    pub fn x1<C: NumOrString>(mut self, x1: C) -> Shape {
+        self.x1 = Some(x1.to_num_or_string());
+        self
+    }
+
+    /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g. "y" or "y2"),
+    /// the `y` position refers to an y coordinate If set to "paper", the `y` position refers to
+    /// the distance from the bottom of the plotting area in normalized coordinates where "0" ("1")
+    /// corresponds to the bottom (top).
+    pub fn y_ref(mut self, y_ref: &str) -> Shape {
+        self.y_ref = Some(y_ref.to_owned());
+        self
+    }
+
+    /// Sets the shapes's sizing mode along the y axis. If set to "scaled", `y0`, `y1` and y
+    /// coordinates within `path` refer to data values on the y axis or a fraction of the plot
+    /// area's height (`yref` set to "paper"). If set to "pixel", `yanchor` specifies the y position
+    /// in terms of data or plot fraction but `y0`, `y1` and y coordinates within `path` are pixels
+    /// relative to `yanchor`. This way, the shape can have a fixed height while maintaining a
+    /// position relative to data or plot fraction.
+    pub fn y_size_mode(mut self, y_size_mode: ShapeSizeMode) -> Shape {
+        self.y_size_mode = Some(y_size_mode);
+        self
+    }
+
+    /// Only relevant in conjunction with `ysizemode` set to "pixel". Specifies the anchor point on
+    /// the y axis to which `y0`, `y1` and y coordinates within `path` are relative to. E.g. useful
+    /// to attach a pixel sized shape to a certain data value. No effect when `ysizemode` not set
+    /// to "pixel".
+    pub fn y_anchor<C: NumOrString>(mut self, y_anchor: C) -> Shape {
+        self.y_anchor = Some(y_anchor.to_num_or_string());
+        self
+    }
+
+    /// Sets the shape's starting y position. See `type` and `ysizemode` for more info.
+    pub fn y0<C: NumOrString>(mut self, y0: C) -> Shape {
+        self.y0 = Some(y0.to_num_or_string());
+        self
+    }
+
+    /// Sets the shape's end y position. See `type` and `ysizemode` for more info.
+    pub fn y1<C: NumOrString>(mut self, y1: C) -> Shape {
+        self.y1 = Some(y1.to_num_or_string());
+        self
+    }
+
+    /// For `type` "path" - a valid SVG path with the pixel values replaced by data values in
+    /// `xsizemode`/`ysizemode` being "scaled" and taken unmodified as pixels relative to
+    /// `xanchor` and `yanchor` in case of "pixel" size mode. There are a few restrictions / quirks
+    /// only absolute instructions, not relative. So the allowed segments
+    /// are: M, L, H, V, Q, C, T, S, and Z arcs (A) are not allowed because radius rx and ry are
+    /// relative. In the future we could consider supporting relative commands, but we would have
+    /// to decide on how to handle date and log axes. Note that even as is, Q and C Bezier paths
+    /// that are smooth on linear axes may not be smooth on log, and vice versa. no chained
+    /// "polybezier" commands - specify the segment type for each one. On category axes, values are
+    /// numbers scaled to the serial numbers of categories because using the categories themselves
+    /// there would be no way to describe fractional positions On data axes: because space and T are
+    /// both normal components of path strings, we can't use either to separate date from time parts.
+    /// Therefore we'll use underscore for this purpose: 2015-02-21_13:45:56.789
+    pub fn path(mut self, path: &str) -> Shape {
+        self.path = Some(path.to_owned());
+        self
+    }
+
+    /// Sets the opacity of the shape. Number between or equal to 0 and 1.
+    pub fn opacity(mut self, opacity: f64) -> Shape {
+        self.opacity = Some(opacity);
+        self
+    }
+
+    /// Sets the shape line properties (`color`, `width`, `dash`).
+    pub fn line(mut self, line: ShapeLine) -> Shape {
+        self.line = Some(line);
+        self
+    }
+
+    /// Sets the color filling the shape's interior. Only applies to closed shapes.
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Shape {
+        self.fill_color = Some(fill_color.to_color());
+        self
+    }
+
+    /// Determines which regions of complex paths constitute the interior. For more info please
+    /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    pub fn fill_rule(mut self, fill_rule: FillRule) -> Shape {
+        self.fill_rule = Some(fill_rule);
+        self
+    }
+
+    /// Determines whether the shape could be activated for edit or not. Has no effect when the
+    /// older editable shapes mode is enabled via `config.editable` or `config.edits.shapePosition`.
+    pub fn editable(mut self, editable: bool) -> Shape {
+        self.editable = Some(editable);
+        self
+    }
+
+    /// When used in a template, named items are created in the output figure in addition to any
+    /// items the figure already has in this array. You can modify these items in the output figure
+    /// by making your own item with `templateitemname` matching this `name` alongside your
+    /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
+    /// outside of a template.
+    pub fn name(mut self, name: &str) -> Shape {
+        self.name = Some(name.to_owned());
+        self
+    }
+
+    /// Used to refer to a named item in this array in the template. Named items from the template
+    /// will be created even without a matching item in the input figure, but you can modify one
+    /// by making an item with `templateitemname` matching its `name`, alongside your modifications
+    /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
+    /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
+    pub fn template_item_name(mut self, template_item_name: &str) -> Shape {
+        self.template_item_name = Some(template_item_name.to_owned());
+        self
+    }
+}
+
+#[derive(Serialize, Debug)]
+pub enum DrawDirection {
+    #[serde(rename = "ortho")]
+    Ortho,
+    #[serde(rename = "horizontal")]
+    Horizontal,
+    #[serde(rename = "vertical")]
+    Vertical,
+    #[serde(rename = "diagonal")]
+    Diagonal,
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct NewShape {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    line: Option<ShapeLine>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
+    fill_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "fillrule")]
+    fill_rule: Option<FillRule>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    opacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    layer: Option<ShapeLayer>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "drawdirection")]
+    draw_direction: Option<DrawDirection>,
+}
+
+impl NewShape {
+    pub fn new() -> NewShape {
+        Default::default()
+    }
+
+    /// Sets the shape line properties (`color`, `width`, `dash`).
+    pub fn line(mut self, line: ShapeLine) -> NewShape {
+        self.line = Some(line);
+        self
+    }
+
+    /// Sets the color filling new shapes' interior. Please note that if using a fillcolor with
+    /// alpha greater than half, drag inside the active shape starts moving the shape underneath,
+    /// otherwise a new shape could be started over.
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> NewShape {
+        self.fill_color = Some(fill_color.to_color());
+        self
+    }
+
+    /// Determines the path's interior. For more info please
+    /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    pub fn fill_rule(mut self, fill_rule: FillRule) -> NewShape {
+        self.fill_rule = Some(fill_rule);
+        self
+    }
+
+    /// Sets the opacity of new shapes. Number between or equal to 0 and 1.
+    pub fn opacity(mut self, opacity: f64) -> NewShape {
+        self.opacity = Some(opacity);
+        self
+    }
+
+    /// Specifies whether new shapes are drawn below or above traces.
+    pub fn layer(mut self, layer: ShapeLayer) -> NewShape {
+        self.layer = Some(layer);
+        self
+    }
+
+    /// When `dragmode` is set to "drawrect", "drawline" or "drawcircle" this limits the drag to be
+    /// horizontal, vertical or diagonal. Using "diagonal" there is no limit e.g. in drawing lines
+    /// in any direction. "ortho" limits the draw to be either horizontal or vertical. "horizontal"
+    /// allows horizontal extend. "vertical" allows vertical extend.
+    pub fn draw_direction(mut self, draw_direction: DrawDirection) -> NewShape {
+        self.draw_direction = Some(draw_direction);
+        self
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct ActiveShape {
+    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
+    fill_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    opacity: Option<f64>,
+}
+
+impl ActiveShape {
+    pub fn new() -> ActiveShape {
+        Default::default()
+    }
+
+    /// Sets the color filling the active shape' interior.
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> ActiveShape {
+        self.fill_color = Some(fill_color.to_color());
+        self
+    }
+
+    /// Sets the opacity of the active shape. Number between or equal to 0 and 1.
+    pub fn opacity(mut self, opacity: f64) -> ActiveShape {
+        self.opacity = Some(opacity);
+        self
+    }
+}
+
 #[derive(Serialize, Debug, Default)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1481,7 +1884,13 @@ pub struct Layout {
 
     // polar: Option<LayoutPolar>,
     // annotations: Option<LayoutAnnotations>,
-    // shapes: Option<LayoutShapes>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    shapes: Option<Vec<Shape>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "newshape")]
+    new_shape: Option<NewShape>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "activeshape")]
+    active_shape: Option<ActiveShape>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "boxmode")]
     box_mode: Option<BoxMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "boxgap")]
@@ -1744,6 +2153,28 @@ impl Layout {
 
     pub fn y_axis8(mut self, yaxis: Axis) -> Layout {
         self.y_axis8 = Some(yaxis);
+        self
+    }
+
+    pub fn shapes(mut self, shapes: Vec<Shape>) -> Layout {
+        self.shapes = Some(shapes);
+        self
+    }
+
+    pub fn add_shape(&mut self, shape: Shape) {
+        if self.shapes.is_none() {
+            self.shapes = Some(Vec::new());
+        }
+        self.shapes.as_mut().unwrap().push(shape);
+    }
+
+    pub fn new_shape(mut self, new_shape: NewShape) -> Layout {
+        self.new_shape = Some(new_shape);
+        self
+    }
+
+    pub fn active_shape(mut self, active_shape: ActiveShape) -> Layout {
+        self.active_shape = Some(active_shape);
         self
     }
 

@@ -38,8 +38,8 @@ fn load_apple_data() -> Vec<FinData> {
 // Time Series and Date Axes
 fn time_series_plot_with_custom_date_range(show: bool) {
     let data = load_apple_data();
-    let date = data.iter().map(|d| d.date.clone()).collect();
-    let high = data.iter().map(|d| d.high).collect();
+    let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec<f64> = data.iter().map(|d| d.high).collect();
 
     let trace = Scatter::new(date, high);
 
@@ -62,8 +62,8 @@ fn time_series_plot_with_custom_date_range(show: bool) {
 
 fn time_series_with_range_slider(show: bool) {
     let data = load_apple_data();
-    let date = data.iter().map(|d| d.date.clone()).collect();
-    let high = data.iter().map(|d| d.high).collect();
+    let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec<f64> = data.iter().map(|d| d.high).collect();
 
     let trace = Scatter::new(date, high);
 
@@ -86,8 +86,8 @@ fn time_series_with_range_slider(show: bool) {
 
 fn time_series_with_range_selector_buttons(show: bool) {
     let data = load_apple_data();
-    let date = data.iter().map(|d| d.date.clone()).collect();
-    let high = data.iter().map(|d| d.high).collect();
+    let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec<f64> = data.iter().map(|d| d.high).collect();
 
     let trace = Scatter::new(date, high);
 
@@ -134,8 +134,8 @@ fn time_series_with_range_selector_buttons(show: bool) {
 
 fn customizing_tick_label_formatting_by_zoom_level(show: bool) {
     let data = load_apple_data();
-    let date = data.iter().map(|d| d.date.clone()).collect();
-    let high = data.iter().map(|d| d.high).collect();
+    let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec<f64> = data.iter().map(|d| d.high).collect();
 
     let trace = Scatter::new(date, high);
 

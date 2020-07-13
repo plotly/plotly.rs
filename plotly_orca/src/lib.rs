@@ -1,5 +1,5 @@
 //! # Plotly Orca
-//! Plotly Orca implements the `orca` feature for [Plotly for Rust](https://github.com/igiagkiozis/plotly)
+//! Plotly Orca implements the `orca` feature for [Plotly.rs](https://github.com/igiagkiozis/plotly)
 //!
 //! The `orca` feature enables `Plot` conversion to the following output formats: png, jpeg, webp, svg, pdf and eps.
 //!
