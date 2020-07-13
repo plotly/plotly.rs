@@ -1,3 +1,0 @@
-plotly_kaleido/kaleido/windows/bin/kaleido.exe filter=lfs diff=lfs merge=lfs -text
-plotly_kaleido/kaleido/linux/bin/kaleido filter=lfs diff=lfs merge=lfs -text
-plotly_kaleido/kaleido/macos/bin/kaleido filter=lfs diff=lfs merge=lfs -text

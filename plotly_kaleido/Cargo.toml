@@ -20,3 +20,7 @@ exclude = [
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 base64 = "0.12.3"
+
+
+[build-dependencies]
+zip = "0.5.6"

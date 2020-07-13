@@ -96,7 +96,6 @@ impl Kaleido {
         let mut p = Kaleido::root_dir()?;
         p = p
             .join("kaleido")
-            .join("linux")
             .join("kaleido")
             .canonicalize()
             .unwrap();
@@ -111,7 +110,6 @@ impl Kaleido {
         let mut p = Kaleido::root_dir()?;
         p = p
             .join("kaleido")
-            .join("macos")
             .join("kaleido")
             .canonicalize()
             .unwrap();
@@ -124,7 +122,7 @@ impl Kaleido {
     #[cfg(target_os = "windows")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("windows").join("kaleido.cmd");
+        p = p.join("kaleido").join("kaleido.cmd");
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
