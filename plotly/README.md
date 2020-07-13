@@ -40,7 +40,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.5.0"
+plotly = "0.5.1"
 ```
 
 For changes since the last version please consult the [change log](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
@@ -51,13 +51,13 @@ The following feature flags are available:
     * Optional, compatible with Rust stable.
     * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
     * Requires some additional configuration, see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
-* `orca` - This feature is **Deprecated**, please use `kaleido` instead.
+* `orca` - This feature is **deprecated**, please use `kaleido` instead.
 
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `kaleido` feature: 
 
 ```toml
 [dependencies]
-plotly = { version = "0.5.0", features = ["kaleido"] }
+plotly = { version = "0.5.1", features = ["kaleido"] }
 ```
 For further details please see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
 

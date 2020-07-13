@@ -1,6 +1,6 @@
 extern crate zip;
-use std::io::Result;
 use std::env;
+use std::io::Result;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -8,12 +8,14 @@ use std::fs;
 use std::io;
 
 #[cfg(target_os = "linux")]
-const KALEIDO_URL: &str = "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_linux-0.0.1rc9.zip";
+const KALEIDO_URL: &str =
+    "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_linux-0.0.1rc9.zip";
 #[cfg(target_os = "windows")]
-const KALEIDO_URL: &str= "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_win-0.0.1rc9.zip";
+const KALEIDO_URL: &str =
+    "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_win-0.0.1rc9.zip";
 #[cfg(target_os = "macos")]
-const KALEIDO_URL: &str = "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_mac-0.0.1rc9.zip";
-
+const KALEIDO_URL: &str =
+    "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_mac-0.0.1rc9.zip";
 
 fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
     let file = fs::File::open(&zip_file).unwrap();
@@ -57,19 +59,18 @@ fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
 
         // Get and Set permissions
         #[cfg(unix)]
-            {
-                use std::os::unix::fs::PermissionsExt;
+        {
+            use std::os::unix::fs::PermissionsExt;
 
-                if let Some(mode) = file.unix_mode() {
-                    fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
-                }
+            if let Some(mode) = file.unix_mode() {
+                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
             }
+        }
     }
 
     fs::remove_file(zip_file)?;
     Ok(())
 }
-
 
 fn main() -> Result<()> {
     println!("cargo:rerun-if-changed=src/lib.rs");
@@ -78,16 +79,22 @@ fn main() -> Result<()> {
     dst = dst.parent().unwrap().to_path_buf();
     dst = dst.join("plotly_kaleido");
 
-
     let kaleido_zip_file = p.join("kaleido.zip");
 
     let mut cmd = Command::new("cargo")
-        .args(&["install", "ruget"]).spawn().unwrap();
+        .args(&["install", "ruget"])
+        .spawn()
+        .unwrap();
     cmd.wait()?;
 
     let mut cmd = Command::new("ruget")
-        .args(&[KALEIDO_URL, "-o", kaleido_zip_file.as_path().to_str().unwrap()])
-        .spawn().unwrap();
+        .args(&[
+            KALEIDO_URL,
+            "-o",
+            kaleido_zip_file.as_path().to_str().unwrap(),
+        ])
+        .spawn()
+        .unwrap();
     cmd.wait()?;
 
     extract_zip(&dst, &kaleido_zip_file)?;

@@ -9,11 +9,11 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Scatter<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     r#type: PlotType,
     x: Vec<X>,
@@ -86,46 +86,15 @@ where
 
 impl<X, Y> Scatter<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Scatter<X, Y>> {
         Box::new(Scatter {
             x,
             y,
             r#type: PlotType::Scatter,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            mode: None,
-            ids: None,
-            text: None,
-            text_position: None,
-            text_template: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            group_norm: None,
-            stack_group: None,
-            marker: None,
-            line: None,
-            text_font: None,
-            error_x: None,
-            error_y: None,
-            clip_on_axis: None,
-            connect_gaps: None,
-            fill: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on: None,
-            stack_gaps: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -337,8 +306,8 @@ where
 
 impl<X, Y> Trace for Scatter<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

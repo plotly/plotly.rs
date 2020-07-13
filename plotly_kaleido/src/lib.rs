@@ -94,11 +94,7 @@ impl Kaleido {
     #[cfg(target_os = "linux")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p
-            .join("kaleido")
-            .join("kaleido")
-            .canonicalize()
-            .unwrap();
+        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -108,11 +104,7 @@ impl Kaleido {
     #[cfg(target_os = "macos")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p
-            .join("kaleido")
-            .join("kaleido")
-            .canonicalize()
-            .unwrap();
+        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -252,7 +244,8 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    #[test] #[ignore]
+    #[test]
+    #[ignore]
     fn test_save_eps() {
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");

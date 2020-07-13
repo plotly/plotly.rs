@@ -54,19 +54,7 @@ pub struct Contours {
 
 impl Contours {
     pub fn new() -> Contours {
-        Contours {
-            r#type: None,
-            start: None,
-            end: None,
-            size: None,
-            coloring: None,
-            show_lines: None,
-            show_labels: None,
-            label_font: None,
-            label_format: None,
-            operation: None,
-            value: None,
-        }
+        Default::default()
     }
 
     pub fn type_(mut self, t: ContoursType) -> Contours {
@@ -125,12 +113,12 @@ impl Contours {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Contour<Z, X = f64, Y = f64>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: Serialize + Default,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -220,102 +208,30 @@ where
 
 impl<Z> Contour<Z, f64, f64>
 where
-    Z: Serialize,
+    Z: Serialize + Default,
 {
     pub fn new_z(z: Vec<Z>) -> Box<Contour<Z, f64, f64>> {
         Box::new(Contour {
             r#type: PlotType::Contour,
-            x: None,
-            x0: None,
-            dx: None,
-            y: None,
-            y0: None,
-            dy: None,
             z,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            line: None,
-            color_bar: None,
-            auto_color_scale: None,
-            color_scale: None,
-            show_scale: None,
-            reverse_scale: None,
-            zauto: None,
-            zhover_format: None,
-            zmax: None,
-            zmid: None,
-            zmin: None,
-            auto_contour: None,
-            connect_gaps: None,
-            contours: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on_gaps: None,
-            n_contours: None,
-            transpose: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 }
 
 impl<Z, X, Y> Contour<Z, X, Y>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: Serialize + Default,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Contour<Z, X, Y>> {
         Box::new(Contour {
             r#type: PlotType::Contour,
             x: Some(x),
-            x0: None,
-            dx: None,
             y: Some(y),
-            y0: None,
-            dy: None,
             z,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            line: None,
-            color_bar: None,
-            auto_color_scale: None,
-            color_scale: None,
-            show_scale: None,
-            reverse_scale: None,
-            zauto: None,
-            zhover_format: None,
-            zmax: None,
-            zmid: None,
-            zmin: None,
-            auto_contour: None,
-            connect_gaps: None,
-            contours: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on_gaps: None,
-            n_contours: None,
-            transpose: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -523,9 +439,9 @@ where
 
 impl<X, Y, Z> Trace for Contour<X, Y, Z>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

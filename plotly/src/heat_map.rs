@@ -5,12 +5,12 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct HeatMap<Z, X, Y>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: Serialize + Default,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -76,51 +76,22 @@ where
 
 impl<Z> HeatMap<Z, f64, f64>
 where
-    Z: Serialize,
+    Z: Serialize + Default,
 {
     pub fn new_z(z: Vec<Z>) -> Box<HeatMap<Z, f64, f64>> {
         Box::new(HeatMap {
-            x: None,
-            y: None,
             z,
             r#type: PlotType::HeatMap,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            color_bar: None,
-            auto_color_scale: None,
-            color_scale: None,
-            show_scale: None,
-            reverse_scale: None,
-            zauto: None,
-            zhover_format: None,
-            zmax: None,
-            zmid: None,
-            zmin: None,
-            zsmooth: None,
-            connect_gaps: None,
-            hover_label: None,
-            hover_on_gaps: None,
-            transpose: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 }
 
 impl<X, Y, Z> HeatMap<Z, X, Y>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: Serialize + Default,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<HeatMap<Z, X, Y>> {
         Box::new(HeatMap {
@@ -128,34 +99,7 @@ where
             y: Some(y),
             z,
             r#type: PlotType::HeatMap,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            color_bar: None,
-            auto_color_scale: None,
-            color_scale: None,
-            show_scale: None,
-            reverse_scale: None,
-            zauto: None,
-            zhover_format: None,
-            zmax: None,
-            zmid: None,
-            zmin: None,
-            zsmooth: None,
-            connect_gaps: None,
-            hover_label: None,
-            hover_on_gaps: None,
-            transpose: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -313,9 +257,9 @@ where
 
 impl<X, Y, Z> Trace for HeatMap<Z, X, Y>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

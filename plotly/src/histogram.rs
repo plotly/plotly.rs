@@ -100,10 +100,10 @@ impl Cumulative {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Histogram<H>
 where
-    H: Serialize,
+    H: Serialize + Default,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -173,43 +173,13 @@ where
 
 impl<H> Histogram<H>
 where
-    H: Serialize,
+    H: Serialize + Default,
 {
     pub fn new(x: Vec<H>) -> Box<Histogram<H>> {
         Box::new(Histogram {
             r#type: PlotType::Histogram,
             x: Some(x),
-            y: None,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            hist_func: None,
-            hist_norm: None,
-            alignment_group: None,
-            offset_group: None,
-            n_bins_x: None,
-            n_bins_y: None,
-            auto_bin_x: None,
-            auto_bin_y: None,
-            bin_group: None,
-            x_bins: None,
-            y_bins: None,
-            marker: None,
-            error_x: None,
-            error_y: None,
-            cumulative: None,
-            hover_label: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -218,74 +188,15 @@ where
             r#type: PlotType::Histogram,
             x: Some(x),
             y: Some(y),
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            hist_func: None,
-            hist_norm: None,
-            alignment_group: None,
-            offset_group: None,
-            n_bins_x: None,
-            n_bins_y: None,
-            auto_bin_x: None,
-            auto_bin_y: None,
-            bin_group: None,
-            x_bins: None,
-            y_bins: None,
-            marker: None,
-            error_x: None,
-            error_y: None,
-            cumulative: None,
-            hover_label: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
     pub fn new_horizontal(y: Vec<H>) -> Box<Histogram<H>> {
         Box::new(Histogram {
             r#type: PlotType::Histogram,
-            x: None,
             y: Some(y),
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            hist_func: None,
-            hist_norm: None,
-            alignment_group: None,
-            offset_group: None,
-            n_bins_x: None,
-            n_bins_y: None,
-            auto_bin_x: None,
-            auto_bin_y: None,
-            bin_group: None,
-            x_bins: None,
-            y_bins: None,
-            marker: None,
-            error_x: None,
-            error_y: None,
-            cumulative: None,
-            hover_label: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -463,7 +374,7 @@ where
 
 impl<H> Trace for Histogram<H>
 where
-    H: Serialize,
+    H: Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

@@ -97,9 +97,9 @@ fn data_labels_hover(show: bool) {
     plot.add_trace(trace2);
 
     let layout = Layout::new()
-        .title(Title::new("Data Labels Hover"))
-        .x_axis(Axis::new().title(Title::new("x")).range(vec![0.75, 5.25]))
-        .y_axis(Axis::new().title(Title::new("y")).range(vec![0., 8.]));
+        .title("Data Labels Hover".into())
+        .x_axis(Axis::new().title("x".into()).range(vec![0.75, 5.25]))
+        .y_axis(Axis::new().title("y".into()).range(vec![0., 8.]));
     plot.set_layout(layout);
     if show {
         plot.show();
@@ -124,7 +124,7 @@ fn data_labels_on_the_plot(show: bool) {
     plot.add_trace(trace2);
 
     let layout = Layout::new()
-        .title(Title::new("Data Labels on the Plot"))
+        .title("Data Labels on the Plot".into())
         .x_axis(Axis::new().range(vec![0.75, 5.25]))
         .y_axis(Axis::new().range(vec![0., 8.]));
     plot.set_layout(layout);

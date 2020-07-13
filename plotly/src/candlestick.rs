@@ -6,11 +6,11 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Candlestick<T, O>
 where
-    T: Serialize,
-    O: num::Num + Serialize,
+    T: Serialize + Default,
+    O: num::Num + Serialize + Default,
 {
     r#type: PlotType,
     x: Vec<T>,
@@ -54,8 +54,8 @@ where
 
 impl<T, O> Candlestick<T, O>
 where
-    T: Serialize,
-    O: num::Num + Serialize,
+    T: Serialize + Default,
+    O: num::Num + Serialize + Default,
 {
     pub fn new(
         x: Vec<T>,
@@ -73,22 +73,9 @@ where
             high,
             low,
             close,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            x_axis: None,
-            y_axis: None,
-            line: None,
-            whisker_width: None,
             increasing: Some(Direction::Increasing { line: iline }),
             decreasing: Some(Direction::Decreasing { line: dline }),
-            hover_label: None,
-            x_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -187,8 +174,8 @@ where
 
 impl<X, Y> Trace for Candlestick<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

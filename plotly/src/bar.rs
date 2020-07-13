@@ -9,11 +9,11 @@ use serde::Serialize;
 
 use crate::private;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Bar<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     x: Vec<X>,
     y: Vec<Y>,
@@ -86,46 +86,15 @@ where
 
 impl<X, Y> Bar<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
         Box::new(Bar {
             x,
             y,
             r#type: PlotType::Bar,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            ids: None,
-            width: None,
-            offset: None,
-            text: None,
-            text_position: None,
-            text_template: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            alignment_group: None,
-            offset_group: None,
-            marker: None,
-            text_angle: None,
-            text_font: None,
-            error_x: None,
-            error_y: None,
-            clip_on_axis: None,
-            constrain_text: None,
-            hover_label: None,
-            inside_text_anchor: None,
-            inside_text_font: None,
-            outside_text_font: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -327,8 +296,8 @@ where
 
 impl<X, Y> Trace for Bar<X, Y>
 where
-    X: Serialize,
-    Y: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: num::Num + Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

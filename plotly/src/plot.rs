@@ -285,7 +285,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     #[deprecated(
         since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
     )]
     pub fn to_png<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
@@ -297,7 +297,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     #[deprecated(
         since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
     )]
     pub fn to_jpeg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
@@ -309,7 +309,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     #[deprecated(
         since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
     )]
     pub fn to_webp<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
@@ -321,7 +321,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     #[deprecated(
         since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
     )]
     pub fn to_svg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
@@ -333,7 +333,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     #[deprecated(
         since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
     )]
     pub fn to_pdf<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
@@ -345,7 +345,7 @@ impl Plot {
     #[cfg(feature = "orca")]
     #[deprecated(
         since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and `save` method instead"
+        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
     )]
     pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
         let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
@@ -527,7 +527,8 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[test] #[ignore]
+    #[test]
+    #[ignore]
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();
@@ -615,7 +616,8 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[test] #[ignore]
+    #[test]
+    #[ignore]
     #[cfg(feature = "orca")]
     #[cfg(any(target_os = "linux", target_os = "windows"))]
     fn test_to_eps() {

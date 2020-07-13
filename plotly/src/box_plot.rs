@@ -38,11 +38,11 @@ pub enum QuartileMethod {
     Inclusive,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct BoxPlot<Y, X>
 where
-    Y: Serialize,
-    X: Serialize,
+    Y: Serialize + Default,
+    X: Serialize + Default,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -129,103 +129,29 @@ where
 
 impl<Y> BoxPlot<Y, f64>
 where
-    Y: Serialize,
+    Y: Serialize + Default,
 {
     pub fn new(y: Vec<Y>) -> Box<BoxPlot<Y, f64>> {
         Box::new(BoxPlot {
             r#type: PlotType::Box,
             x: None,
             y: Some(y),
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            ids: None,
-            width: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            alignment_group: None,
-            offset_group: None,
-            marker: None,
-            line: None,
-            box_mean: None,
-            box_points: None,
-            notched: None,
-            notch_width: None,
-            whisker_width: None,
-            q1: None,
-            median: None,
-            q3: None,
-            lower_fence: None,
-            notch_span: None,
-            mean: None,
-            standard_deviation: None,
-            quartile_method: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on: None,
-            point_pos: None,
-            jitter: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 }
 
 impl<Y, X> BoxPlot<Y, X>
 where
-    Y: Serialize,
-    X: Serialize,
+    Y: Serialize + Default,
+    X: Serialize + Default,
 {
     pub fn new_xy(x: Vec<X>, y: Vec<Y>) -> Box<BoxPlot<Y, X>> {
         Box::new(BoxPlot {
             r#type: PlotType::Box,
             x: Some(x),
             y: Some(y),
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            ids: None,
-            width: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            alignment_group: None,
-            offset_group: None,
-            marker: None,
-            line: None,
-            box_mean: None,
-            box_points: None,
-            notched: None,
-            notch_width: None,
-            whisker_width: None,
-            q1: None,
-            median: None,
-            q3: None,
-            lower_fence: None,
-            notch_span: None,
-            mean: None,
-            standard_deviation: None,
-            quartile_method: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on: None,
-            point_pos: None,
-            jitter: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -234,44 +160,7 @@ where
             r#type: PlotType::Box,
             x: Some(x),
             y: None,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            ids: None,
-            width: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            alignment_group: None,
-            offset_group: None,
-            marker: None,
-            line: None,
-            box_mean: None,
-            box_points: None,
-            notched: None,
-            notch_width: None,
-            whisker_width: None,
-            q1: None,
-            median: None,
-            q3: None,
-            lower_fence: None,
-            notch_span: None,
-            mean: None,
-            standard_deviation: None,
-            quartile_method: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on: None,
-            point_pos: None,
-            jitter: None,
-            x_calendar: None,
-            y_calendar: None,
+            ..Default::default()
         })
     }
 
@@ -490,8 +379,8 @@ where
 
 impl<X, Y> Trace for BoxPlot<X, Y>
 where
-    X: Serialize,
-    Y: Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

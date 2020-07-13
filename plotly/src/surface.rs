@@ -22,13 +22,7 @@ pub struct Lighting {
 
 impl Lighting {
     pub fn new() -> Lighting {
-        Lighting {
-            ambient: None,
-            diffuse: None,
-            specular: None,
-            roughness: None,
-            fresnel: None,
-        }
+        Default::default()
     }
 
     pub fn ambient(mut self, ambient: f64) -> Lighting {
@@ -82,11 +76,7 @@ pub struct PlaneProject {
 
 impl PlaneProject {
     pub fn new() -> PlaneProject {
-        PlaneProject {
-            x: None,
-            y: None,
-            z: None,
-        }
+        Default::default()
     }
 
     pub fn x(mut self, x: bool) -> PlaneProject {
@@ -133,19 +123,7 @@ pub struct PlaneContours {
 
 impl PlaneContours {
     pub fn new() -> PlaneContours {
-        PlaneContours {
-            show: None,
-            start: None,
-            end: None,
-            size: None,
-            project: None,
-            color: None,
-            use_colormap: None,
-            width: None,
-            highlight: None,
-            highlight_color: None,
-            highlight_width: None,
-        }
+        Default::default()
     }
 
     pub fn show(mut self, show: bool) -> PlaneContours {
@@ -216,11 +194,7 @@ pub struct SurfaceContours {
 
 impl SurfaceContours {
     pub fn new() -> SurfaceContours {
-        SurfaceContours {
-            x: None,
-            y: None,
-            z: None,
-        }
+        Default::default()
     }
 
     pub fn x(mut self, x: PlaneContours) -> SurfaceContours {
@@ -239,7 +213,7 @@ impl SurfaceContours {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Surface<X, Y, Z>
 where
     X: Serialize,
@@ -312,44 +286,15 @@ where
 
 impl<X, Y, Z> Surface<X, Y, Z>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: num::Num + Serialize,
+    X: Serialize + Default,
+    Y: Serialize + Default,
+    Z: num::Num + Serialize + Default,
 {
     pub fn new(z: Vec<Vec<Z>>) -> Box<Surface<X, Y, Z>> {
         Box::new(Surface {
             r#type: PlotType::Surface,
-            x: None,
-            y: None,
-            z,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            surface_color: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            color_bar: None,
-            auto_color_scale: None,
-            color_scale: None,
-            show_scale: None,
-            reverse_scale: None,
-            cauto: None,
-            cmin: None,
-            cmax: None,
-            cmid: None,
-            connect_gaps: None,
-            contours: None,
-            hide_surface: None,
-            hover_label: None,
-            lighting: None,
-            light_position: None,
-            x_calendar: None,
-            y_calendar: None,
-            z_calendar: None,
+            z: z,
+            ..Default::default()
         })
     }
 
