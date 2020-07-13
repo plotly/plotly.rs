@@ -155,11 +155,11 @@
                         <h1><a class="header" href="#getting-started" id="getting-started">Getting Started</a></h1>
 <p>To start using <code>Plotly.rs</code> in your project add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-plotly = &quot;0.5.0&quot;
+plotly = &quot;0.5.1&quot;
 </code></pre>
 <p>To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the <code>kaleido</code> feature. This feature depends on <a href="https://github.com/plotly/Kaleido">plotly/Kaleido</a>; a cross-platform library for generating static images. All the necessary binaries have been included with <code>plotly_kaleido</code> for <code>linux</code>, <code>windows</code> and <code>macos</code>. Previous versions of <code>Plotly.rs</code> used the <code>orca</code> feature; however this has been deprecated as it provided the same functionality but required additional installation steps. To enable the <code>kaleido</code> feature add the following to your <code>Cargo.toml</code> instead: </p>
 <pre><code class="language-toml">[dependencies]
-plotly = { version = &quot;0.5.0&quot;, features = [&quot;kaleido&quot;] }
+plotly = { version = &quot;0.5.1&quot;, features = [&quot;kaleido&quot;] }
 </code></pre>
 <p>Plotly Kaleido is an open source project </p>
 <p><code>Plotly.rs</code> has three main components: </p>
