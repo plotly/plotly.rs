@@ -1,4 +1,4 @@
-name: Plotly.rs CI
+name: plotly_ci
 
 on:
   push:
