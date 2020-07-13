@@ -13,6 +13,10 @@
 </div>
 
 <div align="center">
+    <a href="https://github.com/igiagkiozis/plotly/actions">
+        <img src="https://github.com/igiagkiozis/plotly/workflows/build/badge.svg" alt="build status">
+    </a>
+    |
     <a href="https://crates.io/crates/plotly">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
     </a>
