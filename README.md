@@ -28,7 +28,6 @@
     <a href="">
         <img src="https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg" alt="Minimum Version">
     </a>
-
 </div>
 
 A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
@@ -40,7 +39,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.5.1"
+plotly = "0.6.0"
 ```
 
 For changes since the last version please consult the [change log](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
@@ -51,13 +50,15 @@ The following feature flags are available:
     * Optional, compatible with Rust stable.
     * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
     * Requires some additional configuration, see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
-* `orca` - This feature is **deprecated**, please use `kaleido` instead.
+* `ndarray`
+    * Optional, compatible with Rust stable.
+    * Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
 
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `kaleido` feature: 
 
 ```toml
 [dependencies]
-plotly = { version = "0.5.1", features = ["kaleido"] }
+plotly = { version = "0.6.0", features = ["kaleido"] }
 ```
 For further details please see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
 

@@ -7,14 +7,24 @@ use crate::private;
 use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper};
 use color::Color;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum Direction {
     Increasing { line: Line },
     Decreasing { line: Line },
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
+pub enum Visible {
+    #[serde(rename = "x")]
+    True,
+    #[serde(rename = "x")]
+    False,
+    #[serde(rename = "x")]
+    LegendOnly,
+}
+
+#[derive(Serialize, Clone, Debug)]
 pub enum HoverInfo {
     #[serde(rename = "x")]
     X,
@@ -42,7 +52,7 @@ pub enum HoverInfo {
     Skip,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum TextPosition {
     #[serde(rename = "inside")]
     Inside,
@@ -54,7 +64,7 @@ pub enum TextPosition {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum ConstrainText {
     #[serde(rename = "inside")]
     Inside,
@@ -66,7 +76,7 @@ pub enum ConstrainText {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Orientation {
     #[serde(rename = "v")]
     Vertical,
@@ -74,7 +84,7 @@ pub enum Orientation {
     Horizontal,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum GroupNorm {
     #[serde(rename = "")]
     Default,
@@ -84,7 +94,7 @@ pub enum GroupNorm {
     Percent,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Fill {
     #[serde(rename = "tozeroy")]
     ToZeroY,
@@ -102,7 +112,7 @@ pub enum Fill {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Calendar {
     #[serde(rename = "gregorian")]
     Gregorian,
@@ -138,7 +148,7 @@ pub enum Calendar {
     Ummalqura,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum Dim<T>
 where
@@ -148,7 +158,7 @@ where
     Vector(Vec<T>),
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum PlotType {
     #[serde(rename = "scatter")]
     Scatter,
@@ -182,7 +192,7 @@ impl Default for PlotType {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Mode {
     #[serde(rename = "lines")]
     Lines,
@@ -202,7 +212,7 @@ pub enum Mode {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Position {
     #[serde(rename = "top left")]
     TopLeft,
@@ -224,7 +234,7 @@ pub enum Position {
     BottomRight,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum MarkerSymbol {
     #[serde(rename = "circle")]
     Circle,
@@ -512,7 +522,7 @@ pub enum MarkerSymbol {
     LineNWOpen,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum TickMode {
     #[serde(rename = "auto")]
     Auto,
@@ -522,7 +532,7 @@ pub enum TickMode {
     Array,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum DashType {
     #[serde(rename = "solid")]
     Solid,
@@ -538,10 +548,10 @@ pub enum DashType {
     LongDashDot,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ColorScaleElement(f64, String);
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum ColorScalePalette {
     Greys,
     YlGnBu,
@@ -563,14 +573,14 @@ pub enum ColorScalePalette {
     Cividis,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum ColorScale {
     Palette(ColorScalePalette),
     Vector(Vec<ColorScaleElement>),
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum LineShape {
     #[serde(rename = "linear")]
     Linear,
@@ -586,7 +596,7 @@ pub enum LineShape {
     Vhv,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct Line {
     #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
@@ -701,7 +711,7 @@ impl Line {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum GradientType {
     #[serde(rename = "radial")]
     Radial,
@@ -713,7 +723,7 @@ pub enum GradientType {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum SizeMode {
     #[serde(rename = "diameter")]
     Diameter,
@@ -721,7 +731,7 @@ pub enum SizeMode {
     Area,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum ThicknessMode {
     #[serde(rename = "fraction")]
     Fraction,
@@ -729,7 +739,7 @@ pub enum ThicknessMode {
     Pixels,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Anchor {
     #[serde(rename = "auto")]
     Auto,
@@ -747,7 +757,7 @@ pub enum Anchor {
     Bottom,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum TextAnchor {
     #[serde(rename = "start")]
     Start,
@@ -757,7 +767,7 @@ pub enum TextAnchor {
     End,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum ExponentFormat {
     #[serde(rename = "none")]
     None,
@@ -773,7 +783,7 @@ pub enum ExponentFormat {
     B,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub struct Gradient {
     r#type: GradientType,
     color: Dim<ColorWrapper>,
@@ -792,7 +802,7 @@ impl Gradient {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct TickFormatStop {
     enabled: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
@@ -840,7 +850,7 @@ impl TickFormatStop {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub struct ColorBar {
     #[serde(skip_serializing_if = "Option::is_none", rename = "thicknessmode")]
     thickness_mode: Option<ThicknessMode>,
@@ -1134,7 +1144,7 @@ impl ColorBar {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct Marker {
     #[serde(skip_serializing_if = "Option::is_none")]
     symbol: Option<MarkerSymbol>,
@@ -1295,7 +1305,7 @@ impl Marker {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct Font {
     #[serde(skip_serializing_if = "Option::is_none")]
     family: Option<String>,
@@ -1326,7 +1336,7 @@ impl Font {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Side {
     #[serde(rename = "right")]
     Right,
@@ -1340,7 +1350,7 @@ pub enum Side {
     TopLeft,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum Reference {
     #[serde(rename = "container")]
     Container,
@@ -1348,7 +1358,7 @@ pub enum Reference {
     Paper,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub struct Pad {
     t: usize,
     b: usize,
@@ -1361,7 +1371,7 @@ impl Pad {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct Title {
     text: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1444,7 +1454,7 @@ impl Title {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct Label {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
     background_color: Option<ColorWrapper>,
@@ -1494,7 +1504,7 @@ impl Label {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum ErrorType {
     #[serde(rename = "percent")]
     Percent,
@@ -1512,7 +1522,7 @@ impl Default for ErrorType {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct ErrorData {
     r#type: ErrorType,
     #[serde(skip_serializing_if = "Option::is_none")]

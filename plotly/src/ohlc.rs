@@ -10,7 +10,7 @@ use serde::Serialize;
 pub struct Ohlc<T, O>
 where
     T: Serialize + Default,
-    O: num::Num + Serialize + Default,
+    O: Serialize + Default,
 {
     r#type: PlotType,
     x: Vec<T>,
@@ -51,7 +51,7 @@ where
 impl<T, O> Ohlc<T, O>
 where
     T: Serialize + Default,
-    O: num::Num + Serialize + Default,
+    O: Serialize + Default,
 {
     pub fn new(
         x: Vec<T>,
@@ -161,7 +161,7 @@ where
 impl<X, Y> Trace for Ohlc<X, Y>
 where
     X: Serialize + Default,
-    Y: num::Num + Serialize + Default,
+    Y: Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

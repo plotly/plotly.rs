@@ -218,7 +218,7 @@ pub struct Surface<X, Y, Z>
 where
     X: Serialize,
     Y: Serialize,
-    Z: num::Num + Serialize,
+    Z: Serialize,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -288,12 +288,12 @@ impl<X, Y, Z> Surface<X, Y, Z>
 where
     X: Serialize + Default,
     Y: Serialize + Default,
-    Z: num::Num + Serialize + Default,
+    Z: Serialize + Default,
 {
     pub fn new(z: Vec<Vec<Z>>) -> Box<Surface<X, Y, Z>> {
         Box::new(Surface {
             r#type: PlotType::Surface,
-            z: z,
+            z,
             ..Default::default()
         })
     }
@@ -475,7 +475,7 @@ impl<X, Y, Z> Trace for Surface<X, Y, Z>
 where
     X: Serialize,
     Y: Serialize,
-    Z: num::Num + Serialize,
+    Z: Serialize,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

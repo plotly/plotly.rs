@@ -163,7 +163,7 @@ pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
     y_anchor: Option<Anchor>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    valign: Option<Align>,
+    valign: Option<VAlign>,
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
 }
@@ -243,7 +243,7 @@ impl Legend {
         self
     }
 
-    pub fn valign(mut self, valign: Align) -> Legend {
+    pub fn valign(mut self, valign: VAlign) -> Legend {
         self.valign = Some(valign);
         self
     }
@@ -255,13 +255,23 @@ impl Legend {
 }
 
 #[derive(Serialize, Debug)]
-pub enum Align {
+pub enum VAlign {
     #[serde(rename = "top")]
     Top,
     #[serde(rename = "middle")]
     Middle,
     #[serde(rename = "bottom")]
     Bottom,
+}
+
+#[derive(Serialize, Debug)]
+pub enum HAlign {
+    #[serde(rename = "left")]
+    Left,
+    #[serde(rename = "center")]
+    Center,
+    #[serde(rename = "right")]
+    Right,
 }
 
 #[derive(Serialize, Debug, Default)]
@@ -1789,6 +1799,457 @@ impl ActiveShape {
     }
 }
 
+#[derive(Serialize, Debug)]
+pub enum ArrowSide {
+    #[serde(rename = "end")]
+    End,
+    #[serde(rename = "start")]
+    Start,
+    #[serde(rename = "end+start")]
+    StartEnd,
+    #[serde(rename = "none")]
+    None,
+}
+
+#[derive(Serialize, Debug)]
+pub enum ClickToShow {
+    #[serde(rename = "false")]
+    False,
+    #[serde(rename = "onoff")]
+    OnOff,
+    #[serde(rename = "onout")]
+    OnOut,
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct Annotation {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    visible: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    text: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "textangle")]
+    text_angle: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    font: Option<Font>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    height: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    opacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    align: Option<HAlign>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    valign: Option<VAlign>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    background_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
+    border_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "borderpad")]
+    border_pad: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
+    border_width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "showarrow")]
+    show_arrow: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "arrowcolor")]
+    arrow_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "arrowhead")]
+    arrow_head: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startarrowhead")]
+    start_arrow_head: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "arrowside")]
+    arrow_side: Option<ArrowSide>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "arrowsize")]
+    arrow_size: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startarrowsize")]
+    start_arrow_size: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "arrowwidth")]
+    arrow_width: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "standoff")]
+    stand_off: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "startstandoff")]
+    start_stand_off: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ax: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ay: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "axref")]
+    ax_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "ayref")]
+    ay_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xref")]
+    x_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
+    x_anchor: Option<Anchor>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xshift")]
+    x_shift: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yref")]
+    y_ref: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
+    y_anchor: Option<Anchor>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yshift")]
+    y_shift: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "clicktoshow")]
+    click_to_show: Option<TruthyEnum<ClickToShow>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xclick")]
+    x_click: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yclick")]
+    y_click: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    hover_text: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    hover_label: Option<Label>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "captureevents")]
+    capture_events: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "templateitemname")]
+    template_item_name: Option<String>,
+}
+
+impl Annotation {
+    pub fn new() -> Annotation {
+        Default::default()
+    }
+
+    /// Determines whether or not this annotation is visible.
+    pub fn visible(mut self, visible: bool) -> Annotation {
+        self.visible = Some(visible);
+        self
+    }
+
+    /// Sets the text associated with this annotation. Plotly uses a subset of HTML tags to do
+    /// things like newline (<br>), bold (<b></b>), italics (<i></i>), hyperlinks
+    /// (<a href='...'></a>). Tags <em>, <sup>, <sub> <span> are also supported.
+    pub fn text(mut self, text: &str) -> Annotation {
+        self.text = Some(text.to_owned());
+        self
+    }
+
+    /// Sets the angle at which the `text` is drawn with respect to the horizontal.
+    pub fn text_angle(mut self, text_angle: f64) -> Annotation {
+        self.text_angle = Some(text_angle);
+        self
+    }
+
+    /// Sets the annotation text font.
+    pub fn font(mut self, font: Font) -> Annotation {
+        self.font = Some(font);
+        self
+    }
+
+    /// Sets an explicit width for the text box. null (default) lets the text set the box width.
+    /// Wider text will be clipped. There is no automatic wrapping; use <br> to start a new line.
+    pub fn width(mut self, width: f64) -> Annotation {
+        self.width = Some(width);
+        self
+    }
+
+    /// Sets an explicit height for the text box. null (default) lets the text set the box height.
+    /// Taller text will be clipped.
+    pub fn height(mut self, height: f64) -> Annotation {
+        self.height = Some(height);
+        self
+    }
+
+    /// Sets the opacity of the annotation (text + arrow).
+    pub fn opacity(mut self, opacity: f64) -> Annotation {
+        self.opacity = Some(opacity);
+        self
+    }
+
+    /// Sets the horizontal alignment of the `text` within the box. Has an effect only if `text`
+    /// spans two or more lines (i.e. `text` contains one or more <br> HTML tags) or if an explicit
+    /// width is set to override the text width.
+    pub fn align(mut self, align: HAlign) -> Annotation {
+        self.align = Some(align);
+        self
+    }
+
+    /// Sets the vertical alignment of the `text` within the box. Has an effect only if an explicit
+    /// height is set to override the text height.
+    pub fn valign(mut self, valign: VAlign) -> Annotation {
+        self.valign = Some(valign);
+        self
+    }
+
+    /// Sets the background color of the annotation.
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Annotation {
+        self.background_color = Some(background_color.to_color());
+        self
+    }
+
+    /// Sets the color of the border enclosing the annotation `text`.
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Annotation {
+        self.border_color = Some(border_color.to_color());
+        self
+    }
+
+    /// Sets the padding (in px) between the `text` and the enclosing border.
+    pub fn border_pad(mut self, border_pad: f64) -> Annotation {
+        self.border_pad = Some(border_pad);
+        self
+    }
+
+    /// Sets the width (in px) of the border enclosing the annotation `text`.
+    pub fn border_width(mut self, border_width: f64) -> Annotation {
+        self.border_width = Some(border_width);
+        self
+    }
+
+    /// Determines whether or not the annotation is drawn with an arrow. If "True", `text` is
+    /// placed near the arrow's tail. If "False", `text` lines up with the `x` and `y` provided.
+    pub fn show_arrow(mut self, show_arrow: bool) -> Annotation {
+        self.show_arrow = Some(show_arrow);
+        self
+    }
+
+    /// Sets the color of the annotation arrow.
+    pub fn arrow_color<C: Color>(mut self, arrow_color: C) -> Annotation {
+        self.arrow_color = Some(arrow_color.to_color());
+        self
+    }
+
+    /// Sets the end annotation arrow head style. Integer between or equal to 0 and 8.
+    pub fn arrow_head(mut self, arrow_head: u8) -> Annotation {
+        self.arrow_head = Some(arrow_head);
+        self
+    }
+
+    /// Sets the start annotation arrow head style. Integer between or equal to 0 and 8.
+    pub fn start_arrow_head(mut self, start_arrow_head: u8) -> Annotation {
+        self.start_arrow_head = Some(start_arrow_head);
+        self
+    }
+
+    /// Sets the annotation arrow head position.
+    pub fn arrow_side(mut self, arrow_side: ArrowSide) -> Annotation {
+        self.arrow_side = Some(arrow_side);
+        self
+    }
+
+    /// Sets the size of the end annotation arrow head, relative to `arrowwidth`. A value of 1
+    /// (default) gives a head about 3x as wide as the line.
+    pub fn arrow_size(mut self, arrow_size: f64) -> Annotation {
+        self.arrow_size = Some(arrow_size);
+        self
+    }
+
+    /// Sets the size of the start annotation arrow head, relative to `arrowwidth`. A value of 1
+    /// (default) gives a head about 3x as wide as the line.
+    pub fn start_arrow_size(mut self, start_arrow_size: f64) -> Annotation {
+        self.start_arrow_size = Some(start_arrow_size);
+        self
+    }
+
+    /// Sets the width (in px) of annotation arrow line.
+    pub fn arrow_width(mut self, arrow_width: f64) -> Annotation {
+        self.arrow_width = Some(arrow_width);
+        self
+    }
+
+    /// Sets a distance, in pixels, to move the end arrowhead away from the position it is pointing
+    /// at, for example to point at the edge of a marker independent of zoom. Note that this
+    /// shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift` which
+    /// moves everything by this amount.
+    pub fn stand_off(mut self, stand_off: f64) -> Annotation {
+        self.stand_off = Some(stand_off);
+        self
+    }
+
+    /// Sets a distance, in pixels, to move the start arrowhead away from the position it is
+    /// pointing at, for example to point at the edge of a marker independent of zoom. Note that
+    /// this shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift`
+    /// which moves everything by this amount.
+    pub fn start_stand_off(mut self, start_stand_off: f64) -> Annotation {
+        self.start_stand_off = Some(start_stand_off);
+        self
+    }
+
+    /// Sets the x component of the arrow tail about the arrow head. If `axref` is `pixel`, a
+    /// positive (negative) component corresponds to an arrow pointing from right to left (left
+    /// to right). If `axref` is an axis, this is an absolute value on that axis, like `x`, NOT a
+    /// relative value.
+    pub fn ax<C: NumOrString>(mut self, ax: C) -> Annotation {
+        self.ax = Some(ax.to_num_or_string());
+        self
+    }
+
+    /// Sets the y component of the arrow tail about the arrow head. If `ayref` is `pixel`, a
+    /// positive (negative) component corresponds to an arrow pointing from bottom to top (top to
+    /// bottom). If `ayref` is an axis, this is an absolute value on that axis, like `y`, NOT a
+    /// relative value.
+    pub fn ay<C: NumOrString>(mut self, ay: C) -> Annotation {
+        self.ay = Some(ay.to_num_or_string());
+        self
+    }
+
+    /// Indicates in what terms the tail of the annotation (ax,ay) is specified. If `pixel`, `ax`
+    /// is a relative offset in pixels from `x`. If set to an x axis id (e.g. "x" or "x2"), `ax` is
+    /// specified in the same terms as that axis. This is useful for trendline annotations which
+    /// should continue to indicate the correct trend when zoomed.
+    pub fn ax_ref(mut self, ax_ref: &str) -> Annotation {
+        self.ax_ref = Some(ax_ref.to_owned());
+        self
+    }
+
+    /// Indicates in what terms the tail of the annotation (ax,ay) is specified. If `pixel`, `ay`
+    /// is a relative offset in pixels from `y`. If set to a y axis id (e.g. "y" or "y2"), `ay` is
+    /// specified in the same terms as that axis. This is useful for trendline annotations which
+    /// should continue to indicate the correct trend when zoomed.
+    pub fn ay_ref(mut self, ay_ref: &str) -> Annotation {
+        self.ay_ref = Some(ay_ref.to_owned());
+        self
+    }
+
+    /// Sets the annotation's x coordinate axis. If set to an x axis id (e.g. "x" or "x2"), the `x`
+    /// position refers to an x coordinate If set to "paper", the `x` position refers to the
+    /// distance from the left side of the plotting area in normalized coordinates where 0 (1)
+    /// corresponds to the left (right) side.
+    pub fn x_ref(mut self, x_ref: &str) -> Annotation {
+        self.x_ref = Some(x_ref.to_owned());
+        self
+    }
+
+    /// Sets the annotation's x position. If the axis `type` is "log", then you must take the log
+    /// of your desired range. If the axis `type` is "date", it should be date strings, like date
+    /// data, though Date objects and unix milliseconds will be accepted and converted to strings.
+    /// If the axis `type` is "category", it should be numbers, using the scale where each category
+    /// is assigned a serial number from zero in the order it appears.
+    pub fn x<C: NumOrString>(mut self, x: C) -> Annotation {
+        self.x = Some(x.to_num_or_string());
+        self
+    }
+
+    /// Sets the text box's horizontal position anchor This anchor binds the `x` position to the
+    /// "left", "center" or "right" of the annotation. For example, if `x` is set to 1, `xref` to
+    /// "paper" and `xanchor` to "right" then the right-most portion of the annotation lines up with
+    /// the right-most edge of the plotting area. If "auto", the anchor is equivalent to "center"
+    /// for data-referenced annotations or if there is an arrow, whereas for paper-referenced with
+    /// no arrow, the anchor picked corresponds to the closest side.
+    pub fn x_anchor(mut self, x_anchor: Anchor) -> Annotation {
+        self.x_anchor = Some(x_anchor);
+        self
+    }
+
+    /// Shifts the position of the whole annotation and arrow to the right (positive) or left
+    /// (negative) by this many pixels.
+    pub fn x_shift(mut self, x_shift: f64) -> Annotation {
+        self.x_shift = Some(x_shift);
+        self
+    }
+
+    /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g. "y" or "y2"), the `y`
+    /// position refers to an y coordinate If set to "paper", the `y` position refers to the
+    /// distance from the bottom of the plotting area in normalized coordinates where 0 (1)
+    /// corresponds to the bottom (top).
+    pub fn y_ref(mut self, y_ref: &str) -> Annotation {
+        self.y_ref = Some(y_ref.to_owned());
+        self
+    }
+
+    /// Sets the annotation's y position. If the axis `type` is "log", then you must take the log of
+    /// your desired range. If the axis `type` is "date", it should be date strings, like date data,
+    /// though Date objects and unix milliseconds will be accepted and converted to strings. If the
+    /// axis `type` is "category", it should be numbers, using the scale where each category is
+    /// assigned a serial number from zero in the order it appears.
+    pub fn y<C: NumOrString>(mut self, y: C) -> Annotation {
+        self.y = Some(y.to_num_or_string());
+        self
+    }
+
+    /// Sets the text box's vertical position anchor This anchor binds the `y` position to the
+    /// "top", "middle" or "bottom" of the annotation. For example, if `y` is set to 1, `yref` to
+    /// "paper" and `yanchor` to "top" then the top-most portion of the annotation lines up with the
+    /// top-most edge of the plotting area. If "auto", the anchor is equivalent to "middle" for
+    /// data-referenced annotations or if there is an arrow, whereas for paper-referenced with no
+    /// arrow, the anchor picked corresponds to the closest side.
+    pub fn y_anchor(mut self, y_anchor: Anchor) -> Annotation {
+        self.y_anchor = Some(y_anchor);
+        self
+    }
+
+    /// Shifts the position of the whole annotation and arrow up (positive) or down (negative) by
+    /// this many pixels.
+    pub fn y_shift(mut self, y_shift: f64) -> Annotation {
+        self.y_shift = Some(y_shift);
+        self
+    }
+
+    /// Makes this annotation respond to clicks on the plot. If you click a data point that exactly
+    /// matches the `x` and `y` values of this annotation, and it is hidden (visible: false), it
+    /// will appear. In "onoff" mode, you must click the same point again to make it disappear, so
+    /// if you click multiple points, you can show multiple annotations. In "onout" mode, a click
+    /// anywhere else in the plot (on another data point or not) will hide this annotation. If you
+    /// need to show/hide this annotation in response to different `x` or `y` values, you can set
+    /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
+    /// markers though, `standoff` is preferred over `xclick` and `yclick`.
+    pub fn click_to_show(mut self, click_to_show: TruthyEnum<ClickToShow>) -> Annotation {
+        self.click_to_show = Some(click_to_show);
+        self
+    }
+
+    /// Toggle this annotation when clicking a data point whose `x` value is `xclick` rather than
+    /// the annotation's `x` value.
+    pub fn x_click<C: NumOrString>(mut self, x_click: C) -> Annotation {
+        self.x_click = Some(x_click.to_num_or_string());
+        self
+    }
+
+    /// Toggle this annotation when clicking a data point whose `y` value is `yclick` rather than
+    /// the annotation's `y` value.
+    pub fn y_click<C: NumOrString>(mut self, y_click: C) -> Annotation {
+        self.y_click = Some(y_click.to_num_or_string());
+        self
+    }
+
+    /// Sets text to appear when hovering over this annotation. If omitted or blank, no hover label
+    /// will appear.
+    pub fn hover_text(mut self, hover_text: &str) -> Annotation {
+        self.hover_text = Some(hover_text.to_owned());
+        self
+    }
+
+    /// Label displayed on mouse hover.
+    pub fn hover_label(mut self, hover_label: Label) -> Annotation {
+        self.hover_label = Some(hover_label);
+        self
+    }
+
+    /// Determines whether the annotation text box captures mouse move and click events, or allows
+    /// those events to pass through to data points in the plot that may be behind the annotation.
+    /// By default `captureevents` is "false" unless `hovertext` is provided. If you use the event
+    /// `plotly_clickannotation` without `hovertext` you must explicitly enable `captureevents`.
+    pub fn capture_events(mut self, capture_events: bool) -> Annotation {
+        self.capture_events = Some(capture_events);
+        self
+    }
+
+    /// When used in a template, named items are created in the output figure in addition to any
+    /// items the figure already has in this array. You can modify these items in the output figure
+    /// by making your own item with `templateitemname` matching this `name` alongside your
+    /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
+    /// outside of a template.
+    pub fn name(mut self, name: &str) -> Annotation {
+        self.name = Some(name.to_owned());
+        self
+    }
+
+    /// Used to refer to a named item in this array in the template. Named items from the template
+    /// will be created even without a matching item in the input figure, but you can modify one by
+    /// making an item with `templateitemname` matching its `name`, alongside your modifications
+    /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
+    /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
+    pub fn template_item_name(mut self, template_item_name: &str) -> Annotation {
+        self.template_item_name = Some(template_item_name.to_owned());
+        self
+    }
+}
+
 #[derive(Serialize, Debug, Default)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1881,9 +2342,9 @@ pub struct Layout {
 
     // ternary: Option<LayoutTernary>,
     // scene: Option<LayoutScene>,
-
     // polar: Option<LayoutPolar>,
-    // annotations: Option<LayoutAnnotations>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    annotations: Option<Vec<Annotation>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     shapes: Option<Vec<Shape>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "newshape")]
@@ -2154,6 +2615,18 @@ impl Layout {
     pub fn y_axis8(mut self, yaxis: Axis) -> Layout {
         self.y_axis8 = Some(yaxis);
         self
+    }
+
+    pub fn annotations(mut self, annotations: Vec<Annotation>) -> Layout {
+        self.annotations = Some(annotations);
+        self
+    }
+
+    pub fn add_annotation(&mut self, annotation: Annotation) {
+        if self.annotations.is_none() {
+            self.annotations = Some(Vec::new());
+        }
+        self.annotations.as_mut().unwrap().push(annotation);
     }
 
     pub fn shapes(mut self, shapes: Vec<Shape>) -> Layout {

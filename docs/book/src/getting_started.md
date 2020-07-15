@@ -1,23 +1,40 @@
 # Getting Started
+<div align="center">
+    <a href="https://github.com/igiagkiozis/plotly/tree/master">
+        <img src="https://img.shields.io/badge/Plotly.rs-master-brightgreen" alt="build status">
+    </a>
+    <a href="https://github.com/igiagkiozis/plotly/actions">
+        <img src="https://github.com/igiagkiozis/plotly/workflows/build/badge.svg" alt="build status">
+    </a>
+    <a href="https://crates.io/crates/plotly">
+        <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
+    </a>
+	<a href="https://docs.rs/plotly">
+        <img src="https://docs.rs/plotly/badge.svg" alt="Documentation">
+    </a>
+    <a href="">
+        <img src="https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg" alt="Minimum Version">
+    </a>
+</div>
 
-To start using `Plotly.rs` in your project add the following to your `Cargo.toml`:
+To start using [Plotly.rs](https://github.com/igiagkiozis/plotly) in your project add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.5.1"
+plotly = "0.6.0"
 ```
 
-To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the `kaleido` feature. This feature depends on [plotly/Kaleido](https://github.com/plotly/Kaleido); a cross-platform library for generating static images. All the necessary binaries have been included with `plotly_kaleido` for `linux`, `windows` and `macos`. Previous versions of `Plotly.rs` used the `orca` feature; however this has been deprecated as it provided the same functionality but required additional installation steps. To enable the `kaleido` feature add the following to your `Cargo.toml` instead: 
+To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the `kaleido` feature. This feature depends on [plotly/Kaleido](https://github.com/plotly/Kaleido); a cross-platform library for generating static images. All the necessary binaries have been included with `plotly_kaleido` for `linux`, `windows` and `macos`. Previous versions of [Plotly.rs](https://github.com/igiagkiozis/plotly) used the `orca` feature; however this has been deprecated as it provided the same functionality but required additional installation steps. To enable the `kaleido` feature add the following to your `Cargo.toml` instead: 
 
 ```toml
 [dependencies]
-plotly = { version = "0.5.1", features = ["kaleido"] }
+plotly = { version = "0.6.0", features = ["kaleido"] }
 ```
 
 Plotly Kaleido is an open source project 
 
 
-`Plotly.rs` has three main components: 
+[Plotly.rs](https://github.com/igiagkiozis/plotly) has three main components: 
 
 - Traces; these are containers for the data for display,
 - Layout, fine tunes the display of traces on the canvas and more generally controls the way that the plot is displayed, and,

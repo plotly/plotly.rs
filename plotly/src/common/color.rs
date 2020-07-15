@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 #[serde(untagged)]
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub enum ColorWrapper {
     S(String),
     F(f64),

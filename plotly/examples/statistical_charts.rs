@@ -277,7 +277,7 @@ fn box_plot_styling_outliers(show: bool) {
                 ),
         )
         .box_points(BoxPoints::SuspectedOutliers);
-    let trace4 = BoxPlot::new(y.clone())
+    let trace4 = BoxPlot::new(y)
         .name("Whiskers and Outliers")
         .marker(Marker::new().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
@@ -306,7 +306,7 @@ fn box_plot_styling_mean_and_standard_deviation(show: bool) {
         .name("Only Mean")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::True);
-    let trace2 = BoxPlot::new(y.clone())
+    let trace2 = BoxPlot::new(y)
         .name("Mean and Standard Deviation")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);
@@ -486,7 +486,7 @@ fn basic_histogram(show: bool) {
 
 fn horizontal_histogram(show: bool) {
     let samples = sample_normal_distribution(10_000, 0.0, 1.0);
-    let trace = Histogram::new_horizontal(samples)
+    let trace = Histogram::new_vertical(samples)
         .name("h")
         .marker(Marker::new().color(NamedColor::Pink));
     let mut plot = Plot::new();
@@ -578,7 +578,7 @@ fn colored_and_styled_histograms(show: bool) {
         .auto_bin_x(false)
         .x_bins(Bins::new(-3.2, 4.0, 0.06));
     let layout = Layout::new()
-        .title(Title::new("Sampled Results"))
+        .title(Title::new("Colored and Styled Histograms"))
         .x_axis(Axis::new().title(Title::new("Value")))
         .y_axis(Axis::new().title(Title::new("Count")))
         .bar_mode(BarMode::Overlay)

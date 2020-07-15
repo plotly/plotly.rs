@@ -1,6 +1,3 @@
-#[cfg(feature = "orca")]
-extern crate plotly_orca;
-
 #[cfg(feature = "kaleido")]
 extern crate plotly_kaleido;
 
@@ -95,14 +92,24 @@ pub struct Plot {
 }
 
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
-Consider using the `to_html` method to save the plot instead. If using the `orca` feature the following
-additional formats are available accessed by following methods:
-- to_png
-- to_jpeg
-- to_webp
-- to_svg
-- to_pdf
-- to_eps
+Consider using the `to_html` method to save the plot instead. If using the `kaleido` feature the
+`save` method can be used to produce a static image in one of the following formats:
+- ImageFormat::PNG
+- ImageFormat::JPEG
+- ImageFormat::WEBP
+- ImageFormat::SVG
+- ImageFormat::PDF
+- ImageFormat::EPS
+
+used as follows:
+let plot = Plot::new();
+...
+let width = 1024;
+let height = 680;
+let scale = 1.0;
+plot.save("filename", ImageFormat::PNG, width, height, scale);
+
+See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
 "#;
 
 impl Plot {
@@ -277,80 +284,7 @@ impl Plot {
                 width,
                 height,
                 scale,
-            )
-            .expect(format!("failed to export plot to {:?}", filename.as_ref()).as_str());
-    }
-
-    /// Saves the `Plot` to png format.
-    #[cfg(feature = "orca")]
-    #[deprecated(
-        since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
-    )]
-    pub fn to_png<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_png(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to jpeg format.
-    #[cfg(feature = "orca")]
-    #[deprecated(
-        since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
-    )]
-    pub fn to_jpeg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_jpeg(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to webp format.
-    #[cfg(feature = "orca")]
-    #[deprecated(
-        since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
-    )]
-    pub fn to_webp<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_webp(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to svg format.
-    #[cfg(feature = "orca")]
-    #[deprecated(
-        since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
-    )]
-    pub fn to_svg<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_svg(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to pdf format.
-    #[cfg(feature = "orca")]
-    #[deprecated(
-        since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
-    )]
-    pub fn to_pdf<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_pdf(filename.as_ref(), &rendered, width, height);
-    }
-
-    /// Saves the `Plot` to eps format.
-    #[cfg(feature = "orca")]
-    #[deprecated(
-        since = "0.5.0",
-        note = "Orca is no longer the recommended method to produce static images; please use the `kaleido` feature and the `Plot::save` method instead"
-    )]
-    pub fn to_eps<P: AsRef<Path>>(&self, filename: P, width: usize, height: usize) {
-        let orca = plotly_orca::Orca::from(Plot::plotly_js_path());
-        let rendered = self.to_json();
-        orca.save_eps(filename.as_ref(), &rendered, width, height);
+            ).unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
     }
 
     fn plotly_js_path() -> PathBuf {
@@ -556,74 +490,6 @@ mod tests {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.webp");
         plot.save(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[test]
-    #[cfg(feature = "orca")]
-    fn test_to_png() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.png");
-        plot.to_png(&dst, 1024, 680);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[test]
-    #[cfg(feature = "orca")]
-    fn test_to_jpeg() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.jpeg");
-        plot.to_jpeg(&dst, 1024, 680);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[test]
-    #[cfg(feature = "orca")]
-    fn test_to_webp() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.webp");
-        plot.to_webp(&dst, 1024, 680);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[test]
-    #[cfg(feature = "orca")]
-    fn test_to_svg() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.svg");
-        plot.to_svg(&dst, 1024, 680);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[test]
-    #[cfg(feature = "orca")]
-    fn test_to_pdf() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.pdf");
-        plot.to_pdf(&dst, 1024, 680);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[test]
-    #[ignore]
-    #[cfg(feature = "orca")]
-    #[cfg(any(target_os = "linux", target_os = "windows"))]
-    fn test_to_eps() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.eps");
-        plot.to_eps(&dst, 1024, 680);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());

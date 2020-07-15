@@ -13,7 +13,7 @@ use crate::private;
 pub struct Bar<X, Y>
 where
     X: Serialize + Default,
-    Y: num::Num + Serialize + Default,
+    Y: Serialize + Default,
 {
     x: Vec<X>,
     y: Vec<Y>,
@@ -87,7 +87,7 @@ where
 impl<X, Y> Bar<X, Y>
 where
     X: Serialize + Default,
-    Y: num::Num + Serialize + Default,
+    Y: Serialize + Default,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
         Box::new(Bar {
@@ -297,7 +297,7 @@ where
 impl<X, Y> Trace for Bar<X, Y>
 where
     X: Serialize + Default,
-    Y: num::Num + Serialize + Default,
+    Y: Serialize + Default,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

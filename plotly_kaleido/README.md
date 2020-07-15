@@ -35,7 +35,3 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
-
-Note that there is an alternative feature, `plotly_orca`, that enables support for exporting plots in the same set of image formats, however,
-this will be deprecated as soon as [plotly/Kaleido](https://github.com/plotly/Kaleido) moves out of pre-release. The reason is that
- `plotly_kaleido` offers the same functionality as `plotly_orca` and requires no additional installation.

@@ -1,6 +1,9 @@
 use crate::common::color::{Color, ColorWrapper};
 use serde::{Serialize, Serializer};
 
+#[cfg(feature = "ndarray")]
+use plotly_ndarray::{Array, Ix1, Ix2, ArrayTraces};
+
 pub trait NumOrString {
     fn to_num_or_string(&self) -> NumOrStringWrapper;
 }
@@ -88,7 +91,7 @@ impl NumOrString for i64 {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Serialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum NumOrStringWrapper {
     S(String),
@@ -97,7 +100,7 @@ pub enum NumOrStringWrapper {
     U(u64),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TruthyEnum<E> {
     pub e: E,
 }
@@ -125,9 +128,36 @@ where
     }
 }
 
-pub fn copy_iterable_to_vec<'a, T, I>(iterable: I) -> Vec<T>
+pub fn copy_iterable_to_vec<T, I>(iterable: I) -> Vec<T>
 where
     I: IntoIterator<Item = T>,
 {
     iterable.into_iter().collect::<Vec<T>>()
+}
+
+
+#[cfg(feature = "ndarray")]
+pub fn trace_vectors_from<T>(traces_matrix: Array<T, Ix2>, array_traces: ArrayTraces) -> Vec<Vec<T>>
+    where T: Clone + 'static
+{
+    let mut traces: Vec<Vec<T>> = Vec::new();
+    let dim_index = if array_traces == ArrayTraces::OverColumns {
+        1
+    } else {
+        0
+    } as usize;
+    let traces_count = traces_matrix.shape()[dim_index];
+    let get_trace = |index| {
+        if array_traces == ArrayTraces::OverColumns {
+            traces_matrix.column(index)
+        } else {
+            traces_matrix.row(index)
+        }
+    };
+    for col in 0..traces_count {
+        let trace_data: Vec<T> = get_trace(col).to_vec();
+        traces.push(trace_data);
+    }
+
+    traces
 }

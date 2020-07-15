@@ -17,5 +17,5 @@ additional-js = ["ferris.js", "plotly-1.54.6.min.js"]
 
 
 [output.html.fold]
-enable = false
-level = 0
+enable = true
+level = 1

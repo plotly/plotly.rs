@@ -9,13 +9,13 @@ use std::io;
 
 #[cfg(target_os = "linux")]
 const KALEIDO_URL: &str =
-    "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_linux-0.0.1rc9.zip";
+    "https://github.com/plotly/Kaleido/releases/download/v0.0.1/kaleido_linux-0.0.1.zip";
 #[cfg(target_os = "windows")]
 const KALEIDO_URL: &str =
-    "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_win-0.0.1rc9.zip";
+    "https://github.com/plotly/Kaleido/releases/download/v0.0.1/kaleido_win-0.0.1.zip";
 #[cfg(target_os = "macos")]
 const KALEIDO_URL: &str =
-    "https://github.com/plotly/Kaleido/releases/download/v0.0.1rc9/kaleido_mac-0.0.1rc9.zip";
+    "https://github.com/plotly/Kaleido/releases/download/v0.0.1/kaleido_mac-0.0.1.zip";
 
 fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
     let file = fs::File::open(&zip_file).unwrap();

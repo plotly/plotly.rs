@@ -4,7 +4,6 @@
 
 #![allow(dead_code)]
 extern crate askama;
-extern crate num;
 extern crate rand;
 extern crate serde;
 

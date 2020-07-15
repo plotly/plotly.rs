@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2020-xx-xx
 ### Added
-- prelude
-- Shapes support.
+- Shapes support (TODO add link to documentation and examples).
+- Annotations support (TODO add link to documentation and examples).
+- Docstrings.
+- `ndarray` support (TODO add link to documentation and examples).
 ### Changed
-- xx
+- Removed `num` dependence.
+- Removed `plotly_orca` and the `orca` feature. Use the `kaleido` feature for static image generation.
+- Updated Kaleido version in `plotly_kaleido` to 0.0.1.
 ### Fixed
 - xx
 
