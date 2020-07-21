@@ -256,6 +256,11 @@ impl Plot {
         }
     }
 
+    pub fn show_jupyter(&self) {
+        let html = self.to_inline_html(None);
+        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", html);
+    }
+
     /// Saves the `Plot` to the selected image format.
     #[cfg(feature = "kaleido")]
     pub fn save<P: AsRef<Path>>(
