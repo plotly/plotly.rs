@@ -10,12 +10,24 @@ use std::io;
 #[cfg(target_os = "linux")]
 const KALEIDO_URL: &str =
     "https://github.com/plotly/Kaleido/releases/download/v0.0.1/kaleido_linux-0.0.1.zip";
+
 #[cfg(target_os = "windows")]
 const KALEIDO_URL: &str =
     "https://github.com/plotly/Kaleido/releases/download/v0.0.1/kaleido_win-0.0.1.zip";
+
 #[cfg(target_os = "macos")]
 const KALEIDO_URL: &str =
     "https://github.com/plotly/Kaleido/releases/download/v0.0.1/kaleido_mac-0.0.1.zip";
+
+#[cfg(target_os = "linux")]
+const KALEIDO_BIN: &str = "kaleido";
+
+#[cfg(target_os = "windows")]
+const KALEIDO_BIN: &str = "kaleido.exe";
+
+#[cfg(target_os = "macos")]
+const KALEIDO_BIN: &str = "kaleido";
+
 
 fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
     let file = fs::File::open(&zip_file).unwrap();
@@ -78,6 +90,11 @@ fn main() -> Result<()> {
     let mut dst = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     dst = dst.parent().unwrap().to_path_buf();
     dst = dst.join("plotly_kaleido");
+
+    let kaleido_binary = dst.join("kaleido").join("bin").join(KALEIDO_BIN);
+    if kaleido_binary.exists() {
+        return Ok(());
+    }
 
     let kaleido_zip_file = p.join("kaleido.zip");
 

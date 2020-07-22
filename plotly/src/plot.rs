@@ -256,6 +256,10 @@ impl Plot {
         }
     }
 
+    pub fn initialize_notebook() {
+        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", r#"<script src="https://cdn.plot.ly/plotly-1.54.6.min.js" charset="utf-8"></script>"#)
+    }
+
     pub fn show_jupyter(&self) {
         let html = self.to_inline_html(None);
         println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", html);

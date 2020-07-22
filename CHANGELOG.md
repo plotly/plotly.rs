@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Annotations support (TODO add link to documentation and examples).
 - Docstrings.
 - `ndarray` support (TODO add link to documentation and examples).
+- Jupyter lab support (TODO add link to documentation and examples).
 ### Changed
 - Removed `num` dependence.
 - Removed `plotly_orca` and the `orca` feature. Use the `kaleido` feature for static image generation.
