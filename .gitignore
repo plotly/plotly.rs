@@ -3,3 +3,4 @@ target/
 Cargo.lock
 gh-pages/
 Untitled.ipynb
+.ipynb_checkpoints/
