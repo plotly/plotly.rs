@@ -117,8 +117,8 @@ impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Vec::with_capacity(1),
-            layout: None,
             remote_plotly_js: true,
+            ..Default::default()
         }
     }
 
@@ -246,9 +246,10 @@ impl Plot {
     ///
     /// If `plot_div_id` is `None` the plot div id will be randomly generated, otherwise the user
     /// supplied div id is used.
-    pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
+    pub fn to_inline_html<T: Into<Option<&'static str>>>(&self, plot_div_id: T) -> String {
+        let plot_div_id = plot_div_id.into();
         match plot_div_id {
-            Some(id) => self.render_inline(id),
+            Some(id) => self.render_inline(id.as_ref()),
             None => {
                 let rand_id: String = thread_rng().sample_iter(&Alphanumeric).take(20).collect();
                 self.render_inline(rand_id.as_str())
@@ -256,13 +257,12 @@ impl Plot {
         }
     }
 
-    pub fn initialize_notebook() {
-        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", r#"<script src="https://cdn.plot.ly/plotly-1.54.6.min.js" charset="utf-8"></script>"#)
-    }
-
-    pub fn show_jupyter(&self) {
-        let html = self.to_inline_html(None);
-        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", html);
+    pub fn evcxr_display(&self) {
+        let plot_data = self.to_json();
+        println!(
+            "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT",
+            plot_data
+        );
     }
 
     /// Saves the `Plot` to the selected image format.
@@ -293,7 +293,8 @@ impl Plot {
                 width,
                 height,
                 scale,
-            ).unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
+            )
+            .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
     }
 
     fn plotly_js_path() -> PathBuf {
@@ -361,7 +362,7 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
-    fn to_json(&self) -> String {
+    pub fn to_json(&self) -> String {
         let mut plot_data: Vec<String> = Vec::new();
         for trace in self.traces.iter() {
             let s = trace.serialize();
@@ -428,9 +429,16 @@ mod tests {
     }
 
     #[test]
+    fn test_to_json() {
+        let plot = create_test_plot();
+        let plot_json = plot.to_json();
+        println!("{}", plot_json);
+    }
+
+    #[test]
     fn test_inline_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_inline_html(Some("replace_this_with_the_div_id"));
+        let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id");
         assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
         println!("{}", inline_plot_data);
         let random_div_id = plot.to_inline_html(None);

@@ -1,8 +1,8 @@
+use chrono::prelude::*;
+use chrono::{Date, DateTime, Duration, TimeZone, Utc};
 use plotly::common::Mode;
 use plotly::{Plot, Scatter};
-use plotly_ndarray::{Array, Ix1, Ix2, ArrayTraces};
-use chrono::prelude::*;
-use chrono::{DateTime, Date, Utc, TimeZone, Duration};
+use plotly_ndarray::{Array, ArrayTraces, Ix1, Ix2};
 use std::ops::Add;
 
 fn simple_scatter_plot() {
@@ -17,9 +17,10 @@ fn simple_scatter_plot() {
         count += 1.;
     }
 
-    let traces = Scatter::default()
-        .mode(Mode::LinesMarkers)
-        .to_traces(t, ys, ArrayTraces::OverColumns);
+    let traces =
+        Scatter::default()
+            .mode(Mode::LinesMarkers)
+            .to_traces(t, ys, ArrayTraces::OverColumns);
 
     let mut plot = Plot::new();
     plot.add_traces(traces);
@@ -35,12 +36,19 @@ fn chrono_plot() {
     plot.show();
 }
 
-fn date_range<Tz: TimeZone>(start_date: DateTime<Tz>, end_date: DateTime<Tz>, n: usize) -> Vec<DateTime<Tz>> {
+fn date_range<Tz: TimeZone>(
+    start_date: DateTime<Tz>,
+    end_date: DateTime<Tz>,
+    n: usize,
+) -> Vec<DateTime<Tz>> {
     if n < 2 {
         panic!("date_range: n must be greater or equal to 2");
     }
     let mut result: Vec<DateTime<Tz>> = Vec::new();
-    let total_duration = end_date.signed_duration_since(start_date.clone()).num_nanoseconds().unwrap();
+    let total_duration = end_date
+        .signed_duration_since(start_date.clone())
+        .num_nanoseconds()
+        .unwrap();
     let n = (n - 1) as i32;
     result.push(start_date.clone());
     for i in (0..n) {
@@ -68,7 +76,7 @@ fn main() -> std::io::Result<()> {
     println!("{}", &d1);
 
     let end_date = Utc.ymd(2020, 1, 2).and_hms(0, 0, 0);
-    let dates= date_range(start_date, end_date, 7);
+    let dates = date_range(start_date, end_date, 7);
     println!("{:?}", dates);
 
     Ok(())

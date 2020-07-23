@@ -28,7 +28,6 @@ const KALEIDO_BIN: &str = "kaleido.exe";
 #[cfg(target_os = "macos")]
 const KALEIDO_BIN: &str = "kaleido";
 
-
 fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
     let file = fs::File::open(&zip_file).unwrap();
     let mut archive = zip::ZipArchive::new(file).unwrap();
@@ -85,8 +84,6 @@ fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
 }
 
 fn main() -> Result<()> {
-    println!("cargo:rerun-if-changed=src/lib.rs");
-    let p = PathBuf::from(env::var("OUT_DIR").unwrap());
     let mut dst = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     dst = dst.parent().unwrap().to_path_buf();
     dst = dst.join("plotly_kaleido");
@@ -96,6 +93,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
+    let p = PathBuf::from(env::var("OUT_DIR").unwrap());
     let kaleido_zip_file = p.join("kaleido.zip");
 
     let mut cmd = Command::new("cargo")
@@ -115,5 +113,6 @@ fn main() -> Result<()> {
     cmd.wait()?;
 
     extract_zip(&dst, &kaleido_zip_file)?;
+    println!("cargo:rerun-if-changed=src/lib.rs");
     Ok(())
 }

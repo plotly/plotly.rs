@@ -1,6 +1,7 @@
 [book]
 title = "Plotly.rs Book"
 author = "Ioannis Giagkiozis"
+description = "Plotly.rs documentation"
 language = "en"
 multilingual = false
 src = "src"

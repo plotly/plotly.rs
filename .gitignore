@@ -2,5 +2,5 @@ target/
 .idea
 Cargo.lock
 gh-pages/
-Untitled.ipynb
+Untitled*
 .ipynb_checkpoints/

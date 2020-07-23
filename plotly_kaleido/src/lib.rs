@@ -244,7 +244,8 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    #[test] #[ignore]
+    #[test]
+    #[ignore]
     fn test_save_eps() {
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");

@@ -496,12 +496,9 @@ fn filled_lines(show: bool) {
     )
     .line(Line::new().color(Rgb::new(0, 176, 246)))
     .name("Premium");
-    let trace6 = Scatter::new(
-        x2,
-        vec![10.0, 8.0, 6.0, 4.0, 2.0, 0.0, 2.0, 4.0, 2.0, 0.0],
-    )
-    .line(Line::new().color(Rgb::new(231, 107, 243)))
-    .name("Ideal");
+    let trace6 = Scatter::new(x2, vec![10.0, 8.0, 6.0, 4.0, 2.0, 0.0, 2.0, 4.0, 2.0, 0.0])
+        .line(Line::new().color(Rgb::new(231, 107, 243)))
+        .name("Ideal");
 
     let layout = Layout::new()
         .paper_background_color(Rgb::new(255, 255, 255))

@@ -1163,7 +1163,7 @@ pub enum RowOrder {
 pub enum GridPattern {
     #[serde(rename = "independent")]
     Independent,
-    #[serde(rename = "independent")]
+    #[serde(rename = "coupled")]
     Coupled,
 }
 

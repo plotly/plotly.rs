@@ -8,8 +8,7 @@ use crate::private;
 use crate::private::copy_iterable_to_vec;
 
 #[cfg(feature = "ndarray")]
-use plotly_ndarray::{Array, Ix1, Ix2, ArrayTraces};
-
+use plotly_ndarray::{Array, ArrayTraces, Ix1, Ix2};
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Bins {
@@ -107,8 +106,8 @@ impl Cumulative {
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Histogram<H>
-    where
-        H: Serialize + Clone + Default + 'static,
+where
+    H: Serialize + Clone + Default + 'static,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -177,7 +176,9 @@ pub struct Histogram<H>
 }
 
 impl<H> Default for Histogram<H>
-where H: Serialize + Clone + Default + 'static {
+where
+    H: Serialize + Clone + Default + 'static,
+{
     fn default() -> Self {
         Histogram {
             r#type: PlotType::Histogram,
@@ -218,11 +219,12 @@ where H: Serialize + Clone + Default + 'static {
 }
 
 impl<H> Histogram<H>
-    where
-        H: Serialize + Clone + Default + 'static,
+where
+    H: Serialize + Clone + Default + 'static,
 {
     pub fn new<I>(x: I) -> Box<Self>
-        where I: IntoIterator<Item=H>
+    where
+        I: IntoIterator<Item = H>,
     {
         let x = copy_iterable_to_vec(x);
         Box::new(Histogram {
@@ -233,7 +235,8 @@ impl<H> Histogram<H>
     }
 
     pub fn new_xy<I>(x: I, y: I) -> Box<Self>
-        where I: IntoIterator<Item=H>
+    where
+        I: IntoIterator<Item = H>,
     {
         let x = copy_iterable_to_vec(x);
         let y = copy_iterable_to_vec(y);
@@ -246,7 +249,8 @@ impl<H> Histogram<H>
     }
 
     pub fn new_vertical<I>(y: I) -> Box<Self>
-        where I: IntoIterator<Item=H>
+    where
+        I: IntoIterator<Item = H>,
     {
         let y = copy_iterable_to_vec(y);
         Box::new(Histogram {
@@ -308,7 +312,11 @@ impl<H> Histogram<H>
     /// }
     /// ```
     #[cfg(feature = "ndarray")]
-    pub fn to_traces(&self, traces_matrix: Array<H, Ix2>, array_traces: ArrayTraces) -> Vec<Box<dyn Trace>> {
+    pub fn to_traces(
+        &self,
+        traces_matrix: Array<H, Ix2>,
+        array_traces: ArrayTraces,
+    ) -> Vec<Box<dyn Trace>> {
         let mut traces: Vec<Box<dyn Trace>> = Vec::new();
         let mut trace_vectors = private::trace_vectors_from(traces_matrix, array_traces);
         trace_vectors.reverse();
@@ -400,10 +408,7 @@ impl<H> Histogram<H>
         Box::new(self)
     }
 
-    pub fn hover_template_array<S: AsRef<str>>(
-        mut self,
-        hover_template: Vec<S>,
-    ) -> Box<Self> {
+    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Self> {
         let hover_template = private::owned_string_vector(hover_template);
         self.hover_template = Some(Dim::Vector(hover_template));
         Box::new(self)
@@ -506,8 +511,8 @@ impl<H> Histogram<H>
 }
 
 impl<H> Trace for Histogram<H>
-    where
-        H: Serialize + Clone + Default + 'static,
+where
+    H: Serialize + Clone + Default + 'static,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

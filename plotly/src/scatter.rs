@@ -2,23 +2,24 @@
 
 use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
-    Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker,
-    Mode, Orientation, PlotType, Position, Visible,
+    Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
+    Orientation, PlotType, Position, Visible,
 };
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-use crate::private::{copy_iterable_to_vec, to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
+use crate::private::{
+    copy_iterable_to_vec, to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum,
+};
 #[cfg(feature = "ndarray")]
-use plotly_ndarray::{Array, Ix1, Ix2, ArrayTraces};
-
+use plotly_ndarray::{Array, ArrayTraces, Ix1, Ix2};
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Scatter<X, Y>
-    where
-        X: Serialize + Clone + 'static,
-        Y: Serialize + Clone + 'static,
+where
+    X: Serialize + Clone + 'static,
+    Y: Serialize + Clone + 'static,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -38,13 +39,17 @@ pub struct Scatter<X, Y>
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<X>>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     x0: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     dx: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<Vec<Y>>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     y0: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     dy: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -60,7 +65,9 @@ pub struct Scatter<X, Y>
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrStringWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     custom_data: Option<Vec<NumOrStringWrapper>>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
@@ -103,11 +110,10 @@ pub struct Scatter<X, Y>
     y_calendar: Option<Calendar>,
 }
 
-
 impl<X, Y> Default for Scatter<X, Y>
-    where
-        X: Serialize + Clone + 'static,
-        Y: Serialize + Clone + 'static,
+where
+    X: Serialize + Clone + 'static,
+    Y: Serialize + Clone + 'static,
 {
     fn default() -> Self {
         Scatter {
@@ -157,13 +163,15 @@ impl<X, Y> Default for Scatter<X, Y>
 }
 
 use chrono::prelude::*;
-use chrono::{DateTime, Utc, TimeZone};
+use chrono::{DateTime, TimeZone, Utc};
 
 impl<Y> Scatter<String, Y>
-    where
-        Y: Serialize + Clone + 'static {
+where
+    Y: Serialize + Clone + 'static,
+{
     pub fn time_series<K>(x: Vec<DateTime<Utc>>, y: K) -> Box<Self>
-        where K: IntoIterator<Item=Y>
+    where
+        K: IntoIterator<Item = Y>,
     {
         let x = copy_iterable_to_vec(x);
         let x: Vec<String> = x.iter().copied().map(|d| format!("{}", d)).collect();
@@ -178,14 +186,14 @@ impl<Y> Scatter<String, Y>
 }
 
 impl<X, Y> Scatter<X, Y>
-    where
-        X: Serialize + Clone + 'static,
-        Y: Serialize + Clone + 'static,
+where
+    X: Serialize + Clone + 'static,
+    Y: Serialize + Clone + 'static,
 {
     pub fn new<I, K>(x: I, y: K) -> Box<Self>
-        where
-            I: IntoIterator<Item=X>,
-            K: IntoIterator<Item=Y>,
+    where
+        I: IntoIterator<Item = X>,
+        K: IntoIterator<Item = Y>,
     {
         let x = copy_iterable_to_vec(x);
         let y = copy_iterable_to_vec(y);
@@ -663,9 +671,9 @@ impl<X, Y> Scatter<X, Y>
 }
 
 impl<X, Y> Trace for Scatter<X, Y>
-    where
-        X: Serialize + Clone + 'static,
-        Y: Serialize + Clone + 'static,
+where
+    X: Serialize + Clone + 'static,
+    Y: Serialize + Clone + 'static,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
