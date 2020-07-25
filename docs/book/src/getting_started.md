@@ -1,4 +1,3 @@
-# Getting Started
 <div align="center">
     <a href="https://github.com/igiagkiozis/plotly/tree/master">
         <img src="https://img.shields.io/badge/Plotly.rs-master-brightgreen" alt="build status">
@@ -16,6 +15,8 @@
         <img src="https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg" alt="Minimum Version">
     </a>
 </div>
+
+# Getting Started
 
 To start using [Plotly.rs](https://github.com/igiagkiozis/plotly) in your project add the following to your `Cargo.toml`:
 
