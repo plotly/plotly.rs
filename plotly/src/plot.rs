@@ -37,7 +37,14 @@ struct InlinePlotTemplate<'a> {
     plot_div_id: &'a str,
 }
 
-/// Image format for
+#[derive(Template)]
+#[template(path = "jupyter_notebook_plot.html", escape = "none")]
+struct JupyterNotebookPlotTemplate<'a> {
+    plot_data: &'a str,
+    plot_div_id: &'a str,
+}
+
+/// Image format for static image export.
 pub enum ImageFormat {
     PNG,
     JPEG,
@@ -46,6 +53,7 @@ pub enum ImageFormat {
     PDF,
     EPS,
 }
+
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
 pub trait Trace {
@@ -111,6 +119,7 @@ plot.save("filename", ImageFormat::PNG, width, height, scale);
 
 See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
 "#;
+
 
 impl Plot {
     /// Create a new `Plot`.
@@ -257,12 +266,36 @@ impl Plot {
         }
     }
 
-    pub fn evcxr_display(&self) {
+    fn to_jupyter_notebook_html(&self) -> String {
+        let plot_div_id: String = thread_rng().sample_iter(&Alphanumeric).take(20).collect();
+        let plot_data = self.render_plot_data();
+
+        let tmpl = JupyterNotebookPlotTemplate {
+            plot_data: plot_data.as_str(),
+            plot_div_id: plot_div_id.as_str(),
+        };
+        tmpl.render().unwrap()
+    }
+
+    /// Display plot in Jupyter Notebook.
+    pub fn notebook_display(&self) {
+        let plot_data = self.to_jupyter_notebook_html();
+        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", plot_data);
+    }
+
+    /// Display plot in Jupyter Lab.
+    pub fn lab_display(&self) {
         let plot_data = self.to_json();
         println!(
             "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT",
             plot_data
         );
+    }
+
+    /// Displays the plot in Jupyter Lab; if running a Jupyter Notebook then use the
+    /// `notebook_display()` method instead.
+    pub fn evcxr_display(&self) {
+        self.lab_display();
     }
 
     /// Saves the `Plot` to the selected image format.
@@ -443,6 +476,25 @@ mod tests {
         println!("{}", inline_plot_data);
         let random_div_id = plot.to_inline_html(None);
         println!("{}", random_div_id);
+    }
+
+    #[test]
+    fn test_jupyter_notebook_plot() {
+        let plot = create_test_plot();
+        let inline_plot_data = plot.to_jupyter_notebook_html();
+        println!("{}", inline_plot_data);
+    }
+
+    #[test]
+    fn test_notebook_display() {
+        let plot = create_test_plot();
+        plot.notebook_display();
+    }
+
+    #[test]
+    fn test_lab_display() {
+        let plot = create_test_plot();
+        plot.lab_display();
     }
 
     #[test]

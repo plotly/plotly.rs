@@ -12,8 +12,10 @@ use serde::Serialize;
 use crate::private::{
     copy_iterable_to_vec, to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum,
 };
-#[cfg(feature = "ndarray")]
-use plotly_ndarray::{Array, ArrayTraces, Ix1, Ix2};
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
+#[cfg(feature = "plotly_ndarray")]
+use crate::ndarray::ArrayTraces;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Scatter<X, Y>
@@ -162,29 +164,6 @@ where
     }
 }
 
-use chrono::prelude::*;
-use chrono::{DateTime, TimeZone, Utc};
-
-impl<Y> Scatter<String, Y>
-where
-    Y: Serialize + Clone + 'static,
-{
-    pub fn time_series<K>(x: Vec<DateTime<Utc>>, y: K) -> Box<Self>
-    where
-        K: IntoIterator<Item = Y>,
-    {
-        let x = copy_iterable_to_vec(x);
-        let x: Vec<String> = x.iter().copied().map(|d| format!("{}", d)).collect();
-        let y = copy_iterable_to_vec(y);
-        Box::new(Scatter {
-            x: Some(x),
-            y: Some(y),
-            r#type: PlotType::Scatter,
-            ..Default::default()
-        })
-    }
-}
-
 impl<X, Y> Scatter<X, Y>
 where
     X: Serialize + Clone + 'static,
@@ -205,7 +184,7 @@ where
         })
     }
 
-    #[cfg(feature = "ndarray")]
+    #[cfg(feature = "plotly_ndarray")]
     pub fn from_array(x: Array<X, Ix1>, y: Array<Y, Ix1>) -> Box<Self> {
         Box::new(Scatter {
             x: Some(x.to_vec()),
@@ -229,8 +208,8 @@ where
     ///
     /// ```
     /// use plotly::common::Mode;
-    /// use plotly::{Plot, Scatter};
-    /// use plotly_ndarray::{Array, Ix1, Ix2, ArrayTraces};
+    /// use plotly::{Plot, Scatter, ArrayTraces};
+    /// use ndarray::{Array, Ix1, Ix2};
     ///
     /// fn ndarray_to_traces() {
     ///     let n: usize = 11;
@@ -257,7 +236,7 @@ where
     ///     Ok(())
     /// }
     /// ```
-    #[cfg(feature = "ndarray")]
+    #[cfg(feature = "plotly_ndarray")]
     pub fn to_traces(
         &self,
         x: Array<X, Ix1>,
@@ -271,8 +250,8 @@ where
             let mut sc = Box::new(self.clone());
             sc.x = Some(x.to_vec());
             let data = trace_vectors.pop();
-            if !data.is_none() {
-                sc.y = Some(data.unwrap());
+            if let Some(d) = data {
+                sc.y = Some(d);
                 traces.push(sc);
             }
         }

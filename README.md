@@ -50,7 +50,7 @@ The following feature flags are available:
     * Optional, compatible with Rust stable.
     * Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
     * Requires some additional configuration, see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
-* `ndarray`
+* `plotly_ndarray`
     * Optional, compatible with Rust stable.
     * Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
 

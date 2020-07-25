@@ -7,6 +7,8 @@ extern crate askama;
 extern crate rand;
 extern crate serde;
 
+pub mod ndarray;
+
 pub mod layout;
 pub mod plot;
 
@@ -40,6 +42,9 @@ pub use crate::common::color::Rgb;
 pub use crate::common::color::Rgba;
 
 pub use crate::plot::Trace;
+
+#[cfg(feature = "plotly_ndarray")]
+pub use crate::ndarray::ArrayTraces;
 
 // Not public API.
 #[doc(hidden)]

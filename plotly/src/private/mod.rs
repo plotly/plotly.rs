@@ -1,8 +1,10 @@
 use crate::common::color::{Color, ColorWrapper};
 use serde::{Serialize, Serializer};
 
-#[cfg(feature = "ndarray")]
-use plotly_ndarray::{Array, ArrayTraces, Ix1, Ix2};
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix2};
+#[cfg(feature = "plotly_ndarray")]
+use crate::ndarray::ArrayTraces;
 
 pub trait NumOrString {
     fn to_num_or_string(&self) -> NumOrStringWrapper;
@@ -135,7 +137,7 @@ where
     iterable.into_iter().collect::<Vec<T>>()
 }
 
-#[cfg(feature = "ndarray")]
+#[cfg(feature = "plotly_ndarray")]
 pub fn trace_vectors_from<T>(traces_matrix: Array<T, Ix2>, array_traces: ArrayTraces) -> Vec<Vec<T>>
 where
     T: Clone + 'static,

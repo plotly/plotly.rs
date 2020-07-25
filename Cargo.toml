@@ -2,5 +2,5 @@
 members = [
     "plotly",
     "plotly_kaleido",
-    "plotly_ndarray"
+#    "plotly_ndarray"
 ]

@@ -19,23 +19,21 @@ exclude = [
 [features]
 # Adds plot save functionality to the following formats: png, jpeg, webp, svg, pdf and eps.
 kaleido = ["plotly_kaleido"]
-ndarray = ["plotly_ndarray"]
+plotly_ndarray = ["ndarray"]
 
 [dependencies]
 plotly_kaleido = { version = "0.2.0", path = "../plotly_kaleido", optional = true }
-plotly_ndarray = { version = "0.1.0", path = "../plotly_ndarray", optional = true }
+ndarray = { version = ">=0.13.1", optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 askama = "0.9.0"
 rand = "0.7.3"
 rand_distr = "0.2.2"
 
-chrono = { version = "0.4.13", features = ["serde"] }
-time = "0.2.16"
 
 [dev-dependencies]
 plotly_kaleido = { version = "0.2.0", path = "../plotly_kaleido" }
-plotly_ndarray = { version = "0.1.0", path = "../plotly_ndarray" }
 itertools = "0.9.0"
 itertools-num = "0.1.3"
 csv = "1.1.3"
+ndarray = "0.13.1"

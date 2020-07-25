@@ -3,7 +3,7 @@
 - [Plotly.rs](./plotly_rs.md)
     - [Getting Started](./getting_started.md)
 - [Fundamentals](./fundamentals.md)
-    - [Jupyter Lab Support](./fundamentals/jupyter_lab_support.md)
+    - [Jupyter Support](./fundamentals/jupyter_support.md)
     - [ndarray Support](./fundamentals/ndarray_support.md)
     - [Shapes](./fundamentals/shapes.md)
 - [Recipes](./recipes.md)

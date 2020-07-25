@@ -7,8 +7,11 @@ use serde::Serialize;
 use crate::private;
 use crate::private::copy_iterable_to_vec;
 
-#[cfg(feature = "ndarray")]
-use plotly_ndarray::{Array, ArrayTraces, Ix1, Ix2};
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
+#[cfg(feature = "plotly_ndarray")]
+use crate::ndarray::ArrayTraces;
+
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Bins {
@@ -274,8 +277,8 @@ where
     ///
     /// ```
     /// use plotly::common::Mode;
-    /// use plotly::{Plot, Histogram};
-    /// use plotly_ndarray::{Array, Ix1, Ix2, ArrayTraces};
+    /// use plotly::{Plot, Histogram, ArrayTraces};
+    /// use ndarray::{Array, Ix1, Ix2};
     /// use rand_distr::{Distribution, Normal};
     /// use plotly::Layout;
     /// use plotly::layout::BarMode;
@@ -311,7 +314,7 @@ where
     ///     Ok(())
     /// }
     /// ```
-    #[cfg(feature = "ndarray")]
+    #[cfg(feature = "plotly_ndarray")]
     pub fn to_traces(
         &self,
         traces_matrix: Array<H, Ix2>,
@@ -323,8 +326,8 @@ where
         while !trace_vectors.is_empty() {
             let mut sc = Box::new(self.clone());
             let data = trace_vectors.pop();
-            if !data.is_none() {
-                sc.x = Some(data.unwrap());
+            if let Some(d) = data {
+                sc.x = Some(d);
                 traces.push(sc);
             }
         }
@@ -332,7 +335,7 @@ where
         traces
     }
 
-    #[cfg(feature = "ndarray")]
+    #[cfg(feature = "plotly_ndarray")]
     pub fn from_array(x: Array<H, Ix1>) -> Box<Self> {
         Box::new(Histogram {
             r#type: PlotType::Histogram,

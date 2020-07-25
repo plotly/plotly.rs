@@ -758,17 +758,17 @@ fn svg_paths(show: bool) {
 
 fn main() -> std::io::Result<()> {
     // Shapes
-    // filled_area_chart(true);
-    // vertical_and_horizontal_lines_positioned_relative_to_axes(true);
-    // lines_positioned_relative_to_the_plot_and_to_the_axes(true);
-    // creating_tangent_lines_with_shapes(true);
-    // rectangles_positioned_relative_to_the_axes(true);
-    // rectangle_positioned_relative_to_the_plot_and_to_the_axes(true);
-    // highlighting_time_series_regions_with_rectangle_shapes(true);
-    // circles_positioned_relative_to_the_axes(true);
-    // highlighting_clusters_of_scatter_points_with_circle_shapes(true);
-    // venn_diagram_with_circle_shapes(true);
-    // adding_shapes_to_subplots(true);
+    filled_area_chart(true);
+    vertical_and_horizontal_lines_positioned_relative_to_axes(true);
+    lines_positioned_relative_to_the_plot_and_to_the_axes(true);
+    creating_tangent_lines_with_shapes(true);
+    rectangles_positioned_relative_to_the_axes(true);
+    rectangle_positioned_relative_to_the_plot_and_to_the_axes(true);
+    highlighting_time_series_regions_with_rectangle_shapes(true);
+    circles_positioned_relative_to_the_axes(true);
+    highlighting_clusters_of_scatter_points_with_circle_shapes(true);
+    venn_diagram_with_circle_shapes(true);
+    adding_shapes_to_subplots(true);
     svg_paths(true);
 
     Ok(())

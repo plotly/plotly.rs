@@ -1,4 +1,4 @@
-# Jupyter Lab Support
+# Jupyter Support
 
 As of version `0.6.0`, [Plotly.rs](https://github.com/igiagkiozis/plotly) has native support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter). 
 
@@ -6,10 +6,16 @@ Once you've installed the required packages you'll be able to run all the exampl
 
 
 ## Installation
+It is assumed that an installation of the [Anaconda](https://www.anaconda.com/products/individual) Python distribution is already present in the system. If that is not the case you can follow these [instructions](https://www.anaconda.com/products/individual) to get up and running with `Anaconda`. 
 
 ```shell script
-conda install -c plotly=4.9.0
+conda install -c plotly plotly=4.9.0
 conda install jupyterlab "ipywidgets=7.5"
+```
+
+optionally (or instead of `jupyterlab`) you can also install Jupyter Notebook:
+```shell script
+conda install notebook
 ```
 
 Although there are alternative methods to enable support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter), we have elected to keep the requirements consistent with what those of other languages, e.g. Julia, Python and R. This way users know what to expect; and also the folks at [Plotly](https://plotly.com/python/getting-started/#jupyter-notebook-support) have done already most of the heavy lifting to create an extension for Jupyter Lab that works very well.
@@ -17,7 +23,7 @@ Although there are alternative methods to enable support for the [EvCxR Jupyter 
 Run the following to install the Plotly Jupyter Lab extension: 
 ```shell script
 jupyter labextension install jupyterlab-plotly@4.9.0
-``` 
+```
 
 Once this step is complete to make sure the installation so far was successful, run the following command: 
 ```shell script
@@ -97,7 +103,8 @@ let mut plot = Plot::new();
 plot.add_trace(trace);
 let layout = Layout::new().height(800);
 plot.set_layout(layout);
-// Alternatively you can directly invoke the display method: plot.evcxr_display();
-plot
+plot.lab_display();
 ```
-Notice that at the last line there is no semicolon. There are two ways to display a plot in the `EvCxR` kernel, either have the plot object as shown above in the last line or directly invoke the `Plot::evcxr_display()` method on it; both have the same result. You can also find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/jupyterlab_examples.ipynb) that will periodically be updated with examples.
+For Jupyter Lab there are two ways to display a plot in the `EvCxR` kernel, either have the plot object be in the last line without a semicolon or directly invoke the `Plot::lab_display` method on it; both have the same result. You can also find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/jupyter_lab_examples.ipynb) that will periodically be updated with examples.
+
+The process for Jupyter Notebook is very much the same with one exception; the `Plot::noteboo_display` method must be used to display the plot. You can find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/jupyter_notebook_examples.ipynb) 
