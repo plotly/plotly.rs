@@ -3,7 +3,7 @@ use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
 use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter, ScatterPolar};
 use rand_distr::{Distribution, Normal, Uniform};
 
 // Scatter Plots
@@ -80,6 +80,27 @@ fn bubble_scatter_plots(show: bool) {
         plot.show();
     }
     println!("{}", plot.to_inline_html(Some("bubble_scatter_plots")));
+}
+
+fn polar_scatter_plot(show: bool) {
+    let n: usize = 400;
+    let theta: Vec<f64> = linspace(0., 360., n).collect();
+    let r: Vec<f64> = theta
+        .iter()
+        .map(|x| {
+            let x = x / 360. * core::f64::consts::TAU;
+            let x = x.cos();
+            1. / 8. * (63. * x.powf(5.) - 70. * x.powf(3.) + 15. * x).abs()
+        })
+        .collect();
+
+    let trace = ScatterPolar::new(theta, r).mode(Mode::Lines);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    if show {
+        plot.show();
+    }
+    println!("{}", plot.to_inline_html(Some("polar_scatter_plot")));
 }
 
 fn data_labels_hover(show: bool) {
@@ -594,6 +615,7 @@ fn main() -> std::io::Result<()> {
     simple_scatter_plot(true);
     line_and_scatter_plots(true);
     bubble_scatter_plots(true);
+    polar_scatter_plot(true);
     data_labels_hover(true);
     data_labels_on_the_plot(true);
     colored_and_styled_scatter_plot(true);
