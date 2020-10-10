@@ -69,6 +69,12 @@ impl NumOrString for &str {
     }
 }
 
+impl NumOrString for f32 {
+    fn to_num_or_string(&self) -> NumOrStringWrapper {
+        NumOrStringWrapper::F((*self).into())
+    }
+}
+
 impl NumOrString for f64 {
     fn to_num_or_string(&self) -> NumOrStringWrapper {
         NumOrStringWrapper::F(*self)
@@ -78,6 +84,24 @@ impl NumOrString for f64 {
 impl NumOrString for usize {
     fn to_num_or_string(&self) -> NumOrStringWrapper {
         NumOrStringWrapper::U(*self as u64)
+    }
+}
+
+impl NumOrString for u32 {
+    fn to_num_or_string(&self) -> NumOrStringWrapper {
+        NumOrStringWrapper::U(*self as u64)
+    }
+}
+
+impl NumOrString for u64 {
+    fn to_num_or_string(&self) -> NumOrStringWrapper {
+        NumOrStringWrapper::U(*self)
+    }
+}
+
+impl NumOrString for isize {
+    fn to_num_or_string(&self) -> NumOrStringWrapper {
+        NumOrStringWrapper::I(*self as i64)
     }
 }
 
