@@ -18,7 +18,7 @@ use ndarray::{Array, Ix1, Ix2};
 use crate::ndarray::ArrayTraces;
 
 #[derive(Serialize, Clone, Debug)]
-pub struct Scatter<X, Y>
+pub struct Scatter<X, Y, Z>
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -50,6 +50,9 @@ pub struct Scatter<X, Y>
     y0: Option<NumOrStringWrapper>,
     #[serde(skip_serializing_if = "Option::is_none")]
     dy: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    z: Option<Vec<Z>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
@@ -109,7 +112,7 @@ pub struct Scatter<X, Y>
     y_calendar: Option<Calendar>,
 }
 
-impl<X, Y> Default for Scatter<X, Y>
+impl<X, Y, Z> Default for Scatter<X, Y, Z>
 {
     fn default() -> Self {
         Scatter {
@@ -127,6 +130,7 @@ impl<X, Y> Default for Scatter<X, Y>
             y: None,
             y0: None,
             dy: None,
+            z: None,
             text: None,
             text_position: None,
             text_template: None,
@@ -158,7 +162,7 @@ impl<X, Y> Default for Scatter<X, Y>
     }
 }
 
-impl<X, Y> Scatter<X, Y>
+impl<X, Y> Scatter<X, Y, ()>
 where
     X: Clone,
     Y: Clone,
@@ -187,7 +191,31 @@ where
             ..Default::default()
         })
     }
+}
 
+impl<X, Y, Z> Scatter<X, Y, Z>
+where
+    X: Clone,
+    Y: Clone,
+    Z: Clone,
+{
+    pub fn new3<I, J, K>(x: I, y: J, z: K) -> Box<Self>
+    where
+        I: IntoIterator<Item = X>,
+        J: IntoIterator<Item = Y>,
+        K: IntoIterator<Item = Z>,
+    {
+        let x = copy_iterable_to_vec(x);
+        let y = copy_iterable_to_vec(y);
+        let z = copy_iterable_to_vec(z);
+        Box::new(Scatter {
+            x: Some(x),
+            y: Some(y),
+            z: Some(z),
+            r#type: PlotType::Scatter3D,
+            ..Default::default()
+        })
+    }
     /// Enables WebGL.
     pub fn web_gl_mode(mut self, on: bool) -> Box<Self> {
         self.r#type = if on {
@@ -578,7 +606,7 @@ where
     }
 }
 
-impl<X, Y> Scatter<X, Y>
+impl<X, Y> Scatter<X, Y, ()>
 where
     X: Clone + Serialize + 'static,
     Y: Clone + Serialize + 'static,
@@ -649,10 +677,11 @@ where
     }
 }
 
-impl<X, Y> Trace for Scatter<X, Y>
+impl<X, Y, Z> Trace for Scatter<X, Y, Z>
 where
     X: Serialize + Clone + 'static,
     Y: Serialize + Clone + 'static,
+    Z: Serialize + Clone + 'static,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
