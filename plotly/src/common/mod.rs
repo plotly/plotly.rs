@@ -1149,7 +1149,7 @@ pub struct Marker {
     #[serde(skip_serializing_if = "Option::is_none")]
     symbol: Option<MarkerSymbol>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    opacity: Option<f64>,
+    opacity: Option<Dim<f64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     size: Option<Dim<usize>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "maxdisplayed")]
@@ -1199,7 +1199,12 @@ impl Marker {
     }
 
     pub fn opacity(mut self, opacity: f64) -> Marker {
-        self.opacity = Some(opacity);
+        self.opacity = Some(Dim::Scalar(opacity));
+        self
+    }
+
+    pub fn opacity_array(mut self, opacity: Vec<f64>) -> Marker {
+        self.opacity = Some(Dim::Vector(opacity));
         self
     }
 
