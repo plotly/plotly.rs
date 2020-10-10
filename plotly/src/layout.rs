@@ -2250,6 +2250,95 @@ impl Annotation {
     }
 }
 
+#[derive(Serialize, Debug)]
+pub enum AspectMode {
+    #[serde(rename = "auto")]
+    Auto,
+    #[serde(rename = "cube")]
+    Cube,
+    #[serde(rename = "data")]
+    Data,
+    #[serde(rename = "manual")]
+    Manual,
+}
+
+#[derive(Serialize, Debug, Default)]
+pub struct LayoutScene {
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    background_color: Option<ColorWrapper>,
+
+    // camera: Camera,
+    // domain: Domain,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "aspectmode")]
+    aspect_mode: Option<AspectMode>,
+    // #[serde(rename = "aspectratio")]
+    // aspect_ratio: AspectRatio
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis")]
+    z_axis: Option<Axis>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "dragmode")]
+    drag_mode: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hovermode")]
+    hover_mode: Option<TruthyEnum<HoverMode>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    annotations: Option<Vec<Annotation>>,
+}
+
+impl LayoutScene {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
+        self.background_color = Some(background_color.to_color());
+        self
+    }
+
+    pub fn aspect_mode(mut self, aspect_mode: AspectMode) -> Self {
+        self.aspect_mode = Some(aspect_mode);
+        self
+    }
+
+    pub fn x_axis(mut self, xaxis: Axis) -> Self {
+        self.x_axis = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis(mut self, xaxis: Axis) -> Self {
+        self.y_axis = Some(xaxis);
+        self
+    }
+
+    pub fn z_axis(mut self, xaxis: Axis) -> Self {
+        self.z_axis = Some(xaxis);
+        self
+    }
+
+    /// Determines the mode of drag interactions for this scene.
+    /// One of ( "orbit" | "turntable" | "zoom" | "pan" | "false" )
+    pub fn drag_mode(mut self, drag_mode: &str) -> Self {
+        self.drag_mode = Some(drag_mode.to_owned());
+        self
+    }
+
+    /// Determines the mode of hover interactions for this scene.
+    /// Only `HoverMode::Closest` and `HoverMode::False` seem to be supported here.
+    pub fn hover_mode(mut self, hover_mode: HoverMode) -> Self {
+        self.hover_mode = Some(TruthyEnum { e: hover_mode });
+        self
+    }
+
+    pub fn annotations(mut self, annotations: Vec<Annotation>) -> Self {
+        self.annotations = Some(annotations);
+        self
+    }
+}
+
 #[derive(Serialize, Debug, Default)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2341,7 +2430,8 @@ pub struct Layout {
     y_axis8: Option<Axis>,
 
     // ternary: Option<LayoutTernary>,
-    // scene: Option<LayoutScene>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    scene: Option<LayoutScene>,
     // polar: Option<LayoutPolar>,
     #[serde(skip_serializing_if = "Option::is_none")]
     annotations: Option<Vec<Annotation>>,
@@ -2614,6 +2704,11 @@ impl Layout {
 
     pub fn y_axis8(mut self, yaxis: Axis) -> Layout {
         self.y_axis8 = Some(yaxis);
+        self
+    }
+
+    pub fn scene(mut self, scene: LayoutScene) -> Layout {
+        self.scene = Some(scene);
         self
     }
 
