@@ -19,9 +19,6 @@ use crate::ndarray::ArrayTraces;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Scatter<X, Y>
-where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -113,9 +110,6 @@ where
 }
 
 impl<X, Y> Default for Scatter<X, Y>
-where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
 {
     fn default() -> Self {
         Scatter {
@@ -166,8 +160,8 @@ where
 
 impl<X, Y> Scatter<X, Y>
 where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
+    X: Clone,
+    Y: Clone,
 {
     pub fn new<I, K>(x: I, y: K) -> Box<Self>
     where
@@ -192,71 +186,6 @@ where
             r#type: PlotType::Scatter,
             ..Default::default()
         })
-    }
-
-    /// Produces `Scatter` traces from a 2 dimensional tensor (`traces_matrix`) indexed by `x`. This
-    /// function requires the `ndarray` feature.
-    ///
-    /// # Arguments
-    /// * `x`             - One dimensional array (or view) that represents the `x` axis coordinates.
-    /// * `traces_matrix` - Two dimensional array (or view) containing the `y` axis coordinates of
-    /// the traces.
-    /// * `array_traces`  - Determines whether the traces are arranged in the matrix over the
-    /// columns (`ArrayTraces::OverColumns`) or over the rows (`ArrayTraces::OverRows`).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use plotly::common::Mode;
-    /// use plotly::{Plot, Scatter, ArrayTraces};
-    /// use ndarray::{Array, Ix1, Ix2};
-    ///
-    /// fn ndarray_to_traces() {
-    ///     let n: usize = 11;
-    ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
-    ///     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
-    ///     let mut count = 0.;
-    ///     for mut row in ys.gencolumns_mut() {
-    ///         for index in 0..row.len() {
-    ///             row[index] = count + (index as f64).powf(2.);
-    ///         }
-    ///         count += 1.;
-    ///     }
-    ///
-    ///     let traces = Scatter::default()
-    ///         .mode(Mode::LinesMarkers)
-    ///         .to_traces(t, ys, ArrayTraces::OverColumns);
-    ///
-    ///     let mut plot = Plot::new();
-    ///     plot.add_traces(traces);
-    ///     plot.show();
-    /// }
-    /// fn main() -> std::io::Result<()> {
-    ///     ndarray_to_traces();
-    ///     Ok(())
-    /// }
-    /// ```
-    #[cfg(feature = "plotly_ndarray")]
-    pub fn to_traces(
-        &self,
-        x: Array<X, Ix1>,
-        traces_matrix: Array<Y, Ix2>,
-        array_traces: ArrayTraces,
-    ) -> Vec<Box<dyn Trace>> {
-        let mut traces: Vec<Box<dyn Trace>> = Vec::new();
-        let mut trace_vectors = private::trace_vectors_from(traces_matrix, array_traces);
-        trace_vectors.reverse();
-        while !trace_vectors.is_empty() {
-            let mut sc = Box::new(self.clone());
-            sc.x = Some(x.to_vec());
-            let data = trace_vectors.pop();
-            if let Some(d) = data {
-                sc.y = Some(d);
-                traces.push(sc);
-            }
-        }
-
-        traces
     }
 
     /// Enables WebGL.
@@ -646,6 +575,77 @@ where
     pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Self> {
         self.y_calendar = Some(y_calendar);
         Box::new(self)
+    }
+}
+
+impl<X, Y> Scatter<X, Y>
+where
+    X: Clone + Serialize + 'static,
+    Y: Clone + Serialize + 'static,
+{
+    /// Produces `Scatter` traces from a 2 dimensional tensor (`traces_matrix`) indexed by `x`. This
+    /// function requires the `ndarray` feature.
+    ///
+    /// # Arguments
+    /// * `x`             - One dimensional array (or view) that represents the `x` axis coordinates.
+    /// * `traces_matrix` - Two dimensional array (or view) containing the `y` axis coordinates of
+    /// the traces.
+    /// * `array_traces`  - Determines whether the traces are arranged in the matrix over the
+    /// columns (`ArrayTraces::OverColumns`) or over the rows (`ArrayTraces::OverRows`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use plotly::common::Mode;
+    /// use plotly::{Plot, Scatter, ArrayTraces};
+    /// use ndarray::{Array, Ix1, Ix2};
+    ///
+    /// fn ndarray_to_traces() {
+    ///     let n: usize = 11;
+    ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
+    ///     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
+    ///     let mut count = 0.;
+    ///     for mut row in ys.gencolumns_mut() {
+    ///         for index in 0..row.len() {
+    ///             row[index] = count + (index as f64).powf(2.);
+    ///         }
+    ///         count += 1.;
+    ///     }
+    ///
+    ///     let traces = Scatter::default()
+    ///         .mode(Mode::LinesMarkers)
+    ///         .to_traces(t, ys, ArrayTraces::OverColumns);
+    ///
+    ///     let mut plot = Plot::new();
+    ///     plot.add_traces(traces);
+    ///     plot.show();
+    /// }
+    /// fn main() -> std::io::Result<()> {
+    ///     ndarray_to_traces();
+    ///     Ok(())
+    /// }
+    /// ```
+    #[cfg(feature = "plotly_ndarray")]
+    pub fn to_traces(
+        &self,
+        x: Array<X, Ix1>,
+        traces_matrix: Array<Y, Ix2>,
+        array_traces: ArrayTraces,
+    ) -> Vec<Box<dyn Trace>> {
+        let mut traces: Vec<Box<dyn Trace>> = Vec::new();
+        let mut trace_vectors = private::trace_vectors_from(traces_matrix, array_traces);
+        trace_vectors.reverse();
+        while !trace_vectors.is_empty() {
+            let mut sc = Box::new(self.clone());
+            sc.x = Some(x.to_vec());
+            let data = trace_vectors.pop();
+            if let Some(d) = data {
+                sc.y = Some(d);
+                traces.push(sc);
+            }
+        }
+
+        traces
     }
 }
 
