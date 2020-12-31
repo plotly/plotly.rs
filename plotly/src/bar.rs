@@ -7,6 +7,7 @@ use crate::common::{
 use crate::Trace;
 use serde::Serialize;
 
+use crate::error::TraceError;
 use crate::private;
 
 #[derive(Serialize, Debug, Default)]
@@ -299,7 +300,7 @@ where
     X: Serialize + Default,
     Y: Serialize + Default,
 {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+    fn serialize(&self) -> Result<String, TraceError> {
+        Ok(serde_json::to_string(self)?)
     }
 }

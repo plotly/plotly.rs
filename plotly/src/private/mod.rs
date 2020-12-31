@@ -1,10 +1,10 @@
 use crate::common::color::{Color, ColorWrapper};
-use serde::{Serialize, Serializer};
+use serde::{ser::Error, Serialize, Serializer};
 
 #[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix2};
-#[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix2};
 
 pub trait NumOrString {
     fn to_num_or_string(&self) -> NumOrStringWrapper;
@@ -116,7 +116,7 @@ where
         S: Serializer,
     {
         let s = serde_json::to_string(&self.e)
-            .unwrap()
+            .map_err(|_| S::Error::custom("Could not deserialize JSON"))?
             .chars()
             .filter(|c| *c != '"')
             .collect::<String>();

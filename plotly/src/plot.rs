@@ -12,6 +12,8 @@ use std::process::Command;
 use crate::Layout;
 use rand_distr::Alphanumeric;
 
+use crate::error::{Error, TraceError};
+
 const PLOTLY_JS: &str = "plotly-1.54.6.min.js";
 
 #[derive(Template)]
@@ -54,10 +56,9 @@ pub enum ImageFormat {
     EPS,
 }
 
-
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
 pub trait Trace {
-    fn serialize(&self) -> String;
+    fn serialize(&self) -> Result<String, TraceError>;
 }
 
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
@@ -84,7 +85,7 @@ pub trait Trace {
 ///     plot.add_trace(trace1);
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
-///     plot.show();
+///     plot.show().unwrap();
 /// }
 ///
 /// fn main() -> std::io::Result<()> {
@@ -98,28 +99,6 @@ pub struct Plot {
     layout: Option<Layout>,
     remote_plotly_js: bool,
 }
-
-const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
-Consider using the `to_html` method to save the plot instead. If using the `kaleido` feature the
-`save` method can be used to produce a static image in one of the following formats:
-- ImageFormat::PNG
-- ImageFormat::JPEG
-- ImageFormat::WEBP
-- ImageFormat::SVG
-- ImageFormat::PDF
-- ImageFormat::EPS
-
-used as follows:
-let plot = Plot::new();
-...
-let width = 1024;
-let height = 680;
-let scale = 1.0;
-plot.save("filename", ImageFormat::PNG, width, height, scale);
-
-See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
-"#;
-
 
 impl Plot {
     /// Create a new `Plot`.
@@ -159,8 +138,8 @@ impl Plot {
     /// This will serialize the `Trace`s and `Layout` in an html page which is saved in the temp
     /// directory. For example on Linux it will generate a file `plotly_<22 random characters>.html`
     /// in the /tmp directory.
-    pub fn show(&self) {
-        let rendered = self.render(false, "", 0, 0);
+    pub fn show(&self) -> Result<(), Error> {
+        let rendered = self.render(false, "", 0, 0)?;
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
 
@@ -172,22 +151,24 @@ impl Plot {
         plot_name = format!("plotly_{}", plot_name);
 
         temp.push(plot_name);
-        let temp_path = temp.to_str().unwrap();
+        let temp_path = temp
+            .to_str()
+            .ok_or(Error::PathSerializationError(temp.clone()))?;
         {
-            let mut file = File::create(temp_path).unwrap();
-            file.write_all(rendered)
-                .expect("failed to write html output");
-            file.flush().unwrap();
+            let mut file = File::create(temp_path)?;
+            file.write_all(rendered)?;
+            file.flush()?;
         }
 
-        Plot::show_with_default_app(temp_path);
+        Plot::show_with_default_app(temp_path)?;
+        Ok(())
     }
 
     /// Renders the contents of the `Plot`, creates a png raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
-    pub fn show_png(&self, width: usize, height: usize) {
-        let rendered = self.render(true, "png", width, height);
+    pub fn show_png(&self, width: usize, height: usize) -> Result<(), Error> {
+        let rendered = self.render(true, "png", width, height)?;
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
 
@@ -198,22 +179,24 @@ impl Plot {
         plot_name.push_str(".html");
 
         temp.push(plot_name);
-        let temp_path = temp.to_str().unwrap();
+        let temp_path = temp
+            .to_str()
+            .ok_or(Error::PathSerializationError(temp.clone()))?;
         {
-            let mut file = File::create(temp_path).unwrap();
-            file.write_all(rendered)
-                .expect("failed to write html output");
-            file.flush().unwrap();
+            let mut file = File::create(temp_path)?;
+            file.write_all(rendered)?;
+            file.flush()?;
         }
 
-        Plot::show_with_default_app(temp_path);
+        Plot::show_with_default_app(temp_path)?;
+        Ok(())
     }
 
     /// Renders the contents of the `Plot`, creates a jpeg raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
-    pub fn show_jpeg(&self, width: usize, height: usize) {
-        let rendered = self.render(true, "jpg", width, height);
+    pub fn show_jpeg(&self, width: usize, height: usize) -> Result<(), Error> {
+        let rendered = self.render(true, "jpg", width, height)?;
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
 
@@ -224,27 +207,30 @@ impl Plot {
         plot_name.push_str(".html");
 
         temp.push(plot_name);
-        let temp_path = temp.to_str().unwrap();
+        let temp_path = temp
+            .to_str()
+            .ok_or(Error::PathSerializationError(temp.clone()))?;
         {
-            let mut file = File::create(temp_path).unwrap();
-            file.write_all(rendered)
-                .expect("failed to write html output");
-            file.flush().unwrap();
+            let mut file = File::create(temp_path)?;
+            file.write_all(rendered)?;
+            file.flush()?;
         }
 
-        Plot::show_with_default_app(temp_path);
+        Plot::show_with_default_app(temp_path)?;
+
+        Ok(())
     }
 
     /// Renders the contents of the `Plot` and displays it in the system default browser.
     ///
     /// In contrast to `Plot::show()` this will save the resulting html in a user specified location
     /// instead of the system temp directory.
-    pub fn to_html<P: AsRef<Path>>(&self, filename: P) {
-        let rendered = self.render(false, "", 0, 0);
+    pub fn to_html<P: AsRef<Path>>(&self, filename: P) -> Result<(), Error> {
+        let rendered = self.render(false, "", 0, 0)?;
         let rendered = rendered.as_bytes();
-        let mut file = File::create(filename.as_ref()).unwrap();
-        file.write_all(rendered)
-            .expect("failed to write html output");
+        let mut file = File::create(filename.as_ref())?;
+        file.write_all(rendered)?;
+        Ok(())
     }
 
     /// Renders the contents of the `Plot` and returns it as a String, for embedding in
@@ -255,7 +241,10 @@ impl Plot {
     ///
     /// If `plot_div_id` is `None` the plot div id will be randomly generated, otherwise the user
     /// supplied div id is used.
-    pub fn to_inline_html<T: Into<Option<&'static str>>>(&self, plot_div_id: T) -> String {
+    pub fn to_inline_html<T: Into<Option<&'static str>>>(
+        &self,
+        plot_div_id: T,
+    ) -> Result<String, Error> {
         let plot_div_id = plot_div_id.into();
         match plot_div_id {
             Some(id) => self.render_inline(id.as_ref()),
@@ -266,21 +255,27 @@ impl Plot {
         }
     }
 
-    fn to_jupyter_notebook_html(&self) -> String {
+    fn to_jupyter_notebook_html(&self) -> Result<String, Error> {
         let plot_div_id: String = thread_rng().sample_iter(&Alphanumeric).take(20).collect();
-        let plot_data = self.render_plot_data();
+        let plot_data = self.render_plot_data()?;
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot_data: plot_data.as_str(),
             plot_div_id: plot_div_id.as_str(),
         };
-        tmpl.render().unwrap()
+        Ok(tmpl.render()?)
     }
 
     /// Display plot in Jupyter Notebook.
     pub fn notebook_display(&self) {
         let plot_data = self.to_jupyter_notebook_html();
-        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", plot_data);
+        println!(
+            "EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT",
+            match plot_data {
+                Ok(s) => s.to_string(),
+                Err(e) => e.to_string(),
+            }
+        );
     }
 
     /// Display plot in Jupyter Lab.
@@ -288,7 +283,10 @@ impl Plot {
         let plot_data = self.to_json();
         println!(
             "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT",
-            plot_data
+            match plot_data {
+                Ok(s) => s.to_string(),
+                Err(e) => e.to_string(),
+            }
         );
     }
 
@@ -307,9 +305,9 @@ impl Plot {
         width: usize,
         height: usize,
         scale: f64,
-    ) {
+    ) -> Result<(), Error> {
         let kaleido = plotly_kaleido::Kaleido::new();
-        let plot_data = self.to_json();
+        let plot_data = self.to_json()?;
         let image_format = match format {
             ImageFormat::PNG => "png",
             ImageFormat::JPEG => "jpeg",
@@ -318,28 +316,27 @@ impl Plot {
             ImageFormat::EPS => "eps",
             ImageFormat::WEBP => "webp",
         };
-        kaleido
-            .save(
-                filename.as_ref(),
-                plot_data.as_str(),
-                image_format,
-                width,
-                height,
-                scale,
-            )
-            .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
+        kaleido.save(
+            filename.as_ref(),
+            plot_data.as_str(),
+            image_format,
+            width,
+            height,
+            scale,
+        )?;
+        Ok(())
     }
 
     fn plotly_js_path() -> PathBuf {
-        let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+        let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or("".into()));
         let templates = root.join("templates");
         templates.join(PLOTLY_JS)
     }
 
-    fn render_plot_data(&self) -> String {
+    fn render_plot_data(&self) -> Result<String, Error> {
         let mut plot_data = String::new();
         for (idx, trace) in self.traces.iter().enumerate() {
-            let s = trace.serialize();
+            let s = trace.serialize()?;
             plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
         }
         // plot_data.push_str("\n");
@@ -353,7 +350,7 @@ impl Plot {
         }
         plot_data.push_str("];\n");
         let layout_data = match &self.layout {
-            Some(layout) => format!("var layout = {};", Trace::serialize(layout)),
+            Some(layout) => format!("var layout = {};", Trace::serialize(layout)?),
             None => {
                 let mut s = String::from("var layout = {");
                 s.push_str("};");
@@ -361,7 +358,7 @@ impl Plot {
             }
         };
         plot_data.push_str(layout_data.as_str());
-        plot_data
+        Ok(plot_data)
     }
 
     fn render(
@@ -370,9 +367,9 @@ impl Plot {
         image_type: &str,
         image_width: usize,
         image_height: usize,
-    ) -> String {
-        let plot_data = self.render_plot_data();
-        let plotly_js = PlotlyJs {}.render().unwrap();
+    ) -> Result<String, Error> {
+        let plot_data = self.render_plot_data()?;
+        let plotly_js = PlotlyJs {}.render()?;
         let tmpl = PlotTemplate {
             plot_data: plot_data.as_str(),
             plotly_javascript: plotly_js.as_str(),
@@ -382,27 +379,27 @@ impl Plot {
             image_width,
             image_height,
         };
-        tmpl.render().unwrap()
+        Ok(tmpl.render()?)
     }
 
-    fn render_inline(&self, plot_div_id: &str) -> String {
-        let plot_data = self.render_plot_data();
+    fn render_inline(&self, plot_div_id: &str) -> Result<String, Error> {
+        let plot_data = self.render_plot_data()?;
 
         let tmpl = InlinePlotTemplate {
             plot_data: plot_data.as_str(),
             plot_div_id,
         };
-        tmpl.render().unwrap()
+        Ok(tmpl.render()?)
     }
 
-    pub fn to_json(&self) -> String {
+    pub fn to_json(&self) -> Result<String, Error> {
         let mut plot_data: Vec<String> = Vec::new();
         for trace in self.traces.iter() {
-            let s = trace.serialize();
+            let s = trace.serialize()?;
             plot_data.push(s);
         }
         let layout_data = match &self.layout {
-            Some(layout) => Trace::serialize(layout),
+            Some(layout) => Trace::serialize(layout)?,
             None => "{}".to_owned(),
         };
 
@@ -420,32 +417,35 @@ impl Plot {
         }
         json_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
         json_data.push_str("}");
-        json_data
+        Ok(json_data)
     }
 
     #[cfg(target_os = "linux")]
-    fn show_with_default_app(temp_path: &str) {
+    fn show_with_default_app(temp_path: &str) -> Result<(), Error> {
         Command::new("xdg-open")
             .args(&[temp_path])
             .output()
-            .expect(DEFAULT_HTML_APP_NOT_FOUND);
+            .map_err(|e| Error::new_default_app_error(e))?;
+        Ok(())
     }
 
     #[cfg(target_os = "macos")]
-    fn show_with_default_app(temp_path: &str) {
+    fn show_with_default_app(temp_path: &str) -> Result<(), Error> {
         Command::new("open")
             .args(&[temp_path])
             .output()
-            .expect(DEFAULT_HTML_APP_NOT_FOUND);
+            .map_err(|e| Error::new_default_app_error(e))?;
+        Ok(())
     }
 
     #[cfg(target_os = "windows")]
-    fn show_with_default_app(temp_path: &str) {
+    fn show_with_default_app(temp_path: &str) -> Result<(), Error> {
         Command::new("cmd")
             .arg("/C")
             .arg(format!(r#"start {}"#, temp_path))
             .output()
-            .expect(DEFAULT_HTML_APP_NOT_FOUND);
+            .map_err(|e| Error::new_default_app_error(e))?;
+        Ok(())
     }
 }
 
@@ -464,17 +464,17 @@ mod tests {
     #[test]
     fn test_to_json() {
         let plot = create_test_plot();
-        let plot_json = plot.to_json();
+        let plot_json = plot.to_json().unwrap();
         println!("{}", plot_json);
     }
 
     #[test]
     fn test_inline_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id");
+        let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id").unwrap();
         assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
         println!("{}", inline_plot_data);
-        let random_div_id = plot.to_inline_html(None);
+        let random_div_id = plot.to_inline_html(None).unwrap();
         println!("{}", random_div_id);
     }
 
@@ -482,7 +482,7 @@ mod tests {
     fn test_jupyter_notebook_plot() {
         let plot = create_test_plot();
         let inline_plot_data = plot.to_jupyter_notebook_html();
-        println!("{}", inline_plot_data);
+        println!("{}", inline_plot_data.unwrap());
     }
 
     #[test]

@@ -9,13 +9,14 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
+use crate::error::TraceError;
+#[cfg(feature = "plotly_ndarray")]
+use crate::ndarray::ArrayTraces;
 use crate::private::{
     copy_iterable_to_vec, to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum,
 };
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
-#[cfg(feature = "plotly_ndarray")]
-use crate::ndarray::ArrayTraces;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Scatter<X, Y>
@@ -654,7 +655,7 @@ where
     X: Serialize + Clone + 'static,
     Y: Serialize + Clone + 'static,
 {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+    fn serialize(&self) -> Result<String, TraceError> {
+        Ok(serde_json::to_string(self)?)
     }
 }

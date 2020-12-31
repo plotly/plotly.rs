@@ -52,11 +52,12 @@ fn time_series_plot_with_custom_date_range(show: bool) {
     plot.set_layout(layout);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("time_series_plot_with_custom_date_range"))
+            .unwrap()
     );
 }
 
@@ -76,11 +77,12 @@ fn time_series_with_range_slider(show: bool) {
     plot.set_layout(layout);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("time_series_with_range_slider"))
+            .unwrap()
     );
 }
 
@@ -124,11 +126,12 @@ fn time_series_with_range_selector_buttons(show: bool) {
     plot.set_layout(layout);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("time_series_with_range_selector_buttons"))
+            .unwrap()
     );
 }
 
@@ -169,11 +172,12 @@ fn customizing_tick_label_formatting_by_zoom_level(show: bool) {
     plot.set_layout(layout);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("customizing_tick_label_formatting_by_zoom_level"))
+            .unwrap()
     );
 }
 
@@ -241,9 +245,13 @@ fn simple_candlestick_chart(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("simple_candlestick_chart")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("simple_candlestick_chart"))
+            .unwrap()
+    );
 }
 
 // OHLC Charts
@@ -310,9 +318,12 @@ fn simple_ohlc_chart(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("simple_ohlc_chart")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("simple_ohlc_chart")).unwrap()
+    );
 }
 
 fn main() -> std::io::Result<()> {

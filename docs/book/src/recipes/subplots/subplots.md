@@ -36,7 +36,7 @@ fn simple_subplot(show: bool) {
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("simple_subplot"))
+        plot.to_inline_html(Some("simple_subplot")).unwrap()
     );
 }
 ```
@@ -78,7 +78,7 @@ fn custom_sized_subplot(show: bool) {
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("custom_sized_subplot"))
+        plot.to_inline_html(Some("custom_sized_subplot")).unwrap()
     );
 }
 ```
@@ -130,7 +130,7 @@ fn multiple_subplots(show: bool) {
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("multiple_subplots"))
+        plot.to_inline_html(Some("multiple_subplots")).unwrap()
     );
 }
 ```
@@ -181,7 +181,7 @@ fn stacked_subplots(show: bool) {
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("stacked_subplots"))
+        plot.to_inline_html(Some("stacked_subplots")).unwrap()
     );
 }
 ```
@@ -226,7 +226,7 @@ fn stacked_subplots_with_shared_x_axis(show: bool) {
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("stacked_subplots_with_shared_x_axis"))
+        plot.to_inline_html(Some("stacked_subplots_with_shared_x_axis")).unwrap()
     );
 }
 ```
@@ -281,11 +281,11 @@ fn multiple_custom_sized_subplots(show: bool) {
         .y_axis4(Axis::new().domain(&[0., 0.45]).anchor("x4"));
     plot.set_layout(layout);
         if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("multiple_custom_sized_subplots"))
+        plot.to_inline_html(Some("multiple_custom_sized_subplots")).unwrap()
     );
 }
 ```

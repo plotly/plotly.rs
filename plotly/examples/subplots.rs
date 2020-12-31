@@ -22,9 +22,9 @@ fn simple_subplot(show: bool) {
     );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("simple_subplot")));
+    println!("{}", plot.to_inline_html(Some("simple_subplot")).unwrap());
 }
 
 fn custom_sized_subplot(show: bool) {
@@ -44,9 +44,12 @@ fn custom_sized_subplot(show: bool) {
         .x_axis2(Axis::new().domain(&[0.8, 1.]));
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("custom_sized_subplot")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("custom_sized_subplot")).unwrap()
+    );
 }
 
 fn multiple_subplots(show: bool) {
@@ -76,9 +79,12 @@ fn multiple_subplots(show: bool) {
     );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_subplots")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("multiple_subplots")).unwrap()
+    );
 }
 
 fn stacked_subplots(show: bool) {
@@ -105,9 +111,9 @@ fn stacked_subplots(show: bool) {
     );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("stacked_subplots")));
+    println!("{}", plot.to_inline_html(Some("stacked_subplots")).unwrap());
 }
 
 fn stacked_subplots_with_shared_x_axis(show: bool) {
@@ -129,11 +135,12 @@ fn stacked_subplots_with_shared_x_axis(show: bool) {
         .y_axis3(Axis::new().domain(&[0.66, 1.]));
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("stacked_subplots_with_shared_x_axis"))
+            .unwrap()
     );
 }
 
@@ -170,11 +177,12 @@ fn multiple_custom_sized_subplots(show: bool) {
         .y_axis4(Axis::new().domain(&[0., 0.45]).anchor("x4"));
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("multiple_custom_sized_subplots"))
+            .unwrap()
     );
 }
 
@@ -201,9 +209,9 @@ fn two_y_axes(show: bool) {
         );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("two_y_axes")));
+    println!("{}", plot.to_inline_html(Some("two_y_axes")).unwrap());
 }
 
 fn multiple_axes(show: bool) {
@@ -257,9 +265,9 @@ fn multiple_axes(show: bool) {
         );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_axes")));
+    println!("{}", plot.to_inline_html(Some("multiple_axes")).unwrap());
 }
 
 fn main() -> std::io::Result<()> {

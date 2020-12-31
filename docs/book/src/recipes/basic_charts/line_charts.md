@@ -35,9 +35,9 @@ fn adding_names_to_line_and_scatter_plot(show: bool) {
     plot.add_trace(trace3);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("adding_names_to_line_and_scatter_plot")));
+    println!("{}", plot.to_inline_html(Some("adding_names_to_line_and_scatter_plot")).unwrap());
 }
 
 ```
@@ -81,9 +81,9 @@ fn line_and_scatter_styling(show: bool) {
     plot.add_trace(trace3);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("line_and_scatter_styling")));
+    println!("{}", plot.to_inline_html(Some("line_and_scatter_styling")).unwrap());
 }
 ```
 <div id="line_and_scatter_styling" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -122,9 +122,9 @@ fn styling_line_plot(show: bool) {
     plot.add_trace(trace2);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("styling_line_plot")));
+    println!("{}", plot.to_inline_html(Some("styling_line_plot")).unwrap());
 }
 ```
 <div id="styling_line_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -185,9 +185,9 @@ fn line_shape_options_for_interpolation(show: bool) {
     plot.add_trace(trace6);
     plot.show_png(1024, 680);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("line_shape_options_for_interpolation")));
+    println!("{}", plot.to_inline_html(Some("line_shape_options_for_interpolation")).unwrap());
 }
 ```
 <div id="line_shape_options_for_interpolation" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -254,9 +254,9 @@ fn line_dash(show: bool) {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("line_dash")));
+    println!("{}", plot.to_inline_html(Some("line_dash")).unwrap());
 }
 ```
 <div id="line_dash" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -375,9 +375,9 @@ fn filled_lines(show: bool) {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("filled_lines")));
+    println!("{}", plot.to_inline_html(Some("filled_lines")).unwrap());
 }
 ```
 <div id="filled_lines" class="plotly-graph-div" style="height:100%; width:100%;"></div>

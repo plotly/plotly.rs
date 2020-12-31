@@ -16,9 +16,12 @@ fn filled_area_chart(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("filled_area_chart")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("filled_area_chart")).unwrap()
+    );
 }
 
 fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
@@ -76,13 +79,14 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some(
             "vertical_and_horizontal_lines_positioned_relative_to_axes"
         ))
+        .unwrap()
     );
 }
 
@@ -125,13 +129,14 @@ fn lines_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some(
             "lines_positioned_relative_to_the_plot_and_to_the_axes"
         ))
+        .unwrap()
     );
 }
 
@@ -185,11 +190,12 @@ fn creating_tangent_lines_with_shapes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("creating_tangent_lines_with_shapes"))
+            .unwrap()
     );
 }
 
@@ -230,11 +236,12 @@ fn rectangles_positioned_relative_to_the_axes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("rectangles_positioned_relative_to_the_axes"))
+            .unwrap()
     );
 }
 
@@ -279,13 +286,14 @@ fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some(
             "rectangle_positioned_relative_to_the_plot_and_to_the_axes"
         ))
+        .unwrap()
     );
 }
 
@@ -361,13 +369,14 @@ fn highlighting_time_series_regions_with_rectangle_shapes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some(
             "highlighting_time_series_regions_with_rectangle_shapes"
         ))
+        .unwrap()
     );
 }
 
@@ -410,11 +419,12 @@ fn circles_positioned_relative_to_the_axes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("circles_positioned_relative_to_the_axes"))
+            .unwrap()
     );
 }
 
@@ -527,13 +537,14 @@ fn highlighting_clusters_of_scatter_points_with_circle_shapes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some(
             "highlighting_clusters_of_scatter_points_with_circle_shapes"
         ))
+        .unwrap()
     );
 }
 
@@ -600,11 +611,12 @@ fn venn_diagram_with_circle_shapes(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("venn_diagram_with_circle_shapes"))
+            .unwrap()
     );
 }
 
@@ -691,9 +703,13 @@ fn adding_shapes_to_subplots(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("adding_shapes_to_subplots")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("adding_shapes_to_subplots"))
+            .unwrap()
+    );
 }
 
 fn svg_paths(show: bool) {
@@ -751,9 +767,9 @@ fn svg_paths(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("svg_paths")));
+    println!("{}", plot.to_inline_html(Some("svg_paths")).unwrap());
 }
 
 fn main() -> std::io::Result<()> {

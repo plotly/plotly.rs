@@ -24,11 +24,11 @@ fn basic_histogram(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("basic_histogram"))
+        plot.to_inline_html(Some("basic_histogram")).unwrap()
     );
 }
 ```
@@ -57,11 +57,11 @@ fn horizontal_histogram(show: bool) {
 
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("horizontal_histogram"))
+        plot.to_inline_html(Some("horizontal_histogram")).unwrap()
     );
 }
 ```
@@ -101,11 +101,11 @@ fn overlaid_histogram(show: bool) {
     let layout = Layout::new().bar_mode(BarMode::Overlay);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("overlaid_histogram"))
+        plot.to_inline_html(Some("overlaid_histogram")).unwrap()
     );
 }
 ```
@@ -146,11 +146,11 @@ fn stacked_histograms(show: bool) {
     let layout = Layout::new().bar_mode(BarMode::Stack);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("stacked_histograms"))
+        plot.to_inline_html(Some("stacked_histograms")).unwrap()
     );
 }
 ```
@@ -213,11 +213,11 @@ fn colored_and_styled_histograms(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("colored_and_styled_histograms"))
+        plot.to_inline_html(Some("colored_and_styled_histograms")).unwrap()
     );
 }
 ```
@@ -247,11 +247,11 @@ fn cumulative_histogram(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("cumulative_histogram"))
+        plot.to_inline_html(Some("cumulative_histogram")).unwrap()
     );
 }
 ```
@@ -280,11 +280,11 @@ fn normalized_histogram(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("normalized_histogram"))
+        plot.to_inline_html(Some("normalized_histogram")).unwrap()
     );
 }
 ```
@@ -319,11 +319,11 @@ fn specify_binning_function(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("specify_binning_function"))
+        plot.to_inline_html(Some("specify_binning_function")).unwrap()
     );
 }
 

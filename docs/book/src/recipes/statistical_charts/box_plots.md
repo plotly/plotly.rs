@@ -38,11 +38,11 @@ fn basic_box_plot(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("basic_box_plot"))
+        plot.to_inline_html(Some("basic_box_plot")).unwrap()
     );
 }
 ```
@@ -71,11 +71,11 @@ fn box_plot_that_displays_the_underlying_data(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("box_plot_that_displays_the_underlying_data"))
+        plot.to_inline_html(Some("box_plot_that_displays_the_underlying_data")).unwrap()
     );
 }
 
@@ -104,11 +104,11 @@ fn horizontal_box_plot(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("horizontal_box_plot"))
+        plot.to_inline_html(Some("horizontal_box_plot")).unwrap()
     );
 }
 ```
@@ -163,11 +163,11 @@ fn grouped_box_plot(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("grouped_box_plot"))
+        plot.to_inline_html(Some("grouped_box_plot")).unwrap()
     );
 }
 ```
@@ -231,11 +231,11 @@ fn box_plot_styling_outliers(show: bool) {
     plot.add_trace(trace3);
     plot.add_trace(trace4);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("box_plot_styling_outliers"))
+        plot.to_inline_html(Some("box_plot_styling_outliers")).unwrap()
     );
 }
 ```
@@ -279,11 +279,11 @@ fn box_plot_styling_mean_and_standard_deviation(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("box_plot_styling_mean_and_standard_deviation"))
+        plot.to_inline_html(Some("box_plot_styling_mean_and_standard_deviation")).unwrap()
     );
 }
 ```
@@ -351,11 +351,11 @@ fn grouped_horizontal_box_plot(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("grouped_horizontal_box_plot"))
+        plot.to_inline_html(Some("grouped_horizontal_box_plot")).unwrap()
     );
 }
 ```
@@ -445,11 +445,11 @@ fn fully_styled_box_plot(show: bool) {
         plot.add_trace(trace);
     }
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("fully_styled_box_plot"))
+        plot.to_inline_html(Some("fully_styled_box_plot")).unwrap()
     );
 }
 ```

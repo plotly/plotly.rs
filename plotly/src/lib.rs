@@ -7,6 +7,8 @@ extern crate askama;
 extern crate rand;
 extern crate serde;
 
+pub mod error;
+
 pub mod ndarray;
 
 pub mod layout;

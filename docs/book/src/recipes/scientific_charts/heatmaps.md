@@ -19,9 +19,9 @@ fn basic_heat_map(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("basic_heat_map")));
+    println!("{}", plot.to_inline_html(Some("basic_heat_map")).unwrap());
 }
 ```
 <div id="basic_heat_map" class="plotly-graph-div" style="height:100%; width:100%;"></div>

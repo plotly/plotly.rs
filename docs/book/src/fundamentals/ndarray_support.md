@@ -36,9 +36,9 @@ fn single_ndarray_trace(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("single_ndarray_trace")));
+    println!("{}", plot.to_inline_html(Some("single_ndarray_trace")).unwrap());
 }
 ```
 <div id="single_ndarray_trace" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -79,9 +79,9 @@ fn multiple_ndarray_traces_over_columns(show: bool) {
     let mut plot = Plot::new();
     plot.add_traces(traces);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_ndarray_traces_over_columns")));
+    println!("{}", plot.to_inline_html(Some("multiple_ndarray_traces_over_columns")).unwrap());
 }
 ```
 <div id="multiple_ndarray_traces_over_columns" class="plotly-graph-div" style="height:100%; width:100%;"></div>

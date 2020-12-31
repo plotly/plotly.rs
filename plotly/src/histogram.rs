@@ -7,11 +7,11 @@ use serde::Serialize;
 use crate::private;
 use crate::private::copy_iterable_to_vec;
 
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1, Ix2};
+use crate::error::TraceError;
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Bins {
@@ -517,7 +517,7 @@ impl<H> Trace for Histogram<H>
 where
     H: Serialize + Clone + Default + 'static,
 {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+    fn serialize(&self) -> Result<String, TraceError> {
+        Ok(serde_json::to_string(self)?)
     }
 }

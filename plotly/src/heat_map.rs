@@ -1,6 +1,7 @@
 //! Heat-map plot
 
 use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType};
+use crate::error::TraceError;
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
@@ -261,7 +262,7 @@ where
     Y: Serialize + Default,
     Z: Serialize + Default,
 {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+    fn serialize(&self) -> Result<String, TraceError> {
+        Ok(serde_json::to_string(self)?)
     }
 }

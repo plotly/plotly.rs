@@ -15,11 +15,12 @@ fn basic_symmetric_error_bars(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("basic_symmetric_error_bars"))
+            .unwrap()
     );
 }
 
@@ -35,9 +36,12 @@ fn asymmetric_error_bars(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("asymmetric_error_bars")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("asymmetric_error_bars")).unwrap()
+    );
 }
 
 fn error_bars_as_a_percentage_of_the_y_value(show: bool) {
@@ -48,11 +52,12 @@ fn error_bars_as_a_percentage_of_the_y_value(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("error_bars_as_a_percentage_of_the_y_value"))
+            .unwrap()
     );
 }
 
@@ -69,11 +74,12 @@ fn asymmetric_error_bars_with_a_constant_offset(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("asymmetric_error_bars_with_a_constant_offset"))
+            .unwrap()
     );
 }
 
@@ -85,9 +91,12 @@ fn horizontal_error_bars(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("horizontal_error_bars")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("horizontal_error_bars")).unwrap()
+    );
 }
 
 fn bar_chart_with_error_bars(show: bool) {
@@ -104,9 +113,13 @@ fn bar_chart_with_error_bars(show: bool) {
     plot.set_layout(layout);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("bar_chart_with_error_bars")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("bar_chart_with_error_bars"))
+            .unwrap()
+    );
 }
 
 fn colored_and_styled_error_bars(show: bool) {
@@ -147,11 +160,12 @@ fn colored_and_styled_error_bars(show: bool) {
     plot.add_trace(trace2);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("colored_and_styled_error_bars"))
+            .unwrap()
     );
 }
 
@@ -176,9 +190,9 @@ fn basic_box_plot(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("basic_box_plot")));
+    println!("{}", plot.to_inline_html(Some("basic_box_plot")).unwrap());
 }
 
 fn box_plot_that_displays_the_underlying_data(show: bool) {
@@ -189,11 +203,12 @@ fn box_plot_that_displays_the_underlying_data(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("box_plot_that_displays_the_underlying_data"))
+            .unwrap()
     );
 }
 
@@ -205,9 +220,12 @@ fn horizontal_box_plot(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("horizontal_box_plot")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("horizontal_box_plot")).unwrap()
+    );
 }
 
 fn grouped_box_plot(show: bool) {
@@ -244,9 +262,9 @@ fn grouped_box_plot(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("grouped_box_plot")));
+    println!("{}", plot.to_inline_html(Some("grouped_box_plot")).unwrap());
 }
 
 fn box_plot_styling_outliers(show: bool) {
@@ -291,9 +309,13 @@ fn box_plot_styling_outliers(show: bool) {
     plot.add_trace(trace3);
     plot.add_trace(trace4);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("box_plot_styling_outliers")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("box_plot_styling_outliers"))
+            .unwrap()
+    );
 }
 
 fn box_plot_styling_mean_and_standard_deviation(show: bool) {
@@ -317,11 +339,12 @@ fn box_plot_styling_mean_and_standard_deviation(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("box_plot_styling_mean_and_standard_deviation"))
+            .unwrap()
     );
 }
 
@@ -372,11 +395,12 @@ fn grouped_horizontal_box_plot(show: bool) {
 
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("grouped_horizontal_box_plot"))
+            .unwrap()
     );
 }
 
@@ -447,9 +471,12 @@ fn fully_styled_box_plot(show: bool) {
         plot.add_trace(trace);
     }
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("fully_styled_box_plot")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("fully_styled_box_plot")).unwrap()
+    );
 }
 
 // Histograms
@@ -479,9 +506,9 @@ fn basic_histogram(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("basic_histogram")));
+    println!("{}", plot.to_inline_html(Some("basic_histogram")).unwrap());
 }
 
 fn horizontal_histogram(show: bool) {
@@ -493,9 +520,12 @@ fn horizontal_histogram(show: bool) {
 
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("horizontal_histogram")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("horizontal_histogram")).unwrap()
+    );
 }
 
 fn overlaid_histogram(show: bool) {
@@ -518,9 +548,12 @@ fn overlaid_histogram(show: bool) {
     let layout = Layout::new().bar_mode(BarMode::Overlay);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("overlaid_histogram")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("overlaid_histogram")).unwrap()
+    );
 }
 
 fn stacked_histograms(show: bool) {
@@ -543,9 +576,12 @@ fn stacked_histograms(show: bool) {
     let layout = Layout::new().bar_mode(BarMode::Stack);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("stacked_histograms")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("stacked_histograms")).unwrap()
+    );
 }
 
 fn colored_and_styled_histograms(show: bool) {
@@ -590,11 +626,12 @@ fn colored_and_styled_histograms(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("colored_and_styled_histograms"))
+            .unwrap()
     );
 }
 
@@ -607,9 +644,12 @@ fn cumulative_histogram(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("cumulative_histogram")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("cumulative_histogram")).unwrap()
+    );
 }
 
 fn normalized_histogram(show: bool) {
@@ -621,9 +661,12 @@ fn normalized_histogram(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("normalized_histogram")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("normalized_histogram")).unwrap()
+    );
 }
 
 fn specify_binning_function(show: bool) {
@@ -641,9 +684,13 @@ fn specify_binning_function(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("specify_binning_function")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("specify_binning_function"))
+            .unwrap()
+    );
 }
 
 fn main() -> std::io::Result<()> {

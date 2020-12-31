@@ -25,11 +25,11 @@ fn basic_symmetric_error_bars(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("basic_symmetric_error_bars"))
+        plot.to_inline_html(Some("basic_symmetric_error_bars")).unwrap()
     );
 }
 ```
@@ -60,9 +60,9 @@ fn asymmetric_error_bars(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("asymmetric_error_bars")));
+    println!("{}", plot.to_inline_html(Some("asymmetric_error_bars")).unwrap());
 }
 ```
 <div id="asymmetric_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -89,11 +89,11 @@ fn error_bars_as_a_percentage_of_the_y_value(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("error_bars_as_a_percentage_of_the_y_value"))
+        plot.to_inline_html(Some("error_bars_as_a_percentage_of_the_y_value")).unwrap()
     );
 }
 ```
@@ -126,11 +126,11 @@ fn asymmetric_error_bars_with_a_constant_offset(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("asymmetric_error_bars_with_a_constant_offset"))
+        plot.to_inline_html(Some("asymmetric_error_bars_with_a_constant_offset")).unwrap()
     );
 }
 
@@ -159,9 +159,9 @@ fn horizontal_error_bars(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("horizontal_error_bars")));
+    println!("{}", plot.to_inline_html(Some("horizontal_error_bars")).unwrap());
 }
 ```
 <div id="horizontal_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -194,9 +194,9 @@ fn bar_chart_with_error_bars(show: bool) {
     plot.set_layout(layout);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("bar_chart_with_error_bars")));
+    println!("{}", plot.to_inline_html(Some("bar_chart_with_error_bars")).unwrap());
 }
 ```
 <div id="bar_chart_with_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -254,11 +254,11 @@ fn colored_and_styled_error_bars(show: bool) {
     plot.add_trace(trace2);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("colored_and_styled_error_bars"))
+        plot.to_inline_html(Some("colored_and_styled_error_bars")).unwrap()
     );
 }
 ```

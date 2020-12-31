@@ -17,6 +17,10 @@ use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
+pub mod error;
+
+use crate::error::Error;
+
 #[derive(Serialize)]
 struct PlotData {
     format: String,
@@ -41,8 +45,8 @@ struct KaleidoResult {
 }
 
 impl KaleidoResult {
-    fn from(result: &str) -> KaleidoResult {
-        serde_json::from_str(result).unwrap()
+    fn from(result: &str) -> Result<KaleidoResult, Error> {
+        Ok(serde_json::from_str(result)?)
     }
 }
 
@@ -84,39 +88,42 @@ impl Kaleido {
         Kaleido { cmd_path: path }
     }
 
-    fn root_dir() -> Result<PathBuf, &'static str> {
-        let mut p = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        p = p.parent().unwrap().to_path_buf();
+    fn root_dir() -> Result<PathBuf, Error> {
+        let mut p = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
+        p = p
+            .parent()
+            .ok_or(Error::ParentDirectoryFailed)?
+            .to_path_buf();
         p = p.join("plotly_kaleido");
         Ok(p)
     }
 
     #[cfg(target_os = "linux")]
-    fn binary_path() -> Result<PathBuf, &'static str> {
+    fn binary_path() -> Result<PathBuf, Error> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
+        p = p.join("kaleido").join("kaleido").canonicalize()?;
         if !p.exists() {
-            return Err("could not find kaleido executable in path");
+            return Err(Error::ExecutableNotFound(p));
         }
         Ok(p)
     }
 
     #[cfg(target_os = "macos")]
-    fn binary_path() -> Result<PathBuf, &'static str> {
+    fn binary_path() -> Result<PathBuf, Error> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
+        p = p.join("kaleido").join("kaleido").canonicalize()?;
         if !p.exists() {
-            return Err("could not find kaleido executable in path");
+            return Err(Error::ExecutableNotFound(p));
         }
         Ok(p)
     }
 
     #[cfg(target_os = "windows")]
-    fn binary_path() -> Result<PathBuf, &'static str> {
+    fn binary_path() -> Result<PathBuf, Error> {
         let mut p = Kaleido::root_dir()?;
         p = p.join("kaleido").join("kaleido.cmd");
         if !p.exists() {
-            return Err("could not find kaleido executable in path");
+            return Err(Error::ExecutableNotFound(p));
         }
         Ok(p)
     }
@@ -129,41 +136,40 @@ impl Kaleido {
         width: usize,
         height: usize,
         scale: f64,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Error> {
         let mut dst = PathBuf::from(dst);
         dst.set_extension(image_format);
 
         let p = self.cmd_path.as_path();
-        let p = p.to_str().unwrap();
+        let p = p
+            .to_str()
+            .ok_or(Error::PathSerializationError(p.to_path_buf()))?;
         let p = String::from(p);
 
         let process = Command::new(p.as_str())
-            .current_dir(self.cmd_path.parent().unwrap())
+            .current_dir(self.cmd_path.parent().ok_or(Error::ParentDirectoryFailed)?)
             .args(&["plotly", "--disable-gpu"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .spawn()
-            .expect("failed to spawn Kaleido binary");
+            .spawn()?;
 
         {
             let plot_data =
                 PlotData::new(plotly_data, image_format, width, height, scale).to_json();
-            let mut process_stdin = process.stdin.unwrap();
-            process_stdin
-                .write_all(plot_data.as_bytes())
-                .expect("couldn't write to Kaleido stdin");
+            let mut process_stdin = process.stdin.ok_or(Error::StdinError)?;
+            process_stdin.write_all(plot_data.as_bytes())?;
             process_stdin.flush()?;
         }
 
-        let output_lines = BufReader::new(process.stdout.unwrap()).lines();
+        let output_lines = BufReader::new(process.stdout.ok_or(Error::StdinError)?).lines();
         for line in output_lines {
             if let Ok(l) = line {
-                let res = KaleidoResult::from(l.as_str());
+                let res = KaleidoResult::from(l.as_str())?;
                 if let Some(image_data) = res.result {
                     let data: Vec<u8> = match image_format {
                         "svg" | "eps" => image_data.as_bytes().to_vec(),
-                        _ => base64::decode(image_data).unwrap(),
+                        _ => base64::decode(image_data)?,
                     };
                     let mut file = File::create(dst.as_path())?;
                     file.write_all(&data)?;

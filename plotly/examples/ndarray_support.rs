@@ -1,8 +1,7 @@
-use plotly::common::{Mode};
-use plotly::{Plot, Scatter};
 use ndarray::{Array, Ix1, Ix2};
+use plotly::common::Mode;
 use plotly::ndarray::ArrayTraces;
-
+use plotly::{Plot, Scatter};
 
 fn single_ndarray_trace(show: bool) {
     let n: usize = 11;
@@ -14,9 +13,12 @@ fn single_ndarray_trace(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("single_ndarray_trace")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("single_ndarray_trace")).unwrap()
+    );
 }
 
 fn multiple_ndarray_traces_over_columns(show: bool) {
@@ -39,9 +41,13 @@ fn multiple_ndarray_traces_over_columns(show: bool) {
     let mut plot = Plot::new();
     plot.add_traces(traces);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_ndarray_traces_over_columns")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("multiple_ndarray_traces_over_columns"))
+            .unwrap()
+    );
 }
 
 fn multiple_ndarray_traces_over_rows(show: bool) {
@@ -64,9 +70,13 @@ fn multiple_ndarray_traces_over_rows(show: bool) {
     let mut plot = Plot::new();
     plot.add_traces(traces);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_ndarray_traces_over_rows")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("multiple_ndarray_traces_over_rows"))
+            .unwrap()
+    );
 }
 
 fn main() -> std::io::Result<()> {

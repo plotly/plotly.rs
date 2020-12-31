@@ -34,9 +34,9 @@ fn two_y_axes(show: bool) {
         );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("two_y_axes")));
+    println!("{}", plot.to_inline_html(Some("two_y_axes")).unwrap());
 }
 ```
 <div id="two_y_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -107,9 +107,9 @@ fn multiple_axes(show: bool) {
         );
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_axes")));
+    println!("{}", plot.to_inline_html(Some("multiple_axes")).unwrap());
 }
 ```
 <div id="multiple_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>

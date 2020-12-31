@@ -78,11 +78,11 @@ fn simple_ohlc_chart(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
-        plot.to_inline_html(Some("simple_ohlc_chart"))
+        plot.to_inline_html(Some("simple_ohlc_chart")).unwrap()
     );
 }
 ```

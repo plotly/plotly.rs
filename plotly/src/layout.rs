@@ -3,6 +3,7 @@ use crate::common::{
     Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Side,
     TickFormatStop, TickMode, Title,
 };
+use crate::error::TraceError;
 use crate::plot::Trace;
 use crate::private;
 use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
@@ -2745,7 +2746,7 @@ impl Layout {
 }
 
 impl Trace for Layout {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+    fn serialize(&self) -> Result<String, TraceError> {
+        Ok(serde_json::to_string(self)?)
     }
 }

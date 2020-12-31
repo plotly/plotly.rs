@@ -26,8 +26,8 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace3);
 
     // The following will save the plot in all available formats and show the plot.
-    plot.save("scatter", ImageFormat::PNG,  1024, 680, 1.0);
-    plot.show();
+    plot.save("scatter", ImageFormat::PNG,  1024, 680, 1.0).unwrap();
+    plot.show().unwrap();
 }
 
 fn main() -> std::io::Result<()> {

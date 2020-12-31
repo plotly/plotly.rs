@@ -16,9 +16,12 @@ fn simple_scatter_plot(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("simple_scatter_plot")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("simple_scatter_plot")).unwrap()
+    );
 }
 
 fn line_and_scatter_plots(show: bool) {
@@ -56,9 +59,12 @@ fn line_and_scatter_plots(show: bool) {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("line_and_scatter_plots")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("line_and_scatter_plots")).unwrap()
+    );
 }
 
 fn bubble_scatter_plots(show: bool) {
@@ -77,9 +83,12 @@ fn bubble_scatter_plots(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("bubble_scatter_plots")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("bubble_scatter_plots")).unwrap()
+    );
 }
 
 fn data_labels_hover(show: bool) {
@@ -102,9 +111,12 @@ fn data_labels_hover(show: bool) {
         .y_axis(Axis::new().title("y".into()).range(vec![0., 8.]));
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("data_labels_hover")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("data_labels_hover")).unwrap()
+    );
 }
 
 fn data_labels_on_the_plot(show: bool) {
@@ -129,9 +141,13 @@ fn data_labels_on_the_plot(show: bool) {
         .y_axis(Axis::new().range(vec![0., 8.]));
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("data_labels_on_the_plot")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("data_labels_on_the_plot"))
+            .unwrap()
+    );
 }
 
 fn colored_and_styled_scatter_plot(show: bool) {
@@ -214,11 +230,12 @@ fn colored_and_styled_scatter_plot(show: bool) {
     plot.add_trace(trace4);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("colored_and_styled_scatter_plot"))
+            .unwrap()
     );
 }
 
@@ -260,9 +277,9 @@ fn large_data_sets(show: bool) {
     plot.add_trace(trace);
 
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("large_data_sets")));
+    println!("{}", plot.to_inline_html(Some("large_data_sets")).unwrap());
 }
 
 // Line Charts
@@ -284,11 +301,12 @@ fn adding_names_to_line_and_scatter_plot(show: bool) {
     plot.add_trace(trace3);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("adding_names_to_line_and_scatter_plot"))
+            .unwrap()
     );
 }
 
@@ -314,9 +332,13 @@ fn line_and_scatter_styling(show: bool) {
     plot.add_trace(trace3);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("line_and_scatter_styling")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("line_and_scatter_styling"))
+            .unwrap()
+    );
 }
 
 fn styling_line_plot(show: bool) {
@@ -338,9 +360,12 @@ fn styling_line_plot(show: bool) {
     plot.add_trace(trace2);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("styling_line_plot")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("styling_line_plot")).unwrap()
+    );
 }
 
 fn line_shape_options_for_interpolation(show: bool) {
@@ -383,13 +408,14 @@ fn line_shape_options_for_interpolation(show: bool) {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    plot.show_png(1024, 680);
+    plot.show_png(1024, 680).unwrap();
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
     println!(
         "{}",
         plot.to_inline_html(Some("line_shape_options_for_interpolation"))
+            .unwrap()
     );
 }
 
@@ -437,9 +463,9 @@ fn line_dash(show: bool) {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("line_dash")));
+    println!("{}", plot.to_inline_html(Some("line_dash")).unwrap());
 }
 
 fn filled_lines(show: bool) {
@@ -534,9 +560,9 @@ fn filled_lines(show: bool) {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("filled_lines")));
+    println!("{}", plot.to_inline_html(Some("filled_lines")).unwrap());
 }
 
 // Bar Charts
@@ -546,9 +572,9 @@ fn basic_bar_chart(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(t);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("basic_bar_chart")));
+    println!("{}", plot.to_inline_html(Some("basic_bar_chart")).unwrap());
 }
 
 fn grouped_bar_chart(show: bool) {
@@ -565,9 +591,12 @@ fn grouped_bar_chart(show: bool) {
     plot.add_trace(trace2);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("grouped_bar_chart")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("grouped_bar_chart")).unwrap()
+    );
 }
 
 fn stacked_bar_chart(show: bool) {
@@ -584,9 +613,12 @@ fn stacked_bar_chart(show: bool) {
     plot.add_trace(trace2);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("stacked_bar_chart")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("stacked_bar_chart")).unwrap()
+    );
 }
 
 fn main() -> std::io::Result<()> {

@@ -66,7 +66,7 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    plot.show();
+    plot.show().unwrap();
 }
 
 fn main() -> std::io::Result<()> {

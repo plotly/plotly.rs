@@ -16,16 +16,16 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 
 
 ## Basic Bar Chart
-```rust 
+```rust
 fn basic_bar_chart(show: bool) {
     let animals = vec!["giraffes", "orangutans", "monkeys"];
     let t = Bar::new(animals, vec![20, 14, 23]);
     let mut plot = Plot::new();
     plot.add_trace(t);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("basic_bar_chart")));
+    println!("{}", plot.to_inline_html(Some("basic_bar_chart")).unwrap());
 }
 
 ```
@@ -43,7 +43,7 @@ var layout = {};
 </script>
 
 ## Grouped Bar Chart
-```rust 
+```rust
 fn grouped_bar_chart(show: bool) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
@@ -58,9 +58,9 @@ fn grouped_bar_chart(show: bool) {
     plot.add_trace(trace2);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("grouped_bar_chart")));
+    println!("{}", plot.to_inline_html(Some("grouped_bar_chart")).unwrap());
 }
 ```
 <div id="grouped_bar_chart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -79,7 +79,7 @@ var layout = {"barmode":"group"};
 
 
 ## Stacked Bar Chart
-```rust 
+```rust
 fn stacked_bar_chart(show: bool) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
@@ -94,9 +94,9 @@ fn stacked_bar_chart(show: bool) {
     plot.add_trace(trace2);
     plot.set_layout(layout);
     if show {
-        plot.show();
+        plot.show().unwrap();
     }
-    println!("{}", plot.to_inline_html(Some("stacked_bar_chart")));
+    println!("{}", plot.to_inline_html(Some("stacked_bar_chart")).unwrap());
 }
 ```
 <div id="stacked_bar_chart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
