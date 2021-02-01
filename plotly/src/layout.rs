@@ -844,7 +844,7 @@ impl Axis {
 
     pub fn matches(mut self, matches : bool) -> Axis {
         if matches {
-            self.matches = Some(String::from('x'));
+            self.matches = Some(String::from("x"));
         }
         self
     }
