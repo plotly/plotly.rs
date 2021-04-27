@@ -54,7 +54,6 @@ pub enum ImageFormat {
     EPS,
 }
 
-
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
 pub trait Trace {
     fn serialize(&self) -> String;
@@ -119,7 +118,6 @@ plot.save("filename", ImageFormat::PNG, width, height, scale);
 
 See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
 "#;
-
 
 impl Plot {
     /// Create a new `Plot`.
@@ -239,11 +237,25 @@ impl Plot {
     ///
     /// In contrast to `Plot::show()` this will save the resulting html in a user specified location
     /// instead of the system temp directory.
+    ///
+    /// In contrast to `Plot::write_html`, this will save the resulting html to a file located at a
+    /// user specified location, instead of a writing it to anything that implements `std::io::Write`.
     pub fn to_html<P: AsRef<Path>>(&self, filename: P) {
+        let mut file = File::create(filename.as_ref()).unwrap();
+
+        self.write_html(&mut file);
+    }
+
+    /// Renders the contents of the `Plot` to HTML and outputs them to a writable buffer.
+    ///
+    /// In contrast to `Plot::to_html`, this will save the resulting html to a byte buffer using the
+    /// `std::io::Write` trait, instead of to a user specified file.
+    pub fn write_html<W: Write>(&self, buffer: &mut W) {
         let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
-        let mut file = File::create(filename.as_ref()).unwrap();
-        file.write_all(rendered)
+
+        buffer
+            .write_all(rendered)
             .expect("failed to write html output");
     }
 
@@ -280,7 +292,10 @@ impl Plot {
     /// Display plot in Jupyter Notebook.
     pub fn notebook_display(&self) {
         let plot_data = self.to_jupyter_notebook_html();
-        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", plot_data);
+        println!(
+            "EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT",
+            plot_data
+        );
     }
 
     /// Display plot in Jupyter Lab.
