@@ -2,7 +2,10 @@
 
 Plotly Kaleido implements the `kaleido` feature for [Plotly.rs](https://github.com/igiagkiozis/plotly)
  
-The `kaleido` feature enables `Plot` conversion to the following output formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. 
+The `kaleido` feature enables `Plot` conversion to the following output formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
+
+Plotly Kaleido requires that [kaleido](https://github.com/plotly/Kaleido) is installed on your system. Then you need to specify `KALEIDO_PATH`
+environment variable to make sure that Plotly Kaleido can successfully find the kaleido executable.
 
 ## Examples 
  
