@@ -16,6 +16,7 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::panic::panic_any;
 
 #[derive(Serialize)]
 struct PlotData {
@@ -78,7 +79,7 @@ impl Kaleido {
     pub fn new() -> Kaleido {
         let path = match Kaleido::binary_path() {
             Ok(path) => path,
-            Err(msg) => panic!(msg),
+            Err(msg) => panic_any(msg),
         };
 
         Kaleido { cmd_path: path }

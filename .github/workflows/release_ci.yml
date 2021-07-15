@@ -18,7 +18,7 @@ jobs:
     - name: build_linux
       run: cargo build --all-features --verbose
     - name: Run tests
-      run: cargo test --workspace --verbose
+      run: cargo test --all-features --release --verbose
 
   build_windows:
     runs-on: windows-latest
@@ -28,7 +28,7 @@ jobs:
       - name: build_windows
         run: cargo build --all-features --verbose
       - name: Run tests
-        run: cargo test --workspace --verbose
+        run: cargo test --all-features --release --verbose
 
   build_macos:
     runs-on: macos-latest
@@ -38,4 +38,4 @@ jobs:
       - name: build_macos
         run: cargo build --all-features --verbose
       - name: Run tests
-        run: cargo test --workspace --verbose
+        run: cargo test --all-features --release --verbose

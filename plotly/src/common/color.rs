@@ -1,7 +1,7 @@
 use serde::Serialize;
 
-#[serde(untagged)]
 #[derive(Serialize, Clone, Debug)]
+#[serde(untagged)]
 pub enum ColorWrapper {
     S(String),
     F(f64),
@@ -383,13 +383,13 @@ impl Color for f64 {
 
 fn string_types_to_color_wrapper<S: AsRef<str> + std::fmt::Display + Sized>(v: S) -> ColorWrapper {
     if v.as_ref().len() < 6 || v.as_ref().len() > 7 {
-        panic!(format!("{} is not a valid hex color!", v));
+        panic!("{} is not a valid hex color!", v);
     }
     if v.as_ref().len() == 6 && v.as_ref().starts_with('#') {
-        panic!(format!("{} is not a valid hex color!", v));
+        panic!("{} is not a valid hex color!", v);
     }
     if v.as_ref().len() == 7 && !v.as_ref().starts_with('#') {
-        panic!(format!("{} is not a valid hex color!", v));
+        panic!("{} is not a valid hex color!", v);
     }
     let valid_characters = "#ABCDEF0123456789";
     let mut s = v.as_ref().to_uppercase();
@@ -398,7 +398,7 @@ fn string_types_to_color_wrapper<S: AsRef<str> + std::fmt::Display + Sized>(v: S
     }
     for c in s.chars() {
         if !valid_characters.contains(c) {
-            panic!(format!("{} is not a valid hex color!", v));
+            panic!("{} is not a valid hex color!", v);
         }
     }
 

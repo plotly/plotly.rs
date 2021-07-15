@@ -54,7 +54,6 @@ pub enum ImageFormat {
     EPS,
 }
 
-
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
 pub trait Trace {
     fn serialize(&self) -> String;
@@ -120,7 +119,6 @@ plot.save("filename", ImageFormat::PNG, width, height, scale);
 See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
 "#;
 
-
 impl Plot {
     /// Create a new `Plot`.
     pub fn new() -> Plot {
@@ -164,10 +162,13 @@ impl Plot {
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
 
-        let mut plot_name = rand::thread_rng()
-            .sample_iter(&rand::distributions::Alphanumeric)
-            .take(22)
-            .collect::<String>();
+        let mut plot_name = String::from_utf8(
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(22)
+                .collect::<Vec<u8>>(),
+        )
+        .unwrap();
         plot_name.push_str(".html");
         plot_name = format!("plotly_{}", plot_name);
 
@@ -191,10 +192,13 @@ impl Plot {
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
 
-        let mut plot_name = rand::thread_rng()
-            .sample_iter(&rand::distributions::Alphanumeric)
-            .take(22)
-            .collect::<String>();
+        let mut plot_name = String::from_utf8(
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(22)
+                .collect::<Vec<u8>>(),
+        )
+        .unwrap();
         plot_name.push_str(".html");
 
         temp.push(plot_name);
@@ -217,10 +221,13 @@ impl Plot {
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
 
-        let mut plot_name = rand::thread_rng()
-            .sample_iter(&rand::distributions::Alphanumeric)
-            .take(22)
-            .collect::<String>();
+        let mut plot_name: String = String::from_utf8(
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(22)
+                .collect::<Vec<u8>>(),
+        )
+        .unwrap();
         plot_name.push_str(".html");
 
         temp.push(plot_name);
@@ -260,14 +267,26 @@ impl Plot {
         match plot_div_id {
             Some(id) => self.render_inline(id.as_ref()),
             None => {
-                let rand_id: String = thread_rng().sample_iter(&Alphanumeric).take(20).collect();
+                let rand_id = String::from_utf8(
+                    thread_rng()
+                        .sample_iter(&Alphanumeric)
+                        .take(20)
+                        .collect::<Vec<u8>>(),
+                )
+                .unwrap();
                 self.render_inline(rand_id.as_str())
             }
         }
     }
 
     fn to_jupyter_notebook_html(&self) -> String {
-        let plot_div_id: String = thread_rng().sample_iter(&Alphanumeric).take(20).collect();
+        let plot_div_id = String::from_utf8(
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(20)
+                .collect::<Vec<u8>>(),
+        )
+        .unwrap();
         let plot_data = self.render_plot_data();
 
         let tmpl = JupyterNotebookPlotTemplate {
@@ -280,7 +299,10 @@ impl Plot {
     /// Display plot in Jupyter Notebook.
     pub fn notebook_display(&self) {
         let plot_data = self.to_jupyter_notebook_html();
-        println!("EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT", plot_data);
+        println!(
+            "EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT",
+            plot_data
+        );
     }
 
     /// Display plot in Jupyter Lab.

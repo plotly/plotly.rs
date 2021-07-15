@@ -9,19 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - tag matches for struct Axis : allow for synchronisation between subplots on x-axis
   - fn matches in impl of Axis
 
-## [0.6.0] - 2020-xx-xx
+## [0.6.0] - 2020-07-25
 ### Added
-- Shapes support (TODO add link to documentation and examples).
-- Annotations support (TODO add link to documentation and examples).
-- Docstrings.
-- `ndarray` support (TODO add link to documentation and examples).
-- Jupyter lab support (TODO add link to documentation and examples).
+- Shapes support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/shapes.html)).
+- Annotations support.
+- Docstrings to `Scatter`.
+- `ndarray` support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/ndarray_support.html)).
+- Jupyter lab and notebook support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/jupyter_support.html)).
 ### Changed
 - Removed `num` dependence.
 - Removed `plotly_orca` and the `orca` feature. Use the `kaleido` feature for static image generation.
 - Updated Kaleido version in `plotly_kaleido` to 0.0.1.
-### Fixed
-- xx
+
 
 ## [0.5.1] - 2020-07-12
 ### Added
