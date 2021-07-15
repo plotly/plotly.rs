@@ -85,16 +85,14 @@ impl Kaleido {
     }
 
     fn root_dir() -> Result<PathBuf, &'static str> {
-        let mut p = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        p = p.parent().unwrap().to_path_buf();
-        p = p.join("plotly_kaleido");
+        let p = PathBuf::from(env::var("KALEIDO_PATH").expect("KALEIDO_PATH"));
         Ok(p)
     }
 
     #[cfg(target_os = "linux")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
+        p = p.join("kaleido").canonicalize().unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -104,7 +102,7 @@ impl Kaleido {
     #[cfg(target_os = "macos")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
+        p = p.join("kaleido").canonicalize().unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -114,7 +112,7 @@ impl Kaleido {
     #[cfg(target_os = "windows")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido.cmd");
+        p = p.join("kaleido.cmd");
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -189,7 +187,7 @@ mod tests {
     }"#;
 
     #[test]
-    fn test_can_find_kaleido_executable() {
+    fn test_cacan_find_kaleido_executable() {
         let _k = Kaleido::new();
     }
 
