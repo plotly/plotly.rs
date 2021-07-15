@@ -23,21 +23,21 @@ fn simple_scatter_plot(show: bool) {
 
 fn line_and_scatter_plots(show: bool) {
     let n: usize = 100;
-    let rng = rand::thread_rng();
+    let mut rng = rand::thread_rng();
     let random_x: Vec<f64> = linspace(0., 1., n).collect();
     let random_y0: Vec<f64> = Normal::new(5., 1.)
         .unwrap()
-        .sample_iter(rng)
+        .sample_iter(&mut rng)
         .take(n)
         .collect();
     let random_y1: Vec<f64> = Normal::new(0., 1.)
         .unwrap()
-        .sample_iter(rng)
+        .sample_iter(&mut rng)
         .take(n)
         .collect();
     let random_y2: Vec<f64> = Normal::new(-5., 1.)
         .unwrap()
-        .sample_iter(rng)
+        .sample_iter(&mut rng)
         .take(n)
         .collect();
 
@@ -224,16 +224,16 @@ fn colored_and_styled_scatter_plot(show: bool) {
 
 fn large_data_sets(show: bool) {
     let n: usize = 100_000;
-    let rng = rand::thread_rng();
-    let r: Vec<f64> = Uniform::new(0., 1.).sample_iter(rng).take(n).collect();
+    let mut rng = rand::thread_rng();
+    let r: Vec<f64> = Uniform::new(0., 1.).sample_iter(&mut rng).take(n).collect();
     let theta: Vec<f64> = Normal::new(0., 2. * std::f64::consts::PI)
         .unwrap()
-        .sample_iter(rng)
+        .sample_iter(&mut rng)
         .take(n)
         .collect();
     let colors: Vec<f64> = Normal::new(0., 1.)
         .unwrap()
-        .sample_iter(rng)
+        .sample_iter(&mut rng)
         .take(n)
         .collect();
 
