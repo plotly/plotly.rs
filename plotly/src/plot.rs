@@ -12,10 +12,10 @@ use std::process::Command;
 use crate::Layout;
 use rand_distr::Alphanumeric;
 
-const PLOTLY_JS: &str = "plotly-1.54.6.min.js";
+const PLOTLY_JS: &str = "plotly-2.2.1.min.js";
 
 #[derive(Template)]
-#[template(path = "plotly-1.54.6.min.js", escape = "none")]
+#[template(path = "plotly-2.2.1.min.js", escape = "none")]
 struct PlotlyJs;
 
 #[derive(Template)]

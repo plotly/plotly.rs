@@ -216,7 +216,7 @@ where
     ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     ///     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
     ///     let mut count = 0.;
-    ///     for mut row in ys.gencolumns_mut() {
+    ///     for mut row in ys.columns_mut() {
     ///         for index in 0..row.len() {
     ///             row[index] = count + (index as f64).powf(2.);
     ///         }

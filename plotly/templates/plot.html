@@ -8,7 +8,7 @@
     <script type="text/javascript">if (window.MathJax) {MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>
     <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
     {% if remote_plotly_js -%}
-    <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.2.1.min.js"></script>
     {% else -%}
     <script type="text/javascript">{{ plotly_javascript }}</script>
     {% endif -%}
@@ -25,8 +25,7 @@
                 window.PLOTLYENV=window.PLOTLYENV || {};                    
                 if (document.getElementById("plotly-html-element")) {
 
-                    var d3 = Plotly.d3;
-                    var image_element= d3.select('#image-export');
+                    var image_element = document.getElementById('image-export')
 
                     {{ plot_data }}
 

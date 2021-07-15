@@ -1,6 +1,6 @@
 # Jupyter Support
 
-As of version `0.6.0`, [Plotly.rs](https://github.com/igiagkiozis/plotly) has native support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter). 
+As of version `0.7.0`, [Plotly.rs](https://github.com/igiagkiozis/plotly) has native support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter). 
 
 Once you've installed the required packages you'll be able to run all the examples shown here as well as all [the recipes](../recipes.md) in Jupyter Lab!
 
@@ -70,7 +70,7 @@ jupyter lab
 create a new notebook and select the `Rust` kernel. Then create the following three cells and execute them in order:
 
 ```shell script
-:dep plotly = { version = ">=0.6.0" }
+:dep plotly = { version = ">=0.7.0" }
 :dep itertools-num = "0.1.3"
 ```
 

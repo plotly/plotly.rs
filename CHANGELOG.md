@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2021-xx-xx
+### Added
+-
+### Changed
+- Using plotly version 2.2.1
+- Updated Kaleido version in `plotly_kaleido` to 0.2.1.
+
 ## [0.6.0] - 2021-01-31
 ### Added
   - tag matches for struct Axis : allow for synchronisation between subplots on x-axis
