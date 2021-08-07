@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Using plotly version 2.2.1
 - Updated Kaleido version in `plotly_kaleido` to 0.2.1.
+### Fixed
+- Axis ticks text has the wrong parameter name (Issue #45).
 
 ## [0.6.0] - 2021-01-31
 ### Added

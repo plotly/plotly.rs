@@ -741,7 +741,7 @@ pub struct Axis {
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickvals")]
     tick_values: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tick_text")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "ticktext")]
     tick_text: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     ticks: Option<TicksDirection>,
