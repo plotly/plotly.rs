@@ -364,7 +364,7 @@ impl Plot {
             let s = trace.serialize();
             plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
         }
-        // plot_data.push_str("\n");
+
         plot_data.push_str("var data = [");
         for idx in 0..self.traces.len() {
             if idx != self.traces.len() - 1 {
