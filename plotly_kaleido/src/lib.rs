@@ -78,7 +78,7 @@ impl Kaleido {
     pub fn new() -> Kaleido {
         let path = match Kaleido::binary_path() {
             Ok(path) => path,
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         };
 
         Kaleido { cmd_path: path }
