@@ -285,12 +285,12 @@ where
     ///
     /// fn ndarray_to_traces() {
     ///     let n: usize = 1_250;
-    ///     let rng = rand::thread_rng();
+    ///     let mut rng = rand::thread_rng();
     ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     ///     let mut ys: Array<f64, Ix2> = Array::zeros((n, 4));
     ///     let mut count = 0.;
-    ///     for mut row in ys.gencolumns_mut() {
-    ///         let tmp: Vec<f64> = Normal::new(4. * count, 1.).unwrap().sample_iter(rng).take(n).collect();
+    ///     for mut row in ys.columns_mut() {
+    ///         let tmp: Vec<f64> = Normal::new(4. * count, 1.).unwrap().sample_iter(&mut rng).take(n).collect();
     ///         for i in 0..row.len() {
     ///             row[i] = tmp[i];
     ///         }

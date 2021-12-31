@@ -10,12 +10,14 @@
 //! feature should be considered in pre-release mode as well.
 
 use serde::{Deserialize, Serialize};
-use std::env;
+use directories::ProjectDirs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::panic::panic_any;
+
 
 #[derive(Serialize)]
 struct PlotData {
@@ -85,16 +87,14 @@ impl Kaleido {
     }
 
     fn root_dir() -> Result<PathBuf, &'static str> {
-        let mut p = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        p = p.parent().unwrap().to_path_buf();
-        p = p.join("plotly_kaleido");
-        Ok(p)
+        let project_dirs = ProjectDirs::from("org", "plotly", "kaleido").expect("Could not create plotly_kaleido config directory.");
+        Ok(project_dirs.config_dir().into())
     }
 
     #[cfg(target_os = "linux")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
+        p = p.join("kaleido").canonicalize().unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -104,7 +104,7 @@ impl Kaleido {
     #[cfg(target_os = "macos")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido").canonicalize().unwrap();
+        p = p.join("kaleido").canonicalize().unwrap();
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -114,7 +114,7 @@ impl Kaleido {
     #[cfg(target_os = "windows")]
     fn binary_path() -> Result<PathBuf, &'static str> {
         let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").join("kaleido.cmd");
+        p = p.join("kaleido.cmd");
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
@@ -139,7 +139,12 @@ impl Kaleido {
 
         let process = Command::new(p.as_str())
             .current_dir(self.cmd_path.parent().unwrap())
-            .args(&["plotly", "--disable-gpu"])
+            .args(&["plotly",
+                "--disable-gpu",
+                "--allow-file-access-from-files",
+                "--disable-breakpad",
+                "--disable-dev-shm-usage",
+                "--single-process"])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())

@@ -3,7 +3,7 @@
 To enable [ndarray](https://github.com/rust-ndarray/ndarray) support in [Plotly.rs](https://github.com/igiagkiozis/plotly) add the following feature to your `Cargo.toml` file:
 ```toml
 [dependencies]
-plotly = { version = ">=0.6.0", features = ["plotly_ndarray"] }
+plotly = { version = ">=0.7.0", features = ["plotly_ndarray"] }
 ```
 
 This extends the [Plotly.rs](https://github.com/igiagkiozis/plotly) API in two ways: 
@@ -64,7 +64,7 @@ fn multiple_ndarray_traces_over_columns(show: bool) {
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
     let mut count = 0.;
-    for mut row in ys.gencolumns_mut() {
+    for mut row in ys.columns_mut() {
         for index in 0..row.len() {
             row[index] = count + (index as f64).powf(2.);
         }

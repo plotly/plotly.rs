@@ -22,14 +22,14 @@ To start using [Plotly.rs](https://github.com/igiagkiozis/plotly) in your projec
 
 ```toml
 [dependencies]
-plotly = "0.6.0"
+plotly = "0.7.0"
 ```
 
 To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the `kaleido` feature. This feature depends on [plotly/Kaleido](https://github.com/plotly/Kaleido); a cross-platform library for generating static images. All the necessary binaries have been included with `plotly_kaleido` for `linux`, `windows` and `macos`. Previous versions of [Plotly.rs](https://github.com/igiagkiozis/plotly) used the `orca` feature; however this has been deprecated as it provided the same functionality but required additional installation steps. To enable the `kaleido` feature add the following to your `Cargo.toml` instead: 
 
 ```toml
 [dependencies]
-plotly = { version = "0.6.0", features = ["kaleido"] }
+plotly = { version = "0.7.0", features = ["kaleido"] }
 ```
 
 Plotly Kaleido is an open source project 

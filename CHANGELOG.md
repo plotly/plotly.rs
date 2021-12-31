@@ -4,20 +4,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
-## [0.6.0] - 2020-xx-xx
+## [0.7.0] - 2021-xx-xx
 ### Added
-- Shapes support (TODO add link to documentation and examples).
-- Annotations support (TODO add link to documentation and examples).
-- Docstrings.
-- `ndarray` support (TODO add link to documentation and examples).
-- Jupyter lab support (TODO add link to documentation and examples).
+-
+### Changed
+- Using plotly version 2.2.1
+- Updated Kaleido version in `plotly_kaleido` to 0.2.1.
+### Fixed
+- Axis ticks text has the wrong parameter name (Issue #45).
+
+## [0.6.0] - 2021-01-31
+### Added
+  - tag matches for struct Axis : allow for synchronisation between subplots on x-axis
+  - fn matches in impl of Axis
+
+## [0.6.0] - 2020-07-25
+### Added
+- Shapes support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/shapes.html)).
+- Annotations support.
+- Docstrings to `Scatter`.
+- `ndarray` support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/ndarray_support.html)).
+- Jupyter lab and notebook support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/jupyter_support.html)).
 ### Changed
 - Removed `num` dependence.
 - Removed `plotly_orca` and the `orca` feature. Use the `kaleido` feature for static image generation.
 - Updated Kaleido version in `plotly_kaleido` to 0.0.1.
-### Fixed
-- xx
+
 
 ## [0.5.1] - 2020-07-12
 ### Added
@@ -46,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.1] - 2020-03-26
 ### Fixed
-- Added error message to capture the scenario when there is no default browser (or no browser at all) on a machine. 
+- Added error message to capture the scenario when there is no default browser (or no browser at all) on a machine.
 The message suggests a few alternatives.
 
 ## [0.4.0] - 2020-02-27
@@ -66,10 +78,10 @@ The message suggests a few alternatives.
 - `TraceSerialize` renamed to `Trace`
 - `Plot::show_jpg` renamed to `Plot::show_jpeg` for consistency
 - Removed HexColor type. Hex color input is still supported using `String`s or string slices
-- Refactored project structure: 
+- Refactored project structure:
     - All plots `Trace`s are now accessible from the main namespace `plotly::`.
     - Enums and structs common to more than 1 plot type and/or the `Layout` now live in `plotly::common::`
-    - Internal methods and structs that are not considered part of the public API are now in `plotly::private::` 
+    - Internal methods and structs that are not considered part of the public API are now in `plotly::private::`
 
 ### Fixed
 - Color serialization was operating correctly only on Rgb, Rgba and Hex colors ignoring the named colors
@@ -84,7 +96,7 @@ The message suggests a few alternatives.
     - Box plot
     - Scatter and Box plot with error bars
     - Candlestick plot
-    - OHLC plot 
+    - OHLC plot
 - Extended README.md with a few basic examples
 - The API is now based on the builder pattern
 - Extended color set
