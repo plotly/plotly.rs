@@ -39,7 +39,7 @@ fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
 
     for i in 0..archive.len() {
         let mut file = archive.by_index(i).unwrap();
-        let outpath = file.sanitized_name();
+        let outpath = file.mangled_name();
         let outpath = p.join(outpath);
         println!("outpath: {:?}", outpath);
 
