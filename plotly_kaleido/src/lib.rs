@@ -9,15 +9,13 @@
 //! Note that [plotly/Kaleido](https://github.com/plotly/Kaleido) is still in pre-release and as such the `kaleido`
 //! feature should be considered in pre-release mode as well.
 
-use serde::{Deserialize, Serialize};
 use directories::ProjectDirs;
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::panic::panic_any;
-
 
 #[derive(Serialize)]
 struct PlotData {
@@ -28,6 +26,7 @@ struct PlotData {
     data: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct KaleidoResult {
     code: i32,
@@ -87,7 +86,8 @@ impl Kaleido {
     }
 
     fn root_dir() -> Result<PathBuf, &'static str> {
-        let project_dirs = ProjectDirs::from("org", "plotly", "kaleido").expect("Could not create plotly_kaleido config directory.");
+        let project_dirs = ProjectDirs::from("org", "plotly", "kaleido")
+            .expect("Could not create plotly_kaleido config directory.");
         Ok(project_dirs.config_dir().into())
     }
 
@@ -139,12 +139,14 @@ impl Kaleido {
 
         let process = Command::new(p.as_str())
             .current_dir(self.cmd_path.parent().unwrap())
-            .args(&["plotly",
+            .args(&[
+                "plotly",
                 "--disable-gpu",
                 "--allow-file-access-from-files",
                 "--disable-breakpad",
                 "--disable-dev-shm-usage",
-                "--single-process"])
+                "--single-process",
+            ])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())

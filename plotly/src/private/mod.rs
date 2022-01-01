@@ -2,9 +2,9 @@ use crate::common::color::{Color, ColorWrapper};
 use serde::{Serialize, Serializer};
 
 #[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix2};
-#[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix2};
 
 pub trait NumOrString {
     fn to_num_or_string(&self) -> NumOrStringWrapper;

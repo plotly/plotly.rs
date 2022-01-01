@@ -1,13 +1,12 @@
-extern crate zip;
 extern crate directories;
+extern crate zip;
+use directories::ProjectDirs;
 use std::env;
+use std::fs;
+use std::io;
 use std::io::Result;
 use std::path::PathBuf;
 use std::process::Command;
-use directories::ProjectDirs;
-use std::fs;
-use std::io;
-
 
 #[cfg(target_os = "linux")]
 const KALEIDO_URL: &str =
@@ -24,7 +23,6 @@ const KALEIDO_URL: &str =
 #[cfg(all(target_arch = "aarch64", target_os = "macos"))]
 const KALEIDO_URL: &str =
     "https://github.com/plotly/Kaleido/releases/download/v0.2.1/kaleido_mac_arm64.zip";
-
 
 #[cfg(target_os = "linux")]
 const KALEIDO_BIN: &str = "kaleido";
@@ -91,7 +89,8 @@ fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
 }
 
 fn main() -> Result<()> {
-    let project_dirs = ProjectDirs::from("org", "plotly", "kaleido").expect("Could not create plotly_kaleido config directory.");
+    let project_dirs = ProjectDirs::from("org", "plotly", "kaleido")
+        .expect("Could not create plotly_kaleido config directory.");
     let dst: PathBuf = project_dirs.config_dir().into();
 
     let kaleido_binary = dst.join("bin").join(KALEIDO_BIN);

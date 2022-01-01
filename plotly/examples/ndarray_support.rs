@@ -1,8 +1,7 @@
-use plotly::common::{Mode};
-use plotly::{Plot, Scatter};
 use ndarray::{Array, Ix1, Ix2};
+use plotly::common::Mode;
 use plotly::ndarray::ArrayTraces;
-
+use plotly::{Plot, Scatter};
 
 fn single_ndarray_trace(show: bool) {
     let n: usize = 11;
@@ -41,7 +40,10 @@ fn multiple_ndarray_traces_over_columns(show: bool) {
     if show {
         plot.show();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_ndarray_traces_over_columns")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("multiple_ndarray_traces_over_columns"))
+    );
 }
 
 fn multiple_ndarray_traces_over_rows(show: bool) {
@@ -66,7 +68,10 @@ fn multiple_ndarray_traces_over_rows(show: bool) {
     if show {
         plot.show();
     }
-    println!("{}", plot.to_inline_html(Some("multiple_ndarray_traces_over_rows")));
+    println!(
+        "{}",
+        plot.to_inline_html(Some("multiple_ndarray_traces_over_rows"))
+    );
 }
 
 fn main() -> std::io::Result<()> {

@@ -8,10 +8,9 @@ use crate::private;
 use crate::private::copy_iterable_to_vec;
 
 #[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1, Ix2};
-#[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Bins {
