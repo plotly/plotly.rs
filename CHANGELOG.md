@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2021-xx-xx
 ### Added
--
+- `ScatterPolar` contributed by @samlich.
+-  Add a method to render the plot to anything implementing Write, contributed by @foresterre.
+
 ### Changed
 - Using plotly version 2.2.1
 - Updated Kaleido version in `plotly_kaleido` to 0.2.1.
