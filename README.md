@@ -14,7 +14,7 @@
 
 <div align="center">
     <a href="https://github.com/igiagkiozis/plotly/actions">
-        <img src="https://github.com/igiagkiozis/plotly/workflows/build/badge.svg" alt="build status">
+        <img src="https://github.com/igiagkiozis/plotly/workflows/build_master/badge.svg" alt="build status">
     </a>
     |
     <a href="https://crates.io/crates/plotly">
@@ -41,6 +41,8 @@ Add this to your `Cargo.toml`:
 [dependencies]
 plotly = "0.7.0"
 ```
+
+Documentation is available in the [Plotly.rs Book](https://igiagkiozis.github.io/plotly/content/getting_started.html) and [Recipes](https://igiagkiozis.github.io/plotly/content/recipes.html).
 
 For changes since the last version please consult the [change log](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
 
