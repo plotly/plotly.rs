@@ -246,11 +246,25 @@ impl Plot {
     ///
     /// In contrast to `Plot::show()` this will save the resulting html in a user specified location
     /// instead of the system temp directory.
+    ///
+    /// In contrast to `Plot::write_html`, this will save the resulting html to a file located at a
+    /// user specified location, instead of a writing it to anything that implements `std::io::Write`.
     pub fn to_html<P: AsRef<Path>>(&self, filename: P) {
+        let mut file = File::create(filename.as_ref()).unwrap();
+
+        self.write_html(&mut file);
+    }
+
+    /// Renders the contents of the `Plot` to HTML and outputs them to a writable buffer.
+    ///
+    /// In contrast to `Plot::to_html`, this will save the resulting html to a byte buffer using the
+    /// `std::io::Write` trait, instead of to a user specified file.
+    pub fn write_html<W: Write>(&self, buffer: &mut W) {
         let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
-        let mut file = File::create(filename.as_ref()).unwrap();
-        file.write_all(rendered)
+
+        buffer
+            .write_all(rendered)
             .expect("failed to write html output");
     }
 
