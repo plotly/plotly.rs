@@ -20,19 +20,19 @@ jobs:
       - name: Run tests
         run: cargo test --all-features --release --verbose
       - name: Run basic charts
-        run: cargo run --example basic_charts --all-features
+        run: cargo run --example basic_charts --all-features --release
       - name: Run financial charts
-        run: cargo run --example financial_charts --all-features
+        run: cargo run --example financial_charts --all-features --release
       - name: Run fundamentals
-        run: cargo run --example fundamentals --all-features
+        run: cargo run --example fundamentals --all-features --release
       - name: Run ndarray support
-        run: cargo run --example ndarray_support --all-features
+        run: cargo run --example ndarray_support --all-features --release
       - name: Run scientific charts
-        run: cargo run --example scientific_charts --all-features
+        run: cargo run --example scientific_charts --all-features --release
       - name: Run statistical charts
-        run: cargo run --example statistical_charts --all-features
+        run: cargo run --example statistical_charts --all-features --release
       - name: Run subplots
-        run: cargo run --example subplots --all-features
+        run: cargo run --example subplots --all-features --release
 
   build_windows:
     runs-on: windows-latest
@@ -44,19 +44,19 @@ jobs:
       - name: Run tests
         run: cargo test --all-features --release --verbose
       - name: Run basic charts
-        run: cargo run --example basic_charts --all-features
+        run: cargo run --example basic_charts --all-features --release
       - name: Run financial charts
-        run: cargo run --example financial_charts --all-features
+        run: cargo run --example financial_charts --all-features --release
       - name: Run fundamentals
-        run: cargo run --example fundamentals --all-features
+        run: cargo run --example fundamentals --all-features --release
       - name: Run ndarray support
-        run: cargo run --example ndarray_support --all-features
+        run: cargo run --example ndarray_support --all-features --release
       - name: Run scientific charts
-        run: cargo run --example scientific_charts --all-features
+        run: cargo run --example scientific_charts --all-features --release
       - name: Run statistical charts
-        run: cargo run --example statistical_charts --all-features
+        run: cargo run --example statistical_charts --all-features --release
       - name: Run subplots
-        run: cargo run --example subplots --all-features
+        run: cargo run --example subplots --all-features --release
 
   build_macos:
     runs-on: macos-latest
@@ -68,16 +68,16 @@ jobs:
       - name: Run tests
         run: cargo test --all-features --release --verbose
       - name: Run basic charts
-        run: cargo run --example basic_charts --all-features
+        run: cargo run --example basic_charts --all-features --release
       - name: Run financial charts
-        run: cargo run --example financial_charts --all-features
+        run: cargo run --example financial_charts --all-features --release
       - name: Run fundamentals
-        run: cargo run --example fundamentals --all-features
+        run: cargo run --example fundamentals --all-features --release
       - name: Run ndarray support
-        run: cargo run --example ndarray_support --all-features
+        run: cargo run --example ndarray_support --all-features --release
       - name: Run scientific charts
-        run: cargo run --example scientific_charts --all-features
+        run: cargo run --example scientific_charts --all-features --release
       - name: Run statistical charts
-        run: cargo run --example statistical_charts --all-features
+        run: cargo run --example statistical_charts --all-features --release
       - name: Run subplots
-        run: cargo run --example subplots --all-features
+        run: cargo run --example subplots --all-features --release
