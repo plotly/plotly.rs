@@ -448,14 +448,14 @@ impl Plot {
         for (index, data) in plot_data.iter().enumerate() {
             if index < plot_data.len() - 1 {
                 json_data.push_str(data);
-                json_data.push_str(r#","#);
+                json_data.push(',');
             } else {
                 json_data.push_str(data);
-                json_data.push_str("]");
+                json_data.push(']');
             }
         }
         json_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
-        json_data.push_str("}");
+        json_data.push('}');
         json_data
     }
 

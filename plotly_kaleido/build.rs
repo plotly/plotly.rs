@@ -5,7 +5,7 @@ use std::env;
 use std::fs;
 use std::io;
 use std::io::Result;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 #[cfg(target_os = "linux")]
@@ -33,7 +33,7 @@ const KALEIDO_BIN: &str = "kaleido.exe";
 #[cfg(target_os = "macos")]
 const KALEIDO_BIN: &str = "kaleido";
 
-fn extract_zip(p: &PathBuf, zip_file: &PathBuf) -> Result<()> {
+fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
     let file = fs::File::open(&zip_file).unwrap();
     let mut archive = zip::ZipArchive::new(file).unwrap();
 

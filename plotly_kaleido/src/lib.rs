@@ -164,18 +164,16 @@ impl Kaleido {
         }
 
         let output_lines = BufReader::new(process.stdout.unwrap()).lines();
-        for line in output_lines {
-            if let Ok(l) = line {
-                let res = KaleidoResult::from(l.as_str());
-                if let Some(image_data) = res.result {
-                    let data: Vec<u8> = match image_format {
-                        "svg" | "eps" => image_data.as_bytes().to_vec(),
-                        _ => base64::decode(image_data).unwrap(),
-                    };
-                    let mut file = File::create(dst.as_path())?;
-                    file.write_all(&data)?;
-                    file.flush()?;
-                }
+        for line in output_lines.flatten() {
+            let res = KaleidoResult::from(line.as_str());
+            if let Some(image_data) = res.result {
+                let data: Vec<u8> = match image_format {
+                    "svg" | "eps" => image_data.as_bytes().to_vec(),
+                    _ => base64::decode(image_data).unwrap(),
+                };
+                let mut file = File::create(dst.as_path())?;
+                file.write_all(&data)?;
+                file.flush()?;
             }
         }
 
