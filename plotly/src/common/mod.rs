@@ -243,7 +243,7 @@ pub enum MarkerSymbol {
     #[serde(rename = "circle")]
     Circle,
     #[serde(rename = "circle-open")]
-    CirleOpen,
+    CircleOpen,
     #[serde(rename = "circle-dot")]
     CircleDot,
     #[serde(rename = "circle-open-dot")]
