@@ -1,11 +1,7 @@
 use itertools_num::linspace;
-use plotly::common::{
-    ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, MarkerSymbol,
-    Mode, Title,
-};
-use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter, Scatter3D, ScatterPolar, Surface};
-use rand_distr::{Distribution, Normal, Uniform};
+use plotly::common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title};
+use plotly::layout::{Axis, Layout};
+use plotly::{Plot, Scatter3D, Surface};
 
 // 3D Scatter Plots
 fn simple_scatter3d_plot(show: bool) {
@@ -20,7 +16,6 @@ fn simple_scatter3d_plot(show: bool) {
     if show {
         plot.show();
     }
-    //println!("{}", plot.to_inline_html(Some("simple_scatter_plot")));
 }
 
 fn customized_scatter3d_plot(show: bool) {
@@ -67,9 +62,7 @@ fn customized_scatter3d_plot(show: bool) {
     plot.set_layout(layout);
     if show {
         plot.show();
-        plot.to_html("customized_3d_plot.html");
     }
-    //println!( "{}", plot.to_inline_html(Some("customized_3D_scatter_plot")));
 }
 
 // 3D Line Plots
@@ -85,12 +78,11 @@ fn simple_line3d_plot(show: bool) {
     if show {
         plot.show();
     }
-    //println!("{}", plot.to_inline_html(Some("simple_line_plot")));
 }
 
 // 3D Surface Plot
 fn surface_plot(show: bool) {
-    let n: usize = 1000;
+    let n: usize = 100;
     let x: Vec<f64> = linspace(-10., 10., n).collect();
     let y: Vec<f64> = linspace(-10., 10., n).collect();
     let z: Vec<Vec<f64>> = x
