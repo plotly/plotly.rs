@@ -68,7 +68,7 @@ impl Color for Rgba {
 }
 
 // https://www.w3.org/TR/css-color-3/#svg-color
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum NamedColor {
     AliceBlue,
     AntiqueWhite,
