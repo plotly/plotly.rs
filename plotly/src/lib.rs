@@ -21,6 +21,7 @@ pub mod heat_map;
 pub mod histogram;
 pub mod ohlc;
 pub mod scatter;
+pub mod scatter3d;
 pub mod scatter_polar;
 pub mod surface;
 
@@ -36,6 +37,7 @@ pub use crate::heat_map::HeatMap;
 pub use crate::histogram::Histogram;
 pub use crate::ohlc::Ohlc;
 pub use crate::scatter::Scatter;
+pub use crate::scatter3d::Scatter3D;
 pub use crate::scatter_polar::ScatterPolar;
 pub use crate::surface::Surface;
 
