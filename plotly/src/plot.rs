@@ -7,7 +7,6 @@ use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use crate::Layout;
 use rand_distr::Alphanumeric;
@@ -157,6 +156,7 @@ impl Plot {
     /// This will serialize the `Trace`s and `Layout` in an html page which is saved in the temp
     /// directory. For example on Linux it will generate a file `plotly_<22 random characters>.html`
     /// in the /tmp directory.
+    #[cfg(not(target_family = "wasm"))]
     pub fn show(&self) {
         let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
@@ -187,6 +187,7 @@ impl Plot {
     /// Renders the contents of the `Plot`, creates a png raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
+    #[cfg(not(target_family = "wasm"))]
     pub fn show_png(&self, width: usize, height: usize) {
         let rendered = self.render(true, "png", width, height);
         let rendered = rendered.as_bytes();
@@ -216,6 +217,7 @@ impl Plot {
     /// Renders the contents of the `Plot`, creates a jpeg raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
+    #[cfg(not(target_family = "wasm"))]
     pub fn show_jpeg(&self, width: usize, height: usize) {
         let rendered = self.render(true, "jpg", width, height);
         let rendered = rendered.as_bytes();
@@ -461,6 +463,7 @@ impl Plot {
 
     #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("xdg-open")
             .args(&[temp_path])
             .output()
