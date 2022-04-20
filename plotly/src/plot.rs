@@ -485,6 +485,12 @@ impl Plot {
     }
 }
 
+impl PartialEq for Plot {
+    fn eq(&self, other: &Self) -> bool {
+        self.to_json() == other.to_json()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -531,6 +537,24 @@ mod tests {
     fn test_lab_display() {
         let plot = create_test_plot();
         plot.lab_display();
+    }
+
+    #[test]
+    fn test_plot_eq() {
+        let plot1 = create_test_plot();
+        let plot2 = create_test_plot();
+
+        assert!(plot1 == plot2);
+    }
+
+    #[test]
+    fn test_plot_neq() {
+        let plot1 = create_test_plot();
+        let trace2 = Scatter::new(vec![10, 1, 2], vec![6, 10, 2]).name("trace2");
+        let mut plot2 = Plot::new();
+        plot2.add_trace(trace2);
+
+        assert!(plot1 != plot2);
     }
 
     #[test]
