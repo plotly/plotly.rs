@@ -714,7 +714,7 @@ pub struct Axis {
     title: Option<Title>,
     #[serde(skip_serializing_if = "Option::is_none")]
     r#type: Option<AxisType>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "auto_range")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "autorange")]
     auto_range: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
     range_mode: Option<RangeMode>,
