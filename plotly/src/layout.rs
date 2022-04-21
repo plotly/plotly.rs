@@ -2262,7 +2262,18 @@ impl Annotation {
 
 #[derive(Serialize, Debug, Default)]
 pub struct Template {
-    layout: LayoutTemplate,
+    layout: Option<LayoutTemplate>,
+}
+
+impl Template {
+    pub fn new() -> Self {
+        Self { layout: None }
+    }
+
+    pub fn layout(mut self, layout: LayoutTemplate) -> Self {
+        self.layout = Some(layout);
+        self
+    }
 }
 
 // LayoutTemplate matches Layout except it lacks a field for template
