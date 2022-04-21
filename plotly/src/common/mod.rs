@@ -553,7 +553,7 @@ pub enum DashType {
 }
 
 #[derive(Serialize, Clone, Debug)]
-pub struct ColorScaleElement(f64, String);
+pub struct ColorScaleElement(pub f64, pub String);
 
 #[derive(Serialize, Clone, Debug)]
 pub enum ColorScalePalette {
