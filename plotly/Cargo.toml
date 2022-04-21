@@ -20,6 +20,7 @@ kaleido = ["plotly_kaleido"]
 plotly_ndarray = ["ndarray"]
 
 [dependencies]
+dyn-clone = { version = "1" }
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.15.1", optional = true }
 serde = { version = "1.0.125", features = ["derive"] }
@@ -27,7 +28,7 @@ serde_json = "1.0.64"
 askama = "0.10.5"
 rand = "0.8.3"
 rand_distr = "0.4.0"
-once_cell = "1.10"
+once_cell = "1"
 
 
 [dev-dependencies]

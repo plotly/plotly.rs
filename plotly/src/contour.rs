@@ -6,7 +6,7 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ContoursType {
     #[serde(rename = "levels")]
     Levels,
@@ -14,7 +14,7 @@ pub enum ContoursType {
     Constraint,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ContoursColoring {
     #[serde(rename = "fill")]
     Fill,
@@ -26,7 +26,7 @@ pub enum ContoursColoring {
     None,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Contours {
     #[serde(skip_serializing_if = "Option::is_none")]
     r#type: Option<ContoursType>,
@@ -113,12 +113,12 @@ impl Contours {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Contour<Z, X = f64, Y = f64>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -208,7 +208,7 @@ where
 
 impl<Z> Contour<Z, f64, f64>
 where
-    Z: Serialize + Default,
+    Z: Serialize + Default + Clone,
 {
     pub fn new_z(z: Vec<Z>) -> Box<Contour<Z, f64, f64>> {
         Box::new(Contour {
@@ -221,9 +221,9 @@ where
 
 impl<Z, X, Y> Contour<Z, X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Contour<Z, X, Y>> {
         Box::new(Contour {
@@ -439,9 +439,9 @@ where
 
 impl<X, Y, Z> Trace for Contour<X, Y, Z>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

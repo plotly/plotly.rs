@@ -12,6 +12,8 @@ pub mod ndarray;
 pub mod layout;
 pub mod plot;
 
+pub mod themes;
+
 pub mod bar;
 pub mod box_plot;
 pub mod candlestick;
@@ -23,7 +25,6 @@ pub mod ohlc;
 pub mod scatter;
 pub mod scatter_polar;
 pub mod surface;
-pub mod themes;
 
 pub use crate::layout::Layout;
 pub use crate::plot::ImageFormat;

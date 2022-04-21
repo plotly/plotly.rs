@@ -6,11 +6,11 @@ use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Candlestick<T, O>
 where
-    T: Serialize + Default,
-    O: Serialize + Default,
+    T: Serialize + Default + Clone,
+    O: Serialize + Default + Clone,
 {
     r#type: PlotType,
     x: Vec<T>,
@@ -54,8 +54,8 @@ where
 
 impl<T, O> Candlestick<T, O>
 where
-    T: Serialize + Default,
-    O: Serialize + Default,
+    T: Serialize + Default + Clone,
+    O: Serialize + Default + Clone,
 {
     pub fn new(
         x: Vec<T>,
@@ -174,8 +174,8 @@ where
 
 impl<X, Y> Trace for Candlestick<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

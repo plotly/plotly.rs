@@ -10,7 +10,7 @@ use crate::private;
 use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum AxisType {
     #[serde(rename = "-")]
     Default,
@@ -26,7 +26,7 @@ pub enum AxisType {
     MultiCategory,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum AxisConstrain {
     #[serde(rename = "range")]
     Range,
@@ -34,7 +34,7 @@ pub enum AxisConstrain {
     Domain,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ConstrainDirection {
     #[serde(rename = "left")]
     Left,
@@ -50,7 +50,7 @@ pub enum ConstrainDirection {
     Bottom,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum RangeMode {
     #[serde(rename = "normal")]
     Normal,
@@ -60,7 +60,7 @@ pub enum RangeMode {
     NonNegative,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum TicksDirection {
     #[serde(rename = "outside")]
     Outside,
@@ -68,7 +68,7 @@ pub enum TicksDirection {
     Inside,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum TicksPosition {
     #[serde(rename = "labels")]
     Labels,
@@ -76,7 +76,7 @@ pub enum TicksPosition {
     Boundaries,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ArrayShow {
     #[serde(rename = "all")]
     All,
@@ -88,7 +88,7 @@ pub enum ArrayShow {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum BarMode {
     #[serde(rename = "stack")]
     Stack,
@@ -100,7 +100,7 @@ pub enum BarMode {
     Relative,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum BarNorm {
     #[serde(rename = "")]
     Empty,
@@ -110,7 +110,7 @@ pub enum BarNorm {
     Percent,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum BoxMode {
     #[serde(rename = "group")]
     Group,
@@ -118,7 +118,7 @@ pub enum BoxMode {
     Overlay,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ViolinMode {
     #[serde(rename = "group")]
     Group,
@@ -126,7 +126,7 @@ pub enum ViolinMode {
     Overlay,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum WaterfallMode {
     #[serde(rename = "group")]
     Group,
@@ -134,7 +134,7 @@ pub enum WaterfallMode {
     Overlay,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
     background_color: Option<ColorWrapper>,
@@ -256,7 +256,7 @@ impl Legend {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum VAlign {
     #[serde(rename = "top")]
     Top,
@@ -266,7 +266,7 @@ pub enum VAlign {
     Bottom,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum HAlign {
     #[serde(rename = "left")]
     Left,
@@ -276,7 +276,7 @@ pub enum HAlign {
     Right,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Margin {
     #[serde(skip_serializing_if = "Option::is_none")]
     l: Option<usize>,
@@ -328,7 +328,7 @@ impl Margin {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct LayoutColorScale {
     #[serde(skip_serializing_if = "Option::is_none")]
     sequential: Option<ColorScale>,
@@ -359,7 +359,7 @@ impl LayoutColorScale {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum SliderRangeMode {
     #[serde(rename = "auto")]
     Auto,
@@ -369,7 +369,7 @@ pub enum SliderRangeMode {
     Match,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct RangeSliderYAxis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
     range_mode: Option<SliderRangeMode>,
@@ -394,7 +394,7 @@ impl RangeSliderYAxis {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct RangeSlider {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
     background_color: Option<ColorWrapper>,
@@ -461,7 +461,7 @@ impl RangeSlider {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum SelectorStep {
     #[serde(rename = "month")]
     Month,
@@ -479,7 +479,7 @@ pub enum SelectorStep {
     All,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum StepMode {
     #[serde(rename = "backward")]
     Backward,
@@ -487,7 +487,7 @@ pub enum StepMode {
     ToDate,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct SelectorButton {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -546,7 +546,7 @@ impl SelectorButton {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct RangeSelector {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -633,7 +633,7 @@ impl RangeSelector {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct ColorAxis {
     #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
@@ -706,7 +706,7 @@ impl ColorAxis {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -1163,7 +1163,7 @@ impl Axis {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum RowOrder {
     #[serde(rename = "top to bottom")]
     TopToBottom,
@@ -1171,7 +1171,7 @@ pub enum RowOrder {
     BottomToTop,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum GridPattern {
     #[serde(rename = "independent")]
     Independent,
@@ -1179,7 +1179,7 @@ pub enum GridPattern {
     Coupled,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum GridXSide {
     #[serde(rename = "bottom")]
     Bottom,
@@ -1191,7 +1191,7 @@ pub enum GridXSide {
     Top,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum GridYSide {
     #[serde(rename = "left")]
     Left,
@@ -1203,7 +1203,7 @@ pub enum GridYSide {
     Right,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct GridDomain {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<f64>>,
@@ -1227,7 +1227,7 @@ impl GridDomain {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct LayoutGrid {
     #[serde(skip_serializing_if = "Option::is_none")]
     rows: Option<usize>,
@@ -1320,7 +1320,7 @@ impl LayoutGrid {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum UniformTextMode {
     #[serde(rename = "false")]
     False,
@@ -1330,7 +1330,7 @@ pub enum UniformTextMode {
     Show,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct UniformText {
     #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<TruthyEnum<UniformTextMode>>,
@@ -1354,7 +1354,7 @@ impl UniformText {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum HoverMode {
     #[serde(rename = "x")]
     X,
@@ -1370,7 +1370,7 @@ pub enum HoverMode {
     YUnified,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct ModeBar {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
@@ -1408,7 +1408,7 @@ impl ModeBar {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ShapeType {
     #[serde(rename = "circle")]
     Circle,
@@ -1420,7 +1420,7 @@ pub enum ShapeType {
     Line,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ShapeLayer {
     #[serde(rename = "below")]
     Below,
@@ -1428,7 +1428,7 @@ pub enum ShapeLayer {
     Above,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ShapeSizeMode {
     #[serde(rename = "scaled")]
     Scaled,
@@ -1436,7 +1436,7 @@ pub enum ShapeSizeMode {
     Pixel,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum FillRule {
     #[serde(rename = "evenodd")]
     EvenOdd,
@@ -1444,7 +1444,7 @@ pub enum FillRule {
     NonZero,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct ShapeLine {
     #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<ColorWrapper>,
@@ -1479,7 +1479,7 @@ impl ShapeLine {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Shape {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -1709,7 +1709,7 @@ impl Shape {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum DrawDirection {
     #[serde(rename = "ortho")]
     Ortho,
@@ -1721,7 +1721,7 @@ pub enum DrawDirection {
     Diagonal,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct NewShape {
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<ShapeLine>,
@@ -1785,7 +1785,7 @@ impl NewShape {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct ActiveShape {
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
     fill_color: Option<ColorWrapper>,
@@ -1811,7 +1811,7 @@ impl ActiveShape {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ArrowSide {
     #[serde(rename = "end")]
     End,
@@ -1823,7 +1823,7 @@ pub enum ArrowSide {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum ClickToShow {
     #[serde(rename = "false")]
     False,
@@ -1833,7 +1833,7 @@ pub enum ClickToShow {
     OnOut,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -2278,12 +2278,8 @@ impl Template {
     }
 }
 
-// impl ToOwned for Template {
-//     fn to_owned(&self) -> Self::Owned {}
-// }
-
 // LayoutTemplate matches Layout except it lacks a field for template
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct LayoutTemplate {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
@@ -2769,7 +2765,7 @@ impl LayoutTemplate {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
@@ -3174,7 +3170,6 @@ impl Layout {
         self.template = Some(Cow::Owned(template));
         self
     }
-
     pub fn template_ref(mut self, template: &'static Template) -> Layout {
         self.template = Some(Cow::Borrowed(template));
         self
@@ -3290,7 +3285,6 @@ mod tests {
         plot.add_trace(crate::Bar::new(vec![0], vec![1]));
 
         let expected = r##"{"data": [{"x":[0],"y":[1],"type":"bar"}], "layout": {"template":{"layout":{"plot_bgcolor":"#111111"}}}}"##;
-
         assert_eq!(plot.to_json(), expected);
     }
 }

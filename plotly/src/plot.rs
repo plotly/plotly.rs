@@ -2,6 +2,7 @@
 extern crate plotly_kaleido;
 
 use askama::Template;
+use dyn_clone::DynClone;
 use rand::{thread_rng, Rng};
 use std::env;
 use std::fs::File;
@@ -55,9 +56,11 @@ pub enum ImageFormat {
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
-pub trait Trace {
+pub trait Trace: DynClone {
     fn serialize(&self) -> String;
 }
+
+dyn_clone::clone_trait_object!(Trace);
 
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
 /// also be specified. Its function is to serialize `Trace`s and the `Layout` in html format and
@@ -91,7 +94,7 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Plot {
     traces: Vec<Box<dyn Trace>>,
     layout: Option<Layout>,

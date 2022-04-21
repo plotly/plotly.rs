@@ -21,12 +21,9 @@ mod tests {
         let layout = Layout::new().template_ref(template);
         let mut plot = Plot::new();
         plot.set_layout(layout);
-        plot.add_trace(Bar::new(vec![0u32], vec![1u32]));
+        plot.add_trace(Bar::new(vec![0], vec![1]));
 
-        println!("{}", plot.to_json());
-
-        let expected = r##"{"data": [{"x":[0],"y":[1],"type":"bar"}], "layout": {"template":{"layout":{"plot_bgcolor":"#111111","paper_bgcolor":"#111111"}}}}"##;
-
+        let expected = r##"{"data": [{"x":[0],"y":[1],"type":"bar"}], "layout": {"template":{"layout":{"paper_bgcolor":"#111111","plot_bgcolor":"#111111"}}}}"##;
         assert_eq!(plot.to_json(), expected);
     }
 }
