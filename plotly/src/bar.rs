@@ -9,11 +9,11 @@ use serde::Serialize;
 
 use crate::private;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Bar<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     x: Vec<X>,
     y: Vec<Y>,
@@ -86,8 +86,8 @@ where
 
 impl<X, Y> Bar<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
         Box::new(Bar {
@@ -296,8 +296,8 @@ where
 
 impl<X, Y> Trace for Bar<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
