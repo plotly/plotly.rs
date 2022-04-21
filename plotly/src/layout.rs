@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
     Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Side,
@@ -2260,7 +2262,7 @@ impl Annotation {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Template {
     layout: Option<LayoutTemplate>,
 }
@@ -2275,6 +2277,10 @@ impl Template {
         self
     }
 }
+
+// impl ToOwned for Template {
+//     fn to_owned(&self) -> Self::Owned {}
+// }
 
 // LayoutTemplate matches Layout except it lacks a field for template
 #[derive(Serialize, Debug, Default)]
@@ -2813,7 +2819,7 @@ pub struct Layout {
     hover_label: Option<Label>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    template: Option<Template>,
+    template: Option<Cow<'static, Template>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     grid: Option<LayoutGrid>,
@@ -3165,7 +3171,12 @@ impl Layout {
     }
 
     pub fn template(mut self, template: Template) -> Layout {
-        self.template = Some(template);
+        self.template = Some(Cow::Owned(template));
+        self
+    }
+
+    pub fn template_ref(mut self, template: &'static Template) -> Layout {
+        self.template = Some(Cow::Borrowed(template));
         self
     }
 

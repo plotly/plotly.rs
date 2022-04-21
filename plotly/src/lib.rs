@@ -23,6 +23,7 @@ pub mod ohlc;
 pub mod scatter;
 pub mod scatter_polar;
 pub mod surface;
+pub mod themes;
 
 pub use crate::layout::Layout;
 pub use crate::plot::ImageFormat;
