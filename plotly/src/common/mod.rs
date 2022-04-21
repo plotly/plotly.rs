@@ -1184,7 +1184,7 @@ pub struct Marker {
     size_ref: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
     size_min: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemode")]
     size_mode: Option<SizeMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
