@@ -2261,6 +2261,498 @@ impl Annotation {
 }
 
 #[derive(Serialize, Debug, Default)]
+pub struct Template {
+    layout: LayoutTemplate,
+}
+
+// LayoutTemplate matches Layout except it lacks a field for template
+#[derive(Serialize, Debug, Default)]
+pub struct LayoutTemplate {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    title: Option<Title>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    show_legend: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    legend: Option<Legend>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    margin: Option<Margin>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "autosize")]
+    auto_size: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    width: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    height: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    font: Option<Font>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    uniform_text: Option<UniformText>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    separators: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "paper_bgcolor")]
+    paper_background_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "plot_bgcolor")]
+    plot_background_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
+    color_scale: Option<LayoutColorScale>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    colorway: Option<Vec<ColorWrapper>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
+    color_axis: Option<ColorAxis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
+    mode_bar: Option<ModeBar>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hovermode")]
+    hover_mode: Option<TruthyEnum<HoverMode>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "clickmode")]
+    click_mode: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "dragmode")]
+    drag_mode: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "selectdirection")]
+    select_direction: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverdistance")]
+    hover_distance: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "spikedistance")]
+    spike_distance: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    hover_label: Option<Label>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    grid: Option<LayoutGrid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    calendar: Option<Calendar>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<Axis>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis2")]
+    x_axis2: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis2")]
+    y_axis2: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis3")]
+    x_axis3: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis3")]
+    y_axis3: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis4")]
+    x_axis4: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis4")]
+    y_axis4: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis5")]
+    x_axis5: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis5")]
+    y_axis5: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis6")]
+    x_axis6: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis6")]
+    y_axis6: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis7")]
+    x_axis7: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis7")]
+    y_axis7: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis8")]
+    x_axis8: Option<Axis>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis8")]
+    y_axis8: Option<Axis>,
+
+    // ternary: Option<LayoutTernary>,
+    // scene: Option<LayoutScene>,
+    // polar: Option<LayoutPolar>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    annotations: Option<Vec<Annotation>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    shapes: Option<Vec<Shape>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "newshape")]
+    new_shape: Option<NewShape>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "activeshape")]
+    active_shape: Option<ActiveShape>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "boxmode")]
+    box_mode: Option<BoxMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "boxgap")]
+    box_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "boxgroupgap")]
+    box_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "barmode")]
+    bar_mode: Option<BarMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "barnorm")]
+    bar_norm: Option<BarNorm>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bargap")]
+    bar_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "bargroupgap")]
+    bar_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "violinmode")]
+    violin_mode: Option<ViolinMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "violingap")]
+    violin_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "violingroupgap")]
+    violin_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "waterfallmode")]
+    waterfall_mode: Option<WaterfallMode>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "waterfallgap")]
+    waterfall_gap: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "waterfallgroupgap")]
+    waterfall_group_gap: Option<f64>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "piecolorway")]
+    pie_colorway: Option<Vec<ColorWrapper>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "extendpiecolors")]
+    extend_pie_colors: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
+    sunburst_colorway: Option<Vec<ColorWrapper>>,
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename = "extendsuburstcolors"
+    )]
+    extend_sunburst_colors: Option<bool>,
+}
+
+impl LayoutTemplate {
+    pub fn new() -> LayoutTemplate {
+        Default::default()
+    }
+
+    pub fn title(mut self, title: Title) -> LayoutTemplate {
+        self.title = Some(title);
+        self
+    }
+
+    pub fn show_legend(mut self, show_legend: bool) -> LayoutTemplate {
+        self.show_legend = Some(show_legend);
+        self
+    }
+
+    pub fn legend(mut self, legend: Legend) -> LayoutTemplate {
+        self.legend = Some(legend);
+        self
+    }
+
+    pub fn margin(mut self, margin: Margin) -> LayoutTemplate {
+        self.margin = Some(margin);
+        self
+    }
+
+    pub fn auto_size(mut self, auto_size: bool) -> LayoutTemplate {
+        self.auto_size = Some(auto_size);
+        self
+    }
+
+    pub fn width(mut self, width: usize) -> LayoutTemplate {
+        self.width = Some(width);
+        self
+    }
+
+    pub fn height(mut self, height: usize) -> LayoutTemplate {
+        self.height = Some(height);
+        self
+    }
+
+    pub fn font(mut self, font: Font) -> LayoutTemplate {
+        self.font = Some(font);
+        self
+    }
+
+    pub fn uniform_text(mut self, uniform_text: UniformText) -> LayoutTemplate {
+        self.uniform_text = Some(uniform_text);
+        self
+    }
+
+    pub fn separators(mut self, separators: &str) -> LayoutTemplate {
+        self.separators = Some(separators.to_owned());
+        self
+    }
+
+    pub fn paper_background_color<C: Color>(mut self, paper_background_color: C) -> LayoutTemplate {
+        self.paper_background_color = Some(paper_background_color.to_color());
+        self
+    }
+
+    pub fn plot_background_color<C: Color>(mut self, plot_background_color: C) -> LayoutTemplate {
+        self.plot_background_color = Some(plot_background_color.to_color());
+        self
+    }
+
+    pub fn color_scale(mut self, color_scale: LayoutColorScale) -> LayoutTemplate {
+        self.color_scale = Some(color_scale);
+        self
+    }
+
+    pub fn colorway<C: Color>(mut self, colorway: Vec<C>) -> LayoutTemplate {
+        let colorway = private::to_color_array(colorway);
+        self.colorway = Some(colorway);
+        self
+    }
+
+    pub fn color_axis(mut self, color_axis: ColorAxis) -> LayoutTemplate {
+        self.color_axis = Some(color_axis);
+        self
+    }
+
+    pub fn mode_bar(mut self, mode_bar: ModeBar) -> LayoutTemplate {
+        self.mode_bar = Some(mode_bar);
+        self
+    }
+
+    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
+    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
+    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
+    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
+    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
+    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
+    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
+    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
+    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
+    /// else the default value is "closest".
+    pub fn hover_mode(mut self, hover_mode: HoverMode) -> LayoutTemplate {
+        self.hover_mode = Some(TruthyEnum { e: hover_mode });
+        self
+    }
+
+    pub fn click_mode(mut self, click_mode: &str) -> LayoutTemplate {
+        self.click_mode = Some(click_mode.to_owned());
+        self
+    }
+
+    pub fn drag_mode(mut self, drag_mode: &str) -> LayoutTemplate {
+        self.drag_mode = Some(drag_mode.to_owned());
+        self
+    }
+
+    pub fn select_direction(mut self, select_direction: &str) -> LayoutTemplate {
+        self.select_direction = Some(select_direction.to_owned());
+        self
+    }
+
+    pub fn hover_distance(mut self, hover_distance: i32) -> LayoutTemplate {
+        self.hover_distance = Some(hover_distance);
+        self
+    }
+
+    pub fn spike_distance(mut self, spike_distance: i32) -> LayoutTemplate {
+        self.spike_distance = Some(spike_distance);
+        self
+    }
+
+    pub fn hover_label(mut self, hover_label: Label) -> LayoutTemplate {
+        self.hover_label = Some(hover_label);
+        self
+    }
+
+    pub fn grid(mut self, grid: LayoutGrid) -> LayoutTemplate {
+        self.grid = Some(grid);
+        self
+    }
+
+    pub fn calendar(mut self, calendar: Calendar) -> LayoutTemplate {
+        self.calendar = Some(calendar);
+        self
+    }
+
+    pub fn x_axis(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis2(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis2 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis2(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis2 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis3(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis3 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis3(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis3 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis4(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis4 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis4(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis4 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis5(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis5 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis5(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis5 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis6(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis6 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis6(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis6 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis7(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis7 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis7(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis7 = Some(yaxis);
+        self
+    }
+
+    pub fn x_axis8(mut self, xaxis: Axis) -> LayoutTemplate {
+        self.x_axis8 = Some(xaxis);
+        self
+    }
+
+    pub fn y_axis8(mut self, yaxis: Axis) -> LayoutTemplate {
+        self.y_axis8 = Some(yaxis);
+        self
+    }
+
+    pub fn annotations(mut self, annotations: Vec<Annotation>) -> LayoutTemplate {
+        self.annotations = Some(annotations);
+        self
+    }
+
+    pub fn add_annotation(&mut self, annotation: Annotation) {
+        if self.annotations.is_none() {
+            self.annotations = Some(Vec::new());
+        }
+        self.annotations.as_mut().unwrap().push(annotation);
+    }
+
+    pub fn shapes(mut self, shapes: Vec<Shape>) -> LayoutTemplate {
+        self.shapes = Some(shapes);
+        self
+    }
+
+    pub fn add_shape(&mut self, shape: Shape) {
+        if self.shapes.is_none() {
+            self.shapes = Some(Vec::new());
+        }
+        self.shapes.as_mut().unwrap().push(shape);
+    }
+
+    pub fn new_shape(mut self, new_shape: NewShape) -> LayoutTemplate {
+        self.new_shape = Some(new_shape);
+        self
+    }
+
+    pub fn active_shape(mut self, active_shape: ActiveShape) -> LayoutTemplate {
+        self.active_shape = Some(active_shape);
+        self
+    }
+
+    pub fn box_mode(mut self, box_mode: BoxMode) -> LayoutTemplate {
+        self.box_mode = Some(box_mode);
+        self
+    }
+
+    pub fn box_gap(mut self, box_gap: f64) -> LayoutTemplate {
+        self.box_gap = Some(box_gap);
+        self
+    }
+
+    pub fn box_group_gap(mut self, box_group_gap: f64) -> LayoutTemplate {
+        self.box_group_gap = Some(box_group_gap);
+        self
+    }
+
+    pub fn bar_mode(mut self, bar_mode: BarMode) -> LayoutTemplate {
+        self.bar_mode = Some(bar_mode);
+        self
+    }
+
+    pub fn bar_norm(mut self, bar_norm: BarNorm) -> LayoutTemplate {
+        self.bar_norm = Some(bar_norm);
+        self
+    }
+
+    pub fn bar_gap(mut self, bar_gap: f64) -> LayoutTemplate {
+        self.bar_gap = Some(bar_gap);
+        self
+    }
+
+    pub fn bar_group_gap(mut self, bar_group_gap: f64) -> LayoutTemplate {
+        self.bar_group_gap = Some(bar_group_gap);
+        self
+    }
+
+    pub fn violin_mode(mut self, violin_mode: ViolinMode) -> LayoutTemplate {
+        self.violin_mode = Some(violin_mode);
+        self
+    }
+
+    pub fn violin_gap(mut self, violin_gap: f64) -> LayoutTemplate {
+        self.violin_gap = Some(violin_gap);
+        self
+    }
+
+    pub fn violin_group_gap(mut self, violin_group_gap: f64) -> LayoutTemplate {
+        self.violin_group_gap = Some(violin_group_gap);
+        self
+    }
+
+    pub fn waterfall_mode(mut self, waterfall_mode: WaterfallMode) -> LayoutTemplate {
+        self.waterfall_mode = Some(waterfall_mode);
+        self
+    }
+
+    pub fn waterfall_gap(mut self, waterfall_gap: f64) -> LayoutTemplate {
+        self.waterfall_gap = Some(waterfall_gap);
+        self
+    }
+
+    pub fn waterfall_group_gap(mut self, waterfall_group_gap: f64) -> LayoutTemplate {
+        self.waterfall_group_gap = Some(waterfall_group_gap);
+        self
+    }
+
+    pub fn pie_colorway<C: Color>(mut self, pie_colorway: Vec<C>) -> LayoutTemplate {
+        let pie_colorway = private::to_color_array(pie_colorway);
+        self.pie_colorway = Some(pie_colorway);
+        self
+    }
+
+    pub fn extend_pie_colors(mut self, extend_pie_colors: bool) -> LayoutTemplate {
+        self.extend_pie_colors = Some(extend_pie_colors);
+        self
+    }
+
+    pub fn sunburst_colorway<C: Color>(mut self, sunburst_colorway: Vec<C>) -> LayoutTemplate {
+        let sunburst_colorway = private::to_color_array(sunburst_colorway);
+        self.sunburst_colorway = Some(sunburst_colorway);
+        self
+    }
+
+    pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> LayoutTemplate {
+        self.extend_sunburst_colors = Some(extend_sunburst_colors);
+        self
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
 pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
@@ -2310,7 +2802,7 @@ pub struct Layout {
     hover_label: Option<Label>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    template: Option<String>,
+    template: Option<Template>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     grid: Option<LayoutGrid>,
@@ -2661,8 +3153,8 @@ impl Layout {
         self
     }
 
-    pub fn template(mut self, template: &str) -> Layout {
-        self.template = Some(template.to_owned());
+    pub fn template(mut self, template: Template) -> Layout {
+        self.template = Some(template);
         self
     }
 
