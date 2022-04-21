@@ -3262,3 +3262,24 @@ impl Trace for Layout {
         serde_json::to_string(&self).unwrap()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Plot;
+
+    #[test]
+    fn test_layout_template() {
+        let layout_template = LayoutTemplate::new().plot_background_color("#111111");
+        let template = Template::new().layout(layout_template);
+
+        let layout = Layout::new().template(template);
+        let mut plot = Plot::new();
+        plot.set_layout(layout);
+        plot.add_trace(crate::Bar::new(vec![0], vec![1]));
+
+        let expected = r##"{"data": [{"x":[0],"y":[1],"type":"bar"}], "layout": {"template":{"layout":{"plot_bgcolor":"#111111"}}}}"##;
+
+        assert_eq!(plot.to_json(), expected);
+    }
+}
