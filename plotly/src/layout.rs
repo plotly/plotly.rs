@@ -2278,6 +2278,18 @@ impl Template {
     }
 }
 
+impl Into<Cow<'static, Template>> for Template {
+    fn into(self) -> Cow<'static, Template> {
+        Cow::Owned(self)
+    }
+}
+
+impl Into<Cow<'static, Template>> for &'static Template {
+    fn into(self) -> Cow<'static, Template> {
+        Cow::Borrowed(self)
+    }
+}
+
 // LayoutTemplate matches Layout except it lacks a field for template
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct LayoutTemplate {
@@ -3166,12 +3178,11 @@ impl Layout {
         self
     }
 
-    pub fn template(mut self, template: Template) -> Layout {
-        self.template = Some(Cow::Owned(template));
-        self
-    }
-    pub fn template_ref(mut self, template: &'static Template) -> Layout {
-        self.template = Some(Cow::Borrowed(template));
+    pub fn template<T>(mut self, template: T) -> Layout
+    where
+        T: Into<Cow<'static, Template>>,
+    {
+        self.template = Some(template.into());
         self
     }
 

@@ -90,7 +90,7 @@ mod tests {
     #[test]
     fn test_plotly_dark() {
         let template = &*PLOTLY_DARK;
-        let layout = Layout::new().template_ref(template);
+        let layout = Layout::new().template(template);
         let mut plot = Plot::new();
         plot.set_layout(layout);
         plot.add_trace(Bar::new(vec![0], vec![1]));
