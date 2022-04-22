@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{ser::Serializer, Serialize};
 use serde_repr::Serialize_repr;
 
 #[derive(Serialize, Debug, Clone)]
@@ -98,9 +98,23 @@ pub enum ModeBarButtonName {
     ResetViewMapbox,
 }
 
-// TODO
 #[derive(Serialize, Debug, Clone)]
-pub enum DoubleClick {}
+#[serde(rename_all = "lowercase", untagged)]
+pub enum DoubleClick {
+    #[serde(serialize_with = "serialize_to_false")]
+    False,
+    Reset,
+    AutoSize,
+    #[serde(rename = "reset+autosize")]
+    ResetAutoSize,
+}
+
+fn serialize_to_false<S>(s: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    s.serialize_bool(false)
+}
 
 #[derive(Serialize_repr, Debug, Clone)]
 #[repr(u8)]
