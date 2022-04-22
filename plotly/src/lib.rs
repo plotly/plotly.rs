@@ -9,6 +9,7 @@ extern crate serde;
 
 pub mod ndarray;
 
+pub mod configuration;
 pub mod layout;
 pub mod plot;
 
@@ -24,6 +25,7 @@ pub mod scatter;
 pub mod scatter_polar;
 pub mod surface;
 
+pub use crate::configuration::Configuration;
 pub use crate::layout::Layout;
 pub use crate::plot::ImageFormat;
 pub use crate::plot::Plot;
