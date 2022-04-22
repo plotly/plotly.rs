@@ -464,11 +464,12 @@ impl Plot {
     #[cfg(feature = "wasm")]
     /// Convert a `Plot` to a native Javasript `js_sys::Object`.
     pub fn to_js_object(&self) -> js_sys::Object {
+        use wasm_bindgen::JsCast;
         // The only reason this could fail is if to_json() produces structurally incorrect JSON. That
         // would be a bug, and would require fixing in the to_json()/serialization methods, rather than here
-        js_sys::JSON::parse(&plot.to_json())
+        js_sys::JSON::parse(&self.to_json())
             .expect("Invalid JSON")
-            .dyn_into::<Object>()
+            .dyn_into::<js_sys::Object>()
             .expect("Invalid JSON structure - expected an top-level Object")
     }
 
