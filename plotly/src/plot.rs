@@ -461,6 +461,17 @@ impl Plot {
         json_data
     }
 
+    #[cfg(feature = "wasm")]
+    /// Convert a `Plot` to a native Javasript `js_sys::Object`.
+    pub fn to_js_object(&self) -> js_sys::Object {
+        // The only reason this could fail is if to_json() produces structurally incorrect JSON. That
+        // would be a bug, and would require fixing in the to_json()/serialization methods, rather than here
+        js_sys::JSON::parse(&plot.to_json())
+            .expect("Invalid JSON")
+            .dyn_into::<Object>()
+            .expect("Invalid JSON structure - expected an top-level Object")
+    }
+
     #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
