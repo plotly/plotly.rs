@@ -1,7 +1,8 @@
 use serde::Serialize;
+use serde_repr::Serialize_repr;
 
-// TODO: need these to serialize to lowercase text
 #[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
 pub enum ImageButtonFormats {
     Png,
     Svg,
@@ -97,12 +98,13 @@ pub enum ModeBarButtonName {
     ResetViewMapbox,
 }
 
+// TODO
 #[derive(Serialize, Debug, Clone)]
 pub enum DoubleClick {}
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize_repr, Debug, Clone)]
+#[repr(u8)]
 pub enum PlotGLPixelRatio {
-    // TODO: this is supposed to serialize to numeric 1, 2, 3 or 4. What is this the default behaviour of serde?
     One,
     Two,
     Three,
