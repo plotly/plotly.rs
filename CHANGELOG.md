@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2022-04-25
+### Added
+- `Plot3D` contributed by @mrhrzg. Add 3D plots for scatter, line and surface data.
+
 ## [0.7.0] - 2022-01-01
 ### Added
 - `ScatterPolar` contributed by @samlich.
