@@ -2410,6 +2410,10 @@ impl Layout {
         Default::default()
     }
 
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
     pub fn title(mut self, title: Title) -> Layout {
         self.title = Some(title);
         self

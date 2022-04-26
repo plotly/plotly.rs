@@ -63,6 +63,36 @@ pub trait Trace: ErasedSerialize {
 
 erased_serde::serialize_trait_object!(Trace);
 
+#[derive(Default, Serialize)]
+#[serde(transparent)]
+pub struct Traces {
+    traces: Vec<Box<dyn Trace>>,
+}
+
+impl Traces {
+    pub fn new() -> Self {
+        Self {
+            traces: Vec::with_capacity(1),
+        }
+    }
+
+    pub fn push(&mut self, trace: Box<dyn Trace>) {
+        self.traces.push(trace)
+    }
+
+    pub fn len(&self) -> usize {
+        self.traces.len()
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Box<dyn Trace>> {
+        self.traces.iter()
+    }
+
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+}
+
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
 /// also be specified. Its function is to serialize `Trace`s and the `Layout` in html format and
 /// display and/or persist the resulting plot.
@@ -98,9 +128,8 @@ erased_serde::serialize_trait_object!(Trace);
 #[derive(Default, Serialize)]
 pub struct Plot {
     #[serde(rename = "data")]
-    traces: Vec<Box<dyn Trace>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    layout: Option<Layout>,
+    traces: Traces,
+    layout: Layout,
     #[serde(skip)]
     remote_plotly_js: bool,
 }
@@ -130,7 +159,8 @@ impl Plot {
     /// Create a new `Plot`.
     pub fn new() -> Plot {
         Plot {
-            traces: Vec::with_capacity(1),
+            traces: Traces::new(),
+            layout: Layout::new(),
             remote_plotly_js: true,
             ..Default::default()
         }
@@ -156,7 +186,17 @@ impl Plot {
 
     /// Set the `Layout` to be used by `Plot`.
     pub fn set_layout(&mut self, layout: Layout) {
-        self.layout = Some(layout);
+        self.layout = layout;
+    }
+
+    /// Get the contained data elements.
+    pub fn data(&self) -> &Traces {
+        &self.traces
+    }
+
+    /// Get the layout specification of the plot.
+    pub fn layout(&self) -> &Layout {
+        &self.layout
     }
 
     /// Renders the contents of the `Plot` and displays them in the system default browser.
@@ -395,14 +435,7 @@ impl Plot {
             }
         }
         plot_data.push_str("];\n");
-        let layout_data = match &self.layout {
-            Some(layout) => format!("var layout = {};", serde_json::to_string(layout).unwrap()),
-            None => {
-                let mut s = String::from("var layout = {");
-                s.push_str("};");
-                s
-            }
-        };
+        let layout_data = self.layout().to_json();
         plot_data.push_str(layout_data.as_str());
         plot_data
     }
@@ -493,13 +526,6 @@ mod tests {
     }
 
     #[test]
-    fn test_to_json() {
-        let plot = create_test_plot();
-        let plot_json = plot.to_json();
-        println!("{}", plot_json);
-    }
-
-    #[test]
     fn test_inline_plot() {
         let plot = create_test_plot();
         let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id");
@@ -540,7 +566,8 @@ mod tests {
               "x":[0, 1, 2],
               "y":[6, 10, 2]
             }
-          ]
+          ],
+          "layout": {}
         }
         "#
         .minify_json();
@@ -570,6 +597,46 @@ mod tests {
         "#
         .minify_json();
         assert_eq!(plot.to_json(), expected);
+    }
+
+    #[test]
+    fn test_data_to_json() {
+        let plot = create_test_plot();
+        let expected = r#"
+            [
+              {
+                "type": "scatter",
+                "name": "trace1",
+                "x":[0, 1, 2],
+                "y":[6, 10, 2]
+              }
+            ]
+        "#
+        .minify_json();
+
+        assert_eq!(plot.data().to_json(), expected);
+    }
+
+    #[test]
+    fn test_empty_layout_to_json() {
+        let plot = create_test_plot();
+        let expected = r#"{}"#.minify_json();
+
+        assert_eq!(plot.layout().to_json(), expected);
+    }
+
+    #[test]
+    fn test_layout_to_json() {
+        let mut plot = create_test_plot();
+        let layout = Layout::new().title("TestTitle".into());
+        plot.set_layout(layout);
+
+        let expected = r#"{
+            "title": {"text": "TestTitle"}
+        }"#
+        .minify_json();
+
+        assert_eq!(plot.layout().to_json(), expected);
     }
 
     #[test]
