@@ -654,7 +654,7 @@ where
     X: Serialize + Clone + 'static,
     Y: Serialize + Clone + 'static,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

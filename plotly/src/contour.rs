@@ -443,7 +443,7 @@ where
     Y: Serialize + Default,
     Z: Serialize + Default,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

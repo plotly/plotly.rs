@@ -3,7 +3,6 @@ use crate::common::{
     Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Side,
     TickFormatStop, TickMode, Title,
 };
-use crate::plot::Trace;
 use crate::private;
 use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
 use serde::Serialize;
@@ -2751,11 +2750,5 @@ impl Layout {
     pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> Layout {
         self.extend_sunburst_colors = Some(extend_sunburst_colors);
         self
-    }
-}
-
-impl Trace for Layout {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
     }
 }

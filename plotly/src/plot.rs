@@ -2,7 +2,9 @@
 extern crate plotly_kaleido;
 
 use askama::Template;
+use erased_serde::Serialize as ErasedSerialize;
 use rand::{thread_rng, Rng};
+use serde::Serialize;
 use std::env;
 use std::fs::File;
 use std::io::Write;
@@ -55,9 +57,11 @@ pub enum ImageFormat {
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
-pub trait Trace {
-    fn serialize(&self) -> String;
+pub trait Trace: ErasedSerialize {
+    fn to_json(&self) -> String;
 }
+
+erased_serde::serialize_trait_object!(Trace);
 
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
 /// also be specified. Its function is to serialize `Trace`s and the `Layout` in html format and
@@ -91,10 +95,13 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Serialize)]
 pub struct Plot {
+    #[serde(rename = "data")]
     traces: Vec<Box<dyn Trace>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     layout: Option<Layout>,
+    #[serde(skip)]
     remote_plotly_js: bool,
 }
 
@@ -375,7 +382,7 @@ impl Plot {
     fn render_plot_data(&self) -> String {
         let mut plot_data = String::new();
         for (idx, trace) in self.traces.iter().enumerate() {
-            let s = trace.serialize();
+            let s = trace.to_json();
             plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
         }
 
@@ -389,7 +396,7 @@ impl Plot {
         }
         plot_data.push_str("];\n");
         let layout_data = match &self.layout {
-            Some(layout) => format!("var layout = {};", Trace::serialize(layout)),
+            Some(layout) => format!("var layout = {};", serde_json::to_string(layout).unwrap()),
             None => {
                 let mut s = String::from("var layout = {");
                 s.push_str("};");
@@ -432,31 +439,7 @@ impl Plot {
     }
 
     pub fn to_json(&self) -> String {
-        let mut plot_data: Vec<String> = Vec::new();
-        for trace in self.traces.iter() {
-            let s = trace.serialize();
-            plot_data.push(s);
-        }
-        let layout_data = match &self.layout {
-            Some(layout) => Trace::serialize(layout),
-            None => "{}".to_owned(),
-        };
-
-        let mut json_data = String::new();
-        json_data.push_str(r#"{"data": ["#);
-
-        for (index, data) in plot_data.iter().enumerate() {
-            if index < plot_data.len() - 1 {
-                json_data.push_str(data);
-                json_data.push(',');
-            } else {
-                json_data.push_str(data);
-                json_data.push(']');
-            }
-        }
-        json_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
-        json_data.push('}');
-        json_data
+        serde_json::to_string(self).unwrap()
     }
 
     #[cfg(target_os = "linux")]
@@ -497,6 +480,18 @@ mod tests {
         plot
     }
 
+    trait Minify: Sized {
+        fn minify_json(self) -> String;
+    }
+
+    impl Minify for &str {
+        fn minify_json(self) -> String {
+            // note that this rudimentary implementation for minifying JSON will also strip spaces from
+            // key values e.g. {"text": "Test Text"} -> {"text":"TestText"}
+            self.split_whitespace().collect()
+        }
+    }
+
     #[test]
     fn test_to_json() {
         let plot = create_test_plot();
@@ -531,6 +526,50 @@ mod tests {
     fn test_lab_display() {
         let plot = create_test_plot();
         plot.lab_display();
+    }
+
+    #[test]
+    fn test_plot_serialize_simple() {
+        let plot = create_test_plot();
+        let expected = r#"
+        {
+          "data": [
+            {
+              "type": "scatter",
+              "name": "trace1",
+              "x":[0, 1, 2],
+              "y":[6, 10, 2]
+            }
+          ]
+        }
+        "#
+        .minify_json();
+        assert_eq!(plot.to_json(), expected);
+    }
+
+    #[test]
+    fn test_plot_serialize_with_layout() {
+        let mut plot = create_test_plot();
+        let layout = Layout::new().title("Title".into());
+        plot.set_layout(layout);
+
+        let expected = r#"
+        {
+          "data": [
+            {
+              "type": "scatter",
+              "name": "trace1",
+              "x":[0, 1, 2],
+              "y":[6, 10, 2]
+            }
+          ],
+          "layout" : {
+            "title": {"text": "Title"}
+          }
+        }
+        "#
+        .minify_json();
+        assert_eq!(plot.to_json(), expected);
     }
 
     #[test]

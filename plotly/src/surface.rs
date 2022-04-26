@@ -477,7 +477,7 @@ where
     Y: Serialize,
     Z: Serialize,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

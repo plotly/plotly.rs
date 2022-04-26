@@ -382,7 +382,7 @@ where
     X: Serialize + Default,
     Y: Serialize + Default,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

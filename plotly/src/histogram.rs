@@ -516,7 +516,7 @@ impl<H> Trace for Histogram<H>
 where
     H: Serialize + Clone + Default + 'static,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }
