@@ -378,9 +378,10 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::NamedColor;
+    use serde_json::json;
 
     use super::*;
+    use crate::NamedColor;
 
     #[test]
     fn build_basic_sankey_trace() {
@@ -410,8 +411,26 @@ mod tests {
                     .value(vec![8, 4, 2, 8, 4, 2]),
             );
 
-        let expected = r#"{"type":"sankey","orientation":"h","node":{"color":["blue","blue","blue","blue","blue","blue"],"label":["A1","A2","B1","B2","C1","C2"],"line":{"color":"black","width":0.5},"pad":15,"thickness":30},"link":{"source":[0,1,0,2,3,3],"target":[2,3,3,4,4,5],"value":[8,4,2,8,4,2]}}"#;
+        let expected = json!({
+            "link": {
+                "source": [0, 1, 0, 2, 3, 3],
+                "target": [2, 3, 3, 4, 4, 5],
+                "value": [8, 4, 2, 8, 4, 2]
+            },
+            "orientation": "h",
+            "type": "sankey",
+            "node": {
+                "color": ["blue", "blue", "blue", "blue", "blue", "blue"],
+                "label": ["A1", "A2", "B1", "B2", "C1", "C2"],
+                "line": {
+                    "color": "black",
+                    "width": 0.5
+                },
+                "pad": 15,
+                "thickness": 30
+            }
+        });
 
-        assert_eq!(serde_json::to_string(&trace).unwrap(), expected);
+        assert_eq!(serde_json::to_value(trace).unwrap(), expected);
     }
 }
