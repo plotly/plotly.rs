@@ -14,28 +14,24 @@ pub enum Direction {
     Decreasing { line: Line },
 }
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub enum Visible {
-    #[serde(serialize_with = "serialize_true")]
     True,
-    #[serde(serialize_with = "serialize_false")]
     False,
-    #[serde(rename = "legendonly")]
     LegendOnly,
 }
 
-fn serialize_true<S>(serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    serializer.serialize_bool(true)
-}
-
-fn serialize_false<S>(serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    serializer.serialize_bool(false)
+impl Serialize for Visible {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::True => serializer.serialize_bool(true),
+            Self::False => serializer.serialize_bool(false),
+            Self::LegendOnly => serializer.serialize_str("legendonly"),
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -1635,5 +1631,20 @@ impl ErrorData {
     pub fn width(mut self, width: usize) -> ErrorData {
         self.width = Some(width);
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_serialize_visible() {
+        assert_eq!(serde_json::to_string(&Visible::True).unwrap(), r#"true"#);
+        assert_eq!(serde_json::to_string(&Visible::False).unwrap(), r#"false"#);
+        assert_eq!(
+            serde_json::to_string(&Visible::LegendOnly).unwrap(),
+            r#""legendonly""#
+        );
     }
 }
