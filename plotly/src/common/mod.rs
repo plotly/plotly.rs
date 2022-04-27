@@ -101,12 +101,12 @@ impl Domain {
     }
 
     pub fn x(mut self, x: &[f64; 2]) -> Self {
-        self.x = Some(x);
+        self.x = Some(x.to_owned());
         self
     }
 
     pub fn y(mut self, y: &[f64; 2]) -> Self {
-        self.y = Some(y);
+        self.y = Some(y.to_owned());
         self
     }
 }
