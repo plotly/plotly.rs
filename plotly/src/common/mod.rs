@@ -186,6 +186,8 @@ pub enum PlotType {
     Histogram2dContour,
     #[serde(rename = "ohlc")]
     Ohlc,
+    #[serde(rename = "sankey")]
+    Sankey,
     #[serde(rename = "surface")]
     Surface,
 }
