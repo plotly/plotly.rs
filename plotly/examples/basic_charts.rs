@@ -651,32 +651,32 @@ fn basic_sankey_diagram(show: bool) {
         plot.show();
     }
 
-    println!("{}", plot.to_inline_html(Some("basic_bar_chart")));
+    println!("{}", plot.to_inline_html(Some("basic_sankey_diagram")));
 }
 
 fn main() -> std::io::Result<()> {
     // Scatter Plots
-    // simple_scatter_plot(true);
-    // line_and_scatter_plots(true);
-    // bubble_scatter_plots(true);
-    // polar_scatter_plot(true);
-    // data_labels_hover(true);
-    // data_labels_on_the_plot(true);
-    // colored_and_styled_scatter_plot(true);
-    // large_data_sets(true);
+    simple_scatter_plot(true);
+    line_and_scatter_plots(true);
+    bubble_scatter_plots(true);
+    polar_scatter_plot(true);
+    data_labels_hover(true);
+    data_labels_on_the_plot(true);
+    colored_and_styled_scatter_plot(true);
+    large_data_sets(true);
 
-    // // Line Charts
-    // adding_names_to_line_and_scatter_plot(true);
-    // line_and_scatter_styling(true);
-    // styling_line_plot(true);
-    // line_shape_options_for_interpolation(true);
-    // line_dash(true);
-    // filled_lines(true);
+    // Line Charts
+    adding_names_to_line_and_scatter_plot(true);
+    line_and_scatter_styling(true);
+    styling_line_plot(true);
+    line_shape_options_for_interpolation(true);
+    line_dash(true);
+    filled_lines(true);
 
-    // // Bar Charts
-    // basic_bar_chart(true);
-    // grouped_bar_chart(true);
-    // stacked_bar_chart(true);
+    // Bar Charts
+    basic_bar_chart(true);
+    grouped_bar_chart(true);
+    stacked_bar_chart(true);
 
     // Sankey Diagrams
     basic_sankey_diagram(true);
