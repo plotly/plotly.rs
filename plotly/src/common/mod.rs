@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
 pub mod color;
 
@@ -16,12 +16,26 @@ pub enum Direction {
 
 #[derive(Serialize, Clone, Debug)]
 pub enum Visible {
-    #[serde(rename = "x")]
+    #[serde(serialize_with = "serialize_true")]
     True,
-    #[serde(rename = "x")]
+    #[serde(serialize_with = "serialize_false")]
     False,
-    #[serde(rename = "x")]
+    #[serde(rename = "legendonly")]
     LegendOnly,
+}
+
+fn serialize_true<S>(serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_bool(true)
+}
+
+fn serialize_false<S>(serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_bool(false)
 }
 
 #[derive(Serialize, Clone, Debug)]

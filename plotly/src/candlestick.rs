@@ -1,7 +1,7 @@
 //! Candlestick plot
 
 use crate::common::color::NamedColor;
-use crate::common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType};
+use crate::common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible};
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
@@ -21,7 +21,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -84,7 +84,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Candlestick<T, O>> {
+    pub fn visible(mut self, visible: Visible) -> Box<Candlestick<T, O>> {
         self.visible = Some(visible);
         Box::new(self)
     }
