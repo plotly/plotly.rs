@@ -52,6 +52,65 @@ pub enum HoverInfo {
     Skip,
 }
 
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct LegendGroupTitle {
+    text: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    font: Option<Font>,
+}
+
+impl LegendGroupTitle {
+    pub fn new(text: &str) -> Self {
+        Self {
+            text: text.to_string(),
+            ..Default::default()
+        }
+    }
+
+    pub fn font(mut self, font: Font) -> Self {
+        self.font = Some(font);
+        self
+    }
+}
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Domain {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    column: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    row: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<[f64; 2]>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<[f64; 2]>,
+}
+
+impl Domain {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn column(mut self, column: usize) -> Self {
+        self.column = Some(column);
+        self
+    }
+
+    pub fn row(mut self, row: usize) -> Self {
+        self.row = Some(row);
+        self
+    }
+
+    pub fn x(mut self, x: &[f64; 2]) -> Self {
+        self.x = Some(x);
+        self
+    }
+
+    pub fn y(mut self, y: &[f64; 2]) -> Self {
+        self.y = Some(y);
+        self
+    }
+}
+
 #[derive(Serialize, Clone, Debug)]
 pub enum TextPosition {
     #[serde(rename = "inside")]
