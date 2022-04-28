@@ -503,6 +503,8 @@ impl Plot {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::{json, to_value};
+
     use super::*;
     use crate::Scatter;
 
@@ -511,18 +513,6 @@ mod tests {
         let mut plot = Plot::new();
         plot.add_trace(trace1);
         plot
-    }
-
-    trait Minify: Sized {
-        fn minify_json(self) -> String;
-    }
-
-    impl Minify for &str {
-        fn minify_json(self) -> String {
-            // note that this rudimentary implementation for minifying JSON will also strip spaces from
-            // key values e.g. {"text": "Test Text"} -> {"text":"TestText"}
-            self.split_whitespace().collect()
-        }
     }
 
     #[test]
@@ -557,21 +547,19 @@ mod tests {
     #[test]
     fn test_plot_serialize_simple() {
         let plot = create_test_plot();
-        let expected = r#"
-        {
-          "data": [
-            {
-              "type": "scatter",
-              "name": "trace1",
-              "x":[0, 1, 2],
-              "y":[6, 10, 2]
-            }
-          ],
-          "layout": {}
-        }
-        "#
-        .minify_json();
-        assert_eq!(plot.to_json(), expected);
+        let expected = json!({
+            "data": [
+                {
+                    "type": "scatter",
+                    "name": "trace1",
+                    "x": [0, 1, 2],
+                    "y": [6, 10, 2]
+                }
+            ],
+            "layout": {}
+        });
+
+        assert_eq!(to_value(plot).unwrap(), expected);
     }
 
     #[test]
@@ -580,49 +568,46 @@ mod tests {
         let layout = Layout::new().title("Title".into());
         plot.set_layout(layout);
 
-        let expected = r#"
-        {
-          "data": [
-            {
-              "type": "scatter",
-              "name": "trace1",
-              "x":[0, 1, 2],
-              "y":[6, 10, 2]
+        let expected = json!({
+            "data": [
+                {
+                    "type": "scatter",
+                    "name": "trace1",
+                    "x": [0, 1, 2],
+                    "y": [6, 10, 2]
+                }
+            ],
+            "layout": {
+                "title": {
+                    "text": "Title"
+                }
             }
-          ],
-          "layout" : {
-            "title": {"text": "Title"}
-          }
-        }
-        "#
-        .minify_json();
-        assert_eq!(plot.to_json(), expected);
+        });
+
+        assert_eq!(to_value(plot).unwrap(), expected);
     }
 
     #[test]
     fn test_data_to_json() {
         let plot = create_test_plot();
-        let expected = r#"
-            [
-              {
+        let expected = json!([
+            {
                 "type": "scatter",
                 "name": "trace1",
-                "x":[0, 1, 2],
-                "y":[6, 10, 2]
-              }
-            ]
-        "#
-        .minify_json();
+                "x": [0, 1, 2],
+                "y": [6, 10, 2]
+            }
+        ]);
 
-        assert_eq!(plot.data().to_json(), expected);
+        assert_eq!(to_value(plot.data()).unwrap(), expected);
     }
 
     #[test]
     fn test_empty_layout_to_json() {
         let plot = create_test_plot();
-        let expected = r#"{}"#.minify_json();
+        let expected = json!({});
 
-        assert_eq!(plot.layout().to_json(), expected);
+        assert_eq!(to_value(plot.layout()).unwrap(), expected);
     }
 
     #[test]
@@ -631,12 +616,11 @@ mod tests {
         let layout = Layout::new().title("TestTitle".into());
         plot.set_layout(layout);
 
-        let expected = r#"{
+        let expected = json!({
             "title": {"text": "TestTitle"}
-        }"#
-        .minify_json();
+        });
 
-        assert_eq!(plot.layout().to_json(), expected);
+        assert_eq!(to_value(plot.layout()).unwrap(), expected);
     }
 
     #[test]
