@@ -1684,3 +1684,23 @@ impl ErrorData {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_domain() {
+        let domain = Domain::new().column(0).row(0).x(&[0., 1.]).y(&[0., 1.]);
+        let expected = json!({
+            "column": 0,
+            "row": 0,
+            "x": [0.0, 1.0],
+            "y": [0.0, 1.0]
+        });
+
+        assert_eq!(to_value(domain).unwrap(), expected);
+    }
+}
