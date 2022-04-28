@@ -10,6 +10,28 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  run_code_coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install stable toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    - name: Install cargo-tarpaulin
+      uses: baptiste0928/cargo-install@v1
+      with:
+        crate: cargo-tarpaulin
+    - name: Run cargo-tarpaulin
+      run: cargo tarpaulin --all-features --release --debug
+    - name: Upload to codecov.io
+      uses: codecov/codecov-action@v1.0.2
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        
   build_linux:
     runs-on: ubuntu-latest
 
