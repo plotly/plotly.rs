@@ -205,8 +205,8 @@ where
         self
     }
 
-    pub fn value(mut self, value: Vec<V>) -> Self {
-        self.value = Some(value);
+    pub fn value(mut self, target: Vec<V>) -> Self {
+        self.value = Some(target);
         self
     }
 }
@@ -318,19 +318,25 @@ where
         Box::new(self)
     }
 
+    /// Sets the domain within which the Sankey diagram will be drawn.
+    pub fn domain(mut self, domain: Domain) -> Box<Self> {
+        self.domain = Some(domain);
+        Box::new(self)
+    }
+
     /// Sets the orientation of the Sankey diagram.
     pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
         self.orientation = Some(orientation);
         Box::new(self)
     }
 
-    /// The nodes of the Sankey plot.
+    /// The nodes of the Sankey diagram.
     pub fn node(mut self, node: Node) -> Box<Self> {
         self.node = Some(node);
         Box::new(self)
     }
 
-    /// The links of the Sankey plot.
+    /// The links of the Sankey diagram.
     pub fn link(mut self, link: Link<V>) -> Box<Self> {
         self.link = Some(link);
         Box::new(self)
@@ -372,19 +378,19 @@ where
     V: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+        serde_json::to_string(self).unwrap()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
+    use serde_json::{json, to_value};
 
     use super::*;
     use crate::NamedColor;
 
     #[test]
-    fn build_basic_sankey_trace() {
+    fn test_serialize_basic_sankey_trace() {
         // Mimic the plot here, minus the layout:
         // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
         let trace = Sankey::new()
@@ -406,9 +412,9 @@ mod tests {
             )
             .link(
                 Link::new()
+                    .value(vec![8, 4, 2, 8, 4, 2])
                     .source(vec![0, 1, 0, 2, 3, 3])
-                    .target(vec![2, 3, 3, 4, 4, 5])
-                    .value(vec![8, 4, 2, 8, 4, 2]),
+                    .target(vec![2, 3, 3, 4, 4, 5]),
             );
 
         let expected = json!({
@@ -431,6 +437,128 @@ mod tests {
             }
         });
 
-        assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_full_sankey_trace() {
+        let trace = Sankey::<i32>::new()
+            .name("sankey")
+            .visible(true)
+            .legend_rank(1000)
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .ids(vec!["one"])
+            .hover_info(HoverInfo::All)
+            .hover_label(Label::new())
+            .domain(Domain::new())
+            .orientation(Orientation::Horizontal)
+            .node(Node::new())
+            .link(Link::new())
+            .text_font(Font::new())
+            .selected_points(vec![0])
+            .arrangement(Arrangement::Fixed)
+            .value_format(".3f")
+            .value_suffix("nT");
+
+        let expected = json!({
+            "type": "sankey",
+            "name": "sankey",
+            "visible": true,
+            "legendrank": 1000,
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "ids": ["one"],
+            "hoverinfo": "all",
+            "hoverlabel": {},
+            "domain": {},
+            "orientation": "h",
+            "node": {},
+            "link": {},
+            "textfont": {},
+            "selectedpoints": [0],
+            "arrangement": "fixed",
+            "valueformat": ".3f",
+            "valuesuffix": "nT"
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_arrangement() {
+        assert_eq!(to_value(Arrangement::Snap).unwrap(), json!("snap"));
+        assert_eq!(
+            to_value(Arrangement::Perpendicular).unwrap(),
+            json!("perpendicular")
+        );
+        assert_eq!(to_value(Arrangement::Freeform).unwrap(), json!("freeform"));
+        assert_eq!(to_value(Arrangement::Fixed).unwrap(), json!("fixed"));
+    }
+
+    #[test]
+    fn test_serialize_line() {
+        let line = Line::new()
+            .color_array(vec![NamedColor::Black, NamedColor::Blue])
+            .color(NamedColor::Black)
+            .width(0.1);
+        let expected = json!({
+            "color": "black",
+            "width": 0.1
+        });
+
+        assert_eq!(to_value(line).unwrap(), expected)
+    }
+
+    #[test]
+    fn test_serialize_node() {
+        let node = Node::new()
+            .color(NamedColor::Blue)
+            .color_array(vec![NamedColor::Blue])
+            .hover_info(HoverInfo::All)
+            .hover_label(Label::new())
+            .hover_template("template")
+            .line(Line::new())
+            .pad(5)
+            .thickness(10)
+            .x(0.5)
+            .y(0.25);
+        let expected = json!({
+            "color": ["blue"],
+            "hoverinfo": "all",
+            "hoverlabel": {},
+            "hovertemplate": "template",
+            "line": {},
+            "pad": 5,
+            "thickness": 10,
+            "x": 0.5,
+            "y": 0.25
+        });
+
+        assert_eq!(to_value(node).unwrap(), expected)
+    }
+
+    #[test]
+    fn test_serialize_link() {
+        let link = Link::new()
+            .color_array(vec![NamedColor::Blue])
+            .color(NamedColor::Blue)
+            .hover_info(HoverInfo::All)
+            .hover_label(Label::new())
+            .hover_template("template")
+            .line(Line::new())
+            .value(vec![2, 2, 2])
+            .source(vec![0, 1, 2])
+            .target(vec![1, 2, 0]);
+        let expected = json!({
+            "color": "blue",
+            "hoverinfo": "all",
+            "hoverlabel": {},
+            "hovertemplate": "template",
+            "line": {},
+            "source": [0, 1, 2],
+            "target": [1, 2, 0],
+            "value": [2, 2, 2],
+        });
+
+        assert_eq!(to_value(link).unwrap(), expected)
     }
 }

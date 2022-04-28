@@ -634,9 +634,9 @@ fn basic_sankey_diagram(show: bool) {
         )
         .link(
             Link::new()
+                .value(vec![8, 4, 2, 8, 4, 2])
                 .source(vec![0, 1, 0, 2, 3, 3])
-                .target(vec![2, 3, 3, 4, 4, 5])
-                .value(vec![8, 4, 2, 8, 4, 2]),
+                .target(vec![2, 3, 3, 4, 4, 5]),
         );
 
     let layout = Layout::new()
