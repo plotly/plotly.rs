@@ -1636,15 +1636,17 @@ impl ErrorData {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::{json, to_value};
+
     use super::*;
 
     #[test]
     fn test_serialize_visible() {
-        assert_eq!(serde_json::to_string(&Visible::True).unwrap(), r#"true"#);
-        assert_eq!(serde_json::to_string(&Visible::False).unwrap(), r#"false"#);
+        assert_eq!(to_value(Visible::True).unwrap(), json!(true));
+        assert_eq!(to_value(Visible::False).unwrap(), json!(false));
         assert_eq!(
-            serde_json::to_string(&Visible::LegendOnly).unwrap(),
-            r#""legendonly""#
+            to_value(Visible::LegendOnly).unwrap(),
+            json!("legendonly")
         );
     }
 }
