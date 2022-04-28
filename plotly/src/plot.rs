@@ -23,7 +23,7 @@ struct PlotlyJs;
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
-    plot_data: &'a str,
+    plot: &'a Plot,
     plotly_javascript: &'a str,
     remote_plotly_js: bool,
     export_image: bool,
@@ -35,14 +35,14 @@ struct PlotTemplate<'a> {
 #[derive(Template)]
 #[template(path = "inline_plot.html", escape = "none")]
 struct InlinePlotTemplate<'a> {
-    plot_data: &'a str,
+    plot: &'a Plot,
     plot_div_id: &'a str,
 }
 
 #[derive(Template)]
 #[template(path = "jupyter_notebook_plot.html", escape = "none")]
 struct JupyterNotebookPlotTemplate<'a> {
-    plot_data: &'a str,
+    plot: &'a Plot,
     plot_div_id: &'a str,
 }
 
@@ -348,10 +348,9 @@ impl Plot {
                 .collect::<Vec<u8>>(),
         )
         .unwrap();
-        let plot_data = self.render_plot_data();
 
         let tmpl = JupyterNotebookPlotTemplate {
-            plot_data: plot_data.as_str(),
+            plot: self,
             plot_div_id: plot_div_id.as_str(),
         };
         tmpl.render().unwrap()
@@ -419,27 +418,6 @@ impl Plot {
         templates.join(PLOTLY_JS)
     }
 
-    fn render_plot_data(&self) -> String {
-        let mut plot_data = String::new();
-        for (idx, trace) in self.traces.iter().enumerate() {
-            let s = trace.to_json();
-            plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
-        }
-
-        plot_data.push_str("var data = [");
-        for idx in 0..self.traces.len() {
-            if idx != self.traces.len() - 1 {
-                plot_data.push_str(format!("trace_{},", idx).as_str());
-            } else {
-                plot_data.push_str(format!("trace_{}", idx).as_str());
-            }
-        }
-        plot_data.push_str("];\n");
-        let layout_data = self.layout().to_json();
-        plot_data.push_str(layout_data.as_str());
-        plot_data
-    }
-
     fn render(
         &self,
         export_image: bool,
@@ -447,10 +425,9 @@ impl Plot {
         image_width: usize,
         image_height: usize,
     ) -> String {
-        let plot_data = self.render_plot_data();
         let plotly_js = PlotlyJs {}.render().unwrap();
         let tmpl = PlotTemplate {
-            plot_data: plot_data.as_str(),
+            plot: self,
             plotly_javascript: plotly_js.as_str(),
             remote_plotly_js: self.remote_plotly_js,
             export_image,
@@ -462,10 +439,8 @@ impl Plot {
     }
 
     fn render_inline(&self, plot_div_id: &str) -> String {
-        let plot_data = self.render_plot_data();
-
         let tmpl = InlinePlotTemplate {
-            plot_data: plot_data.as_str(),
+            plot: self,
             plot_div_id,
         };
         tmpl.render().unwrap()

@@ -25,7 +25,7 @@ plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = tru
 ndarray = { version = "0.15.4", optional = true }
 serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
-askama = "0.11.0"
+askama = { version = "0.11.0", features = ["serde-json"] }
 rand = "0.8.4"
 rand_distr = "0.4.2"
 
