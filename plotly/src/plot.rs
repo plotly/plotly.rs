@@ -102,7 +102,7 @@ impl Traces {
 /// ```
 /// extern crate plotly;
 /// use plotly::common::Mode;
-/// use plotly::{Plot, Scatter};
+/// use plotly::{Layout, Plot, Scatter};
 ///
 /// fn line_and_scatter_plot() {
 ///     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
@@ -117,6 +117,10 @@ impl Traces {
 ///     plot.add_trace(trace1);
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
+/// 
+///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
+///     plot.set_layout(layout);
+/// 
 ///     plot.show();
 /// }
 ///
