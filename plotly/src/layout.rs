@@ -5,8 +5,8 @@ use crate::common::{
 };
 use crate::plot::Trace;
 use crate::private;
-use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
-use serde::Serialize;
+use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper};
+use serde::{Serialize, Serializer};
 
 #[derive(Serialize, Debug)]
 pub enum AxisType {
@@ -1318,20 +1318,30 @@ impl LayoutGrid {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub enum UniformTextMode {
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "hide")]
     Hide,
-    #[serde(rename = "show")]
     Show,
+}
+
+impl Serialize for UniformTextMode {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::False => serializer.serialize_bool(false),
+            Self::Hide => serializer.serialize_str("hide"),
+            Self::Show => serializer.serialize_str("show"),
+        }
+    }
 }
 
 #[derive(Serialize, Debug, Default)]
 pub struct UniformText {
     #[serde(skip_serializing_if = "Option::is_none")]
-    mode: Option<TruthyEnum<UniformTextMode>>,
+    mode: Option<UniformTextMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
     min_size: Option<usize>,
 }
@@ -1342,7 +1352,7 @@ impl UniformText {
     }
 
     pub fn mode(mut self, mode: UniformTextMode) -> UniformText {
-        self.mode = Some(TruthyEnum { e: mode });
+        self.mode = Some(mode);
         self
     }
 
@@ -1352,20 +1362,30 @@ impl UniformText {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub enum HoverMode {
-    #[serde(rename = "x")]
     X,
-    #[serde(rename = "y")]
     Y,
-    #[serde(rename = "closest")]
     Closest,
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "x unified")]
     XUnified,
-    #[serde(rename = "y unified")]
     YUnified,
+}
+
+impl Serialize for HoverMode {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::X => serializer.serialize_str("x"),
+            Self::Y => serializer.serialize_str("y"),
+            Self::Closest => serializer.serialize_str("closest"),
+            Self::False => serializer.serialize_bool(false),
+            Self::XUnified => serializer.serialize_str("x unified"),
+            Self::YUnified => serializer.serialize_str("y unified"),
+        }
+    }
 }
 
 #[derive(Serialize, Debug, Default)]
@@ -1821,14 +1841,24 @@ pub enum ArrowSide {
     None,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub enum ClickToShow {
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "onoff")]
     OnOff,
-    #[serde(rename = "onout")]
     OnOut,
+}
+
+impl Serialize for ClickToShow {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::False => serializer.serialize_bool(false),
+            Self::OnOff => serializer.serialize_str("onoff"),
+            Self::OnOut => serializer.serialize_str("onout"),
+        }
+    }
 }
 
 #[derive(Serialize, Debug, Default)]
@@ -1904,7 +1934,7 @@ pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none", rename = "yshift")]
     y_shift: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "clicktoshow")]
-    click_to_show: Option<TruthyEnum<ClickToShow>>,
+    click_to_show: Option<ClickToShow>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xclick")]
     x_click: Option<NumOrStringWrapper>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yclick")]
@@ -2198,7 +2228,7 @@ impl Annotation {
     /// need to show/hide this annotation in response to different `x` or `y` values, you can set
     /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
     /// markers though, `standoff` is preferred over `xclick` and `yclick`.
-    pub fn click_to_show(mut self, click_to_show: TruthyEnum<ClickToShow>) -> Annotation {
+    pub fn click_to_show(mut self, click_to_show: ClickToShow) -> Annotation {
         self.click_to_show = Some(click_to_show);
         self
     }
@@ -2295,7 +2325,7 @@ pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
     mode_bar: Option<ModeBar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovermode")]
-    hover_mode: Option<TruthyEnum<HoverMode>>,
+    hover_mode: Option<HoverMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "clickmode")]
     click_mode: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dragmode")]
@@ -2503,7 +2533,7 @@ impl Layout {
     /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
     /// else the default value is "closest".
     pub fn hover_mode(mut self, hover_mode: HoverMode) -> Layout {
-        self.hover_mode = Some(TruthyEnum { e: hover_mode });
+        self.hover_mode = Some(hover_mode);
         self
     }
 
@@ -2757,5 +2787,36 @@ impl Layout {
 impl Trace for Layout {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_uniform_text_mode() {
+        assert_eq!(to_value(UniformTextMode::False).unwrap(), json!(false));
+        assert_eq!(to_value(UniformTextMode::Hide).unwrap(), json!("hide"));
+        assert_eq!(to_value(UniformTextMode::Show).unwrap(), json!("show"));
+    }
+    
+    #[test]
+    fn test_serialize_click_to_show() {
+        assert_eq!(to_value(ClickToShow::False).unwrap(), json!(false));
+        assert_eq!(to_value(ClickToShow::OnOff).unwrap(), json!("onoff"));
+        assert_eq!(to_value(ClickToShow::OnOut).unwrap(), json!("onout"));
+    }
+
+    #[test]
+    fn test_serialize_hover_mode() {
+        assert_eq!(to_value(HoverMode::X).unwrap(), json!("x"));
+        assert_eq!(to_value(HoverMode::Y).unwrap(), json!("y"));
+        assert_eq!(to_value(HoverMode::Closest).unwrap(), json!("closest"));
+        assert_eq!(to_value(HoverMode::False).unwrap(), json!(false));
+        assert_eq!(to_value(HoverMode::XUnified).unwrap(), json!("x unified"));
+        assert_eq!(to_value(HoverMode::YUnified).unwrap(), json!("y unified"));
     }
 }

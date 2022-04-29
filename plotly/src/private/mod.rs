@@ -1,5 +1,5 @@
 use crate::common::color::{Color, ColorWrapper};
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
@@ -100,34 +100,6 @@ pub enum NumOrStringWrapper {
     F(f64),
     I(i64),
     U(u64),
-}
-
-#[derive(Clone, Debug)]
-pub struct TruthyEnum<E> {
-    pub e: E,
-}
-
-impl<E> Serialize for TruthyEnum<E>
-where
-    E: Serialize,
-{
-    fn serialize<S>(&self, serializer: S) -> Result<<S as Serializer>::Ok, <S as Serializer>::Error>
-    where
-        S: Serializer,
-    {
-        let s = serde_json::to_string(&self.e)
-            .unwrap()
-            .chars()
-            .filter(|c| *c != '"')
-            .collect::<String>();
-        if s == "true" {
-            return serializer.serialize_bool(true);
-        }
-        if s == "false" {
-            return serializer.serialize_bool(false);
-        }
-        serializer.serialize_str(&s)
-    }
 }
 
 pub fn copy_iterable_to_vec<T, I>(iterable: I) -> Vec<T>
