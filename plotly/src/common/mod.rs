@@ -601,7 +601,7 @@ pub struct Gradient {
 }
 
 impl Gradient {
-    pub fn new<C: Color + Serialize>(gradient_type: GradientType, color: Dim<C>) -> Gradient {
+    pub fn new<C: Color + Serialize>(gradient_type: GradientType, color: Dim<C>) -> Self {
         let color = match color {
             Dim::Scalar(c) => Dim::Scalar(c.to_color()),
             Dim::Vector(c) => Dim::Vector(private::to_color_array(c)),
@@ -627,35 +627,35 @@ pub struct TickFormatStop {
 }
 
 impl TickFormatStop {
-    pub fn new() -> TickFormatStop {
+    pub fn new() -> Self {
         TickFormatStop {
             enabled: true,
             ..Default::default()
         }
     }
 
-    pub fn enabled(mut self, enabled: bool) -> TickFormatStop {
+    pub fn enabled(mut self, enabled: bool) -> Self {
         self.enabled = enabled;
         self
     }
 
-    pub fn dtick_range<C: NumOrString>(mut self, range: Vec<C>) -> TickFormatStop {
+    pub fn dtick_range<C: NumOrString>(mut self, range: Vec<C>) -> Self {
         let wrapped = to_num_or_string_wrapper(range);
         self.dtick_range = Some(wrapped);
         self
     }
 
-    pub fn value(mut self, value: &str) -> TickFormatStop {
+    pub fn value(mut self, value: &str) -> Self {
         self.value = Some(value.to_owned());
         self
     }
 
-    pub fn name(mut self, name: &str) -> TickFormatStop {
+    pub fn name(mut self, name: &str) -> Self {
         self.name = Some(name.to_owned());
         self
     }
 
-    pub fn template_item_name(mut self, name: &str) -> TickFormatStop {
+    pub fn template_item_name(mut self, name: &str) -> Self {
         self.template_item_name = Some(name.to_owned());
         self
     }
@@ -969,7 +969,7 @@ pub struct Marker {
     size_ref: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
     size_min: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemode")]
     size_mode: Option<SizeMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
@@ -1000,117 +1000,117 @@ pub struct Marker {
 }
 
 impl Marker {
-    pub fn new() -> Marker {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn symbol(mut self, symbol: MarkerSymbol) -> Marker {
+    pub fn symbol(mut self, symbol: MarkerSymbol) -> Self {
         self.symbol = Some(symbol);
         self
     }
 
-    pub fn opacity(mut self, opacity: f64) -> Marker {
+    pub fn opacity(mut self, opacity: f64) -> Self {
         self.opacity = Some(opacity);
         self
     }
 
-    pub fn size(mut self, size: usize) -> Marker {
+    pub fn size(mut self, size: usize) -> Self {
         self.size = Some(Dim::Scalar(size));
         self
     }
 
-    pub fn size_array(mut self, size: Vec<usize>) -> Marker {
+    pub fn size_array(mut self, size: Vec<usize>) -> Self {
         self.size = Some(Dim::Vector(size));
         self
     }
 
-    pub fn max_displayed(mut self, size: usize) -> Marker {
+    pub fn max_displayed(mut self, size: usize) -> Self {
         self.max_displayed = Some(size);
         self
     }
 
-    pub fn size_ref(mut self, size: usize) -> Marker {
+    pub fn size_ref(mut self, size: usize) -> Self {
         self.size_ref = Some(size);
         self
     }
 
-    pub fn size_min(mut self, size: usize) -> Marker {
+    pub fn size_min(mut self, size: usize) -> Self {
         self.size_min = Some(size);
         self
     }
 
-    pub fn size_mode(mut self, mode: SizeMode) -> Marker {
+    pub fn size_mode(mut self, mode: SizeMode) -> Self {
         self.size_mode = Some(mode);
         self
     }
 
-    pub fn line(mut self, line: Line) -> Marker {
+    pub fn line(mut self, line: Line) -> Self {
         self.line = Some(line);
         self
     }
 
-    pub fn gradient(mut self, gradient: Gradient) -> Marker {
+    pub fn gradient(mut self, gradient: Gradient) -> Self {
         self.gradient = Some(gradient);
         self
     }
 
-    pub fn color<C: Color>(mut self, color: C) -> Marker {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(Dim::Scalar(color.to_color()));
         self
     }
 
-    pub fn color_array<C: Color>(mut self, color: Vec<C>) -> Marker {
+    pub fn color_array<C: Color>(mut self, color: Vec<C>) -> Self {
         let color = private::to_color_array(color);
         self.color = Some(Dim::Vector(color));
         self
     }
 
-    pub fn cauto(mut self, cauto: bool) -> Marker {
+    pub fn cauto(mut self, cauto: bool) -> Self {
         self.cauto = Some(cauto);
         self
     }
 
-    pub fn cmin(mut self, cmin: f64) -> Marker {
+    pub fn cmin(mut self, cmin: f64) -> Self {
         self.cmin = Some(cmin);
         self
     }
 
-    pub fn cmax(mut self, cmax: f64) -> Marker {
+    pub fn cmax(mut self, cmax: f64) -> Self {
         self.cmax = Some(cmax);
         self
     }
 
-    pub fn cmid(mut self, cmid: f64) -> Marker {
+    pub fn cmid(mut self, cmid: f64) -> Self {
         self.cmid = Some(cmid);
         self
     }
 
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Marker {
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
         self.color_scale = Some(color_scale);
         self
     }
 
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Marker {
+    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Self {
         self.auto_color_scale = Some(auto_color_scale);
         self
     }
 
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Marker {
+    pub fn reverse_scale(mut self, reverse_scale: bool) -> Self {
         self.reverse_scale = Some(reverse_scale);
         self
     }
 
-    pub fn show_scale(mut self, show_scale: bool) -> Marker {
+    pub fn show_scale(mut self, show_scale: bool) -> Self {
         self.show_scale = Some(show_scale);
         self
     }
 
-    pub fn color_bar(mut self, colorbar: ColorBar) -> Marker {
+    pub fn color_bar(mut self, colorbar: ColorBar) -> Self {
         self.color_bar = Some(colorbar);
         self
     }
 
-    pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Marker {
+    pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Self {
         self.outlier_color = Some(outlier_color.to_color());
         self
     }
@@ -1127,45 +1127,41 @@ pub struct Font {
 }
 
 impl Font {
-    pub fn new() -> Font {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn family(mut self, family: &str) -> Font {
+    pub fn family(mut self, family: &str) -> Self {
         self.family = Some(family.to_owned());
         self
     }
 
-    pub fn size(mut self, size: usize) -> Font {
+    pub fn size(mut self, size: usize) -> Self {
         self.size = Some(size);
         self
     }
 
-    pub fn color<C: Color>(mut self, color: C) -> Font {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(color.to_color());
         self
     }
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum Side {
-    #[serde(rename = "right")]
     Right,
-    #[serde(rename = "top")]
     Top,
-    #[serde(rename = "bottom")]
     Bottom,
-    #[serde(rename = "left")]
     Left,
     #[serde(rename = "top left")]
     TopLeft,
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum Reference {
-    #[serde(rename = "container")]
     Container,
-    #[serde(rename = "paper")]
     Paper,
 }
 
@@ -1177,7 +1173,7 @@ pub struct Pad {
 }
 
 impl Pad {
-    pub fn new(t: usize, b: usize, l: usize) -> Pad {
+    pub fn new(t: usize, b: usize, l: usize) -> Self {
         Pad { t, b, l }
     }
 }
@@ -1212,54 +1208,54 @@ impl From<&str> for Title {
 }
 
 impl Title {
-    pub fn new(text: &str) -> Title {
+    pub fn new(text: &str) -> Self {
         Title {
             text: text.to_owned(),
             ..Default::default()
         }
     }
 
-    pub fn font(mut self, font: Font) -> Title {
+    pub fn font(mut self, font: Font) -> Self {
         self.font = Some(font);
         self
     }
 
-    pub fn side(mut self, side: Side) -> Title {
+    pub fn side(mut self, side: Side) -> Self {
         self.side = Some(side);
         self
     }
 
-    pub fn x_ref(mut self, xref: Reference) -> Title {
+    pub fn x_ref(mut self, xref: Reference) -> Self {
         self.x_ref = Some(xref);
         self
     }
 
-    pub fn y_ref(mut self, yref: Reference) -> Title {
+    pub fn y_ref(mut self, yref: Reference) -> Self {
         self.y_ref = Some(yref);
         self
     }
 
-    pub fn x(mut self, x: f64) -> Title {
+    pub fn x(mut self, x: f64) -> Self {
         self.x = Some(x);
         self
     }
 
-    pub fn y(mut self, y: f64) -> Title {
+    pub fn y(mut self, y: f64) -> Self {
         self.y = Some(y);
         self
     }
 
-    pub fn x_anchor(mut self, anchor: Anchor) -> Title {
+    pub fn x_anchor(mut self, anchor: Anchor) -> Self {
         self.x_anchor = Some(anchor);
         self
     }
 
-    pub fn y_anchor(mut self, anchor: Anchor) -> Title {
+    pub fn y_anchor(mut self, anchor: Anchor) -> Self {
         self.y_anchor = Some(anchor);
         self
     }
 
-    pub fn pad(mut self, pad: Pad) -> Title {
+    pub fn pad(mut self, pad: Pad) -> Self {
         self.pad = Some(pad);
         self
     }
@@ -1280,50 +1276,48 @@ pub struct Label {
 }
 
 impl Label {
-    pub fn new() -> Label {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Label {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(background_color.to_color());
         self
     }
 
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Label {
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
         self.border_color = Some(border_color.to_color());
         self
     }
 
-    pub fn font(mut self, font: Font) -> Label {
+    pub fn font(mut self, font: Font) -> Self {
         self.font = Some(font);
         self
     }
 
-    pub fn align(mut self, align: &str) -> Label {
+    pub fn align(mut self, align: &str) -> Self {
         self.align = Some(align.to_owned());
         self
     }
 
-    pub fn name_length(mut self, name_length: i32) -> Label {
+    pub fn name_length(mut self, name_length: i32) -> Self {
         self.name_length = Some(Dim::Scalar(name_length));
         self
     }
 
-    pub fn name_length_array(mut self, name_length: Vec<i32>) -> Label {
+    pub fn name_length_array(mut self, name_length: Vec<i32>) -> Self {
         self.name_length = Some(Dim::Vector(name_length));
         self
     }
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ErrorType {
-    #[serde(rename = "percent")]
     Percent,
-    #[serde(rename = "constant")]
     Constant,
     #[serde(rename = "sqrt")]
     SquareRoot,
-    #[serde(rename = "data")]
     Data,
 }
 
@@ -1363,69 +1357,69 @@ pub struct ErrorData {
 }
 
 impl ErrorData {
-    pub fn new(error_type: ErrorType) -> ErrorData {
+    pub fn new(error_type: ErrorType) -> Self {
         ErrorData {
             r#type: error_type,
             ..Default::default()
         }
     }
 
-    pub fn array(mut self, array: Vec<f64>) -> ErrorData {
+    pub fn array(mut self, array: Vec<f64>) -> Self {
         self.array = Some(array);
         self
     }
 
-    pub fn visible(mut self, visible: bool) -> ErrorData {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
 
-    pub fn symmetric(mut self, symmetric: bool) -> ErrorData {
+    pub fn symmetric(mut self, symmetric: bool) -> Self {
         self.symmetric = Some(symmetric);
         self
     }
 
-    pub fn array_minus(mut self, array_minus: Vec<f64>) -> ErrorData {
+    pub fn array_minus(mut self, array_minus: Vec<f64>) -> Self {
         self.array_minus = Some(array_minus);
         self
     }
 
-    pub fn value(mut self, value: f64) -> ErrorData {
+    pub fn value(mut self, value: f64) -> Self {
         self.value = Some(value);
         self
     }
 
-    pub fn value_minus(mut self, value_minus: f64) -> ErrorData {
+    pub fn value_minus(mut self, value_minus: f64) -> Self {
         self.value_minus = Some(value_minus);
         self
     }
 
-    pub fn trace_ref(mut self, trace_ref: usize) -> ErrorData {
+    pub fn trace_ref(mut self, trace_ref: usize) -> Self {
         self.trace_ref = Some(trace_ref);
         self
     }
 
-    pub fn trace_ref_minus(mut self, trace_ref_minus: usize) -> ErrorData {
+    pub fn trace_ref_minus(mut self, trace_ref_minus: usize) -> Self {
         self.trace_ref_minus = Some(trace_ref_minus);
         self
     }
 
-    pub fn copy_ystyle(mut self, copy_ystyle: bool) -> ErrorData {
+    pub fn copy_ystyle(mut self, copy_ystyle: bool) -> Self {
         self.copy_ystyle = Some(copy_ystyle);
         self
     }
 
-    pub fn color<C: Color>(mut self, color: C) -> ErrorData {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(color.to_color());
         self
     }
 
-    pub fn thickness(mut self, thickness: f64) -> ErrorData {
+    pub fn thickness(mut self, thickness: f64) -> Self {
         self.thickness = Some(thickness);
         self
     }
 
-    pub fn width(mut self, width: usize) -> ErrorData {
+    pub fn width(mut self, width: usize) -> Self {
         self.width = Some(width);
         self
     }
@@ -1436,6 +1430,7 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
+    use crate::NamedColor;
 
     #[test]
     fn test_serialize_direction() {
@@ -1896,5 +1891,235 @@ mod tests {
         assert_eq!(to_value(ExponentFormat::Power).unwrap(), json!("power"));
         assert_eq!(to_value(ExponentFormat::SI).unwrap(), json!("SI"));
         assert_eq!(to_value(ExponentFormat::B).unwrap(), json!("B"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_gradient() {
+        let gradient = Gradient::new(GradientType::Horizontal, Dim::Scalar("#ffffff"));
+        let expected = json!({"color": "#FFFFFF", "type": "horizontal"});
+        assert_eq!(to_value(gradient).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_tick_format_stop_default() {
+        let tick_format_stop = TickFormatStop::new();
+        let expected = json!({"enabled": true});
+        assert_eq!(to_value(tick_format_stop).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_tick_format_stop() {
+        let tick_format_stop = TickFormatStop::new()
+            .enabled(false)
+            .dtick_range(vec![0.0, 1.0])
+            .value("value")
+            .name("name")
+            .template_item_name("template_item_name");
+        let expected = json!({
+            "enabled": false,
+            "dtickrange": [0.0, 1.0],
+            "value": "value",
+            "name": "name",
+            "templateitemname": "template_item_name"
+        });
+        assert_eq!(to_value(tick_format_stop).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_marker() {
+        let marker = Marker::new()
+            .symbol(MarkerSymbol::Circle)
+            .opacity(0.1)
+            .size(1)
+            .max_displayed(5)
+            .size_ref(5)
+            .size_min(1)
+            .size_mode(SizeMode::Area)
+            .line(Line::new())
+            .gradient(Gradient::new(GradientType::Radial, Dim::Scalar("#FFFFFF")))
+            .color(NamedColor::Blue)
+            .color_array(vec![NamedColor::Black, NamedColor::Blue])
+            .cauto(true)
+            .cmin(0.0)
+            .cmax(1.0)
+            .cmid(0.5)
+            .color_scale(ColorScale::Palette(ColorScalePalette::Earth))
+            .auto_color_scale(true)
+            .reverse_scale(true)
+            .show_scale(true)
+            // .color_bar(ColorBar::new()) awaiting fix in other branch
+            .outlier_color("#FFFFFF");
+
+        let expected = json!({
+            "symbol": "circle",
+            "opacity": 0.1,
+            "size": 1,
+            "maxdisplayed": 5,
+            "sizeref": 5,
+            "sizemin": 1,
+            "sizemode": "area",
+            "line": {},
+            "gradient": {"type": "radial", "color": "#FFFFFF"},
+            "color": ["black", "blue"],
+            "cauto": true,
+            "cmin": 0.0,
+            "cmax": 1.0,
+            "cmid": 0.5,
+            "colorscale": "Earth",
+            "autocolorscale": true,
+            "reversescale": true,
+            "showscale": true,
+            "outliercolor": "#FFFFFF"
+        });
+
+        assert_eq!(to_value(marker).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_font() {
+        let font = Font::new().family("family").size(100).color("#FFFFFF");
+        let expected = json!({
+            "family": "family",
+            "size": 100,
+            "color": "#FFFFFF"
+        });
+
+        assert_eq!(to_value(font).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_side() {
+        assert_eq!(to_value(Side::Right).unwrap(), json!("right"));
+        assert_eq!(to_value(Side::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(Side::Bottom).unwrap(), json!("bottom"));
+        assert_eq!(to_value(Side::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(Side::TopLeft).unwrap(), json!("top left"));
+    }
+
+    #[test]
+    fn test_serialize_reference() {
+        assert_eq!(to_value(Reference::Container).unwrap(), json!("container"));
+        assert_eq!(to_value(Reference::Paper).unwrap(), json!("paper"));
+    }
+
+    #[test]
+    fn test_serialize_pad() {
+        let pad = Pad::new(1, 2, 3);
+        let expected = json!({
+            "t": 1,
+            "b": 2,
+            "l": 3
+        });
+
+        assert_eq!(to_value(pad).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_title() {
+        let title = Title::new("title")
+            .font(Font::new())
+            .side(Side::Top)
+            .x_ref(Reference::Paper)
+            .y_ref(Reference::Paper)
+            .x(0.5)
+            .y(0.5)
+            .x_anchor(Anchor::Auto)
+            .y_anchor(Anchor::Auto)
+            .pad(Pad::new(0, 0, 0));
+        let expected = json!({
+            "text": "title",
+            "font": {},
+            "side": "top",
+            "xref": "paper",
+            "yref": "paper",
+            "x": 0.5,
+            "y": 0.5,
+            "xanchor": "auto",
+            "yanchor": "auto",
+            "pad": {"t": 0, "b": 0, "l": 0}
+        });
+
+        assert_eq!(to_value(title).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_title_from_str() {
+        let title = Title::from("from");
+        let expected = json!({"text": "from"});
+
+        assert_eq!(to_value(title).unwrap(), expected);
+
+        let title: Title = "into".into();
+        let expected = json!({"text": "into"});
+
+        assert_eq!(to_value(title).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_label() {
+        let label = Label::new()
+            .background_color("#FFFFFF")
+            .border_color("#000000")
+            .font(Font::new())
+            .align("something")
+            .name_length_array(vec![5, 10])
+            .name_length(6);
+        let expected = json!({
+            "bgcolor": "#FFFFFF",
+            "bordercolor": "#000000",
+            "font": {},
+            "align": "something",
+            "namelength": 6,
+        });
+
+        assert_eq!(to_value(label).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_error_type() {
+        assert_eq!(to_value(ErrorType::Percent).unwrap(), json!("percent"));
+        assert_eq!(to_value(ErrorType::Constant).unwrap(), json!("constant"));
+        assert_eq!(to_value(ErrorType::SquareRoot).unwrap(), json!("sqrt"));
+        assert_eq!(to_value(ErrorType::Data).unwrap(), json!("data"));
+    }
+
+    #[test]
+    fn test_serialize_error_type_default() {
+        assert_eq!(to_value(ErrorType::default()).unwrap(), json!("percent"));
+    }
+
+    #[test]
+    fn test_serialize_error_data() {
+        let error_data = ErrorData::new(ErrorType::Constant)
+            .array(vec![0.1, 0.2])
+            .visible(true)
+            .symmetric(false)
+            .array_minus(vec![0.05, 0.1])
+            .value(5.0)
+            .value_minus(2.5)
+            .trace_ref(1)
+            .trace_ref_minus(1)
+            .copy_ystyle(true)
+            .color("#AAAAAA")
+            .thickness(2.0)
+            .width(5);
+        let expected = json!({
+            "type": "constant",
+            "array": [0.1, 0.2],
+            "visible": true,
+            "symmetric": false,
+            "arrayminus": [0.05, 0.1],
+            "value": 5.0,
+            "valueminus": 2.5,
+            "traceref": 1,
+            "tracerefminus": 1,
+            "copy_ystyle": true,
+            "color": "#AAAAAA",
+            "thickness": 2.0,
+            "width": 5,
+        });
+
+        assert_eq!(to_value(error_data).unwrap(), expected)
     }
 }
