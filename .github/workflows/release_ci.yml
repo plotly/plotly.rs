@@ -14,23 +14,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Install stable toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
-    - name: Install cargo-tarpaulin
-      uses: baptiste0928/cargo-install@v1
-      with:
-        crate: cargo-tarpaulin
-    - name: Run cargo-tarpaulin
-      run: cargo tarpaulin --all-features --release --debug
-    - name: Upload to codecov.io
-      uses: codecov/codecov-action@v1.0.2
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        run: rustup toolchain install stable --component llvm-tools-preview
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Generate code coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          files: lcov.info
+          fail_ci_if_error: true
         
   build_linux:
     runs-on: ubuntu-latest
