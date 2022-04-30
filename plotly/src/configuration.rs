@@ -345,7 +345,7 @@ impl Configuration {
     }
 
     /// Determines the mode bar display mode. If `true`, the mode bar is always visible. If `false`,
-    /// the mode bar is always hidden. If omitted, the mode bar is visible while the mouse cursor
+    /// the mode bar is always hidden. If `hover`, the mode bar is visible while the mouse cursor
     /// is on the graph container.
     pub fn display_mode_bar(mut self, display_mode_bar: DisplayModeBar) -> Self {
         self.display_mode_bar = Some(display_mode_bar);
