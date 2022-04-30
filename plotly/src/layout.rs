@@ -145,108 +145,104 @@ pub struct Legend {
 }
 
 impl Legend {
-    pub fn new() -> Legend {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Legend {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(background_color.to_color());
         self
     }
 
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Legend {
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
         self.border_color = Some(border_color.to_color());
         self
     }
 
-    pub fn border_width(mut self, border_width: usize) -> Legend {
+    pub fn border_width(mut self, border_width: usize) -> Self {
         self.border_width = Some(border_width);
         self
     }
 
-    pub fn font(mut self, font: Font) -> Legend {
+    pub fn font(mut self, font: Font) -> Self {
         self.font = Some(font);
         self
     }
 
-    pub fn orientation(mut self, orientation: Orientation) -> Legend {
+    pub fn orientation(mut self, orientation: Orientation) -> Self {
         self.orientation = Some(orientation);
         self
     }
 
-    pub fn trace_order(mut self, trace_order: &str) -> Legend {
+    pub fn trace_order(mut self, trace_order: &str) -> Self {
         self.trace_order = Some(trace_order.to_owned());
         self
     }
 
-    pub fn trace_group_gap(mut self, trace_group_gap: usize) -> Legend {
+    pub fn trace_group_gap(mut self, trace_group_gap: usize) -> Self {
         self.trace_group_gap = Some(trace_group_gap);
         self
     }
 
-    pub fn item_sizing(mut self, item_sizing: &str) -> Legend {
+    pub fn item_sizing(mut self, item_sizing: &str) -> Self {
         self.item_sizing = Some(item_sizing.to_owned());
         self
     }
 
-    pub fn item_click(mut self, item_click: &str) -> Legend {
+    pub fn item_click(mut self, item_click: &str) -> Self {
         self.item_click = Some(item_click.to_owned());
         self
     }
 
-    pub fn item_double_click(mut self, item_double_click: &str) -> Legend {
+    pub fn item_double_click(mut self, item_double_click: &str) -> Self {
         self.item_double_click = Some(item_double_click.to_owned());
         self
     }
 
-    pub fn x(mut self, x: f64) -> Legend {
+    pub fn x(mut self, x: f64) -> Self {
         self.x = Some(x);
         self
     }
 
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> Legend {
+    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
         self.x_anchor = Some(x_anchor);
         self
     }
 
-    pub fn y(mut self, y: f64) -> Legend {
+    pub fn y(mut self, y: f64) -> Self {
         self.y = Some(y);
         self
     }
 
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> Legend {
+    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
         self.y_anchor = Some(y_anchor);
         self
     }
 
-    pub fn valign(mut self, valign: VAlign) -> Legend {
+    pub fn valign(mut self, valign: VAlign) -> Self {
         self.valign = Some(valign);
         self
     }
 
-    pub fn title(mut self, title: Title) -> Legend {
+    pub fn title(mut self, title: Title) -> Self {
         self.title = Some(title);
         self
     }
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum VAlign {
-    #[serde(rename = "top")]
     Top,
-    #[serde(rename = "middle")]
     Middle,
-    #[serde(rename = "bottom")]
     Bottom,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum HAlign {
-    #[serde(rename = "left")]
     Left,
-    #[serde(rename = "center")]
     Center,
-    #[serde(rename = "right")]
     Right,
 }
 
@@ -267,36 +263,36 @@ pub struct Margin {
 }
 
 impl Margin {
-    pub fn new() -> Margin {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn left(mut self, left: usize) -> Margin {
+    pub fn left(mut self, left: usize) -> Self {
         self.l = Some(left);
         self
     }
 
-    pub fn right(mut self, right: usize) -> Margin {
+    pub fn right(mut self, right: usize) -> Self {
         self.r = Some(right);
         self
     }
 
-    pub fn top(mut self, top: usize) -> Margin {
+    pub fn top(mut self, top: usize) -> Self {
         self.t = Some(top);
         self
     }
 
-    pub fn bottom(mut self, bottom: usize) -> Margin {
+    pub fn bottom(mut self, bottom: usize) -> Self {
         self.b = Some(bottom);
         self
     }
 
-    pub fn pad(mut self, pad: usize) -> Margin {
+    pub fn pad(mut self, pad: usize) -> Self {
         self.pad = Some(pad);
         self
     }
 
-    pub fn auto_expand(mut self, auto_expand: bool) -> Margin {
+    pub fn auto_expand(mut self, auto_expand: bool) -> Self {
         self.auto_expand = Some(auto_expand);
         self
     }
@@ -313,33 +309,31 @@ pub struct LayoutColorScale {
 }
 
 impl LayoutColorScale {
-    pub fn new() -> LayoutColorScale {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn sequential(mut self, sequential: ColorScale) -> LayoutColorScale {
+    pub fn sequential(mut self, sequential: ColorScale) -> Self {
         self.sequential = Some(sequential);
         self
     }
 
-    pub fn sequential_minus(mut self, sequential_minus: ColorScale) -> LayoutColorScale {
+    pub fn sequential_minus(mut self, sequential_minus: ColorScale) -> Self {
         self.sequential_minus = Some(sequential_minus);
         self
     }
 
-    pub fn diverging(mut self, diverging: ColorScale) -> LayoutColorScale {
+    pub fn diverging(mut self, diverging: ColorScale) -> Self {
         self.diverging = Some(diverging);
         self
     }
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum SliderRangeMode {
-    #[serde(rename = "auto")]
     Auto,
-    #[serde(rename = "fixed")]
     Fixed,
-    #[serde(rename = "match")]
     Match,
 }
 
@@ -352,16 +346,16 @@ pub struct RangeSliderYAxis {
 }
 
 impl RangeSliderYAxis {
-    pub fn new() -> RangeSliderYAxis {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn range_mode(mut self, range_mode: SliderRangeMode) -> RangeSliderYAxis {
+    pub fn range_mode(mut self, range_mode: SliderRangeMode) -> Self {
         self.range_mode = Some(range_mode);
         self
     }
 
-    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> RangeSliderYAxis {
+    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> Self {
         let wrapped = to_num_or_string_wrapper(range);
         self.range = Some(wrapped);
         self
@@ -389,75 +383,68 @@ pub struct RangeSlider {
 }
 
 impl RangeSlider {
-    pub fn new() -> RangeSlider {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn background_color<C: Color>(mut self, background_color: C) -> RangeSlider {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(background_color.to_color());
         self
     }
 
-    pub fn border_color<C: Color>(mut self, border_color: C) -> RangeSlider {
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
         self.border_color = Some(border_color.to_color());
         self
     }
 
-    pub fn border_width(mut self, border_width: u64) -> RangeSlider {
+    pub fn border_width(mut self, border_width: u64) -> Self {
         self.border_width = Some(border_width);
         self
     }
 
-    pub fn auto_range(mut self, auto_range: bool) -> RangeSlider {
+    pub fn auto_range(mut self, auto_range: bool) -> Self {
         self.auto_range = Some(auto_range);
         self
     }
 
-    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> RangeSlider {
+    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> Self {
         let wrapped = to_num_or_string_wrapper(range);
         self.range = Some(wrapped);
         self
     }
 
-    pub fn thickness(mut self, thickness: f64) -> RangeSlider {
+    pub fn thickness(mut self, thickness: f64) -> Self {
         self.thickness = Some(thickness);
         self
     }
 
-    pub fn visible(mut self, visible: bool) -> RangeSlider {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
 
-    pub fn y_axis(mut self, axis: RangeSliderYAxis) -> RangeSlider {
+    pub fn y_axis(mut self, axis: RangeSliderYAxis) -> Self {
         self.y_axis = Some(axis);
         self
     }
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum SelectorStep {
-    #[serde(rename = "month")]
     Month,
-    #[serde(rename = "year")]
     Year,
-    #[serde(rename = "day")]
     Day,
-    #[serde(rename = "hour")]
     Hour,
-    #[serde(rename = "minute")]
     Minute,
-    #[serde(rename = "second")]
     Second,
-    #[serde(rename = "all")]
     All,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum StepMode {
-    #[serde(rename = "backward")]
     Backward,
-    #[serde(rename = "todate")]
     ToDate,
 }
 
@@ -480,41 +467,41 @@ pub struct SelectorButton {
 }
 
 impl SelectorButton {
-    pub fn new() -> SelectorButton {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn visible(mut self, visible: bool) -> SelectorButton {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
 
-    pub fn step(mut self, step: SelectorStep) -> SelectorButton {
+    pub fn step(mut self, step: SelectorStep) -> Self {
         self.step = Some(step);
         self
     }
 
-    pub fn step_mode(mut self, step_mode: StepMode) -> SelectorButton {
+    pub fn step_mode(mut self, step_mode: StepMode) -> Self {
         self.step_mode = Some(step_mode);
         self
     }
 
-    pub fn count(mut self, count: usize) -> SelectorButton {
+    pub fn count(mut self, count: usize) -> Self {
         self.count = Some(count);
         self
     }
 
-    pub fn label(mut self, label: &str) -> SelectorButton {
+    pub fn label(mut self, label: &str) -> Self {
         self.label = Some(label.to_owned());
         self
     }
 
-    pub fn name(mut self, name: &str) -> SelectorButton {
+    pub fn name(mut self, name: &str) -> Self {
         self.name = Some(name.to_owned());
         self
     }
 
-    pub fn template_item_name(mut self, template_item_name: &str) -> SelectorButton {
+    pub fn template_item_name(mut self, template_item_name: &str) -> Self {
         self.template_item_name = Some(template_item_name.to_owned());
         self
     }
@@ -547,61 +534,61 @@ pub struct RangeSelector {
 }
 
 impl RangeSelector {
-    pub fn new() -> RangeSelector {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn visible(mut self, visible: bool) -> RangeSelector {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
 
-    pub fn buttons(mut self, buttons: Vec<SelectorButton>) -> RangeSelector {
+    pub fn buttons(mut self, buttons: Vec<SelectorButton>) -> Self {
         self.buttons = Some(buttons);
         self
     }
 
-    pub fn x(mut self, x: f64) -> RangeSelector {
+    pub fn x(mut self, x: f64) -> Self {
         self.x = Some(x);
         self
     }
 
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> RangeSelector {
+    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
         self.x_anchor = Some(x_anchor);
         self
     }
 
-    pub fn y(mut self, y: f64) -> RangeSelector {
+    pub fn y(mut self, y: f64) -> Self {
         self.y = Some(y);
         self
     }
 
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> RangeSelector {
+    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
         self.y_anchor = Some(y_anchor);
         self
     }
 
-    pub fn font(mut self, font: Font) -> RangeSelector {
+    pub fn font(mut self, font: Font) -> Self {
         self.font = Some(font);
         self
     }
 
-    pub fn background_color<C: Color>(mut self, background_color: C) -> RangeSelector {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(background_color.to_color());
         self
     }
 
-    pub fn active_color<C: Color>(mut self, active_color: C) -> RangeSelector {
+    pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
         self.background_color = Some(active_color.to_color());
         self
     }
 
-    pub fn border_color<C: Color>(mut self, border_color: C) -> RangeSelector {
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
         self.border_color = Some(border_color.to_color());
         self
     }
 
-    pub fn border_width(mut self, border_width: usize) -> RangeSelector {
+    pub fn border_width(mut self, border_width: usize) -> Self {
         self.border_width = Some(border_width);
         self
     }
@@ -630,51 +617,51 @@ pub struct ColorAxis {
 }
 
 impl ColorAxis {
-    pub fn new() -> ColorAxis {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn cauto(mut self, cauto: bool) -> ColorAxis {
+    pub fn cauto(mut self, cauto: bool) -> Self {
         self.cauto = Some(cauto);
         self
     }
 
-    pub fn cmin(mut self, cmin: f64) -> ColorAxis {
+    pub fn cmin(mut self, cmin: f64) -> Self {
         self.cmin = Some(cmin);
         self
     }
 
-    pub fn cmax(mut self, cmax: f64) -> ColorAxis {
+    pub fn cmax(mut self, cmax: f64) -> Self {
         self.cmax = Some(cmax);
         self
     }
 
-    pub fn cmid(mut self, cmid: f64) -> ColorAxis {
+    pub fn cmid(mut self, cmid: f64) -> Self {
         self.cmid = Some(cmid);
         self
     }
 
-    pub fn color_scale(mut self, color_scale: ColorScale) -> ColorAxis {
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
         self.color_scale = Some(color_scale);
         self
     }
 
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> ColorAxis {
+    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Self {
         self.auto_color_scale = Some(auto_color_scale);
         self
     }
 
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> ColorAxis {
+    pub fn reverse_scale(mut self, reverse_scale: bool) -> Self {
         self.reverse_scale = Some(reverse_scale);
         self
     }
 
-    pub fn show_scale(mut self, show_scale: bool) -> ColorAxis {
+    pub fn show_scale(mut self, show_scale: bool) -> Self {
         self.show_scale = Some(show_scale);
         self
     }
 
-    pub fn color_bar(mut self, color_bar: ColorBar) -> ColorAxis {
+    pub fn color_bar(mut self, color_bar: ColorBar) -> Self {
         self.color_bar = Some(color_bar);
         self
     }
@@ -1146,34 +1133,31 @@ pub enum RowOrder {
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum GridPattern {
-    #[serde(rename = "independent")]
     Independent,
-    #[serde(rename = "coupled")]
     Coupled,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum GridXSide {
-    #[serde(rename = "bottom")]
     Bottom,
     #[serde(rename = "bottom plot")]
     BottomPlot,
     #[serde(rename = "top plot")]
     TopPlot,
-    #[serde(rename = "top")]
     Top,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum GridYSide {
-    #[serde(rename = "left")]
     Left,
     #[serde(rename = "left plot")]
     LeftPlot,
     #[serde(rename = "right plot")]
     RightPlot,
-    #[serde(rename = "right")]
     Right,
 }
 
@@ -1186,16 +1170,16 @@ pub struct GridDomain {
 }
 
 impl GridDomain {
-    pub fn new() -> GridDomain {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn x(mut self, x: Vec<f64>) -> GridDomain {
+    pub fn x(mut self, x: Vec<f64>) -> Self {
         self.x = Some(x);
         self
     }
 
-    pub fn y(mut self, y: Vec<f64>) -> GridDomain {
+    pub fn y(mut self, y: Vec<f64>) -> Self {
         self.y = Some(y);
         self
     }
@@ -1230,65 +1214,65 @@ pub struct LayoutGrid {
 }
 
 impl LayoutGrid {
-    pub fn new() -> LayoutGrid {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn rows(mut self, rows: usize) -> LayoutGrid {
+    pub fn rows(mut self, rows: usize) -> Self {
         self.rows = Some(rows);
         self
     }
 
-    pub fn row_order(mut self, row_order: RowOrder) -> LayoutGrid {
+    pub fn row_order(mut self, row_order: RowOrder) -> Self {
         self.row_order = Some(row_order);
         self
     }
 
-    pub fn columns(mut self, columns: usize) -> LayoutGrid {
+    pub fn columns(mut self, columns: usize) -> Self {
         self.columns = Some(columns);
         self
     }
 
-    pub fn sub_plots(mut self, sub_plots: Vec<String>) -> LayoutGrid {
+    pub fn sub_plots(mut self, sub_plots: Vec<String>) -> Self {
         self.sub_plots = Some(sub_plots);
         self
     }
 
-    pub fn x_axes(mut self, x_axes: Vec<String>) -> LayoutGrid {
+    pub fn x_axes(mut self, x_axes: Vec<String>) -> Self {
         self.x_axes = Some(x_axes);
         self
     }
 
-    pub fn y_axes(mut self, y_axes: Vec<String>) -> LayoutGrid {
+    pub fn y_axes(mut self, y_axes: Vec<String>) -> Self {
         self.y_axes = Some(y_axes);
         self
     }
 
-    pub fn pattern(mut self, pattern: GridPattern) -> LayoutGrid {
+    pub fn pattern(mut self, pattern: GridPattern) -> Self {
         self.pattern = Some(pattern);
         self
     }
 
-    pub fn x_gap(mut self, x_gap: f64) -> LayoutGrid {
+    pub fn x_gap(mut self, x_gap: f64) -> Self {
         self.x_gap = Some(x_gap);
         self
     }
 
-    pub fn y_gap(mut self, y_gap: f64) -> LayoutGrid {
+    pub fn y_gap(mut self, y_gap: f64) -> Self {
         self.y_gap = Some(y_gap);
         self
     }
 
-    pub fn domain(mut self, domain: GridDomain) -> LayoutGrid {
+    pub fn domain(mut self, domain: GridDomain) -> Self {
         self.domain = Some(domain);
         self
     }
 
-    pub fn x_side(mut self, x_side: GridXSide) -> LayoutGrid {
+    pub fn x_side(mut self, x_side: GridXSide) -> Self {
         self.x_side = Some(x_side);
         self
     }
-    pub fn y_side(mut self, y_side: GridYSide) -> LayoutGrid {
+    pub fn y_side(mut self, y_side: GridYSide) -> Self {
         self.y_side = Some(y_side);
         self
     }
@@ -1313,16 +1297,16 @@ pub struct UniformText {
 }
 
 impl UniformText {
-    pub fn new() -> UniformText {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn mode(mut self, mode: UniformTextMode) -> UniformText {
+    pub fn mode(mut self, mode: UniformTextMode) -> Self {
         self.mode = Some(TruthyEnum { e: mode });
         self
     }
 
-    pub fn min_size(mut self, min_size: usize) -> UniformText {
+    pub fn min_size(mut self, min_size: usize) -> Self {
         self.min_size = Some(min_size);
         self
     }
@@ -1357,64 +1341,58 @@ pub struct ModeBar {
 }
 
 impl ModeBar {
-    pub fn new() -> ModeBar {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn orientation<C: Color>(mut self, orientation: Orientation) -> ModeBar {
+    pub fn orientation<C: Color>(mut self, orientation: Orientation) -> Self {
         self.orientation = Some(orientation);
         self
     }
 
-    pub fn background_color<C: Color>(mut self, background_color: C) -> ModeBar {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(background_color.to_color());
         self
     }
 
-    pub fn color<C: Color>(mut self, color: C) -> ModeBar {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(color.to_color());
         self
     }
 
-    pub fn active_color<C: Color>(mut self, active_color: C) -> ModeBar {
+    pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
         self.active_color = Some(active_color.to_color());
         self
     }
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ShapeType {
-    #[serde(rename = "circle")]
     Circle,
-    #[serde(rename = "rect")]
     Rect,
-    #[serde(rename = "path")]
     Path,
-    #[serde(rename = "line")]
     Line,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ShapeLayer {
-    #[serde(rename = "below")]
     Below,
-    #[serde(rename = "above")]
     Above,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ShapeSizeMode {
-    #[serde(rename = "scaled")]
     Scaled,
-    #[serde(rename = "pixel")]
     Pixel,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum FillRule {
-    #[serde(rename = "evenodd")]
     EvenOdd,
-    #[serde(rename = "nonzero")]
     NonZero,
 }
 
@@ -1429,25 +1407,25 @@ pub struct ShapeLine {
 }
 
 impl ShapeLine {
-    pub fn new() -> ShapeLine {
+    pub fn new() -> Self {
         Default::default()
     }
 
     /// Sets the line color.
-    pub fn color<C: Color>(mut self, color: C) -> ShapeLine {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(color.to_color());
         self
     }
 
     /// Sets the line width (in px).
-    pub fn width(mut self, width: f64) -> ShapeLine {
+    pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
         self
     }
 
     /// Sets the dash style of lines. Set to a dash type string ("solid", "dot", "dash", "longdash",
     /// "dashdot", or "longdashdot") or a dash length list in px (eg "5px,10px,2px,2px").
-    pub fn dash(mut self, dash: &str) -> ShapeLine {
+    pub fn dash(mut self, dash: &str) -> Self {
         self.dash = Some(dash.to_owned());
         self
     }
@@ -1500,12 +1478,12 @@ pub struct Shape {
 }
 
 impl Shape {
-    pub fn new() -> Shape {
+    pub fn new() -> Self {
         Default::default()
     }
 
     /// Determines whether or not this shape is visible.
-    pub fn visible(mut self, visible: bool) -> Shape {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
@@ -1517,13 +1495,13 @@ impl Shape {
     /// (`x0`,`y0`), (`x1`,`y0`), (`x1`,`y1`), (`x0`,`y1`), (`x0`,`y0`) with respect to the axes'
     /// sizing mode. If "path", draw a custom SVG path using `path`. with respect to the axes'
     /// sizing mode.
-    pub fn shape_type(mut self, shape_type: ShapeType) -> Shape {
+    pub fn shape_type(mut self, shape_type: ShapeType) -> Self {
         self.r#type = Some(shape_type);
         self
     }
 
     /// Specifies whether shapes are drawn below or above traces.
-    pub fn layer(mut self, layer: ShapeLayer) -> Shape {
+    pub fn layer(mut self, layer: ShapeLayer) -> Self {
         self.layer = Some(layer);
         self
     }
@@ -1534,7 +1512,7 @@ impl Shape {
     /// corresponds to the left (right) side. If the axis `type` is "log", then you must take the
     /// log of your desired range. If the axis `type` is "date", then you must convert the date to
     /// unix time in milliseconds.
-    pub fn x_ref(mut self, x_ref: &str) -> Shape {
+    pub fn x_ref(mut self, x_ref: &str) -> Self {
         self.x_ref = Some(x_ref.to_owned());
         self
     }
@@ -1545,7 +1523,7 @@ impl Shape {
     /// in terms of data or plot fraction but `x0`, `x1` and x coordinates within `path` are pixels
     /// relative to `xanchor`. This way, the shape can have a fixed width while maintaining a
     /// position relative to data or plot fraction.
-    pub fn x_size_mode(mut self, x_size_mode: ShapeSizeMode) -> Shape {
+    pub fn x_size_mode(mut self, x_size_mode: ShapeSizeMode) -> Self {
         self.x_size_mode = Some(x_size_mode);
         self
     }
@@ -1554,19 +1532,19 @@ impl Shape {
     /// the x axis to which `x0`, `x1` and x coordinates within `path` are relative to. E.g. useful
     /// to attach a pixel sized shape to a certain data value. No effect when `xsizemode` not set
     /// to "pixel".
-    pub fn x_anchor<C: NumOrString>(mut self, x_anchor: C) -> Shape {
+    pub fn x_anchor<C: NumOrString>(mut self, x_anchor: C) -> Self {
         self.x_anchor = Some(x_anchor.to_num_or_string());
         self
     }
 
     /// Sets the shape's starting x position. See `type` and `xsizemode` for more info.
-    pub fn x0<C: NumOrString>(mut self, x0: C) -> Shape {
+    pub fn x0<C: NumOrString>(mut self, x0: C) -> Self {
         self.x0 = Some(x0.to_num_or_string());
         self
     }
 
     /// Sets the shape's end x position. See `type` and `xsizemode` for more info.
-    pub fn x1<C: NumOrString>(mut self, x1: C) -> Shape {
+    pub fn x1<C: NumOrString>(mut self, x1: C) -> Self {
         self.x1 = Some(x1.to_num_or_string());
         self
     }
@@ -1575,7 +1553,7 @@ impl Shape {
     /// the `y` position refers to an y coordinate If set to "paper", the `y` position refers to
     /// the distance from the bottom of the plotting area in normalized coordinates where "0" ("1")
     /// corresponds to the bottom (top).
-    pub fn y_ref(mut self, y_ref: &str) -> Shape {
+    pub fn y_ref(mut self, y_ref: &str) -> Self {
         self.y_ref = Some(y_ref.to_owned());
         self
     }
@@ -1586,7 +1564,7 @@ impl Shape {
     /// in terms of data or plot fraction but `y0`, `y1` and y coordinates within `path` are pixels
     /// relative to `yanchor`. This way, the shape can have a fixed height while maintaining a
     /// position relative to data or plot fraction.
-    pub fn y_size_mode(mut self, y_size_mode: ShapeSizeMode) -> Shape {
+    pub fn y_size_mode(mut self, y_size_mode: ShapeSizeMode) -> Self {
         self.y_size_mode = Some(y_size_mode);
         self
     }
@@ -1595,19 +1573,19 @@ impl Shape {
     /// the y axis to which `y0`, `y1` and y coordinates within `path` are relative to. E.g. useful
     /// to attach a pixel sized shape to a certain data value. No effect when `ysizemode` not set
     /// to "pixel".
-    pub fn y_anchor<C: NumOrString>(mut self, y_anchor: C) -> Shape {
+    pub fn y_anchor<C: NumOrString>(mut self, y_anchor: C) -> Self {
         self.y_anchor = Some(y_anchor.to_num_or_string());
         self
     }
 
     /// Sets the shape's starting y position. See `type` and `ysizemode` for more info.
-    pub fn y0<C: NumOrString>(mut self, y0: C) -> Shape {
+    pub fn y0<C: NumOrString>(mut self, y0: C) -> Self {
         self.y0 = Some(y0.to_num_or_string());
         self
     }
 
     /// Sets the shape's end y position. See `type` and `ysizemode` for more info.
-    pub fn y1<C: NumOrString>(mut self, y1: C) -> Shape {
+    pub fn y1<C: NumOrString>(mut self, y1: C) -> Self {
         self.y1 = Some(y1.to_num_or_string());
         self
     }
@@ -1625,39 +1603,39 @@ impl Shape {
     /// there would be no way to describe fractional positions On data axes: because space and T are
     /// both normal components of path strings, we can't use either to separate date from time parts.
     /// Therefore we'll use underscore for this purpose: 2015-02-21_13:45:56.789
-    pub fn path(mut self, path: &str) -> Shape {
+    pub fn path(mut self, path: &str) -> Self {
         self.path = Some(path.to_owned());
         self
     }
 
     /// Sets the opacity of the shape. Number between or equal to 0 and 1.
-    pub fn opacity(mut self, opacity: f64) -> Shape {
+    pub fn opacity(mut self, opacity: f64) -> Self {
         self.opacity = Some(opacity);
         self
     }
 
     /// Sets the shape line properties (`color`, `width`, `dash`).
-    pub fn line(mut self, line: ShapeLine) -> Shape {
+    pub fn line(mut self, line: ShapeLine) -> Self {
         self.line = Some(line);
         self
     }
 
     /// Sets the color filling the shape's interior. Only applies to closed shapes.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Shape {
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
         self.fill_color = Some(fill_color.to_color());
         self
     }
 
     /// Determines which regions of complex paths constitute the interior. For more info please
     /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
-    pub fn fill_rule(mut self, fill_rule: FillRule) -> Shape {
+    pub fn fill_rule(mut self, fill_rule: FillRule) -> Self {
         self.fill_rule = Some(fill_rule);
         self
     }
 
     /// Determines whether the shape could be activated for edit or not. Has no effect when the
     /// older editable shapes mode is enabled via `config.editable` or `config.edits.shapePosition`.
-    pub fn editable(mut self, editable: bool) -> Shape {
+    pub fn editable(mut self, editable: bool) -> Self {
         self.editable = Some(editable);
         self
     }
@@ -1667,7 +1645,7 @@ impl Shape {
     /// by making your own item with `templateitemname` matching this `name` alongside your
     /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
     /// outside of a template.
-    pub fn name(mut self, name: &str) -> Shape {
+    pub fn name(mut self, name: &str) -> Self {
         self.name = Some(name.to_owned());
         self
     }
@@ -1677,21 +1655,18 @@ impl Shape {
     /// by making an item with `templateitemname` matching its `name`, alongside your modifications
     /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
     /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
-    pub fn template_item_name(mut self, template_item_name: &str) -> Shape {
+    pub fn template_item_name(mut self, template_item_name: &str) -> Self {
         self.template_item_name = Some(template_item_name.to_owned());
         self
     }
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum DrawDirection {
-    #[serde(rename = "ortho")]
     Ortho,
-    #[serde(rename = "horizontal")]
     Horizontal,
-    #[serde(rename = "vertical")]
     Vertical,
-    #[serde(rename = "diagonal")]
     Diagonal,
 }
 
@@ -1712,12 +1687,12 @@ pub struct NewShape {
 }
 
 impl NewShape {
-    pub fn new() -> NewShape {
+    pub fn new() -> Self {
         Default::default()
     }
 
     /// Sets the shape line properties (`color`, `width`, `dash`).
-    pub fn line(mut self, line: ShapeLine) -> NewShape {
+    pub fn line(mut self, line: ShapeLine) -> Self {
         self.line = Some(line);
         self
     }
@@ -1725,26 +1700,26 @@ impl NewShape {
     /// Sets the color filling new shapes' interior. Please note that if using a fillcolor with
     /// alpha greater than half, drag inside the active shape starts moving the shape underneath,
     /// otherwise a new shape could be started over.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> NewShape {
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
         self.fill_color = Some(fill_color.to_color());
         self
     }
 
     /// Determines the path's interior. For more info please
     /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
-    pub fn fill_rule(mut self, fill_rule: FillRule) -> NewShape {
+    pub fn fill_rule(mut self, fill_rule: FillRule) -> Self {
         self.fill_rule = Some(fill_rule);
         self
     }
 
     /// Sets the opacity of new shapes. Number between or equal to 0 and 1.
-    pub fn opacity(mut self, opacity: f64) -> NewShape {
+    pub fn opacity(mut self, opacity: f64) -> Self {
         self.opacity = Some(opacity);
         self
     }
 
     /// Specifies whether new shapes are drawn below or above traces.
-    pub fn layer(mut self, layer: ShapeLayer) -> NewShape {
+    pub fn layer(mut self, layer: ShapeLayer) -> Self {
         self.layer = Some(layer);
         self
     }
@@ -1753,7 +1728,7 @@ impl NewShape {
     /// horizontal, vertical or diagonal. Using "diagonal" there is no limit e.g. in drawing lines
     /// in any direction. "ortho" limits the draw to be either horizontal or vertical. "horizontal"
     /// allows horizontal extend. "vertical" allows vertical extend.
-    pub fn draw_direction(mut self, draw_direction: DrawDirection) -> NewShape {
+    pub fn draw_direction(mut self, draw_direction: DrawDirection) -> Self {
         self.draw_direction = Some(draw_direction);
         self
     }
@@ -1768,32 +1743,30 @@ pub struct ActiveShape {
 }
 
 impl ActiveShape {
-    pub fn new() -> ActiveShape {
+    pub fn new() -> Self {
         Default::default()
     }
 
     /// Sets the color filling the active shape' interior.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> ActiveShape {
+    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
         self.fill_color = Some(fill_color.to_color());
         self
     }
 
     /// Sets the opacity of the active shape. Number between or equal to 0 and 1.
-    pub fn opacity(mut self, opacity: f64) -> ActiveShape {
+    pub fn opacity(mut self, opacity: f64) -> Self {
         self.opacity = Some(opacity);
         self
     }
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ArrowSide {
-    #[serde(rename = "end")]
     End,
-    #[serde(rename = "start")]
     Start,
     #[serde(rename = "end+start")]
     StartEnd,
-    #[serde(rename = "none")]
     None,
 }
 
@@ -1898,12 +1871,12 @@ pub struct Annotation {
 }
 
 impl Annotation {
-    pub fn new() -> Annotation {
+    pub fn new() -> Self {
         Default::default()
     }
 
     /// Determines whether or not this annotation is visible.
-    pub fn visible(mut self, visible: bool) -> Annotation {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
@@ -1911,39 +1884,39 @@ impl Annotation {
     /// Sets the text associated with this annotation. Plotly uses a subset of HTML tags to do
     /// things like newline (<br>), bold (<b></b>), italics (<i></i>), hyperlinks
     /// (<a href='...'></a>). Tags <em>, <sup>, <sub> <span> are also supported.
-    pub fn text(mut self, text: &str) -> Annotation {
+    pub fn text(mut self, text: &str) -> Self {
         self.text = Some(text.to_owned());
         self
     }
 
     /// Sets the angle at which the `text` is drawn with respect to the horizontal.
-    pub fn text_angle(mut self, text_angle: f64) -> Annotation {
+    pub fn text_angle(mut self, text_angle: f64) -> Self {
         self.text_angle = Some(text_angle);
         self
     }
 
     /// Sets the annotation text font.
-    pub fn font(mut self, font: Font) -> Annotation {
+    pub fn font(mut self, font: Font) -> Self {
         self.font = Some(font);
         self
     }
 
     /// Sets an explicit width for the text box. null (default) lets the text set the box width.
     /// Wider text will be clipped. There is no automatic wrapping; use <br> to start a new line.
-    pub fn width(mut self, width: f64) -> Annotation {
+    pub fn width(mut self, width: f64) -> Self {
         self.width = Some(width);
         self
     }
 
     /// Sets an explicit height for the text box. null (default) lets the text set the box height.
     /// Taller text will be clipped.
-    pub fn height(mut self, height: f64) -> Annotation {
+    pub fn height(mut self, height: f64) -> Self {
         self.height = Some(height);
         self
     }
 
     /// Sets the opacity of the annotation (text + arrow).
-    pub fn opacity(mut self, opacity: f64) -> Annotation {
+    pub fn opacity(mut self, opacity: f64) -> Self {
         self.opacity = Some(opacity);
         self
     }
@@ -1951,89 +1924,89 @@ impl Annotation {
     /// Sets the horizontal alignment of the `text` within the box. Has an effect only if `text`
     /// spans two or more lines (i.e. `text` contains one or more <br> HTML tags) or if an explicit
     /// width is set to override the text width.
-    pub fn align(mut self, align: HAlign) -> Annotation {
+    pub fn align(mut self, align: HAlign) -> Self {
         self.align = Some(align);
         self
     }
 
     /// Sets the vertical alignment of the `text` within the box. Has an effect only if an explicit
     /// height is set to override the text height.
-    pub fn valign(mut self, valign: VAlign) -> Annotation {
+    pub fn valign(mut self, valign: VAlign) -> Self {
         self.valign = Some(valign);
         self
     }
 
     /// Sets the background color of the annotation.
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Annotation {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(background_color.to_color());
         self
     }
 
     /// Sets the color of the border enclosing the annotation `text`.
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Annotation {
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
         self.border_color = Some(border_color.to_color());
         self
     }
 
     /// Sets the padding (in px) between the `text` and the enclosing border.
-    pub fn border_pad(mut self, border_pad: f64) -> Annotation {
+    pub fn border_pad(mut self, border_pad: f64) -> Self {
         self.border_pad = Some(border_pad);
         self
     }
 
     /// Sets the width (in px) of the border enclosing the annotation `text`.
-    pub fn border_width(mut self, border_width: f64) -> Annotation {
+    pub fn border_width(mut self, border_width: f64) -> Self {
         self.border_width = Some(border_width);
         self
     }
 
     /// Determines whether or not the annotation is drawn with an arrow. If "True", `text` is
     /// placed near the arrow's tail. If "False", `text` lines up with the `x` and `y` provided.
-    pub fn show_arrow(mut self, show_arrow: bool) -> Annotation {
+    pub fn show_arrow(mut self, show_arrow: bool) -> Self {
         self.show_arrow = Some(show_arrow);
         self
     }
 
     /// Sets the color of the annotation arrow.
-    pub fn arrow_color<C: Color>(mut self, arrow_color: C) -> Annotation {
+    pub fn arrow_color<C: Color>(mut self, arrow_color: C) -> Self {
         self.arrow_color = Some(arrow_color.to_color());
         self
     }
 
     /// Sets the end annotation arrow head style. Integer between or equal to 0 and 8.
-    pub fn arrow_head(mut self, arrow_head: u8) -> Annotation {
+    pub fn arrow_head(mut self, arrow_head: u8) -> Self {
         self.arrow_head = Some(arrow_head);
         self
     }
 
     /// Sets the start annotation arrow head style. Integer between or equal to 0 and 8.
-    pub fn start_arrow_head(mut self, start_arrow_head: u8) -> Annotation {
+    pub fn start_arrow_head(mut self, start_arrow_head: u8) -> Self {
         self.start_arrow_head = Some(start_arrow_head);
         self
     }
 
     /// Sets the annotation arrow head position.
-    pub fn arrow_side(mut self, arrow_side: ArrowSide) -> Annotation {
+    pub fn arrow_side(mut self, arrow_side: ArrowSide) -> Self {
         self.arrow_side = Some(arrow_side);
         self
     }
 
     /// Sets the size of the end annotation arrow head, relative to `arrowwidth`. A value of 1
     /// (default) gives a head about 3x as wide as the line.
-    pub fn arrow_size(mut self, arrow_size: f64) -> Annotation {
+    pub fn arrow_size(mut self, arrow_size: f64) -> Self {
         self.arrow_size = Some(arrow_size);
         self
     }
 
     /// Sets the size of the start annotation arrow head, relative to `arrowwidth`. A value of 1
     /// (default) gives a head about 3x as wide as the line.
-    pub fn start_arrow_size(mut self, start_arrow_size: f64) -> Annotation {
+    pub fn start_arrow_size(mut self, start_arrow_size: f64) -> Self {
         self.start_arrow_size = Some(start_arrow_size);
         self
     }
 
     /// Sets the width (in px) of annotation arrow line.
-    pub fn arrow_width(mut self, arrow_width: f64) -> Annotation {
+    pub fn arrow_width(mut self, arrow_width: f64) -> Self {
         self.arrow_width = Some(arrow_width);
         self
     }
@@ -2042,7 +2015,7 @@ impl Annotation {
     /// at, for example to point at the edge of a marker independent of zoom. Note that this
     /// shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift` which
     /// moves everything by this amount.
-    pub fn stand_off(mut self, stand_off: f64) -> Annotation {
+    pub fn stand_off(mut self, stand_off: f64) -> Self {
         self.stand_off = Some(stand_off);
         self
     }
@@ -2051,7 +2024,7 @@ impl Annotation {
     /// pointing at, for example to point at the edge of a marker independent of zoom. Note that
     /// this shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift`
     /// which moves everything by this amount.
-    pub fn start_stand_off(mut self, start_stand_off: f64) -> Annotation {
+    pub fn start_stand_off(mut self, start_stand_off: f64) -> Self {
         self.start_stand_off = Some(start_stand_off);
         self
     }
@@ -2060,7 +2033,7 @@ impl Annotation {
     /// positive (negative) component corresponds to an arrow pointing from right to left (left
     /// to right). If `axref` is an axis, this is an absolute value on that axis, like `x`, NOT a
     /// relative value.
-    pub fn ax<C: NumOrString>(mut self, ax: C) -> Annotation {
+    pub fn ax<C: NumOrString>(mut self, ax: C) -> Self {
         self.ax = Some(ax.to_num_or_string());
         self
     }
@@ -2069,7 +2042,7 @@ impl Annotation {
     /// positive (negative) component corresponds to an arrow pointing from bottom to top (top to
     /// bottom). If `ayref` is an axis, this is an absolute value on that axis, like `y`, NOT a
     /// relative value.
-    pub fn ay<C: NumOrString>(mut self, ay: C) -> Annotation {
+    pub fn ay<C: NumOrString>(mut self, ay: C) -> Self {
         self.ay = Some(ay.to_num_or_string());
         self
     }
@@ -2078,7 +2051,7 @@ impl Annotation {
     /// is a relative offset in pixels from `x`. If set to an x axis id (e.g. "x" or "x2"), `ax` is
     /// specified in the same terms as that axis. This is useful for trendline annotations which
     /// should continue to indicate the correct trend when zoomed.
-    pub fn ax_ref(mut self, ax_ref: &str) -> Annotation {
+    pub fn ax_ref(mut self, ax_ref: &str) -> Self {
         self.ax_ref = Some(ax_ref.to_owned());
         self
     }
@@ -2087,7 +2060,7 @@ impl Annotation {
     /// is a relative offset in pixels from `y`. If set to a y axis id (e.g. "y" or "y2"), `ay` is
     /// specified in the same terms as that axis. This is useful for trendline annotations which
     /// should continue to indicate the correct trend when zoomed.
-    pub fn ay_ref(mut self, ay_ref: &str) -> Annotation {
+    pub fn ay_ref(mut self, ay_ref: &str) -> Self {
         self.ay_ref = Some(ay_ref.to_owned());
         self
     }
@@ -2096,7 +2069,7 @@ impl Annotation {
     /// position refers to an x coordinate If set to "paper", the `x` position refers to the
     /// distance from the left side of the plotting area in normalized coordinates where 0 (1)
     /// corresponds to the left (right) side.
-    pub fn x_ref(mut self, x_ref: &str) -> Annotation {
+    pub fn x_ref(mut self, x_ref: &str) -> Self {
         self.x_ref = Some(x_ref.to_owned());
         self
     }
@@ -2106,7 +2079,7 @@ impl Annotation {
     /// data, though Date objects and unix milliseconds will be accepted and converted to strings.
     /// If the axis `type` is "category", it should be numbers, using the scale where each category
     /// is assigned a serial number from zero in the order it appears.
-    pub fn x<C: NumOrString>(mut self, x: C) -> Annotation {
+    pub fn x<C: NumOrString>(mut self, x: C) -> Self {
         self.x = Some(x.to_num_or_string());
         self
     }
@@ -2117,14 +2090,14 @@ impl Annotation {
     /// the right-most edge of the plotting area. If "auto", the anchor is equivalent to "center"
     /// for data-referenced annotations or if there is an arrow, whereas for paper-referenced with
     /// no arrow, the anchor picked corresponds to the closest side.
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> Annotation {
+    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
         self.x_anchor = Some(x_anchor);
         self
     }
 
     /// Shifts the position of the whole annotation and arrow to the right (positive) or left
     /// (negative) by this many pixels.
-    pub fn x_shift(mut self, x_shift: f64) -> Annotation {
+    pub fn x_shift(mut self, x_shift: f64) -> Self {
         self.x_shift = Some(x_shift);
         self
     }
@@ -2133,7 +2106,7 @@ impl Annotation {
     /// position refers to an y coordinate If set to "paper", the `y` position refers to the
     /// distance from the bottom of the plotting area in normalized coordinates where 0 (1)
     /// corresponds to the bottom (top).
-    pub fn y_ref(mut self, y_ref: &str) -> Annotation {
+    pub fn y_ref(mut self, y_ref: &str) -> Self {
         self.y_ref = Some(y_ref.to_owned());
         self
     }
@@ -2143,7 +2116,7 @@ impl Annotation {
     /// though Date objects and unix milliseconds will be accepted and converted to strings. If the
     /// axis `type` is "category", it should be numbers, using the scale where each category is
     /// assigned a serial number from zero in the order it appears.
-    pub fn y<C: NumOrString>(mut self, y: C) -> Annotation {
+    pub fn y<C: NumOrString>(mut self, y: C) -> Self {
         self.y = Some(y.to_num_or_string());
         self
     }
@@ -2154,14 +2127,14 @@ impl Annotation {
     /// top-most edge of the plotting area. If "auto", the anchor is equivalent to "middle" for
     /// data-referenced annotations or if there is an arrow, whereas for paper-referenced with no
     /// arrow, the anchor picked corresponds to the closest side.
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> Annotation {
+    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
         self.y_anchor = Some(y_anchor);
         self
     }
 
     /// Shifts the position of the whole annotation and arrow up (positive) or down (negative) by
     /// this many pixels.
-    pub fn y_shift(mut self, y_shift: f64) -> Annotation {
+    pub fn y_shift(mut self, y_shift: f64) -> Self {
         self.y_shift = Some(y_shift);
         self
     }
@@ -2174,34 +2147,34 @@ impl Annotation {
     /// need to show/hide this annotation in response to different `x` or `y` values, you can set
     /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
     /// markers though, `standoff` is preferred over `xclick` and `yclick`.
-    pub fn click_to_show(mut self, click_to_show: TruthyEnum<ClickToShow>) -> Annotation {
+    pub fn click_to_show(mut self, click_to_show: TruthyEnum<ClickToShow>) -> Self {
         self.click_to_show = Some(click_to_show);
         self
     }
 
     /// Toggle this annotation when clicking a data point whose `x` value is `xclick` rather than
     /// the annotation's `x` value.
-    pub fn x_click<C: NumOrString>(mut self, x_click: C) -> Annotation {
+    pub fn x_click<C: NumOrString>(mut self, x_click: C) -> Self {
         self.x_click = Some(x_click.to_num_or_string());
         self
     }
 
     /// Toggle this annotation when clicking a data point whose `y` value is `yclick` rather than
     /// the annotation's `y` value.
-    pub fn y_click<C: NumOrString>(mut self, y_click: C) -> Annotation {
+    pub fn y_click<C: NumOrString>(mut self, y_click: C) -> Self {
         self.y_click = Some(y_click.to_num_or_string());
         self
     }
 
     /// Sets text to appear when hovering over this annotation. If omitted or blank, no hover label
     /// will appear.
-    pub fn hover_text(mut self, hover_text: &str) -> Annotation {
+    pub fn hover_text(mut self, hover_text: &str) -> Self {
         self.hover_text = Some(hover_text.to_owned());
         self
     }
 
     /// Label displayed on mouse hover.
-    pub fn hover_label(mut self, hover_label: Label) -> Annotation {
+    pub fn hover_label(mut self, hover_label: Label) -> Self {
         self.hover_label = Some(hover_label);
         self
     }
@@ -2210,7 +2183,7 @@ impl Annotation {
     /// those events to pass through to data points in the plot that may be behind the annotation.
     /// By default `captureevents` is "false" unless `hovertext` is provided. If you use the event
     /// `plotly_clickannotation` without `hovertext` you must explicitly enable `captureevents`.
-    pub fn capture_events(mut self, capture_events: bool) -> Annotation {
+    pub fn capture_events(mut self, capture_events: bool) -> Self {
         self.capture_events = Some(capture_events);
         self
     }
@@ -2220,7 +2193,7 @@ impl Annotation {
     /// by making your own item with `templateitemname` matching this `name` alongside your
     /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
     /// outside of a template.
-    pub fn name(mut self, name: &str) -> Annotation {
+    pub fn name(mut self, name: &str) -> Self {
         self.name = Some(name.to_owned());
         self
     }
@@ -2230,7 +2203,7 @@ impl Annotation {
     /// making an item with `templateitemname` matching its `name`, alongside your modifications
     /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
     /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
-    pub fn template_item_name(mut self, template_item_name: &str) -> Annotation {
+    pub fn template_item_name(mut self, template_item_name: &str) -> Self {
         self.template_item_name = Some(template_item_name.to_owned());
         self
     }
@@ -2831,4 +2804,203 @@ mod tests {
         assert_eq!(to_value(WaterfallMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(WaterfallMode::Overlay).unwrap(), json!("overlay"));
     }
+
+    #[test]
+    fn test_serialize_legend() {}
+
+    #[test]
+    fn test_serialize_valign() {
+        assert_eq!(to_value(VAlign::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(VAlign::Middle).unwrap(), json!("middle"));
+        assert_eq!(to_value(VAlign::Bottom).unwrap(), json!("bottom"));
+    }
+
+    #[test]
+    fn test_serialize_halign() {
+        assert_eq!(to_value(HAlign::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(HAlign::Center).unwrap(), json!("center"));
+        assert_eq!(to_value(HAlign::Right).unwrap(), json!("right"));
+    }
+
+    #[test]
+    fn test_serialize_margin() {}
+
+    #[test]
+    fn test_serialize_layout_color_scale() {}
+
+    #[test]
+    fn test_serialize_slider_range_mode() {
+        assert_eq!(to_value(SliderRangeMode::Auto).unwrap(), json!("auto"));
+        assert_eq!(to_value(SliderRangeMode::Fixed).unwrap(), json!("fixed"));
+        assert_eq!(to_value(SliderRangeMode::Match).unwrap(), json!("match"));
+    }
+
+    #[test]
+    fn test_serialize_range_slider_y_axis() {}
+
+    #[test]
+    fn test_serialize_range_slider() {}
+
+    #[test]
+    fn test_serialize_selector_step() {
+        assert_eq!(to_value(SelectorStep::Month).unwrap(), json!("month"));
+        assert_eq!(to_value(SelectorStep::Year).unwrap(), json!("year"));
+        assert_eq!(to_value(SelectorStep::Day).unwrap(), json!("day"));
+        assert_eq!(to_value(SelectorStep::Hour).unwrap(), json!("hour"));
+        assert_eq!(to_value(SelectorStep::Minute).unwrap(), json!("minute"));
+        assert_eq!(to_value(SelectorStep::Second).unwrap(), json!("second"));
+        assert_eq!(to_value(SelectorStep::All).unwrap(), json!("all"));
+    }
+
+    #[test]
+    fn test_serialize_step_mode() {
+        assert_eq!(to_value(StepMode::Backward).unwrap(), json!("backward"));
+        assert_eq!(to_value(StepMode::ToDate).unwrap(), json!("todate"));
+    }
+
+    #[test]
+    fn test_serialize_selector_button() {}
+
+    #[test]
+    fn test_serialize_range_selector() {}
+
+    #[test]
+    fn test_serialize_color_axis() {}
+
+    #[test]
+    fn test_serialize_axis() {}
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_row_order() {
+        assert_eq!(to_value(RowOrder::TopToBottom).unwrap(), json!("top to bottom"));
+        assert_eq!(to_value(RowOrder::BottomToTop).unwrap(), json!("bottom to top"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_grid_pattern() {
+        assert_eq!(to_value(GridPattern::Independent).unwrap(), json!("independent"));
+        assert_eq!(to_value(GridPattern::Coupled).unwrap(), json!("coupled"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_grid_x_side() {
+        assert_eq!(to_value(GridXSide::Bottom).unwrap(), json!("bottom"));
+        assert_eq!(to_value(GridXSide::BottomPlot).unwrap(), json!("bottom plot"));
+        assert_eq!(to_value(GridXSide::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(GridXSide::TopPlot).unwrap(), json!("top plot"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_grid_y_side() {
+        assert_eq!(to_value(GridYSide::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(GridYSide::LeftPlot).unwrap(), json!("left plot"));
+        assert_eq!(to_value(GridYSide::Right).unwrap(), json!("right"));
+        assert_eq!(to_value(GridYSide::RightPlot).unwrap(), json!("right plot"));
+    }
+
+    #[test]
+    fn test_serialize_grid_domain() {}
+
+    #[test]
+    fn test_serialize_layout_grid() {}
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_uniform_text_mode() {
+        // TODO:: add this test back in after TruthyEnums have been fixed
+        // assert_eq!(to_value(UniformTextMode::False).unwrap(), json!(false));
+        // assert_eq!(to_value(UniformTextMode::Hide).unwrap(), json!("hide"));
+        // assert_eq!(to_value(UniformTextMode::Show).unwrap(), json!("show"));
+    }
+
+    #[test]
+    fn test_serialize_uniform_text() {}
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_hover_mode() {
+        // TODO:: add this test back in after TruthyEnums have been fixed
+        // assert_eq!(to_value(HoverMode::X).unwrap(), json!("x"));
+        // assert_eq!(to_value(HoverMode::Y).unwrap(), json!("y"));
+        // assert_eq!(to_value(HoverMode::Closest).unwrap(), json!("closest"));
+        // assert_eq!(to_value(HoverMode::False).unwrap(), json!(false));
+        // assert_eq!(to_value(HoverMode::XUnified).unwrap(), json!("x unified"));
+        // assert_eq!(to_value(HoverMode::YUnified).unwrap(), json!("y unified"));
+    }
+
+    #[test]
+    fn test_serialize_mode_bar() {}
+
+    #[test]
+    fn test_serialize_shape_type() {
+        assert_eq!(to_value(ShapeType::Circle).unwrap(), json!("circle"));
+        assert_eq!(to_value(ShapeType::Rect).unwrap(), json!("rect"));
+        assert_eq!(to_value(ShapeType::Path).unwrap(), json!("path"));
+        assert_eq!(to_value(ShapeType::Line).unwrap(), json!("line"));
+    }
+
+    #[test]
+    fn test_serialize_shape_layer() {
+        assert_eq!(to_value(ShapeLayer::Below).unwrap(), json!("below"));
+        assert_eq!(to_value(ShapeLayer::Above).unwrap(), json!("above"));
+    }
+
+    #[test]
+    fn test_serialize_shape_size_mode() {
+        assert_eq!(to_value(ShapeSizeMode::Scaled).unwrap(), json!("scaled"));
+        assert_eq!(to_value(ShapeSizeMode::Pixel).unwrap(), json!("pixel"));
+    }
+
+    #[test]
+    fn test_serialize_fill_rule() {
+        assert_eq!(to_value(FillRule::EvenOdd).unwrap(), json!("evenodd"));
+        assert_eq!(to_value(FillRule::NonZero).unwrap(), json!("nonzero"));
+    }
+
+    #[test]
+    fn test_serialize_shape_line() {}
+
+    #[test]
+    fn test_serialize_shape() {}
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_draw_direction() {
+        assert_eq!(to_value(DrawDirection::Ortho).unwrap(), json!("ortho"));
+        assert_eq!(to_value(DrawDirection::Horizontal).unwrap(), json!("horizontal"));
+        assert_eq!(to_value(DrawDirection::Vertical).unwrap(), json!("vertical"));
+        assert_eq!(to_value(DrawDirection::Diagonal).unwrap(), json!("diagonal"));
+    }
+
+    #[test]
+    fn test_serialize_new_shape() {}
+
+    #[test]
+    fn test_serialize_active_shape() {}
+
+    #[test]
+    fn test_serialize_arrow_side() {
+        assert_eq!(to_value(ArrowSide::End).unwrap(), json!("end"));
+        assert_eq!(to_value(ArrowSide::Start).unwrap(), json!("start"));
+        assert_eq!(to_value(ArrowSide::StartEnd).unwrap(), json!("end+start"));
+        assert_eq!(to_value(ArrowSide::None).unwrap(), json!("none"));
+    }
+
+    #[test]
+    fn test_serialize_click_to_show() {
+        // TODO:: add this test back in after TruthyEnums have been fixed
+        // assert_eq!(to_value(ClickToShow::False).unwrap(), json!(false));
+        // assert_eq!(to_value(ClickToShow::OnOff).unwrap(), json!("onoff"));
+        // assert_eq!(to_value(ClickToShow::OnOut).unwrap(), json!("onout"));
+    }
+
+    #[test]
+    fn test_serialize_annotation() {}
+
+    #[test]
+    fn test_serialize_layout() {}
 }
