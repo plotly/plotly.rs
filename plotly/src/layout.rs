@@ -9,126 +9,102 @@ use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, 
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum AxisType {
     #[serde(rename = "-")]
     Default,
-    #[serde(rename = "linear")]
     Linear,
-    #[serde(rename = "log")]
     Log,
-    #[serde(rename = "date")]
     Date,
-    #[serde(rename = "category")]
     Category,
-    #[serde(rename = "multicategory")]
     MultiCategory,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum AxisConstrain {
-    #[serde(rename = "range")]
     Range,
-    #[serde(rename = "domain")]
     Domain,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ConstrainDirection {
-    #[serde(rename = "left")]
     Left,
-    #[serde(rename = "center")]
     Center,
-    #[serde(rename = "right")]
     Right,
-    #[serde(rename = "top")]
     Top,
-    #[serde(rename = "middle")]
     Middle,
-    #[serde(rename = "bottom")]
     Bottom,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum RangeMode {
-    #[serde(rename = "normal")]
     Normal,
-    #[serde(rename = "tozero")]
     ToZero,
-    #[serde(rename = "nonnegative")]
     NonNegative,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum TicksDirection {
-    #[serde(rename = "outside")]
     Outside,
-    #[serde(rename = "inside")]
     Inside,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum TicksPosition {
-    #[serde(rename = "labels")]
     Labels,
-    #[serde(rename = "boundaries")]
     Boundaries,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ArrayShow {
-    #[serde(rename = "all")]
     All,
-    #[serde(rename = "first")]
     First,
-    #[serde(rename = "last")]
     Last,
-    #[serde(rename = "none")]
     None,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum BarMode {
-    #[serde(rename = "stack")]
     Stack,
-    #[serde(rename = "group")]
     Group,
-    #[serde(rename = "overlay")]
     Overlay,
-    #[serde(rename = "relative")]
     Relative,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum BarNorm {
     #[serde(rename = "")]
     Empty,
-    #[serde(rename = "fraction")]
     Fraction,
-    #[serde(rename = "percent")]
     Percent,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum BoxMode {
-    #[serde(rename = "group")]
     Group,
-    #[serde(rename = "overlay")]
     Overlay,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum ViolinMode {
-    #[serde(rename = "group")]
     Group,
-    #[serde(rename = "overlay")]
     Overlay,
 }
 
 #[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum WaterfallMode {
-    #[serde(rename = "group")]
     Group,
-    #[serde(rename = "overlay")]
     Overlay,
 }
 
@@ -2757,5 +2733,102 @@ impl Layout {
 impl Trace for Layout {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_axis_type() {
+        assert_eq!(to_value(AxisType::Default).unwrap(), json!("-"));
+        assert_eq!(to_value(AxisType::Linear).unwrap(), json!("linear"));
+        assert_eq!(to_value(AxisType::Log).unwrap(), json!("log"));
+        assert_eq!(to_value(AxisType::Date).unwrap(), json!("date"));
+        assert_eq!(to_value(AxisType::Category).unwrap(), json!("category"));
+        assert_eq!(to_value(AxisType::MultiCategory).unwrap(), json!("multicategory"));
+    }
+
+    #[test]
+    fn test_serialize_axis_constrain() {
+        assert_eq!(to_value(AxisConstrain::Range).unwrap(), json!("range"));
+        assert_eq!(to_value(AxisConstrain::Domain).unwrap(), json!("domain"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_constrain_direction() {
+        assert_eq!(to_value(ConstrainDirection::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(ConstrainDirection::Center).unwrap(), json!("center"));
+        assert_eq!(to_value(ConstrainDirection::Right).unwrap(), json!("right"));
+        assert_eq!(to_value(ConstrainDirection::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(ConstrainDirection::Middle).unwrap(), json!("middle"));
+        assert_eq!(to_value(ConstrainDirection::Bottom).unwrap(), json!("bottom"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_range_mode() {
+        assert_eq!(to_value(RangeMode::Normal).unwrap(), json!("normal"));
+        assert_eq!(to_value(RangeMode::ToZero).unwrap(), json!("tozero"));
+        assert_eq!(to_value(RangeMode::NonNegative).unwrap(), json!("nonnegative"));
+    }
+
+    #[test]
+    fn test_serialize_ticks_direction() {
+        assert_eq!(to_value(TicksDirection::Outside).unwrap(), json!("outside"));
+        assert_eq!(to_value(TicksDirection::Inside).unwrap(), json!("inside"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_ticks_position() {
+        assert_eq!(to_value(TicksPosition::Labels).unwrap(), json!("labels"));
+        assert_eq!(to_value(TicksPosition::Boundaries).unwrap(), json!("boundaries"));
+    }
+
+    #[test]
+    fn test_serialize_array_show() {
+        assert_eq!(to_value(ArrayShow::All).unwrap(), json!("all"));
+        assert_eq!(to_value(ArrayShow::First).unwrap(), json!("first"));
+        assert_eq!(to_value(ArrayShow::Last).unwrap(), json!("last"));
+        assert_eq!(to_value(ArrayShow::None).unwrap(), json!("none"));
+    }
+
+    #[test]
+    fn test_serialize_bar_mode() {
+        assert_eq!(to_value(BarMode::Stack).unwrap(), json!("stack"));
+        assert_eq!(to_value(BarMode::Group).unwrap(), json!("group"));
+        assert_eq!(to_value(BarMode::Overlay).unwrap(), json!("overlay"));
+        assert_eq!(to_value(BarMode::Relative).unwrap(), json!("relative"));
+    }
+
+    #[test]
+    fn test_serialize_bar_norm() {
+        assert_eq!(to_value(BarNorm::Empty).unwrap(), json!(""));
+        assert_eq!(to_value(BarNorm::Fraction).unwrap(), json!("fraction"));
+        assert_eq!(to_value(BarNorm::Percent).unwrap(), json!("percent"));
+    }
+
+    #[test]
+    fn test_serialize_box_mode() {
+        assert_eq!(to_value(BoxMode::Group).unwrap(), json!("group"));
+        assert_eq!(to_value(BoxMode::Overlay).unwrap(), json!("overlay"));
+    }
+
+    #[test]
+    fn test_serialize_violin_mode() {
+        assert_eq!(to_value(ViolinMode::Group).unwrap(), json!("group"));
+        assert_eq!(to_value(ViolinMode::Overlay).unwrap(), json!("overlay"));
+    }
+
+    #[test]
+    fn test_serialize_waterfall_mode() {
+        assert_eq!(to_value(WaterfallMode::Group).unwrap(), json!("group"));
+        assert_eq!(to_value(WaterfallMode::Overlay).unwrap(), json!("overlay"));
     }
 }
