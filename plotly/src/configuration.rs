@@ -63,6 +63,26 @@ impl ToImageButtonOptions {
     }
 }
 
+#[derive(Debug, Clone)]
+pub enum DisplayModeBar {
+    Hover,
+    True,
+    False,
+}
+
+impl Serialize for DisplayModeBar {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::Hover => serializer.serialize_str("hover"),
+            Self::True => serializer.serialize_bool(true),
+            Self::False => serializer.serialize_bool(false),
+        }
+    }
+}
+
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub enum ModeBarButtonName {
@@ -98,28 +118,32 @@ pub enum ModeBarButtonName {
     ResetViewMapbox,
 }
 
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase", untagged)]
+#[derive(Debug, Clone)]
 pub enum DoubleClick {
-    #[serde(serialize_with = "serialize_to_false")]
     False,
     Reset,
     AutoSize,
-    #[serde(rename = "reset+autosize")]
     ResetAutoSize,
 }
 
-fn serialize_to_false<S>(s: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    s.serialize_bool(false)
+impl Serialize for DoubleClick {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::False => serializer.serialize_bool(false),
+            Self::Reset => serializer.serialize_str("reset"),
+            Self::AutoSize => serializer.serialize_str("autosize"),
+            Self::ResetAutoSize => serializer.serialize_str("reset+autosize"),
+        }
+    }
 }
 
 #[derive(Serialize_repr, Debug, Clone)]
 #[repr(u8)]
 pub enum PlotGLPixelRatio {
-    One,
+    One = 1,
     Two,
     Three,
     Four,
@@ -128,8 +152,8 @@ pub enum PlotGLPixelRatio {
 #[derive(Serialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Configuration {
-    // reference is here: https://github.com/plotly/plotly.js/blob/master/src/plot_api/plot_config.js#L22-L86
-    // missing edits, show_sources, mode_bar_buttons, set_background, logging, notify_on_logging,
+    // reference is here: https://github.com/plotly/plotly.js/blob/master/src/plot_api/plot_config.js
+    // missing: edits, show_sources, mode_bar_buttons, set_background, logging, notify_on_logging,
     // global_transforms, mode_bar_buttons_to_add and locales
     #[serde(skip_serializing_if = "Option::is_none")]
     typeset_math: Option<bool>,
@@ -148,7 +172,7 @@ pub struct Configuration {
     #[serde(skip_serializing_if = "Option::is_none")]
     to_image_button_options: Option<ToImageButtonOptions>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    display_mode_bar: Option<bool>,
+    display_mode_bar: Option<DisplayModeBar>,
     #[serde(skip_serializing_if = "Option::is_none")]
     mode_bar_buttons_to_remove: Option<Vec<ModeBarButtonName>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -323,7 +347,7 @@ impl Configuration {
     /// Determines the mode bar display mode. If `true`, the mode bar is always visible. If `false`,
     /// the mode bar is always hidden. If omitted, the mode bar is visible while the mouse cursor
     /// is on the graph container.
-    pub fn display_mode_bar(mut self, display_mode_bar: bool) -> Self {
+    pub fn display_mode_bar(mut self, display_mode_bar: DisplayModeBar) -> Self {
         self.display_mode_bar = Some(display_mode_bar);
         self
     }
