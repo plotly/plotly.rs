@@ -98,7 +98,6 @@ pub enum ModeBarButtonName {
     Pan3d,
     OrbitRotation,
     TableRotation,
-    HandleDrag3d,
     ResetCameraDefault3d,
     ResetCameraLastSave3d,
     HoverClosest3d,
@@ -116,6 +115,8 @@ pub enum ModeBarButtonName {
     SendDataToCloud,
     ToggleSpikelines,
     ResetViewMapbox,
+    ZoomInMapbox,
+    ZoomOutMapbox,
 }
 
 #[derive(Debug, Clone)]
@@ -189,7 +190,7 @@ pub struct Configuration {
     show_edit_in_chart_studio: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     locale: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "displaylogo")]
     display_logo: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     responsive: Option<bool>,
@@ -207,7 +208,7 @@ pub struct Configuration {
     send_data: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     watermark: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "plotGlPixelRatio")]
     plot_gl_pixel_ratio: Option<PlotGLPixelRatio>,
     #[serde(skip_serializing_if = "Option::is_none")]
     show_send_to_cloud: Option<bool>,
@@ -434,5 +435,166 @@ impl Configuration {
     pub fn locale(mut self, locale: &str) -> Self {
         self.locale = Some(locale.to_string());
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_image_button_formats() {
+        assert_eq!(to_value(ImageButtonFormats::Png).unwrap(), json!("png"));
+        assert_eq!(to_value(ImageButtonFormats::Svg).unwrap(), json!("svg"));
+        assert_eq!(to_value(ImageButtonFormats::Jpeg).unwrap(), json!("jpeg"));
+        assert_eq!(to_value(ImageButtonFormats::Webp).unwrap(), json!("webp"));
+    }
+    #[test]
+    fn test_serialize_to_image_button_options() {
+        let options = ToImageButtonOptions::new()
+            .format(ImageButtonFormats::Jpeg)
+            .filename("filename")
+            .height(500)
+            .width(250)
+            .scale(2);
+        let expected = json!({
+            "format": "jpeg",
+            "filename": "filename",
+            "height": 500,
+            "width": 250,
+            "scale": 2
+        });
+
+        assert_eq!(to_value(options).unwrap(), expected)
+    }
+
+    #[test]
+    fn test_serialize_display_mode_bar() {
+        assert_eq!(to_value(DisplayModeBar::Hover).unwrap(), json!("hover"));
+        assert_eq!(to_value(DisplayModeBar::True).unwrap(), json!(true));
+        assert_eq!(to_value(DisplayModeBar::False).unwrap(), json!(false));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_mode_bar_button_name() {
+        assert_eq!(to_value(ModeBarButtonName::Zoom2d).unwrap(), json!("zoom2d"));
+        assert_eq!(to_value(ModeBarButtonName::Pan2d).unwrap(), json!("pan2d"));
+        assert_eq!(to_value(ModeBarButtonName::Select2d).unwrap(), json!("select2d"));
+        assert_eq!(to_value(ModeBarButtonName::Lasso2d).unwrap(), json!("lasso2d"));
+        assert_eq!(to_value(ModeBarButtonName::ZoomIn2d).unwrap(), json!("zoomIn2d"));
+        assert_eq!(to_value(ModeBarButtonName::ZoomOut2d).unwrap(), json!("zoomOut2d"));
+        assert_eq!(to_value(ModeBarButtonName::AutoScale2d).unwrap(), json!("autoScale2d"));
+        assert_eq!(to_value(ModeBarButtonName::ResetScale2d).unwrap(), json!("resetScale2d"));
+        assert_eq!(to_value(ModeBarButtonName::Zoom3d).unwrap(), json!("zoom3d"));
+        assert_eq!(to_value(ModeBarButtonName::Pan3d).unwrap(), json!("pan3d"));
+        assert_eq!(to_value(ModeBarButtonName::ResetCameraDefault3d).unwrap(), json!("resetCameraDefault3d"));
+        assert_eq!(to_value(ModeBarButtonName::ResetCameraLastSave3d).unwrap(), json!("resetCameraLastSave3d"));
+        assert_eq!(to_value(ModeBarButtonName::HoverClosest3d).unwrap(), json!("hoverClosest3d"));
+        assert_eq!(to_value(ModeBarButtonName::OrbitRotation).unwrap(), json!("orbitRotation"));
+        assert_eq!(to_value(ModeBarButtonName::TableRotation).unwrap(), json!("tableRotation"));
+        assert_eq!(to_value(ModeBarButtonName::HoverClosestCartesian).unwrap(), json!("hoverClosestCartesian"));
+        assert_eq!(to_value(ModeBarButtonName::HoverCompareCartesian).unwrap(), json!("hoverCompareCartesian"));
+        assert_eq!(to_value(ModeBarButtonName::ZoomInGeo).unwrap(), json!("zoomInGeo"));
+        assert_eq!(to_value(ModeBarButtonName::ZoomOutGeo).unwrap(), json!("zoomOutGeo"));
+        assert_eq!(to_value(ModeBarButtonName::ResetGeo).unwrap(), json!("resetGeo"));
+        assert_eq!(to_value(ModeBarButtonName::HoverClosestGeo).unwrap(), json!("hoverClosestGeo"));
+        assert_eq!(to_value(ModeBarButtonName::HoverClosestGl2d).unwrap(), json!("hoverClosestGl2d"));
+        assert_eq!(to_value(ModeBarButtonName::HoverClosestPie).unwrap(), json!("hoverClosestPie"));
+        assert_eq!(to_value(ModeBarButtonName::ToggleHover).unwrap(), json!("toggleHover"));
+        assert_eq!(to_value(ModeBarButtonName::ResetViews).unwrap(), json!("resetViews"));
+        assert_eq!(to_value(ModeBarButtonName::ToImage).unwrap(), json!("toImage"));
+        assert_eq!(to_value(ModeBarButtonName::SendDataToCloud).unwrap(), json!("sendDataToCloud"));
+        assert_eq!(to_value(ModeBarButtonName::ToggleSpikelines).unwrap(), json!("toggleSpikelines"));
+        assert_eq!(to_value(ModeBarButtonName::ResetViewMapbox).unwrap(), json!("resetViewMapbox"));
+        assert_eq!(to_value(ModeBarButtonName::ZoomInMapbox).unwrap(), json!("zoomInMapbox"));
+        assert_eq!(to_value(ModeBarButtonName::ZoomOutMapbox).unwrap(), json!("zoomOutMapbox"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_double_click() {
+        assert_eq!(to_value(DoubleClick::False).unwrap(), json!(false));
+        assert_eq!(to_value(DoubleClick::Reset).unwrap(), json!("reset"));
+        assert_eq!(to_value(DoubleClick::AutoSize).unwrap(), json!("autosize"));
+        assert_eq!(to_value(DoubleClick::ResetAutoSize).unwrap(), json!("reset+autosize"));
+    }
+
+    #[test]
+    fn test_serialize_plot_gl_pixel_ratio() {
+        assert_eq!(to_value(PlotGLPixelRatio::One).unwrap(), json!(1));
+        assert_eq!(to_value(PlotGLPixelRatio::Two).unwrap(), json!(2));
+        assert_eq!(to_value(PlotGLPixelRatio::Three).unwrap(), json!(3));
+        assert_eq!(to_value(PlotGLPixelRatio::Four).unwrap(), json!(4));
+    }
+
+    #[test]
+    fn test_serialize_configuration() {
+        let config = Configuration::new()
+            .static_plot(true)
+            .typeset_math(true)
+            .plotly_server_url("server_url")
+            .editable(false)
+            .autosizable(false)
+            .responsive(true)
+            .fill_frame(false)
+            .frame_margins(2.0)
+            .scroll_zoom(false)
+            .double_click(DoubleClick::ResetAutoSize)
+            .double_click_delay(50)
+            .show_axis_drag_handles(false)
+            .show_axis_range_entry_boxes(true)
+            .show_tips(false)
+            .show_link(true)
+            .link_text("link text")
+            .send_data(false)
+            .display_mode_bar(DisplayModeBar::Hover)
+            .show_send_to_cloud(true)
+            .show_edit_in_chart_studio(false)
+            .mode_bar_buttons_to_remove(vec![ModeBarButtonName::Zoom2d])
+            .to_image_button_options(ToImageButtonOptions::new())
+            .display_logo(false)
+            .watermark(true)
+            .plot_gl_pixel_ratio(PlotGLPixelRatio::Four)
+            .topojson_url("topojson_url")
+            .mapbox_access_token("123")
+            .queue_length(100)
+            .locale("en");
+
+        let expected = json!({
+            "staticPlot": true,
+            "typesetMath": true,
+            "plotlyServerURL": "server_url",
+            "editable": false,
+            "autosizable": false,
+            "responsive": true,
+            "fillFrame": false,
+            "frameMargins": 2.0,
+            "scrollZoom": false,
+            "doubleClick": "reset+autosize",
+            "doubleClickDelay": 50,
+            "showAxisDragHandles": false,
+            "showAxisRangeEntryBoxes": true,
+            "showTips": false,
+            "showLink": true,
+            "linkText": "link text",
+            "sendData": false,
+            "displayModeBar": "hover",
+            "showSendToCloud": true,
+            "showEditInChartStudio": false,
+            "modeBarButtonsToRemove": ["zoom2d"],
+            "toImageButtonOptions": {},
+            "displaylogo": false,
+            "watermark": true,
+            "plotGlPixelRatio": 4,
+            "topojsonURL": "topojson_url",
+            "mapboxAccessToken": "123",
+            "queueLength": 100,
+            "locale": "en"
+        });
+
+        assert_eq!(to_value(config).unwrap(), expected);
     }
 }
