@@ -1,6 +1,6 @@
 use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
-    Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Side,
+    Anchor, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font, Label, Orientation,
     TickFormatStop, TickMode, Title,
 };
 use crate::plot::Trace;
@@ -108,6 +108,50 @@ pub enum WaterfallMode {
     Overlay,
 }
 
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum TraceOrder {
+    Reversed,
+    Grouped,
+    #[serde(rename = "reversed+grouped")]
+    ReversedGrouped,
+    Normal,
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum ItemSizing {
+    Trace,
+    Constant,
+}
+
+#[derive(Debug)]
+pub enum ItemClick {
+    Toggle,
+    ToggleOthers,
+    False,
+}
+
+impl Serialize for ItemClick {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match *self {
+            Self::Toggle => serializer.serialize_str("toggle"),
+            Self::ToggleOthers => serializer.serialize_str("toggleothers"),
+            Self::False => serializer.serialize_bool(false),
+        }
+    }
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum GroupClick {
+    ToggleItem,
+    ToggleGroup,
+}
+
 #[derive(Serialize, Debug, Default)]
 pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
@@ -121,15 +165,15 @@ pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "traceorder")]
-    trace_order: Option<String>,
+    trace_order: Option<TraceOrder>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tracegroupgap")]
     trace_group_gap: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "itemsizing")]
-    item_sizing: Option<String>,
+    item_sizing: Option<ItemSizing>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "itemclick")]
-    item_click: Option<String>,
+    item_click: Option<ItemClick>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "itemdoubleclick")]
-    item_double_click: Option<String>,
+    item_double_click: Option<ItemClick>,
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
@@ -142,6 +186,10 @@ pub struct Legend {
     valign: Option<VAlign>,
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "groupclick")]
+    group_click: Option<GroupClick>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "itemwidth")]
+    item_width: Option<usize>,
 }
 
 impl Legend {
@@ -174,8 +222,8 @@ impl Legend {
         self
     }
 
-    pub fn trace_order(mut self, trace_order: &str) -> Self {
-        self.trace_order = Some(trace_order.to_owned());
+    pub fn trace_order(mut self, trace_order: TraceOrder) -> Self {
+        self.trace_order = Some(trace_order);
         self
     }
 
@@ -184,18 +232,18 @@ impl Legend {
         self
     }
 
-    pub fn item_sizing(mut self, item_sizing: &str) -> Self {
-        self.item_sizing = Some(item_sizing.to_owned());
+    pub fn item_sizing(mut self, item_sizing: ItemSizing) -> Self {
+        self.item_sizing = Some(item_sizing);
         self
     }
 
-    pub fn item_click(mut self, item_click: &str) -> Self {
-        self.item_click = Some(item_click.to_owned());
+    pub fn item_click(mut self, item_click: ItemClick) -> Self {
+        self.item_click = Some(item_click);
         self
     }
 
-    pub fn item_double_click(mut self, item_double_click: &str) -> Self {
-        self.item_double_click = Some(item_double_click.to_owned());
+    pub fn item_double_click(mut self, item_double_click: ItemClick) -> Self {
+        self.item_double_click = Some(item_double_click);
         self
     }
 
@@ -226,6 +274,16 @@ impl Legend {
 
     pub fn title(mut self, title: Title) -> Self {
         self.title = Some(title);
+        self
+    }
+
+    pub fn group_click(mut self, group_click: GroupClick) -> Self {
+        self.group_click = Some(group_click);
+        self
+    }
+
+    pub fn item_width(mut self, item_width: usize) -> Self {
+        self.item_width = Some(item_width);
         self
     }
 }
@@ -579,7 +637,7 @@ impl RangeSelector {
     }
 
     pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
-        self.background_color = Some(active_color.to_color());
+        self.active_color = Some(active_color.to_color());
         self
     }
 
@@ -667,6 +725,40 @@ impl ColorAxis {
     }
 }
 
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum SpikeMode {
+    ToAxis,
+    Across,
+    Marker,
+    #[serde(rename = "toaxis+across")]
+    ToaxisAcross,
+    #[serde(rename = "toaxis+marker")]
+    ToAxisMarker,
+    #[serde(rename = "across+marker")]
+    AcrossMarker,
+    #[serde(rename = "toaxis+across+marker")]
+    ToaxisAcrossMarker,
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum SpikeSnap {
+    Data,
+    Cursor,
+    #[serde(rename = "hovered data")]
+    HoveredData,
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum AxisSide {
+    Top,
+    Bottom,
+    Left,
+    Right,
+}
+
 #[derive(Serialize, Debug, Default)]
 pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -677,7 +769,7 @@ pub struct Axis {
     title: Option<Title>,
     #[serde(skip_serializing_if = "Option::is_none")]
     r#type: Option<AxisType>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "auto_range")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "autorange")]
     auto_range: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
     range_mode: Option<RangeMode>,
@@ -731,9 +823,9 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikedash")]
     spike_dash: Option<DashType>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikemode")]
-    spike_mode: Option<String>,
+    spike_mode: Option<SpikeMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikesnap")]
-    spike_snap: Option<String>,
+    spike_snap: Option<SpikeSnap>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickfont")]
     tick_font: Option<Font>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickangle")]
@@ -749,7 +841,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "showexponent")]
     show_exponent: Option<ArrayShow>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "exponentformat")]
-    exponent_format: Option<String>,
+    exponent_format: Option<ExponentFormat>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "separatethousands")]
     separate_thousands: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickformat")]
@@ -785,7 +877,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
     anchor: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    side: Option<Side>,
+    side: Option<AxisSide>,
     #[serde(skip_serializing_if = "Option::is_none")]
     overlaying: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -801,324 +893,324 @@ pub struct Axis {
 }
 
 impl Axis {
-    pub fn new() -> Axis {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn matches(mut self, matches: bool) -> Axis {
+    pub fn matches(mut self, matches: bool) -> Self {
         if matches {
             self.matches = Some(String::from("x"));
         }
         self
     }
 
-    pub fn visible(mut self, visible: bool) -> Axis {
+    pub fn visible(mut self, visible: bool) -> Self {
         self.visible = Some(visible);
         self
     }
 
-    pub fn color<C: Color>(mut self, color: C) -> Axis {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(color.to_color());
         self
     }
 
-    pub fn title(mut self, title: Title) -> Axis {
+    pub fn title(mut self, title: Title) -> Self {
         self.title = Some(title);
         self
     }
 
-    pub fn type_(mut self, t: AxisType) -> Axis {
+    pub fn type_(mut self, t: AxisType) -> Self {
         self.r#type = Some(t);
         self
     }
 
-    pub fn auto_range(mut self, auto_range: bool) -> Axis {
+    pub fn auto_range(mut self, auto_range: bool) -> Self {
         self.auto_range = Some(auto_range);
         self
     }
 
-    pub fn range_mode(mut self, range_mode: RangeMode) -> Axis {
+    pub fn range_mode(mut self, range_mode: RangeMode) -> Self {
         self.range_mode = Some(range_mode);
         self
     }
 
-    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> Axis {
+    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> Self {
         let wrapped = to_num_or_string_wrapper(range);
         self.range = Some(wrapped);
         self
     }
 
-    pub fn fixed_range(mut self, fixed_range: bool) -> Axis {
+    pub fn fixed_range(mut self, fixed_range: bool) -> Self {
         self.fixed_range = Some(fixed_range);
         self
     }
 
-    pub fn constrain(mut self, constrain: AxisConstrain) -> Axis {
+    pub fn constrain(mut self, constrain: AxisConstrain) -> Self {
         self.constrain = Some(constrain);
         self
     }
 
-    pub fn constrain_toward(mut self, constrain_toward: ConstrainDirection) -> Axis {
+    pub fn constrain_toward(mut self, constrain_toward: ConstrainDirection) -> Self {
         self.constrain_toward = Some(constrain_toward);
         self
     }
 
-    pub fn tick_mode(mut self, tick_mode: TickMode) -> Axis {
+    pub fn tick_mode(mut self, tick_mode: TickMode) -> Self {
         self.tick_mode = Some(tick_mode);
         self
     }
 
-    pub fn n_ticks(mut self, n_ticks: usize) -> Axis {
+    pub fn n_ticks(mut self, n_ticks: usize) -> Self {
         self.n_ticks = Some(n_ticks);
         self
     }
 
-    pub fn tick0(mut self, tick0: f64) -> Axis {
+    pub fn tick0(mut self, tick0: f64) -> Self {
         self.tick0 = Some(tick0);
         self
     }
 
-    pub fn dtick(mut self, dtick: f64) -> Axis {
+    pub fn dtick(mut self, dtick: f64) -> Self {
         self.dtick = Some(dtick);
         self
     }
 
-    pub fn tick_values(mut self, tick_values: Vec<f64>) -> Axis {
+    pub fn tick_values(mut self, tick_values: Vec<f64>) -> Self {
         self.tick_values = Some(tick_values);
         self
     }
 
-    pub fn tick_text(mut self, tick_text: Vec<String>) -> Axis {
+    pub fn tick_text(mut self, tick_text: Vec<String>) -> Self {
         self.tick_text = Some(tick_text);
         self
     }
 
-    pub fn ticks(mut self, ticks: TicksDirection) -> Axis {
+    pub fn ticks(mut self, ticks: TicksDirection) -> Self {
         self.ticks = Some(ticks);
         self
     }
 
-    pub fn ticks_on(mut self, ticks_on: TicksPosition) -> Axis {
+    pub fn ticks_on(mut self, ticks_on: TicksPosition) -> Self {
         self.ticks_on = Some(ticks_on);
         self
     }
 
-    pub fn mirror(mut self, mirror: bool) -> Axis {
+    pub fn mirror(mut self, mirror: bool) -> Self {
         self.mirror = Some(mirror);
         self
     }
 
-    pub fn tick_length(mut self, tick_length: usize) -> Axis {
+    pub fn tick_length(mut self, tick_length: usize) -> Self {
         self.tick_length = Some(tick_length);
         self
     }
 
-    pub fn tick_width(mut self, tick_width: usize) -> Axis {
+    pub fn tick_width(mut self, tick_width: usize) -> Self {
         self.tick_width = Some(tick_width);
         self
     }
 
-    pub fn tick_color<C: Color>(mut self, tick_color: C) -> Axis {
+    pub fn tick_color<C: Color>(mut self, tick_color: C) -> Self {
         self.tick_color = Some(tick_color.to_color());
         self
     }
 
-    pub fn show_tick_labels(mut self, show_tick_labels: bool) -> Axis {
+    pub fn show_tick_labels(mut self, show_tick_labels: bool) -> Self {
         self.show_tick_labels = Some(show_tick_labels);
         self
     }
 
-    pub fn auto_margin(mut self, auto_margin: bool) -> Axis {
+    pub fn auto_margin(mut self, auto_margin: bool) -> Self {
         self.auto_margin = Some(auto_margin);
         self
     }
 
-    pub fn show_spikes(mut self, show_spikes: bool) -> Axis {
+    pub fn show_spikes(mut self, show_spikes: bool) -> Self {
         self.show_spikes = Some(show_spikes);
         self
     }
 
-    pub fn spike_color<C: Color>(mut self, spike_color: C) -> Axis {
+    pub fn spike_color<C: Color>(mut self, spike_color: C) -> Self {
         self.spike_color = Some(spike_color.to_color());
         self
     }
 
-    pub fn spike_thickness(mut self, spike_thickness: usize) -> Axis {
+    pub fn spike_thickness(mut self, spike_thickness: usize) -> Self {
         self.spike_thickness = Some(spike_thickness);
         self
     }
 
-    pub fn spike_dash(mut self, spike_dash: DashType) -> Axis {
+    pub fn spike_dash(mut self, spike_dash: DashType) -> Self {
         self.spike_dash = Some(spike_dash);
         self
     }
 
-    pub fn spike_mode(mut self, spike_mode: &str) -> Axis {
-        self.spike_mode = Some(spike_mode.to_owned());
+    pub fn spike_mode(mut self, spike_mode: SpikeMode) -> Self {
+        self.spike_mode = Some(spike_mode);
         self
     }
 
-    pub fn spike_snap(mut self, spike_snap: &str) -> Axis {
-        self.spike_snap = Some(spike_snap.to_owned());
+    pub fn spike_snap(mut self, spike_snap: SpikeSnap) -> Self {
+        self.spike_snap = Some(spike_snap);
         self
     }
 
-    pub fn tick_font(mut self, tick_font: Font) -> Axis {
+    pub fn tick_font(mut self, tick_font: Font) -> Self {
         self.tick_font = Some(tick_font);
         self
     }
 
-    pub fn tick_angle(mut self, tick_angle: f64) -> Axis {
+    pub fn tick_angle(mut self, tick_angle: f64) -> Self {
         self.tick_angle = Some(tick_angle);
         self
     }
 
-    pub fn tick_prefix(mut self, tick_prefix: &str) -> Axis {
+    pub fn tick_prefix(mut self, tick_prefix: &str) -> Self {
         self.tick_prefix = Some(tick_prefix.to_owned());
         self
     }
 
-    pub fn show_tick_prefix(mut self, show_tick_prefix: ArrayShow) -> Axis {
+    pub fn show_tick_prefix(mut self, show_tick_prefix: ArrayShow) -> Self {
         self.show_tick_prefix = Some(show_tick_prefix);
         self
     }
 
-    pub fn tick_suffix(mut self, tick_suffix: &str) -> Axis {
+    pub fn tick_suffix(mut self, tick_suffix: &str) -> Self {
         self.tick_suffix = Some(tick_suffix.to_owned());
         self
     }
 
-    pub fn show_tick_suffix(mut self, show_tick_suffix: ArrayShow) -> Axis {
+    pub fn show_tick_suffix(mut self, show_tick_suffix: ArrayShow) -> Self {
         self.show_tick_suffix = Some(show_tick_suffix);
         self
     }
 
-    pub fn show_exponent(mut self, show_exponent: ArrayShow) -> Axis {
+    pub fn show_exponent(mut self, show_exponent: ArrayShow) -> Self {
         self.show_exponent = Some(show_exponent);
         self
     }
 
-    pub fn exponent_format(mut self, exponent_format: &str) -> Axis {
-        self.exponent_format = Some(exponent_format.to_owned());
+    pub fn exponent_format(mut self, exponent_format: ExponentFormat) -> Self {
+        self.exponent_format = Some(exponent_format);
         self
     }
 
-    pub fn separate_thousands(mut self, separate_thousands: bool) -> Axis {
+    pub fn separate_thousands(mut self, separate_thousands: bool) -> Self {
         self.separate_thousands = Some(separate_thousands);
         self
     }
 
-    pub fn tick_format(mut self, tick_format: &str) -> Axis {
+    pub fn tick_format(mut self, tick_format: &str) -> Self {
         self.tick_format = Some(tick_format.to_owned());
         self
     }
 
-    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> Axis {
+    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> Self {
         self.tick_format_stops = Some(tick_format_stops);
         self
     }
 
-    pub fn hover_format(mut self, hover_format: &str) -> Axis {
+    pub fn hover_format(mut self, hover_format: &str) -> Self {
         self.hover_format = Some(hover_format.to_owned());
         self
     }
 
-    pub fn show_line(mut self, show_line: bool) -> Axis {
+    pub fn show_line(mut self, show_line: bool) -> Self {
         self.show_line = Some(show_line);
         self
     }
 
-    pub fn line_color<C: Color>(mut self, line_color: C) -> Axis {
+    pub fn line_color<C: Color>(mut self, line_color: C) -> Self {
         self.line_color = Some(line_color.to_color());
         self
     }
 
-    pub fn line_width(mut self, line_width: usize) -> Axis {
+    pub fn line_width(mut self, line_width: usize) -> Self {
         self.line_width = Some(line_width);
         self
     }
 
-    pub fn show_grid(mut self, show_grid: bool) -> Axis {
+    pub fn show_grid(mut self, show_grid: bool) -> Self {
         self.show_grid = Some(show_grid);
         self
     }
 
-    pub fn grid_color<C: Color>(mut self, grid_color: C) -> Axis {
+    pub fn grid_color<C: Color>(mut self, grid_color: C) -> Self {
         self.grid_color = Some(grid_color.to_color());
         self
     }
 
-    pub fn grid_width(mut self, grid_width: usize) -> Axis {
+    pub fn grid_width(mut self, grid_width: usize) -> Self {
         self.grid_width = Some(grid_width);
         self
     }
 
-    pub fn zero_line(mut self, zero_line: bool) -> Axis {
+    pub fn zero_line(mut self, zero_line: bool) -> Self {
         self.zero_line = Some(zero_line);
         self
     }
 
-    pub fn zero_line_color<C: Color>(mut self, zero_line_color: C) -> Axis {
+    pub fn zero_line_color<C: Color>(mut self, zero_line_color: C) -> Self {
         self.zero_line_color = Some(zero_line_color.to_color());
         self
     }
 
-    pub fn zero_line_width(mut self, zero_line_width: usize) -> Axis {
+    pub fn zero_line_width(mut self, zero_line_width: usize) -> Self {
         self.zero_line_width = Some(zero_line_width);
         self
     }
 
-    pub fn show_dividers(mut self, show_dividers: bool) -> Axis {
+    pub fn show_dividers(mut self, show_dividers: bool) -> Self {
         self.show_dividers = Some(show_dividers);
         self
     }
 
-    pub fn divider_color<C: Color>(mut self, divider_color: C) -> Axis {
+    pub fn divider_color<C: Color>(mut self, divider_color: C) -> Self {
         self.divider_color = Some(divider_color.to_color());
         self
     }
 
-    pub fn divider_width(mut self, divider_width: usize) -> Axis {
+    pub fn divider_width(mut self, divider_width: usize) -> Self {
         self.divider_width = Some(divider_width);
         self
     }
 
-    pub fn anchor(mut self, anchor: &str) -> Axis {
+    pub fn anchor(mut self, anchor: &str) -> Self {
         self.anchor = Some(anchor.to_owned());
         self
     }
 
-    pub fn side(mut self, side: Side) -> Axis {
+    pub fn side(mut self, side: AxisSide) -> Self {
         self.side = Some(side);
         self
     }
 
-    pub fn overlaying(mut self, overlaying: &str) -> Axis {
+    pub fn overlaying(mut self, overlaying: &str) -> Self {
         self.overlaying = Some(overlaying.to_owned());
         self
     }
 
-    pub fn domain(mut self, domain: &[f64]) -> Axis {
+    pub fn domain(mut self, domain: &[f64]) -> Self {
         self.domain = Some(domain.to_vec());
         self
     }
 
-    pub fn position(mut self, position: f64) -> Axis {
+    pub fn position(mut self, position: f64) -> Self {
         self.position = Some(position);
         self
     }
 
-    pub fn range_slider(mut self, slider: RangeSlider) -> Axis {
+    pub fn range_slider(mut self, slider: RangeSlider) -> Self {
         self.range_slider = Some(slider);
         self
     }
 
-    pub fn range_selector(mut self, range_selector: RangeSelector) -> Axis {
+    pub fn range_selector(mut self, range_selector: RangeSelector) -> Self {
         self.range_selector = Some(range_selector);
         self
     }
 
-    pub fn calendar(mut self, calendar: Calendar) -> Axis {
+    pub fn calendar(mut self, calendar: Calendar) -> Self {
         self.calendar = Some(calendar);
         self
     }
@@ -2711,7 +2803,10 @@ impl Trace for Layout {
 
 #[cfg(test)]
 mod tests {
+
     use serde_json::{json, to_value};
+
+    use crate::common::ColorScalePalette;
 
     use super::*;
 
@@ -2806,7 +2901,80 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_legend() {}
+    #[rustfmt::skip]
+    fn test_serialize_trace_order() {
+        assert_eq!(to_value(TraceOrder::Reversed).unwrap(), json!("reversed"));
+        assert_eq!(to_value(TraceOrder::Grouped).unwrap(), json!("grouped"));
+        assert_eq!(to_value(TraceOrder::ReversedGrouped).unwrap(), json!("reversed+grouped"));
+        assert_eq!(to_value(TraceOrder::Normal).unwrap(), json!("normal"));
+    }
+
+    #[test]
+    fn test_serialize_item_sizing() {
+        assert_eq!(to_value(ItemSizing::Trace).unwrap(), json!("trace"));
+        assert_eq!(to_value(ItemSizing::Constant).unwrap(), json!("constant"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_item_click() {
+        assert_eq!(to_value(ItemClick::Toggle).unwrap(), json!("toggle"));
+        assert_eq!(to_value(ItemClick::ToggleOthers).unwrap(), json!("toggleothers"));
+        assert_eq!(to_value(ItemClick::False).unwrap(), json!(false));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_group_click() {
+        assert_eq!(to_value(GroupClick::ToggleItem).unwrap(), json!("toggleitem"));
+        assert_eq!(to_value(GroupClick::ToggleGroup).unwrap(), json!("togglegroup"));
+    }
+
+    #[test]
+    fn test_serialize_legend() {
+        let legend = Legend::new()
+            .background_color("#123123")
+            .border_color("#321321")
+            .border_width(500)
+            .font(Font::new())
+            .orientation(Orientation::Vertical)
+            .trace_order(TraceOrder::Normal)
+            .trace_group_gap(10)
+            .item_sizing(ItemSizing::Trace)
+            .item_click(ItemClick::Toggle)
+            .item_double_click(ItemClick::False)
+            .x(1.0)
+            .x_anchor(Anchor::Auto)
+            .y(2.0)
+            .y_anchor(Anchor::Left)
+            .valign(VAlign::Middle)
+            .title(Title::new("title"))
+            .group_click(GroupClick::ToggleItem)
+            .item_width(50);
+
+        let expected = json!({
+            "bgcolor": "#123123",
+            "bordercolor": "#321321",
+            "borderwidth": 500,
+            "font": {},
+            "orientation": "vertical",
+            "traceorder": "normal",
+            "tracegroupgap": 10,
+            "itemsizing": "trace",
+            "itemclick": "toggle",
+            "itemdoubleclick": false,
+            "x": 1.0,
+            "xanchor": "auto",
+            "y": 2.0,
+            "yanchor": "left",
+            "valign": "middle",
+            "title": {"text": "title"},
+            "groupclick": "toggleitem",
+            "itemwidth": 50
+        });
+
+        assert_eq!(to_value(legend).unwrap(), expected)
+    }
 
     #[test]
     fn test_serialize_valign() {
@@ -2823,10 +2991,40 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_margin() {}
+    fn test_serialize_margin() {
+        let margin = Margin::new()
+            .left(1)
+            .right(2)
+            .top(3)
+            .bottom(4)
+            .pad(5)
+            .auto_expand(true);
+        let expected = json!({
+            "l": 1,
+            "r": 2,
+            "t": 3,
+            "b": 4,
+            "pad": 5,
+            "autoexpand": true,
+        });
+
+        assert_eq!(to_value(margin).unwrap(), expected);
+    }
 
     #[test]
-    fn test_serialize_layout_color_scale() {}
+    fn test_serialize_layout_color_scale() {
+        let layout_color_scale = LayoutColorScale::new()
+            .sequential(ColorScale::Palette(ColorScalePalette::Greys))
+            .sequential_minus(ColorScale::Palette(ColorScalePalette::Blues))
+            .diverging(ColorScale::Palette(ColorScalePalette::Hot));
+        let expected = json!({
+            "sequential": "Greys",
+            "sequentialminus": "Blues",
+            "diverging": "Hot"
+        });
+
+        assert_eq!(to_value(layout_color_scale).unwrap(), expected);
+    }
 
     #[test]
     fn test_serialize_slider_range_mode() {
@@ -2836,10 +3034,43 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_range_slider_y_axis() {}
+    fn test_serialize_range_slider_y_axis() {
+        let range_slider_y_axis = RangeSliderYAxis::new()
+            .range_mode(SliderRangeMode::Match)
+            .range(vec![0.2]);
+        let expected = json!({
+            "rangemode": "match",
+            "range": [0.2]
+        });
+
+        assert_eq!(to_value(range_slider_y_axis).unwrap(), expected);
+    }
 
     #[test]
-    fn test_serialize_range_slider() {}
+    fn test_serialize_range_slider() {
+        let range_slider = RangeSlider::new()
+            .background_color("#123ABC")
+            .border_color("#ABC123")
+            .border_width(1000)
+            .auto_range(false)
+            .range(vec![5_i32])
+            .thickness(2000.)
+            .visible(true)
+            .y_axis(RangeSliderYAxis::new());
+
+        let expected = json!({
+            "bgcolor": "#123ABC",
+            "bordercolor": "#ABC123",
+            "borderwidth": 1000,
+            "autorange": false,
+            "range": [5],
+            "thickness": 2000.0,
+            "visible": true,
+            "yaxis": {}
+        });
+
+        assert_eq!(to_value(range_slider).unwrap(), expected);
+    }
 
     #[test]
     fn test_serialize_selector_step() {
@@ -2859,16 +3090,243 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_selector_button() {}
+    #[rustfmt::skip]
+    fn test_serialize_spike_mode() {
+        assert_eq!(to_value(SpikeMode::ToAxis).unwrap(), json!("toaxis"));
+        assert_eq!(to_value(SpikeMode::Across).unwrap(), json!("across"));
+        assert_eq!(to_value(SpikeMode::Marker).unwrap(), json!("marker"));
+        assert_eq!(to_value(SpikeMode::ToaxisAcross).unwrap(), json!("toaxis+across"));
+        assert_eq!(to_value(SpikeMode::ToAxisMarker).unwrap(), json!("toaxis+marker"));
+        assert_eq!(to_value(SpikeMode::AcrossMarker).unwrap(), json!("across+marker"));
+        assert_eq!(to_value(SpikeMode::ToaxisAcrossMarker).unwrap(), json!("toaxis+across+marker"));
+    }
 
     #[test]
-    fn test_serialize_range_selector() {}
+    #[rustfmt::skip]
+    fn test_serialize_spike_snap() {
+        assert_eq!(to_value(SpikeSnap::Data).unwrap(), json!("data"));
+        assert_eq!(to_value(SpikeSnap::Cursor).unwrap(), json!("cursor"));
+        assert_eq!(to_value(SpikeSnap::HoveredData).unwrap(), json!("hovered data"));
+    }
 
     #[test]
-    fn test_serialize_color_axis() {}
+    fn test_serialize_selector_button() {
+        let selector_button = SelectorButton::new()
+            .visible(false)
+            .step(SelectorStep::Hour)
+            .step_mode(StepMode::ToDate)
+            .count(42)
+            .label("label")
+            .name("name")
+            .template_item_name("something");
+
+        let expected = json!({
+            "visible": false,
+            "step": "hour",
+            "stepmode": "todate",
+            "count": 42,
+            "label": "label",
+            "name": "name",
+            "templateitemname": "something",
+        });
+
+        assert_eq!(to_value(selector_button).unwrap(), expected);
+    }
 
     #[test]
-    fn test_serialize_axis() {}
+    fn test_serialize_range_selector() {
+        let range_selector = RangeSelector::new()
+            .visible(true)
+            .buttons(vec![SelectorButton::new()])
+            .x(2.0)
+            .x_anchor(Anchor::Middle)
+            .y(4.0)
+            .y_anchor(Anchor::Top)
+            .font(Font::new())
+            .background_color("#123ABC")
+            .border_color("#ABC123")
+            .border_width(1000)
+            .active_color("#888999");
+
+        let expected = json!({
+            "visible": true,
+            "buttons": [{}],
+            "x": 2.0,
+            "xanchor": "middle",
+            "y": 4.0,
+            "yanchor": "top",
+            "font": {},
+            "bgcolor": "#123ABC",
+            "bordercolor": "#ABC123",
+            "borderwidth": 1000,
+            "activecolor": "#888999",
+        });
+
+        assert_eq!(to_value(range_selector).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_color_axis() {
+        let color_axis = ColorAxis::new()
+            .cauto(true)
+            .cmin(0.0)
+            .cmid(0.5)
+            .cmax(1.0)
+            .color_scale(ColorScale::Palette(ColorScalePalette::Greens))
+            .auto_color_scale(false)
+            .reverse_scale(false)
+            .show_scale(true);
+        // .color_bar(); Awaiting fix from other branch
+
+        let expected = json!({
+            "cauto": true,
+            "cmin": 0.0,
+            "cmid": 0.5,
+            "cmax": 1.0,
+            "colorscale": "Greens",
+            "autocolorscale": false,
+            "reversescale": false,
+            "showscale": true,
+        });
+
+        assert_eq!(to_value(color_axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_axis() {
+        let axis = Axis::new()
+            .visible(false)
+            .color("#678123")
+            .title(Title::new("title"))
+            .type_(AxisType::Date)
+            .auto_range(false)
+            .range_mode(RangeMode::NonNegative)
+            .range(vec![2.0])
+            .fixed_range(true)
+            .constrain(AxisConstrain::Range)
+            .constrain_toward(ConstrainDirection::Middle)
+            .tick_mode(TickMode::Auto)
+            .n_ticks(600)
+            .tick0(5.0)
+            .dtick(10.0)
+            .matches(true)
+            .tick_values(vec![1.0, 2.0])
+            .tick_text(vec!["one".to_string(), "two".to_string()])
+            .ticks(TicksDirection::Inside)
+            .ticks_on(TicksPosition::Boundaries)
+            .mirror(false)
+            .tick_length(77)
+            .tick_width(99)
+            .tick_color("#101010")
+            .show_tick_labels(false)
+            .auto_margin(true)
+            .show_spikes(false)
+            .spike_color("#ABABAB")
+            .spike_thickness(501)
+            .spike_dash(DashType::DashDot)
+            .spike_mode(SpikeMode::AcrossMarker)
+            .spike_snap(SpikeSnap::Data)
+            .tick_font(Font::new())
+            .tick_angle(2.1)
+            .tick_prefix("prefix")
+            .show_tick_prefix(ArrayShow::Last)
+            .tick_suffix("suffix")
+            .show_tick_suffix(ArrayShow::None)
+            .show_exponent(ArrayShow::All)
+            .exponent_format(ExponentFormat::SmallE)
+            .separate_thousands(false)
+            .tick_format("tickfmt")
+            .tick_format_stops(vec![TickFormatStop::new()])
+            .hover_format("hoverfmt")
+            .show_line(true)
+            .line_color("#CCCDDD")
+            .line_width(9)
+            .show_grid(false)
+            .grid_color("#fff000")
+            .grid_width(8)
+            .zero_line(true)
+            .zero_line_color("#f0f0f0")
+            .zero_line_width(7)
+            .show_dividers(false)
+            .divider_color("#AFAFAF")
+            .divider_width(55)
+            .anchor("anchor")
+            .side(AxisSide::Right)
+            .overlaying("overlaying")
+            .domain(&[0.0, 1.0])
+            .position(0.6)
+            .range_slider(RangeSlider::new())
+            .range_selector(RangeSelector::new())
+            .calendar(Calendar::Coptic);
+
+        let expected = json!({
+            "visible": false,
+            "color": "#678123",
+            "title": {"text": "title"},
+            "type": "date",
+            "autorange": false,
+            "rangemode": "nonnegative",
+            "range": [2.0],
+            "fixedrange": true,
+            "constrain": "range",
+            "constraintoward": "middle",
+            "tickmode": "auto",
+            "nticks": 600,
+            "tick0": 5.0,
+            "dtick": 10.0,
+            "matches": "x",
+            "tickvals": [1.0, 2.0],
+            "ticktext": ["one", "two"],
+            "ticks": "inside",
+            "tickson": "boundaries",
+            "mirror": false,
+            "ticklen": 77,
+            "tickwidth": 99,
+            "tickcolor": "#101010",
+            "showticklabels": false,
+            "automargin": true,
+            "showspikes": false,
+            "spikecolor": "#ABABAB",
+            "spikethickness": 501,
+            "spikedash": "dashdot",
+            "spikemode": "across+marker",
+            "spikesnap": "data",
+            "tickfont": {},
+            "tickangle": 2.1,
+            "tickprefix": "prefix",
+            "showtickprefix": "last",
+            "ticksuffix": "suffix",
+            "showticksuffix": "none",
+            "showexponent": "all",
+            "exponentformat": "e",
+            "separatethousands": false,
+            "tickformat": "tickfmt",
+            "tickformatstops": [{"enabled": true}],
+            "hoverformat": "hoverfmt",
+            "showline": true,
+            "linecolor": "#CCCDDD",
+            "linewidth": 9,
+            "showgrid": false,
+            "gridcolor": "#FFF000",
+            "gridwidth": 8,
+            "zeroline": true,
+            "zerolinecolor": "#F0F0F0",
+            "zerolinewidth": 7,
+            "showdividers": false,
+            "dividercolor": "#AFAFAF",
+            "dividerwidth": 55,
+            "anchor": "anchor",
+            "side": "right",
+            "overlaying": "overlaying",
+            "domain": [0.0, 1.0],
+            "position": 0.6,
+            "rangeslider": {},
+            "rangeselector": {},
+            "calendar": "coptic",
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
 
     #[test]
     #[rustfmt::skip]
@@ -2903,10 +3361,58 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_grid_domain() {}
+    #[rustfmt::skip]
+    fn test_serialize_axis_side() {
+        assert_eq!(to_value(AxisSide::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(AxisSide::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(AxisSide::Right).unwrap(), json!("right"));
+        assert_eq!(to_value(AxisSide::Bottom).unwrap(), json!("bottom"));
+    }
 
     #[test]
-    fn test_serialize_layout_grid() {}
+    fn test_serialize_grid_domain() {
+        let grid_domain = GridDomain::new().x(vec![0.0]).y(vec![1.0]);
+        let expected = json!({
+            "x": [0.0],
+            "y": [1.0]
+        });
+
+        assert_eq!(to_value(grid_domain).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_layout_grid() {
+        let layout_grid = LayoutGrid::new()
+            .rows(224)
+            .row_order(RowOrder::BottomToTop)
+            .columns(501)
+            .sub_plots(vec!["subplots".to_string()])
+            .x_axes(vec!["xaxes".to_string()])
+            .y_axes(vec!["yaxes".to_string()])
+            .pattern(GridPattern::Coupled)
+            .x_gap(2.2)
+            .y_gap(4.4)
+            .domain(GridDomain::new())
+            .x_side(GridXSide::Top)
+            .y_side(GridYSide::Right);
+
+        let expected = json!({
+            "rows": 224,
+            "roworder": "bottom to top",
+            "columns": 501,
+            "subplots": ["subplots"],
+            "xaxes": ["xaxes"],
+            "yaxes": ["yaxes"],
+            "pattern": "coupled",
+            "xgap": 2.2,
+            "ygap": 4.4,
+            "domain": {},
+            "xside": "top",
+            "yside": "right",
+        });
+
+        assert_eq!(to_value(layout_grid).unwrap(), expected);
+    }
 
     #[test]
     #[rustfmt::skip]

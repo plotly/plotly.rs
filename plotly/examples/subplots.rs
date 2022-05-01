@@ -1,5 +1,5 @@
 use plotly::common::{Font, Side, Title};
-use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder};
+use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder};
 use plotly::{Plot, Rgb, Scatter};
 
 // Subplots
@@ -124,7 +124,7 @@ fn stacked_subplots_with_shared_x_axis(show: bool) {
 
     let layout = Layout::new()
         .y_axis(Axis::new().domain(&[0., 0.33]))
-        .legend(Legend::new().trace_order("reversed"))
+        .legend(Legend::new().trace_order(TraceOrder::Reversed))
         .y_axis2(Axis::new().domain(&[0.33, 0.66]))
         .y_axis3(Axis::new().domain(&[0.66, 1.]));
     plot.set_layout(layout);
