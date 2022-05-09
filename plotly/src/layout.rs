@@ -1384,7 +1384,7 @@ pub enum UniformTextMode {
 pub struct UniformText {
     #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<TruthyEnum<UniformTextMode>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "minsize")]
     min_size: Option<usize>,
 }
 
@@ -1437,7 +1437,7 @@ impl ModeBar {
         Default::default()
     }
 
-    pub fn orientation<C: Color>(mut self, orientation: Orientation) -> Self {
+    pub fn orientation(mut self, orientation: Orientation) -> Self {
         self.orientation = Some(orientation);
         self
     }
@@ -1495,7 +1495,7 @@ pub struct ShapeLine {
     #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    dash: Option<String>,
+    dash: Option<DashType>,
 }
 
 impl ShapeLine {
@@ -1517,8 +1517,8 @@ impl ShapeLine {
 
     /// Sets the dash style of lines. Set to a dash type string ("solid", "dot", "dash", "longdash",
     /// "dashdot", or "longdashdot") or a dash length list in px (eg "5px,10px,2px,2px").
-    pub fn dash(mut self, dash: &str) -> Self {
-        self.dash = Some(dash.to_owned());
+    pub fn dash(mut self, dash: DashType) -> Self {
+        self.dash = Some(dash);
         self
     }
 }
@@ -2239,8 +2239,8 @@ impl Annotation {
     /// need to show/hide this annotation in response to different `x` or `y` values, you can set
     /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
     /// markers though, `standoff` is preferred over `xclick` and `yclick`.
-    pub fn click_to_show(mut self, click_to_show: TruthyEnum<ClickToShow>) -> Self {
-        self.click_to_show = Some(click_to_show);
+    pub fn click_to_show(mut self, click_to_show: ClickToShow) -> Self {
+        self.click_to_show = Some(TruthyEnum { e: click_to_show });
         self
     }
 
@@ -3424,7 +3424,15 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_uniform_text() {}
+    fn test_serialize_uniform_text() {
+        let uniform_text = UniformText::new().mode(UniformTextMode::Hide).min_size(5);
+        let expected = json!({
+            "mode": "hide",
+            "minsize": 5
+        });
+
+        assert_eq!(to_value(uniform_text).unwrap(), expected);
+    }
 
     #[test]
     #[rustfmt::skip]
@@ -3439,7 +3447,21 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_mode_bar() {}
+    fn test_serialize_mode_bar() {
+        let mode_bar = ModeBar::new()
+            .orientation(Orientation::Horizontal)
+            .background_color("#FFF000")
+            .color("#000FFF")
+            .active_color("#AAABBB");
+        let expected = json!({
+            "orientation": "horizontal",
+            "bgcolor": "#FFF000",
+            "color": "#000FFF",
+            "activecolor": "#AAABBB",
+        });
+
+        assert_eq!(to_value(mode_bar).unwrap(), expected);
+    }
 
     #[test]
     fn test_serialize_shape_type() {
@@ -3468,10 +3490,71 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_shape_line() {}
+    fn test_serialize_shape_line() {
+        let shape_line = ShapeLine::new()
+            .color("#000FFF")
+            .width(100.)
+            .dash(DashType::LongDashDot);
+        let expected = json!({
+            "color": "#000FFF",
+            "width": 100.0,
+            "dash": "longdashdot",
+        });
+
+        assert_eq!(to_value(shape_line).unwrap(), expected);
+    }
 
     #[test]
-    fn test_serialize_shape() {}
+    fn test_serialize_shape() {
+        let shape = Shape::new()
+            .visible(false)
+            .shape_type(ShapeType::Circle)
+            .layer(ShapeLayer::Above)
+            .x_ref("xref")
+            .x_size_mode(ShapeSizeMode::Pixel)
+            .x_anchor(5)
+            .x0(7)
+            .x1(8)
+            .y_ref("paper")
+            .y0(1)
+            .y1(2)
+            .y_anchor("yanchor")
+            .y_size_mode(ShapeSizeMode::Scaled)
+            .path("path")
+            .opacity(0.2)
+            .line(ShapeLine::new())
+            .fill_color("#FEFEFE")
+            .fill_rule(FillRule::NonZero)
+            .editable(true)
+            .name("name")
+            .template_item_name("templateitemname");
+
+        let expected = json!({
+            "visible": false,
+            "type": "circle",
+            "layer": "above",
+            "xref": "xref",
+            "xsizemode": "pixel",
+            "xanchor": 5,
+            "x0": 7,
+            "x1": 8,
+            "yref": "paper",
+            "y0": 1,
+            "y1": 2,
+            "yanchor": "yanchor",
+            "ysizemode": "scaled",
+            "path": "path",
+            "opacity": 0.2,
+            "line": {},
+            "fillcolor": "#FEFEFE",
+            "fillrule": "nonzero",
+            "editable": true,
+            "name": "name",
+            "templateitemname": "templateitemname"
+        });
+
+        assert_eq!(to_value(shape).unwrap(), expected)
+    }
 
     #[test]
     #[rustfmt::skip]
@@ -3483,10 +3566,38 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_new_shape() {}
+    fn test_serialize_new_shape() {
+        let new_shape = NewShape::new()
+            .line(ShapeLine::new())
+            .fill_color("#123ABC")
+            .fill_rule(FillRule::EvenOdd)
+            .opacity(0.02)
+            .layer(ShapeLayer::Below)
+            .draw_direction(DrawDirection::Ortho);
+
+        let expected = json!({
+            "line": {},
+            "fillcolor": "#123ABC",
+            "fillrule": "evenodd",
+            "opacity": 0.02,
+            "layer": "below",
+            "drawdirection": "ortho",
+        });
+
+        assert_eq!(to_value(new_shape).unwrap(), expected)
+    }
 
     #[test]
-    fn test_serialize_active_shape() {}
+    fn test_serialize_active_shape() {
+        let active_shape = ActiveShape::new().fill_color("#123ABC").opacity(0.02);
+
+        let expected = json!({
+            "fillcolor": "#123ABC",
+            "opacity": 0.02,
+        });
+
+        assert_eq!(to_value(active_shape).unwrap(), expected);
+    }
 
     #[test]
     fn test_serialize_arrow_side() {
@@ -3505,8 +3616,105 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_annotation() {}
+    fn test_serialize_annotation() {
+        let annotation = Annotation::new()
+            .visible(true)
+            .text("text")
+            .text_angle(5.)
+            .font(Font::new())
+            .width(4.)
+            .height(6.)
+            .opacity(0.01)
+            .align(HAlign::Center)
+            .valign(VAlign::Middle)
+            .background_color("#123456")
+            .border_color("#456789")
+            .border_pad(500.)
+            .border_width(1000.)
+            .show_arrow(false)
+            .arrow_color("#464646")
+            .arrow_head(2)
+            .start_arrow_head(0)
+            .arrow_size(123.4)
+            .start_arrow_size(456.7)
+            .arrow_width(111.1)
+            .stand_off(999.9)
+            .start_stand_off(8.8)
+            .ax("ax")
+            .ay("ay")
+            .ax_ref("axref")
+            .ay_ref("ayref")
+            .x_ref("xref")
+            .x("x")
+            .x_anchor(Anchor::Auto)
+            .x_shift(4.0)
+            .y_ref("yref")
+            .y("y")
+            .y_anchor(Anchor::Bottom)
+            .y_shift(6.3)
+            .click_to_show(ClickToShow::OnOff)
+            .x_click("xclick")
+            .y_click("yclick")
+            .hover_text("hovertext")
+            .hover_label(Label::new())
+            .capture_events(false)
+            .name("name")
+            .template_item_name("templateitemname");
+
+        let expected = json!({
+            "visible": true,
+            "text": "text",
+            "textangle": 5.0,
+            "font": {},
+            "width": 4.0,
+            "height": 6.0,
+            "opacity": 0.01,
+            "align": "center",
+            "valign": "middle",
+            "bgcolor": "#123456",
+            "bordercolor": "#456789",
+            "borderpad": 500.0,
+            "borderwidth": 1000.0,
+            "showarrow": false,
+            "arrowcolor": "#464646",
+            "arrowhead": 2,
+            "startarrowhead": 0,
+            "arrowsize": 123.4,
+            "startarrowsize": 456.7,
+            "arrowwidth": 111.1,
+            "standoff": 999.9,
+            "startstandoff": 8.8,
+            "ax": "ax",
+            "ay": "ay",
+            "x": "x",
+            "y": "y",
+            "axref": "axref",
+            "ayref": "ayref",
+            "xref": "xref",
+            "yref": "yref",
+            "xanchor": "auto",
+            "yanchor": "bottom",
+            "xshift": 4.0,
+            "yshift": 6.3,
+            "clicktoshow": "onoff",
+            "xclick": "xclick",
+            "yclick": "yclick",
+            "hovertext": "hovertext",
+            "hoverlabel": {},
+            "captureevents": false,
+            "name": "name",
+            "templateitemname": "templateitemname",
+        });
+
+        assert_eq!(to_value(annotation).unwrap(), expected);
+    }
 
     #[test]
-    fn test_serialize_layout() {}
+    fn test_serialize_layout() {
+        let layout = Layout::new().title(Title::new("title")).show_legend(false);
+
+        let expected = json!({});
+
+        assert_eq!(to_value(layout).unwrap(), expected);
+    }
 }
