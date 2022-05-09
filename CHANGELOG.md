@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.8.0] - 2022-xx-xx
 ### Added
 ### Changed
-- Improve implementation of private::NumOrString to support more primitive types ([Issue 
+- Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
 #47](https://github.com/igiagkiozis/plotly/issues/47))
+### Fixed
+- Typos in `CONTRIBUTING.md`
 ### Updated
 - `ndarray` to `0.15.4`.
 - `serde` to `1.0.132`.
