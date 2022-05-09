@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.8.0] - 2022-xx-xx
 ### Added
 - impl `Clone` for `Plot`
+- Support for [configuration options](https://plotly.com/javascript/configuration-options/)
 ### Changed
 - Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
 #47](https://github.com/igiagkiozis/plotly/issues/47))
