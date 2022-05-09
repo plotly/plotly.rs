@@ -13,7 +13,7 @@ Verifiable example].
 [Minimal, Complete, and Verifiable example]: https://stackoverflow.com/help/mcve
 
 When making a feature request, please make it clear what problem you intend to
-solve with the feature, any ideas for how Serde could support solving that
+solve with the feature, any ideas for how Plotly.rs could support solving that
 problem, any possible alternatives, and any disadvantages.
 
 ## Process
@@ -27,11 +27,11 @@ appropriately the [change log](CHANGELOG.md).
 
 For change-log updates please use previous entries as reference, namely classify
 the nature of the change, e.g. fixed, changed, added etc., and a brief description. The entry in the change-log that should be
-used for the update will always be marked with YEAR-XX-XX, e.g. 2020-XX-XX.
+used for the update will always be marked with YEAR-XX-XX, e.g. 2022-XX-XX.
 
 Check that the test suite passes locally and that all examples still execute and produce the expected results before submitting a pull request.
 
-Make a pull request with our changes directly to the `dev` branch. Please note, pull requests to the `master` branch will not
+Make a pull request with your changes directly to the `dev` branch. Please note, pull requests to the `master` branch will not
 be considered. The `master` branch is reserved for release.
 
 

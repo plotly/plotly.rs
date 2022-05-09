@@ -20,19 +20,18 @@ kaleido = ["plotly_kaleido"]
 plotly_ndarray = ["ndarray"]
 
 [dependencies]
-askama = "0.10.5"
+askama = "0.11.0"
 dyn-clone = { version = "1" }
-ndarray = { version = "0.15.1", optional = true }
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = true }
-rand = "0.8.3"
-rand_distr = "0.4.0"
-serde = { version = "1.0.125", features = ["derive"] }
-serde_json = "1.0.64"
-
+ndarray = { version = "0.15.4", optional = true }
+serde = { version = "1.0.132", features = ["derive"] }
+serde_json = "1.0.73"
+rand = "0.8.4"
+rand_distr = "0.4.2"
 
 [dev-dependencies]
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido" }
-itertools = "0.10.0"
+itertools = "0.10.3"
 itertools-num = "0.1.3"
 csv = "1.1.6"
-ndarray = "0.15.1"
+ndarray = "0.15.4"

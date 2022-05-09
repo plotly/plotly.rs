@@ -4,9 +4,8 @@ use crate::common::{
     TickFormatStop, TickMode, Title,
 };
 use crate::plot::Trace;
-use crate::private;
-use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum};
-use serde::Serialize;
+use crate::private::{self, NumOrString, NumOrStringCollection};
+use serde::{Serialize, Serializer};
 
 #[derive(Serialize, Debug, Clone)]
 pub enum AxisType {
@@ -372,7 +371,7 @@ pub struct RangeSliderYAxis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
     range_mode: Option<SliderRangeMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    range: Option<Vec<NumOrStringWrapper>>,
+    range: Option<NumOrStringCollection>,
 }
 
 impl RangeSliderYAxis {
@@ -385,9 +384,8 @@ impl RangeSliderYAxis {
         self
     }
 
-    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> RangeSliderYAxis {
-        let wrapped = to_num_or_string_wrapper(range);
-        self.range = Some(wrapped);
+    pub fn range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> RangeSliderYAxis {
+        self.range = Some(range.into());
         self
     }
 }
@@ -403,7 +401,7 @@ pub struct RangeSlider {
     #[serde(skip_serializing_if = "Option::is_none", rename = "autorange")]
     auto_range: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    range: Option<Vec<NumOrStringWrapper>>,
+    range: Option<NumOrStringCollection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     thickness: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -437,9 +435,8 @@ impl RangeSlider {
         self
     }
 
-    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> RangeSlider {
-        let wrapped = to_num_or_string_wrapper(range);
-        self.range = Some(wrapped);
+    pub fn range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> RangeSlider {
+        self.range = Some(range.into());
         self
     }
 
@@ -719,7 +716,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "rangemode")]
     range_mode: Option<RangeMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    range: Option<Vec<NumOrStringWrapper>>,
+    range: Option<NumOrStringCollection>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fixedrange")]
     fixed_range: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -879,9 +876,8 @@ impl Axis {
         self
     }
 
-    pub fn range<C: NumOrString>(mut self, range: Vec<C>) -> Axis {
-        let wrapped = to_num_or_string_wrapper(range);
-        self.range = Some(wrapped);
+    pub fn range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> Axis {
+        self.range = Some(range.into());
         self
     }
 
@@ -1318,20 +1314,30 @@ impl LayoutGrid {
     }
 }
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub enum UniformTextMode {
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "hide")]
     Hide,
-    #[serde(rename = "show")]
     Show,
 }
 
-#[derive(Serialize, Debug, Default, Clone)]
+impl Serialize for UniformTextMode {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::False => serializer.serialize_bool(false),
+            Self::Hide => serializer.serialize_str("hide"),
+            Self::Show => serializer.serialize_str("show"),
+        }
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
 pub struct UniformText {
     #[serde(skip_serializing_if = "Option::is_none")]
-    mode: Option<TruthyEnum<UniformTextMode>>,
+    mode: Option<UniformTextMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
     min_size: Option<usize>,
 }
@@ -1342,7 +1348,7 @@ impl UniformText {
     }
 
     pub fn mode(mut self, mode: UniformTextMode) -> UniformText {
-        self.mode = Some(TruthyEnum { e: mode });
+        self.mode = Some(mode);
         self
     }
 
@@ -1352,23 +1358,33 @@ impl UniformText {
     }
 }
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub enum HoverMode {
-    #[serde(rename = "x")]
     X,
-    #[serde(rename = "y")]
     Y,
-    #[serde(rename = "closest")]
     Closest,
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "x unified")]
     XUnified,
-    #[serde(rename = "y unified")]
     YUnified,
 }
 
-#[derive(Serialize, Debug, Default, Clone)]
+impl Serialize for HoverMode {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::X => serializer.serialize_str("x"),
+            Self::Y => serializer.serialize_str("y"),
+            Self::Closest => serializer.serialize_str("closest"),
+            Self::False => serializer.serialize_bool(false),
+            Self::XUnified => serializer.serialize_str("x unified"),
+            Self::YUnified => serializer.serialize_str("y unified"),
+        }
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
 pub struct ModeBar {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
@@ -1490,21 +1506,21 @@ pub struct Shape {
     #[serde(skip_serializing_if = "Option::is_none", rename = "xsizemode")]
     x_size_mode: Option<ShapeSizeMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
-    x_anchor: Option<NumOrStringWrapper>,
+    x_anchor: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    x0: Option<NumOrStringWrapper>,
+    x0: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    x1: Option<NumOrStringWrapper>,
+    x1: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yref")]
     y_ref: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "ysizemode")]
     y_size_mode: Option<ShapeSizeMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
-    y_anchor: Option<NumOrStringWrapper>,
+    y_anchor: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    y0: Option<NumOrStringWrapper>,
+    y0: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    y1: Option<NumOrStringWrapper>,
+    y1: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
     path: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1578,20 +1594,20 @@ impl Shape {
     /// the x axis to which `x0`, `x1` and x coordinates within `path` are relative to. E.g. useful
     /// to attach a pixel sized shape to a certain data value. No effect when `xsizemode` not set
     /// to "pixel".
-    pub fn x_anchor<C: NumOrString>(mut self, x_anchor: C) -> Shape {
-        self.x_anchor = Some(x_anchor.to_num_or_string());
+    pub fn x_anchor<V: Into<NumOrString>>(mut self, x_anchor: V) -> Shape {
+        self.x_anchor = Some(x_anchor.into());
         self
     }
 
     /// Sets the shape's starting x position. See `type` and `xsizemode` for more info.
-    pub fn x0<C: NumOrString>(mut self, x0: C) -> Shape {
-        self.x0 = Some(x0.to_num_or_string());
+    pub fn x0<V: Into<NumOrString>>(mut self, x0: V) -> Shape {
+        self.x0 = Some(x0.into());
         self
     }
 
     /// Sets the shape's end x position. See `type` and `xsizemode` for more info.
-    pub fn x1<C: NumOrString>(mut self, x1: C) -> Shape {
-        self.x1 = Some(x1.to_num_or_string());
+    pub fn x1<V: Into<NumOrString>>(mut self, x1: V) -> Shape {
+        self.x1 = Some(x1.into());
         self
     }
 
@@ -1619,20 +1635,20 @@ impl Shape {
     /// the y axis to which `y0`, `y1` and y coordinates within `path` are relative to. E.g. useful
     /// to attach a pixel sized shape to a certain data value. No effect when `ysizemode` not set
     /// to "pixel".
-    pub fn y_anchor<C: NumOrString>(mut self, y_anchor: C) -> Shape {
-        self.y_anchor = Some(y_anchor.to_num_or_string());
+    pub fn y_anchor<V: Into<NumOrString>>(mut self, y_anchor: V) -> Shape {
+        self.y_anchor = Some(y_anchor.into());
         self
     }
 
     /// Sets the shape's starting y position. See `type` and `ysizemode` for more info.
-    pub fn y0<C: NumOrString>(mut self, y0: C) -> Shape {
-        self.y0 = Some(y0.to_num_or_string());
+    pub fn y0<V: Into<NumOrString>>(mut self, y0: V) -> Shape {
+        self.y0 = Some(y0.into());
         self
     }
 
     /// Sets the shape's end y position. See `type` and `ysizemode` for more info.
-    pub fn y1<C: NumOrString>(mut self, y1: C) -> Shape {
-        self.y1 = Some(y1.to_num_or_string());
+    pub fn y1<V: Into<NumOrString>>(mut self, y1: V) -> Shape {
+        self.y1 = Some(y1.into());
         self
     }
 
@@ -1821,17 +1837,27 @@ pub enum ArrowSide {
     None,
 }
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub enum ClickToShow {
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "onoff")]
     OnOff,
-    #[serde(rename = "onout")]
     OnOut,
 }
 
-#[derive(Serialize, Debug, Default, Clone)]
+impl Serialize for ClickToShow {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::False => serializer.serialize_bool(false),
+            Self::OnOff => serializer.serialize_str("onoff"),
+            Self::OnOut => serializer.serialize_str("onout"),
+        }
+    }
+}
+
+#[derive(Serialize, Debug, Default)]
 pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
@@ -1880,9 +1906,9 @@ pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none", rename = "startstandoff")]
     start_stand_off: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    ax: Option<NumOrStringWrapper>,
+    ax: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    ay: Option<NumOrStringWrapper>,
+    ay: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "axref")]
     ax_ref: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "ayref")]
@@ -1890,7 +1916,7 @@ pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none", rename = "xref")]
     x_ref: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    x: Option<NumOrStringWrapper>,
+    x: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
     x_anchor: Option<Anchor>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xshift")]
@@ -1898,17 +1924,17 @@ pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none", rename = "yref")]
     y_ref: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    y: Option<NumOrStringWrapper>,
+    y: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
     y_anchor: Option<Anchor>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yshift")]
     y_shift: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "clicktoshow")]
-    click_to_show: Option<TruthyEnum<ClickToShow>>,
+    click_to_show: Option<ClickToShow>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xclick")]
-    x_click: Option<NumOrStringWrapper>,
+    x_click: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yclick")]
-    y_click: Option<NumOrStringWrapper>,
+    y_click: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
     hover_text: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
@@ -2084,8 +2110,8 @@ impl Annotation {
     /// positive (negative) component corresponds to an arrow pointing from right to left (left
     /// to right). If `axref` is an axis, this is an absolute value on that axis, like `x`, NOT a
     /// relative value.
-    pub fn ax<C: NumOrString>(mut self, ax: C) -> Annotation {
-        self.ax = Some(ax.to_num_or_string());
+    pub fn ax<V: Into<NumOrString>>(mut self, ax: V) -> Annotation {
+        self.ax = Some(ax.into());
         self
     }
 
@@ -2093,8 +2119,8 @@ impl Annotation {
     /// positive (negative) component corresponds to an arrow pointing from bottom to top (top to
     /// bottom). If `ayref` is an axis, this is an absolute value on that axis, like `y`, NOT a
     /// relative value.
-    pub fn ay<C: NumOrString>(mut self, ay: C) -> Annotation {
-        self.ay = Some(ay.to_num_or_string());
+    pub fn ay<V: Into<NumOrString>>(mut self, ay: V) -> Annotation {
+        self.ay = Some(ay.into());
         self
     }
 
@@ -2130,8 +2156,8 @@ impl Annotation {
     /// data, though Date objects and unix milliseconds will be accepted and converted to strings.
     /// If the axis `type` is "category", it should be numbers, using the scale where each category
     /// is assigned a serial number from zero in the order it appears.
-    pub fn x<C: NumOrString>(mut self, x: C) -> Annotation {
-        self.x = Some(x.to_num_or_string());
+    pub fn x<V: Into<NumOrString>>(mut self, x: V) -> Annotation {
+        self.x = Some(x.into());
         self
     }
 
@@ -2167,8 +2193,8 @@ impl Annotation {
     /// though Date objects and unix milliseconds will be accepted and converted to strings. If the
     /// axis `type` is "category", it should be numbers, using the scale where each category is
     /// assigned a serial number from zero in the order it appears.
-    pub fn y<C: NumOrString>(mut self, y: C) -> Annotation {
-        self.y = Some(y.to_num_or_string());
+    pub fn y<V: Into<NumOrString>>(mut self, y: V) -> Annotation {
+        self.y = Some(y.into());
         self
     }
 
@@ -2198,22 +2224,22 @@ impl Annotation {
     /// need to show/hide this annotation in response to different `x` or `y` values, you can set
     /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
     /// markers though, `standoff` is preferred over `xclick` and `yclick`.
-    pub fn click_to_show(mut self, click_to_show: TruthyEnum<ClickToShow>) -> Annotation {
+    pub fn click_to_show(mut self, click_to_show: ClickToShow) -> Annotation {
         self.click_to_show = Some(click_to_show);
         self
     }
 
     /// Toggle this annotation when clicking a data point whose `x` value is `xclick` rather than
     /// the annotation's `x` value.
-    pub fn x_click<C: NumOrString>(mut self, x_click: C) -> Annotation {
-        self.x_click = Some(x_click.to_num_or_string());
+    pub fn x_click<V: Into<NumOrString>>(mut self, x_click: V) -> Annotation {
+        self.x_click = Some(x_click.into());
         self
     }
 
     /// Toggle this annotation when clicking a data point whose `y` value is `yclick` rather than
     /// the annotation's `y` value.
-    pub fn y_click<C: NumOrString>(mut self, y_click: C) -> Annotation {
-        self.y_click = Some(y_click.to_num_or_string());
+    pub fn y_click<V: Into<NumOrString>>(mut self, y_click: V) -> Annotation {
+        self.y_click = Some(y_click.into());
         self
     }
 
@@ -2295,7 +2321,7 @@ pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
     mode_bar: Option<ModeBar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovermode")]
-    hover_mode: Option<TruthyEnum<HoverMode>>,
+    hover_mode: Option<HoverMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "clickmode")]
     click_mode: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dragmode")]
@@ -2503,7 +2529,7 @@ impl Layout {
     /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
     /// else the default value is "closest".
     pub fn hover_mode(mut self, hover_mode: HoverMode) -> Layout {
-        self.hover_mode = Some(TruthyEnum { e: hover_mode });
+        self.hover_mode = Some(hover_mode);
         self
     }
 
@@ -2757,5 +2783,44 @@ impl Layout {
 impl Trace for Layout {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_uniform_text_mode() {
+        assert_eq!(to_value(UniformTextMode::False).unwrap(), json!(false));
+        assert_eq!(to_value(UniformTextMode::Hide).unwrap(), json!("hide"));
+        assert_eq!(to_value(UniformTextMode::Show).unwrap(), json!("show"));
+    }
+
+    #[test]
+    fn test_serialize_click_to_show() {
+        assert_eq!(to_value(ClickToShow::False).unwrap(), json!(false));
+        assert_eq!(to_value(ClickToShow::OnOff).unwrap(), json!("onoff"));
+        assert_eq!(to_value(ClickToShow::OnOut).unwrap(), json!("onout"));
+    }
+
+    #[test]
+    fn test_serialize_hover_mode() {
+        assert_eq!(to_value(HoverMode::X).unwrap(), json!("x"));
+        assert_eq!(to_value(HoverMode::Y).unwrap(), json!("y"));
+        assert_eq!(to_value(HoverMode::Closest).unwrap(), json!("closest"));
+        assert_eq!(to_value(HoverMode::False).unwrap(), json!(false));
+        assert_eq!(to_value(HoverMode::XUnified).unwrap(), json!("x unified"));
+        assert_eq!(to_value(HoverMode::YUnified).unwrap(), json!("y unified"));
+    }
+
+    #[test]
+    fn test_serialize_axis() {
+        let axis = Axis::new().range(vec![1.0_f32, 2.0]);
+        let expected = json!({"range": [1.0, 2.0]});
+
+        assert_eq!(to_value(axis).unwrap(), expected);
     }
 }
