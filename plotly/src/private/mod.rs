@@ -6,10 +6,6 @@ use crate::ndarray::ArrayTraces;
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix2};
 
-pub trait NumOrString {
-    fn to_num_or_string(&self) -> NumOrStringWrapper;
-}
-
 pub fn owned_string_vector<S: AsRef<str>>(s: Vec<S>) -> Vec<String> {
     s.iter()
         .map(|x| x.as_ref().to_string())
@@ -20,14 +16,6 @@ pub fn to_color_array<C: Color>(v: Vec<C>) -> Vec<ColorWrapper> {
     let mut sv: Vec<ColorWrapper> = Vec::with_capacity(v.len());
     for e in v.iter() {
         sv.push(e.to_color());
-    }
-    sv
-}
-
-pub fn to_num_or_string_wrapper<C: NumOrString>(v: Vec<C>) -> Vec<NumOrStringWrapper> {
-    let mut sv: Vec<NumOrStringWrapper> = Vec::with_capacity(v.len());
-    for e in v.iter() {
-        sv.push(e.to_num_or_string());
     }
     sv
 }
@@ -45,61 +33,95 @@ pub fn is_valid_color_array(a: &[ColorWrapper]) -> bool {
     !sv.is_empty() && !fv.is_empty()
 }
 
-impl NumOrString for String {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::S(self.to_owned())
-    }
-}
-
-impl NumOrString for str {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::S(self.to_owned())
-    }
-}
-
-impl NumOrString for &String {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::S(String::from(*self))
-    }
-}
-
-impl NumOrString for &str {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::S(String::from(*self))
-    }
-}
-
-impl NumOrString for f64 {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::F(*self)
-    }
-}
-
-impl NumOrString for usize {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::U(*self as u64)
-    }
-}
-
-impl NumOrString for i32 {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::I(*self as i64)
-    }
-}
-
-impl NumOrString for i64 {
-    fn to_num_or_string(&self) -> NumOrStringWrapper {
-        NumOrStringWrapper::I(*self)
-    }
-}
-
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone, Debug, PartialEq)]
 #[serde(untagged)]
-pub enum NumOrStringWrapper {
+pub enum NumOrString {
     S(String),
     F(f64),
     I(i64),
     U(u64),
+}
+
+impl From<String> for NumOrString {
+    fn from(item: String) -> Self {
+        NumOrString::S(item)
+    }
+}
+
+impl From<&String> for NumOrString {
+    fn from(item: &String) -> Self {
+        NumOrString::S(item.clone())
+    }
+}
+
+impl From<&str> for NumOrString {
+    fn from(item: &str) -> Self {
+        NumOrString::S(item.to_string())
+    }
+}
+
+impl From<f64> for NumOrString {
+    fn from(item: f64) -> Self {
+        NumOrString::F(item)
+    }
+}
+
+impl From<f32> for NumOrString {
+    fn from(item: f32) -> Self {
+        NumOrString::F(item as f64)
+    }
+}
+
+impl From<usize> for NumOrString {
+    fn from(item: usize) -> Self {
+        NumOrString::U(item as u64)
+    }
+}
+
+impl From<u64> for NumOrString {
+    fn from(item: u64) -> Self {
+        NumOrString::U(item)
+    }
+}
+
+impl From<u32> for NumOrString {
+    fn from(item: u32) -> Self {
+        NumOrString::U(item as u64)
+    }
+}
+
+impl From<isize> for NumOrString {
+    fn from(item: isize) -> Self {
+        NumOrString::I(item as i64)
+    }
+}
+
+impl From<i64> for NumOrString {
+    fn from(item: i64) -> Self {
+        NumOrString::I(item)
+    }
+}
+
+impl From<i32> for NumOrString {
+    fn from(item: i32) -> Self {
+        NumOrString::I(item as i64)
+    }
+}
+
+#[derive(Serialize, Clone, Debug, PartialEq)]
+pub struct NumOrStringCollection(Vec<NumOrString>);
+
+impl<T> From<Vec<T>> for NumOrStringCollection
+where
+    T: Into<NumOrString> + Clone,
+{
+    fn from(items: Vec<T>) -> Self {
+        let mut collection: Vec<NumOrString> = Vec::with_capacity(items.len());
+        for item in items.iter().cloned() {
+            collection.push(item.into());
+        }
+        Self(collection)
+    }
 }
 
 pub fn copy_iterable_to_vec<T, I>(iterable: I) -> Vec<T>
@@ -134,4 +156,84 @@ where
     }
 
     traces
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_num_or_string() {
+        let x: NumOrString = "String".to_string().into();
+        assert_eq!(x, NumOrString::S("String".to_string()));
+
+        let x: NumOrString = (&"String".to_string()).into();
+        assert_eq!(x, NumOrString::S("String".to_string()));
+
+        let x: NumOrString = "&str".into();
+        assert_eq!(x, NumOrString::S("&str".to_string()));
+
+        let x: NumOrString = 100.0_f64.into();
+        assert_eq!(x, NumOrString::F(100.));
+
+        let x: NumOrString = 100.0_f32.into();
+        assert_eq!(x, NumOrString::F(100.));
+
+        let x: NumOrString = (-100 as isize).into();
+        assert_eq!(x, NumOrString::I(-100));
+
+        let x: NumOrString = (-100 as i64).into();
+        assert_eq!(x, NumOrString::I(-100));
+
+        let x: NumOrString = (-100 as i32).into();
+        assert_eq!(x, NumOrString::I(-100));
+
+        let x: NumOrString = 100_usize.into();
+        assert_eq!(x, NumOrString::U(100));
+
+        let x: NumOrString = 100_u64.into();
+        assert_eq!(x, NumOrString::U(100));
+
+        let x: NumOrString = 100_u32.into();
+        assert_eq!(x, NumOrString::U(100));
+    }
+
+    #[test]
+    fn test_num_or_string_collection() {
+        let x: NumOrStringCollection = vec!["&str"].into();
+        let expected = NumOrStringCollection(vec![NumOrString::S("&str".to_string())]);
+        assert_eq!(x, expected);
+
+        let x: NumOrStringCollection = vec![1.].into();
+        let expected = NumOrStringCollection(vec![NumOrString::F(1.)]);
+        assert_eq!(x, expected);
+
+        let x: NumOrStringCollection = vec![1_i32].into();
+        let expected = NumOrStringCollection(vec![NumOrString::I(1)]);
+        assert_eq!(x, expected);
+
+        let x: NumOrStringCollection = vec![1_u32].into();
+        let expected = NumOrStringCollection(vec![NumOrString::U(1)]);
+        assert_eq!(x, expected);
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_num_or_string() {
+        assert_eq!(to_value(NumOrString::S("&str".to_string())).unwrap(), json!("&str"));
+        assert_eq!(to_value(NumOrString::F(100.)).unwrap(), json!(100.0));
+        assert_eq!(to_value(NumOrString::I(-50)).unwrap(), json!(-50));
+        assert_eq!(to_value(NumOrString::U(50)).unwrap(), json!(50));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_num_or_string_collection() {
+        assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::S("&str".to_string())])).unwrap(), json!(["&str"]));
+        assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::F(100.)])).unwrap(), json!([100.0]));
+        assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::I(-50)])).unwrap(), json!([-50]));
+        assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::U(50)])).unwrap(), json!([50]));
+    }
 }

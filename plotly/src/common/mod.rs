@@ -3,8 +3,8 @@ use serde::{Serialize, Serializer};
 pub mod color;
 
 use crate::common::color::ColorWrapper;
-use crate::private;
-use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper};
+use crate::private::NumOrString;
+use crate::private::{self, NumOrStringCollection};
 use color::Color;
 
 #[derive(Serialize, Clone, Debug)]
@@ -820,7 +820,7 @@ impl Gradient {
 pub struct TickFormatStop {
     enabled: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
-    dtick_range: Option<Vec<NumOrStringWrapper>>,
+    dtick_range: Option<NumOrStringCollection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -842,9 +842,8 @@ impl TickFormatStop {
         self
     }
 
-    pub fn dtick_range<C: NumOrString>(mut self, range: Vec<C>) -> TickFormatStop {
-        let wrapped = to_num_or_string_wrapper(range);
-        self.dtick_range = Some(wrapped);
+    pub fn dtick_range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> TickFormatStop {
+        self.dtick_range = Some(range.into());
         self
     }
 
