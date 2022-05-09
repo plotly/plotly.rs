@@ -8,7 +8,7 @@ use crate::private;
 use crate::Trace;
 use serde::{Serialize, Serializer};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BoxMean {
     True,
     False,
@@ -28,7 +28,7 @@ impl Serialize for BoxMean {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BoxPoints {
     All,
     Outliers,
@@ -50,7 +50,7 @@ impl Serialize for BoxPoints {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum QuartileMethod {
     #[serde(rename = "linear")]
     Linear,
@@ -60,11 +60,11 @@ pub enum QuartileMethod {
     Inclusive,
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct BoxPlot<Y, X>
 where
-    Y: Serialize + Default,
-    X: Serialize + Default,
+    Y: Serialize + Default + Clone,
+    X: Serialize + Default + Clone,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -151,7 +151,7 @@ where
 
 impl<Y> BoxPlot<Y, f64>
 where
-    Y: Serialize + Default,
+    Y: Serialize + Default + Clone,
 {
     pub fn new(y: Vec<Y>) -> Box<BoxPlot<Y, f64>> {
         Box::new(BoxPlot {
@@ -165,8 +165,8 @@ where
 
 impl<Y, X> BoxPlot<Y, X>
 where
-    Y: Serialize + Default,
-    X: Serialize + Default,
+    Y: Serialize + Default + Clone,
+    X: Serialize + Default + Clone,
 {
     pub fn new_xy(x: Vec<X>, y: Vec<Y>) -> Box<BoxPlot<Y, X>> {
         Box::new(BoxPlot {
@@ -401,8 +401,8 @@ where
 
 impl<X, Y> Trace for BoxPlot<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

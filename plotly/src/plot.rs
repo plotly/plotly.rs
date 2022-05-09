@@ -2,6 +2,7 @@
 extern crate plotly_kaleido;
 
 use askama::Template;
+use dyn_clone::DynClone;
 use rand::{thread_rng, Rng};
 use std::env;
 use std::fs::File;
@@ -55,9 +56,11 @@ pub enum ImageFormat {
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
-pub trait Trace {
+pub trait Trace: DynClone {
     fn serialize(&self) -> String;
 }
+
+dyn_clone::clone_trait_object!(Trace);
 
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
 /// also be specified. Its function is to serialize `Trace`s and the `Layout` in html format and
@@ -91,7 +94,7 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Plot {
     traces: Vec<Box<dyn Trace>>,
     layout: Option<Layout>,
@@ -485,6 +488,12 @@ impl Plot {
     }
 }
 
+impl PartialEq for Plot {
+    fn eq(&self, other: &Self) -> bool {
+        self.to_json() == other.to_json()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -531,6 +540,32 @@ mod tests {
     fn test_lab_display() {
         let plot = create_test_plot();
         plot.lab_display();
+    }
+
+    #[test]
+    fn test_plot_eq() {
+        let plot1 = create_test_plot();
+        let plot2 = create_test_plot();
+
+        assert!(plot1 == plot2);
+    }
+
+    #[test]
+    fn test_plot_neq() {
+        let plot1 = create_test_plot();
+        let trace2 = Scatter::new(vec![10, 1, 2], vec![6, 10, 2]).name("trace2");
+        let mut plot2 = Plot::new();
+        plot2.add_trace(trace2);
+
+        assert!(plot1 != plot2);
+    }
+
+    #[test]
+    fn test_plot_clone() {
+        let plot1 = create_test_plot();
+        let plot2 = plot1.clone();
+
+        assert!(plot1 == plot2);
     }
 
     #[test]
