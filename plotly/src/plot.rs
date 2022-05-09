@@ -196,6 +196,11 @@ impl Plot {
         self.layout = layout;
     }
 
+    /// Set the `Configuration` to be used by `Plot`.
+    pub fn set_configuration(&mut self, configuration: Configuration) {
+        self.configuration = configuration;
+    }
+
     /// Get the contained data elements.
     pub fn data(&self) -> &Traces {
         &self.traces
@@ -206,9 +211,9 @@ impl Plot {
         &self.layout
     }
 
-    /// Set the `Configuration` to be used by `Plot`.
-    pub fn set_configuration(&mut self, configuration: Configuration) {
-        self.configuration = configuration;
+    /// Get the configuration specification of the plot.
+    pub fn configuration(&self) -> &Configuration {
+        &self.configuration
     }
 
     /// Renders the contents of the `Plot` and displays them in the system default browser.
