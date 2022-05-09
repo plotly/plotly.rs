@@ -1,6 +1,8 @@
 //! Histogram plot
 
-use crate::common::{Calendar, Dim, ErrorData, HoverInfo, Label, Marker, Orientation, PlotType};
+use crate::common::{
+    Calendar, Dim, ErrorData, HoverInfo, Label, Marker, Orientation, PlotType, Visible,
+};
 use crate::Trace;
 use serde::Serialize;
 
@@ -115,7 +117,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -348,7 +350,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Self> {
+    pub fn visible(mut self, visible: Visible) -> Box<Self> {
         self.visible = Some(visible);
         Box::new(self)
     }

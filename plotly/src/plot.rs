@@ -2,6 +2,7 @@
 extern crate plotly_kaleido;
 
 use askama::Template;
+use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use rand::{thread_rng, Rng};
 use serde::Serialize;
@@ -11,7 +12,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use crate::Layout;
+use crate::{Configuration, Layout};
 use rand_distr::Alphanumeric;
 
 const PLOTLY_JS: &str = "plotly-2.8.3.min.js";
@@ -57,13 +58,14 @@ pub enum ImageFormat {
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
-pub trait Trace: ErasedSerialize {
+pub trait Trace: DynClone + ErasedSerialize {
     fn to_json(&self) -> String;
 }
 
+dyn_clone::clone_trait_object!(Trace);
 erased_serde::serialize_trait_object!(Trace);
 
-#[derive(Default, Serialize)]
+#[derive(Default, Serialize, Clone)]
 #[serde(transparent)]
 pub struct Traces {
     traces: Vec<Box<dyn Trace>>,
@@ -117,10 +119,10 @@ impl Traces {
 ///     plot.add_trace(trace1);
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
-/// 
+///
 ///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
 ///     plot.set_layout(layout);
-/// 
+///
 ///     plot.show();
 /// }
 ///
@@ -129,11 +131,13 @@ impl Traces {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default, Serialize)]
+#[derive(Default, Serialize, Clone)]
 pub struct Plot {
     #[serde(rename = "data")]
     traces: Traces,
     layout: Layout,
+    #[serde(rename = "config")]
+    configuration: Configuration,
     #[serde(skip)]
     remote_plotly_js: bool,
 }
@@ -164,7 +168,6 @@ impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Traces::new(),
-            layout: Layout::new(),
             remote_plotly_js: true,
             ..Default::default()
         }
@@ -201,6 +204,11 @@ impl Plot {
     /// Get the layout specification of the plot.
     pub fn layout(&self) -> &Layout {
         &self.layout
+    }
+
+    /// Set the `Configuration` to be used by `Plot`.
+    pub fn set_configuration(&mut self, configuration: Configuration) {
+        self.configuration = configuration;
     }
 
     /// Renders the contents of the `Plot` and displays them in the system default browser.
@@ -480,6 +488,12 @@ impl Plot {
     }
 }
 
+impl PartialEq for Plot {
+    fn eq(&self, other: &Self) -> bool {
+        self.to_json() == other.to_json()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::{json, to_value};
@@ -535,7 +549,8 @@ mod tests {
                     "y": [6, 10, 2]
                 }
             ],
-            "layout": {}
+            "layout": {},
+            "config": {},
         });
 
         assert_eq!(to_value(plot).unwrap(), expected);
@@ -560,7 +575,8 @@ mod tests {
                 "title": {
                     "text": "Title"
                 }
-            }
+            },
+            "config": {},
         });
 
         assert_eq!(to_value(plot).unwrap(), expected);
@@ -600,6 +616,32 @@ mod tests {
         });
 
         assert_eq!(to_value(plot.layout()).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_plot_eq() {
+        let plot1 = create_test_plot();
+        let plot2 = create_test_plot();
+
+        assert!(plot1 == plot2);
+    }
+
+    #[test]
+    fn test_plot_neq() {
+        let plot1 = create_test_plot();
+        let trace2 = Scatter::new(vec![10, 1, 2], vec![6, 10, 2]).name("trace2");
+        let mut plot2 = Plot::new();
+        plot2.add_trace(trace2);
+
+        assert!(plot1 != plot2);
+    }
+
+    #[test]
+    fn test_plot_clone() {
+        let plot1 = create_test_plot();
+        let plot2 = plot1.clone();
+
+        assert!(plot1 == plot2);
     }
 
     #[test]
