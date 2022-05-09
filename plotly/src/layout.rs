@@ -1334,7 +1334,7 @@ impl Serialize for UniformTextMode {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct UniformText {
     #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<UniformTextMode>,
@@ -1384,7 +1384,7 @@ impl Serialize for HoverMode {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct ModeBar {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
@@ -1857,7 +1857,7 @@ impl Serialize for ClickToShow {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
