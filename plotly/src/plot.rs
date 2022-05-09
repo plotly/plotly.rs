@@ -10,7 +10,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use crate::Layout;
+use crate::{Configuration, Layout};
 use rand_distr::Alphanumeric;
 
 const PLOTLY_JS: &str = "plotly-2.8.3.min.js";
@@ -98,6 +98,7 @@ dyn_clone::clone_trait_object!(Trace);
 pub struct Plot {
     traces: Vec<Box<dyn Trace>>,
     layout: Option<Layout>,
+    configuration: Option<Configuration>,
     remote_plotly_js: bool,
 }
 
@@ -153,6 +154,11 @@ impl Plot {
     /// Set the `Layout` to be used by `Plot`.
     pub fn set_layout(&mut self, layout: Layout) {
         self.layout = Some(layout);
+    }
+
+    /// Set the `Configuration` to be used by `Plot`.
+    pub fn set_configuration(&mut self, configuration: Configuration) {
+        self.configuration = Some(configuration);
     }
 
     /// Renders the contents of the `Plot` and displays them in the system default browser.
@@ -392,7 +398,7 @@ impl Plot {
         }
         plot_data.push_str("];\n");
         let layout_data = match &self.layout {
-            Some(layout) => format!("var layout = {};", Trace::serialize(layout)),
+            Some(layout) => format!("var layout = {};", serde_json::to_string(layout).unwrap()),
             None => {
                 let mut s = String::from("var layout = {");
                 s.push_str("};");
@@ -440,10 +446,6 @@ impl Plot {
             let s = trace.serialize();
             plot_data.push(s);
         }
-        let layout_data = match &self.layout {
-            Some(layout) => Trace::serialize(layout),
-            None => "{}".to_owned(),
-        };
 
         let mut json_data = String::new();
         json_data.push_str(r#"{"data": ["#);
@@ -457,7 +459,19 @@ impl Plot {
                 json_data.push(']');
             }
         }
-        json_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
+
+        let layout_data = match &self.layout {
+            Some(layout) => serde_json::to_string(layout).unwrap(),
+            None => "{}".to_string(),
+        };
+        json_data.push_str(&format!(r#", "layout": {}"#, layout_data));
+
+        let configuration_data = match &self.configuration {
+            Some(configuration) => serde_json::to_string(configuration).unwrap(),
+            None => "{}".to_string(),
+        };
+        json_data.push_str(&format!(r#", "config": {}"#, configuration_data));
+
         json_data.push('}');
         json_data
     }
