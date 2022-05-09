@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.1] - 2022-xx-xx
+## [0.8.0] - 2022-xx-xx
 ### Added
+### Changed
+- Improve implementation of private::NumOrString to support more primitive types ([Issue 
+#47](https://github.com/igiagkiozis/plotly/issues/47))
 ### Updated
 - `ndarray` to `0.15.4`.
 - `serde` to `1.0.132`.
@@ -27,8 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2021-01-31
 ### Added
-  - tag matches for struct Axis : allow for synchronisation between subplots on x-axis
-  - fn matches in impl of Axis
+- tag matches for struct Axis : allow for synchronisation between subplots on x-axis
+- fn matches in impl of Axis
 
 ## [0.6.0] - 2020-07-25
 ### Added

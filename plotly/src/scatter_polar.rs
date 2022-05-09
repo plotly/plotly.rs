@@ -5,15 +5,13 @@ use crate::common::{
     Dim, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode, Orientation, PlotType,
     Position, Visible,
 };
-use crate::private;
+use crate::private::{self, NumOrStringCollection};
 use crate::Trace;
 use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-use crate::private::{
-    copy_iterable_to_vec, to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum,
-};
+use crate::private::{copy_iterable_to_vec, NumOrString, TruthyEnum};
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 
@@ -42,7 +40,7 @@ where
     theta: Option<Vec<Theta>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    theta0: Option<NumOrStringWrapper>,
+    theta0: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
     dtheta: Option<f64>,
 
@@ -50,7 +48,7 @@ where
     r: Option<Vec<R>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    r0: Option<NumOrStringWrapper>,
+    r0: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
     dr: Option<f64>,
 
@@ -71,9 +69,9 @@ where
     hover_template: Option<Dim<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    meta: Option<NumOrStringWrapper>,
+    meta: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    custom_data: Option<Vec<NumOrStringWrapper>>,
+    custom_data: Option<NumOrStringCollection>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
@@ -312,8 +310,8 @@ where
 
     /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
     /// starting coordinate and `dx` the step.
-    pub fn theta0<C: NumOrString>(mut self, theta0: C) -> Box<Self> {
-        self.theta0 = Some(theta0.to_num_or_string());
+    pub fn theta0<V: Into<NumOrString>>(mut self, theta0: V) -> Box<Self> {
+        self.theta0 = Some(theta0.into());
         Box::new(self)
     }
 
@@ -325,8 +323,8 @@ where
 
     /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the
     /// starting coordinate and `dy` the step.
-    pub fn r0<C: NumOrString>(mut self, r0: C) -> Box<Self> {
-        self.r0 = Some(r0.to_num_or_string());
+    pub fn r0<V: Into<NumOrString>>(mut self, r0: V) -> Box<Self> {
+        self.r0 = Some(r0.into());
         Box::new(self)
     }
 
@@ -477,17 +475,16 @@ where
     /// `%{meta[i]}` where `i` is the index or key of the `meta` item in question. To access trace
     /// `meta` in layout attributes, use `%{data[n[.meta[i]}` where `i` is the index or key of the
     /// `meta` and `n` is the trace index.
-    pub fn meta<C: NumOrString>(mut self, meta: C) -> Box<Self> {
-        self.meta = Some(meta.to_num_or_string());
+    pub fn meta<V: Into<NumOrString>>(mut self, meta: V) -> Box<Self> {
+        self.meta = Some(meta.into());
         Box::new(self)
     }
 
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
     /// DOM elements
-    pub fn custom_data<C: NumOrString>(mut self, custom_data: Vec<C>) -> Box<Self> {
-        let wrapped = to_num_or_string_wrapper(custom_data);
-        self.custom_data = Some(wrapped);
+    pub fn custom_data<V: Into<NumOrString> + Clone>(mut self, custom_data: Vec<V>) -> Box<Self> {
+        self.custom_data = Some(custom_data.into());
         Box::new(self)
     }
 
