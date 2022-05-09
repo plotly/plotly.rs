@@ -2,18 +2,18 @@
 
 use crate::common::{
     Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, Marker, Orientation, PlotType,
-    TextAnchor, TextPosition,
+    TextAnchor, TextPosition, Visible,
 };
 use crate::Trace;
 use serde::Serialize;
 
 use crate::private;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Bar<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     x: Vec<X>,
     y: Vec<Y>,
@@ -21,7 +21,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -86,8 +86,8 @@ where
 
 impl<X, Y> Bar<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
         Box::new(Bar {
@@ -103,7 +103,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Bar<X, Y>> {
+    pub fn visible(mut self, visible: Visible) -> Box<Bar<X, Y>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -296,8 +296,8 @@ where
 
 impl<X, Y> Trace for Bar<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

@@ -1,10 +1,10 @@
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
 pub mod color;
 
 use crate::common::color::ColorWrapper;
-use crate::private;
-use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper};
+use crate::private::NumOrString;
+use crate::private::{self, NumOrStringCollection};
 use color::Color;
 
 #[derive(Serialize, Clone, Debug)]
@@ -14,14 +14,24 @@ pub enum Direction {
     Decreasing { line: Line },
 }
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub enum Visible {
-    #[serde(rename = "x")]
     True,
-    #[serde(rename = "x")]
     False,
-    #[serde(rename = "x")]
     LegendOnly,
+}
+
+impl Serialize for Visible {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::True => serializer.serialize_bool(true),
+            Self::False => serializer.serialize_bool(false),
+            Self::LegendOnly => serializer.serialize_str("legendonly"),
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -810,7 +820,7 @@ impl Gradient {
 pub struct TickFormatStop {
     enabled: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
-    dtick_range: Option<Vec<NumOrStringWrapper>>,
+    dtick_range: Option<NumOrStringCollection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -832,9 +842,8 @@ impl TickFormatStop {
         self
     }
 
-    pub fn dtick_range<C: NumOrString>(mut self, range: Vec<C>) -> TickFormatStop {
-        let wrapped = to_num_or_string_wrapper(range);
-        self.dtick_range = Some(wrapped);
+    pub fn dtick_range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> TickFormatStop {
+        self.dtick_range = Some(range.into());
         self
     }
 
@@ -1621,5 +1630,22 @@ impl ErrorData {
     pub fn width(mut self, width: usize) -> ErrorData {
         self.width = Some(width);
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_visible() {
+        assert_eq!(to_value(Visible::True).unwrap(), json!(true));
+        assert_eq!(to_value(Visible::False).unwrap(), json!(false));
+        assert_eq!(
+            to_value(Visible::LegendOnly).unwrap(),
+            json!("legendonly")
+        );
     }
 }

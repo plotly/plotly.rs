@@ -1,22 +1,22 @@
 //! Heat-map plot
 
-use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType};
+use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible};
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct HeatMap<Z, X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -76,7 +76,7 @@ where
 
 impl<Z> HeatMap<Z, f64, f64>
 where
-    Z: Serialize + Default,
+    Z: Serialize + Default + Clone,
 {
     pub fn new_z(z: Vec<Z>) -> Box<HeatMap<Z, f64, f64>> {
         Box::new(HeatMap {
@@ -89,9 +89,9 @@ where
 
 impl<X, Y, Z> HeatMap<Z, X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<HeatMap<Z, X, Y>> {
         Box::new(HeatMap {
@@ -108,7 +108,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<HeatMap<Z, X, Y>> {
+    pub fn visible(mut self, visible: Visible) -> Box<HeatMap<Z, X, Y>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -257,9 +257,9 @@ where
 
 impl<X, Y, Z> Trace for HeatMap<Z, X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()

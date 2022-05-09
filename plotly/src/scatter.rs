@@ -5,15 +5,13 @@ use crate::common::{
     Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };
-use crate::private;
+use crate::private::{self, NumOrStringCollection};
 use crate::Trace;
 use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-use crate::private::{
-    copy_iterable_to_vec, to_num_or_string_wrapper, NumOrString, NumOrStringWrapper, TruthyEnum,
-};
+use crate::private::{copy_iterable_to_vec, NumOrString};
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 
@@ -27,7 +25,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<TruthyEnum<Visible>>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -42,7 +40,7 @@ where
     x: Option<Vec<X>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    x0: Option<NumOrStringWrapper>,
+    x0: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
     dx: Option<f64>,
 
@@ -50,7 +48,7 @@ where
     y: Option<Vec<Y>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    y0: Option<NumOrStringWrapper>,
+    y0: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
     dy: Option<f64>,
 
@@ -68,9 +66,9 @@ where
     hover_template: Option<Dim<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    meta: Option<NumOrStringWrapper>,
+    meta: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    custom_data: Option<Vec<NumOrStringWrapper>>,
+    custom_data: Option<NumOrStringCollection>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
     x_axis: Option<String>,
@@ -278,7 +276,7 @@ where
     /// Determines whether or not this trace is visible. If `Visible::LegendOnly`, the trace is not
     /// drawn, but can appear as a legend item (provided that the legend itself is visible).
     pub fn visible(mut self, visible: Visible) -> Box<Self> {
-        self.visible = Some(TruthyEnum { e: visible });
+        self.visible = Some(visible);
         Box::new(self)
     }
 
@@ -320,8 +318,8 @@ where
 
     /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
     /// starting coordinate and `dx` the step.
-    pub fn x0<C: NumOrString>(mut self, x0: C) -> Box<Self> {
-        self.x0 = Some(x0.to_num_or_string());
+    pub fn x0<V: Into<NumOrString>>(mut self, x0: V) -> Box<Self> {
+        self.x0 = Some(x0.into());
         Box::new(self)
     }
 
@@ -333,8 +331,8 @@ where
 
     /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the
     /// starting coordinate and `dy` the step.
-    pub fn y0<C: NumOrString>(mut self, y0: C) -> Box<Self> {
-        self.y0 = Some(y0.to_num_or_string());
+    pub fn y0<V: Into<NumOrString>>(mut self, y0: V) -> Box<Self> {
+        self.y0 = Some(y0.into());
         Box::new(self)
     }
 
@@ -477,17 +475,16 @@ where
     /// `%{meta[i]}` where `i` is the index or key of the `meta` item in question. To access trace
     /// `meta` in layout attributes, use `%{data[n[.meta[i]}` where `i` is the index or key of the
     /// `meta` and `n` is the trace index.
-    pub fn meta<C: NumOrString>(mut self, meta: C) -> Box<Self> {
-        self.meta = Some(meta.to_num_or_string());
+    pub fn meta<V: Into<NumOrString>>(mut self, meta: V) -> Box<Self> {
+        self.meta = Some(meta.into());
         Box::new(self)
     }
 
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
     /// DOM elements
-    pub fn custom_data<C: NumOrString>(mut self, custom_data: Vec<C>) -> Box<Self> {
-        let wrapped = to_num_or_string_wrapper(custom_data);
-        self.custom_data = Some(wrapped);
+    pub fn custom_data<V: Into<NumOrString> + Clone>(mut self, custom_data: Vec<V>) -> Box<Self> {
+        self.custom_data = Some(custom_data.into());
         Box::new(self)
     }
 
