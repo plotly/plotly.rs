@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
 pub mod color;
 
@@ -14,14 +14,24 @@ pub enum Direction {
     Decreasing { line: Line },
 }
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub enum Visible {
-    #[serde(rename = "x")]
     True,
-    #[serde(rename = "x")]
     False,
-    #[serde(rename = "x")]
     LegendOnly,
+}
+
+impl Serialize for Visible {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::True => serializer.serialize_bool(true),
+            Self::False => serializer.serialize_bool(false),
+            Self::LegendOnly => serializer.serialize_str("legendonly"),
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -1620,5 +1630,22 @@ impl ErrorData {
     pub fn width(mut self, width: usize) -> ErrorData {
         self.width = Some(width);
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_visible() {
+        assert_eq!(to_value(Visible::True).unwrap(), json!(true));
+        assert_eq!(to_value(Visible::False).unwrap(), json!(false));
+        assert_eq!(
+            to_value(Visible::LegendOnly).unwrap(),
+            json!("legendonly")
+        );
     }
 }

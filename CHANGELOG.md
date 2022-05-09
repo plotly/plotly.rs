@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
 #47](https://github.com/igiagkiozis/plotly/issues/47))
+- Remove `private::TruthyEnum` in favour of a more robust way of serializing to `String` or `bool`
 ### Fixed
 - Typos in `CONTRIBUTING.md`
 ### Updated

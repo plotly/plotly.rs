@@ -1,31 +1,53 @@
 //! Box plot
 
 use crate::common::color::{Color, ColorWrapper};
-use crate::common::{Calendar, Dim, HoverInfo, Label, Line, Marker, Orientation, PlotType};
+use crate::common::{
+    Calendar, Dim, HoverInfo, Label, Line, Marker, Orientation, PlotType, Visible,
+};
 use crate::private;
 use crate::Trace;
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub enum BoxMean {
-    #[serde(rename = "true")]
     True,
-    #[serde(rename = "false")]
     False,
-    #[serde(rename = "sd")]
     StandardDeviation,
 }
 
-#[derive(Serialize, Debug)]
+impl Serialize for BoxMean {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::True => serializer.serialize_bool(true),
+            Self::False => serializer.serialize_bool(false),
+            Self::StandardDeviation => serializer.serialize_str("sd"),
+        }
+    }
+}
+
+#[derive(Debug)]
 pub enum BoxPoints {
-    #[serde(rename = "all")]
     All,
-    #[serde(rename = "outliers")]
     Outliers,
-    #[serde(rename = "suspectedoutliers")]
     SuspectedOutliers,
-    #[serde(rename = "false")]
     False,
+}
+
+impl Serialize for BoxPoints {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::All => serializer.serialize_str("all"),
+            Self::Outliers => serializer.serialize_str("outliers"),
+            Self::SuspectedOutliers => serializer.serialize_str("suspectedoutliers"),
+            Self::False => serializer.serialize_bool(false),
+        }
+    }
 }
 
 #[derive(Serialize, Debug)]
@@ -52,7 +74,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -86,9 +108,9 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "boxmean")]
-    box_mean: Option<private::TruthyEnum<BoxMean>>,
+    box_mean: Option<BoxMean>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "boxpoints")]
-    box_points: Option<private::TruthyEnum<BoxPoints>>,
+    box_points: Option<BoxPoints>,
     #[serde(skip_serializing_if = "Option::is_none")]
     notched: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "notchwidth")]
@@ -169,7 +191,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<BoxPlot<Y, X>> {
+    pub fn visible(mut self, visible: Visible) -> Box<BoxPlot<Y, X>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -277,12 +299,12 @@ where
     }
 
     pub fn box_mean(mut self, box_mean: BoxMean) -> Box<BoxPlot<Y, X>> {
-        self.box_mean = Some(private::TruthyEnum { e: box_mean });
+        self.box_mean = Some(box_mean);
         Box::new(self)
     }
 
     pub fn box_points(mut self, box_points: BoxPoints) -> Box<BoxPlot<Y, X>> {
-        self.box_points = Some(private::TruthyEnum { e: box_points });
+        self.box_points = Some(box_points);
         Box::new(self)
     }
 
@@ -384,5 +406,28 @@ where
 {
     fn serialize(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_box_mean() {
+        assert_eq!(to_value(BoxMean::True).unwrap(), json!(true));
+        assert_eq!(to_value(BoxMean::False).unwrap(), json!(false));
+        assert_eq!(to_value(BoxMean::StandardDeviation).unwrap(), json!("sd"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_box_points() {
+        assert_eq!(to_value(BoxPoints::All).unwrap(), json!("all"));
+        assert_eq!(to_value(BoxPoints::Outliers).unwrap(), json!("outliers"));
+        assert_eq!(to_value(BoxPoints::SuspectedOutliers).unwrap(), json!("suspectedoutliers"));
+        assert_eq!(to_value(BoxPoints::False).unwrap(), json!(false));
     }
 }

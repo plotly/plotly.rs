@@ -1,17 +1,17 @@
 //! Polar scatter plot
 
+use serde::Serialize;
+
 use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
     Dim, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode, Orientation, PlotType,
     Position, Visible,
 };
-use crate::private::{self, NumOrStringCollection};
+use crate::private::{self, NumOrString, NumOrStringCollection};
 use crate::Trace;
-use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-use crate::private::{copy_iterable_to_vec, NumOrString, TruthyEnum};
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 
@@ -25,7 +25,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<TruthyEnum<Visible>>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -164,8 +164,8 @@ where
         I: IntoIterator<Item = Theta>,
         K: IntoIterator<Item = R>,
     {
-        let theta = copy_iterable_to_vec(theta);
-        let r = copy_iterable_to_vec(r);
+        let theta = private::copy_iterable_to_vec(theta);
+        let r = private::copy_iterable_to_vec(r);
         Box::new(Self {
             theta: Some(theta),
             r: Some(r),
@@ -268,7 +268,7 @@ where
     /// Determines whether or not this trace is visible. If `Visible::LegendOnly`, the trace is not
     /// drawn, but can appear as a legend item (provided that the legend itself is visible).
     pub fn visible(mut self, visible: Visible) -> Box<Self> {
-        self.visible = Some(TruthyEnum { e: visible });
+        self.visible = Some(visible);
         Box::new(self)
     }
 

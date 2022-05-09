@@ -1,5 +1,5 @@
 use crate::common::color::{Color, ColorWrapper};
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
@@ -121,34 +121,6 @@ where
             collection.push(item.into());
         }
         Self(collection)
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct TruthyEnum<E> {
-    pub e: E,
-}
-
-impl<E> Serialize for TruthyEnum<E>
-where
-    E: Serialize,
-{
-    fn serialize<S>(&self, serializer: S) -> Result<<S as Serializer>::Ok, <S as Serializer>::Error>
-    where
-        S: Serializer,
-    {
-        let s = serde_json::to_string(&self.e)
-            .unwrap()
-            .chars()
-            .filter(|c| *c != '"')
-            .collect::<String>();
-        if s == "true" {
-            return serializer.serialize_bool(true);
-        }
-        if s == "false" {
-            return serializer.serialize_bool(false);
-        }
-        serializer.serialize_str(&s)
     }
 }
 
