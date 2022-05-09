@@ -156,6 +156,11 @@ impl Plot {
         self.layout = Some(layout);
     }
 
+    /// Set the `Configuration` to be used by `Plot`.
+    pub fn set_configuration(&mut self, configuration: Configuration) {
+        self.configuration = Some(configuration);
+    }
+
     /// Renders the contents of the `Plot` and displays them in the system default browser.
     ///
     /// This will serialize the `Trace`s and `Layout` in an html page which is saved in the temp
