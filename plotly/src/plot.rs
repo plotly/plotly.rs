@@ -491,6 +491,7 @@ impl Plot {
 
     #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("open")
             .args(&[temp_path])
             .output()
@@ -499,6 +500,7 @@ impl Plot {
 
     #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("cmd")
             .arg("/C")
             .arg(format!(r#"start {}"#, temp_path))
