@@ -14,25 +14,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: build_linux
-      run: cargo build --all-features --verbose
-    - name: Run tests
-      run: cargo test --all-features --release --verbose
-    - name: Run basic charts
-      run: cargo run --example basic_charts --all-features --release
-    - name: Run financial charts
-      run: cargo run --example financial_charts --all-features --release
-    - name: Run fundamentals
-      run: cargo run --example fundamentals --all-features --release
-    - name: Run ndarray support
-      run: cargo run --example ndarray_support --all-features --release
-    - name: Run scientific charts
-      run: cargo run --example scientific_charts --all-features --release
-    - name: Run statistical charts
-      run: cargo run --example statistical_charts --all-features --release
-    - name: Run subplots
-      run: cargo run --example subplots --all-features --release
+      - uses: actions/checkout@v2
+      - name: build_linux
+        run: cargo build --all-features --verbose --release
+      - name: Run tests
+        run: cargo test --features plotly_ndarray,kaleido --release --verbose
+      - name: Run basic charts
+        run: cargo run --example basic_charts --release
+      - name: Run financial charts
+        run: cargo run --example financial_charts --release
+      - name: Run fundamentals
+        run: cargo run --example fundamentals --release
+      - name: Run ndarray support
+        run: cargo run --example ndarray_support --features plotly_ndarray --release
+      - name: Run scientific charts
+        run: cargo run --example scientific_charts --release
+      - name: Run statistical charts
+        run: cargo run --example statistical_charts --release
+      - name: Run subplots
+        run: cargo run --example subplots --release
 
   build_windows:
     runs-on: windows-latest
@@ -40,23 +40,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build_windows
-        run: cargo build --all-features --verbose
+        run: cargo build --all-features --verbose --release
       - name: Run tests
-        run: cargo test --all-features --release --verbose
+        run: cargo test --features plotly_ndarray,kaleido --release --verbose
       - name: Run basic charts
-        run: cargo run --example basic_charts --all-features --release
+        run: cargo run --example basic_charts --release
       - name: Run financial charts
-        run: cargo run --example financial_charts --all-features --release
+        run: cargo run --example financial_charts --release
       - name: Run fundamentals
-        run: cargo run --example fundamentals --all-features --release
+        run: cargo run --example fundamentals --release
       - name: Run ndarray support
-        run: cargo run --example ndarray_support --all-features --release
+        run: cargo run --example ndarray_support --features plotly_ndarray --release
       - name: Run scientific charts
-        run: cargo run --example scientific_charts --all-features --release
+        run: cargo run --example scientific_charts --release
       - name: Run statistical charts
-        run: cargo run --example statistical_charts --all-features --release
+        run: cargo run --example statistical_charts --release
       - name: Run subplots
-        run: cargo run --example subplots --all-features --release
+        run: cargo run --example subplots --release
 
   build_macos:
     runs-on: macos-latest
@@ -64,20 +64,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build_macos
-        run: cargo build --all-features --verbose
+        run: cargo build --all-features --verbose --release
       - name: Run tests
-        run: cargo test --all-features --release --verbose
+        run: cargo test --features plotly_ndarray,kaleido --release --verbose
       - name: Run basic charts
-        run: cargo run --example basic_charts --all-features --release
+        run: cargo run --example basic_charts --release
       - name: Run financial charts
-        run: cargo run --example financial_charts --all-features --release
+        run: cargo run --example financial_charts --release
       - name: Run fundamentals
-        run: cargo run --example fundamentals --all-features --release
+        run: cargo run --example fundamentals --release
       - name: Run ndarray support
-        run: cargo run --example ndarray_support --all-features --release
+        run: cargo run --example ndarray_support --features plotly_ndarray --release
       - name: Run scientific charts
-        run: cargo run --example scientific_charts --all-features --release
+        run: cargo run --example scientific_charts --release
       - name: Run statistical charts
-        run: cargo run --example statistical_charts --all-features --release
+        run: cargo run --example statistical_charts --release
       - name: Run subplots
-        run: cargo run --example subplots --all-features --release
+        run: cargo run --example subplots --release
