@@ -408,7 +408,6 @@ impl Plot {
         scale: f64,
     ) {
         let kaleido = plotly_kaleido::Kaleido::new();
-        let plot_data = self.to_json();
         let image_format = match format {
             ImageFormat::PNG => "png",
             ImageFormat::JPEG => "jpeg",
@@ -420,7 +419,7 @@ impl Plot {
         kaleido
             .save(
                 filename.as_ref(),
-                plot_data.as_str(),
+                &serde_json::to_value(self).unwrap(),
                 image_format,
                 width,
                 height,
