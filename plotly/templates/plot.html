@@ -14,7 +14,7 @@
         {% if remote_plotly_js -%}
         <script src="https://cdn.plot.ly/plotly-2.8.3.min.js"></script>
         {% else -%}
-        <script type="text/javascript">{ { plotly_javascript } }</script>
+        <script type="text/javascript">{{ plotly_javascript }}</script>
         {% endif -%}
         {% if export_image -%}
         <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;" hidden></div>
