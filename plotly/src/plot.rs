@@ -9,15 +9,13 @@ use serde::Serialize;
 use std::env;
 use std::fs::File;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::{Configuration, Layout};
 use rand_distr::Alphanumeric;
 
-const PLOTLY_JS: &str = "plotly-2.8.3.min.js";
-
 #[derive(Template)]
-#[template(path = "plotly-2.8.3.min.js", escape = "none")]
+#[template(path = "plotly.min.js", escape = "none")]
 struct PlotlyJs;
 
 #[derive(Template)]
@@ -428,12 +426,6 @@ impl Plot {
                 scale,
             )
             .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
-    }
-
-    fn plotly_js_path() -> PathBuf {
-        let root = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-        let templates = root.join("templates");
-        templates.join(PLOTLY_JS)
     }
 
     fn render(

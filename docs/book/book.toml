@@ -14,7 +14,7 @@ create-missing = false
 default-theme = "Ayu"
 mathjax-support = true
 additional-css = ["ferris.css"]
-additional-js = ["ferris.js", "plotly-2.2.1.min.js"]
+additional-js = ["ferris.js", "plotly.min.js"]
 
 
 [output.html.fold]
