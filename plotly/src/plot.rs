@@ -469,7 +469,7 @@ impl Plot {
         js_sys::JSON::parse(&self.to_json())
             .expect("Invalid JSON")
             .dyn_into::<js_sys::Object>()
-            .expect("Invalid JSON structure - expected an top-level Object")
+            .expect("Invalid JSON structure - expected a top-level Object")
     }
 
     #[cfg(target_os = "linux")]
@@ -510,6 +510,7 @@ impl PartialEq for Plot {
 #[cfg(test)]
 mod tests {
     use serde_json::{json, to_value};
+    use std::path::PathBuf;
 
     use super::*;
     use crate::Scatter;
