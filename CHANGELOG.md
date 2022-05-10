@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.8.0] - 2022-xx-xx
 ### Added
 - impl `Clone`, `Serialize` and `PartialEq` for `Plot`
+- impl `Clone` +/- `Copy` for color types
 - Support for [configuration options](https://plotly.com/javascript/configuration-options/)
 - Support for layout templates and pre-defined themes
 - Support for WASM environments
