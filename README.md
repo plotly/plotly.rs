@@ -55,6 +55,9 @@ The following feature flags are available:
 * `plotly_ndarray`
     * Optional, compatible with Rust stable.
     * Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
+* `wasm`
+    * Optional, compatible with Rust stable.
+    * Disables OS-specific functions, therefore allowing compilation in WASM environments. Note that `examples` won't compile when this feature is enabled, as they require OS-specific functions.
 
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `kaleido` feature: 
 
