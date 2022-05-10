@@ -4229,10 +4229,6 @@ mod tests {
 
     #[test]
     fn test_serialize_layout() {
-        let layout = Layout::new().title(Title::new("title")).show_legend(false);
-
-        let expected = json!({});
-
-        assert_eq!(to_value(layout).unwrap(), expected);
+        // TODO
     }
 }
