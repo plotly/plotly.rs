@@ -1,12 +1,12 @@
 //! Surface plot
 
 use crate::common::color::{Color, ColorWrapper};
-use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType};
+use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible};
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Lighting {
     #[serde(skip_serializing_if = "Option::is_none")]
     ambient: Option<f64>,
@@ -51,7 +51,7 @@ impl Lighting {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Position {
     x: i32,
     y: i32,
@@ -64,7 +64,7 @@ impl Position {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct PlaneProject {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<bool>,
@@ -95,7 +95,7 @@ impl PlaneProject {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct PlaneContours {
     #[serde(skip_serializing_if = "Option::is_none")]
     show: Option<bool>,
@@ -182,7 +182,7 @@ impl PlaneContours {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct SurfaceContours {
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<PlaneContours>,
@@ -213,12 +213,12 @@ impl SurfaceContours {
     }
 }
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Surface<X, Y, Z>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+    Z: Serialize + Clone,
 {
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -229,7 +229,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -286,9 +286,9 @@ where
 
 impl<X, Y, Z> Surface<X, Y, Z>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
-    Z: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
     pub fn new(z: Vec<Vec<Z>>) -> Box<Surface<X, Y, Z>> {
         Box::new(Surface {
@@ -313,7 +313,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Surface<X, Y, Z>> {
+    pub fn visible(mut self, visible: Visible) -> Box<Surface<X, Y, Z>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -473,11 +473,11 @@ where
 
 impl<X, Y, Z> Trace for Surface<X, Y, Z>
 where
-    X: Serialize,
-    Y: Serialize,
-    Z: Serialize,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+    Z: Serialize + Clone,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

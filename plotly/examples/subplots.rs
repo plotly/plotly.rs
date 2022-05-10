@@ -1,4 +1,4 @@
-use plotly::common::{Font, Side, Title};
+use plotly::common::{AxisSide, Font, Title};
 use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder};
 use plotly::{Plot, Rgb, Scatter};
 
@@ -197,7 +197,7 @@ fn two_y_axes(show: bool) {
                 .title(Title::new("yaxis2 title").font(Font::new().color(Rgb::new(148, 103, 189))))
                 .tick_font(Font::new().color(Rgb::new(148, 103, 189)))
                 .overlaying("y")
-                .side(Side::Right),
+                .side(AxisSide::Right),
         );
     plot.set_layout(layout);
     if show {
@@ -235,7 +235,7 @@ fn multiple_axes(show: bool) {
                 .tick_font(Font::new().color("#ff7f0e"))
                 .anchor("free")
                 .overlaying("y")
-                .side(Side::Left)
+                .side(AxisSide::Left)
                 .position(0.15),
         )
         .y_axis3(
@@ -244,7 +244,7 @@ fn multiple_axes(show: bool) {
                 .tick_font(Font::new().color("#d62728"))
                 .anchor("x")
                 .overlaying("y")
-                .side(Side::Right),
+                .side(AxisSide::Right),
         )
         .y_axis4(
             Axis::new()
@@ -252,7 +252,7 @@ fn multiple_axes(show: bool) {
                 .tick_font(Font::new().color("#9467bd"))
                 .anchor("free")
                 .overlaying("y")
-                .side(Side::Right)
+                .side(AxisSide::Right)
                 .position(0.85),
         );
     plot.set_layout(layout);

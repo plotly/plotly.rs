@@ -2,14 +2,16 @@
 extern crate plotly_kaleido;
 
 use askama::Template;
+use dyn_clone::DynClone;
+use erased_serde::Serialize as ErasedSerialize;
 use rand::{thread_rng, Rng};
+use serde::Serialize;
 use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
-use crate::Layout;
+use crate::{Configuration, Layout};
 use rand_distr::Alphanumeric;
 
 const PLOTLY_JS: &str = "plotly-2.8.3.min.js";
@@ -21,7 +23,7 @@ struct PlotlyJs;
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
-    plot_data: &'a str,
+    plot: &'a Plot,
     plotly_javascript: &'a str,
     remote_plotly_js: bool,
     export_image: bool,
@@ -33,14 +35,14 @@ struct PlotTemplate<'a> {
 #[derive(Template)]
 #[template(path = "inline_plot.html", escape = "none")]
 struct InlinePlotTemplate<'a> {
-    plot_data: &'a str,
+    plot: &'a Plot,
     plot_div_id: &'a str,
 }
 
 #[derive(Template)]
 #[template(path = "jupyter_notebook_plot.html", escape = "none")]
 struct JupyterNotebookPlotTemplate<'a> {
-    plot_data: &'a str,
+    plot: &'a Plot,
     plot_div_id: &'a str,
 }
 
@@ -55,8 +57,41 @@ pub enum ImageFormat {
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
-pub trait Trace {
-    fn serialize(&self) -> String;
+pub trait Trace: DynClone + ErasedSerialize {
+    fn to_json(&self) -> String;
+}
+
+dyn_clone::clone_trait_object!(Trace);
+erased_serde::serialize_trait_object!(Trace);
+
+#[derive(Default, Serialize, Clone)]
+#[serde(transparent)]
+pub struct Traces {
+    traces: Vec<Box<dyn Trace>>,
+}
+
+impl Traces {
+    pub fn new() -> Self {
+        Self {
+            traces: Vec::with_capacity(1),
+        }
+    }
+
+    pub fn push(&mut self, trace: Box<dyn Trace>) {
+        self.traces.push(trace)
+    }
+
+    pub fn len(&self) -> usize {
+        self.traces.len()
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Box<dyn Trace>> {
+        self.traces.iter()
+    }
+
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
 }
 
 /// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
@@ -68,7 +103,7 @@ pub trait Trace {
 /// ```
 /// extern crate plotly;
 /// use plotly::common::Mode;
-/// use plotly::{Plot, Scatter};
+/// use plotly::{Layout, Plot, Scatter};
 ///
 /// fn line_and_scatter_plot() {
 ///     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
@@ -83,6 +118,10 @@ pub trait Trace {
 ///     plot.add_trace(trace1);
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
+///
+///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
+///     plot.set_layout(layout);
+///
 ///     plot.show();
 /// }
 ///
@@ -91,10 +130,14 @@ pub trait Trace {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default)]
+#[derive(Default, Serialize, Clone)]
 pub struct Plot {
-    traces: Vec<Box<dyn Trace>>,
-    layout: Option<Layout>,
+    #[serde(rename = "data")]
+    traces: Traces,
+    layout: Layout,
+    #[serde(rename = "config")]
+    configuration: Configuration,
+    #[serde(skip)]
     remote_plotly_js: bool,
 }
 
@@ -123,7 +166,7 @@ impl Plot {
     /// Create a new `Plot`.
     pub fn new() -> Plot {
         Plot {
-            traces: Vec::with_capacity(1),
+            traces: Traces::new(),
             remote_plotly_js: true,
             ..Default::default()
         }
@@ -149,7 +192,27 @@ impl Plot {
 
     /// Set the `Layout` to be used by `Plot`.
     pub fn set_layout(&mut self, layout: Layout) {
-        self.layout = Some(layout);
+        self.layout = layout;
+    }
+
+    /// Set the `Configuration` to be used by `Plot`.
+    pub fn set_configuration(&mut self, configuration: Configuration) {
+        self.configuration = configuration;
+    }
+
+    /// Get the contained data elements.
+    pub fn data(&self) -> &Traces {
+        &self.traces
+    }
+
+    /// Get the layout specification of the plot.
+    pub fn layout(&self) -> &Layout {
+        &self.layout
+    }
+
+    /// Get the configuration specification of the plot.
+    pub fn configuration(&self) -> &Configuration {
+        &self.configuration
     }
 
     /// Renders the contents of the `Plot` and displays them in the system default browser.
@@ -157,6 +220,7 @@ impl Plot {
     /// This will serialize the `Trace`s and `Layout` in an html page which is saved in the temp
     /// directory. For example on Linux it will generate a file `plotly_<22 random characters>.html`
     /// in the /tmp directory.
+    #[cfg(not(feature = "wasm"))]
     pub fn show(&self) {
         let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
@@ -187,6 +251,7 @@ impl Plot {
     /// Renders the contents of the `Plot`, creates a png raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
+    #[cfg(not(feature = "wasm"))]
     pub fn show_png(&self, width: usize, height: usize) {
         let rendered = self.render(true, "png", width, height);
         let rendered = rendered.as_bytes();
@@ -216,6 +281,7 @@ impl Plot {
     /// Renders the contents of the `Plot`, creates a jpeg raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
+    #[cfg(not(feature = "wasm"))]
     pub fn show_jpeg(&self, width: usize, height: usize) {
         let rendered = self.render(true, "jpg", width, height);
         let rendered = rendered.as_bytes();
@@ -301,10 +367,9 @@ impl Plot {
                 .collect::<Vec<u8>>(),
         )
         .unwrap();
-        let plot_data = self.render_plot_data();
 
         let tmpl = JupyterNotebookPlotTemplate {
-            plot_data: plot_data.as_str(),
+            plot: self,
             plot_div_id: plot_div_id.as_str(),
         };
         tmpl.render().unwrap()
@@ -345,7 +410,6 @@ impl Plot {
         scale: f64,
     ) {
         let kaleido = plotly_kaleido::Kaleido::new();
-        let plot_data = self.to_json();
         let image_format = match format {
             ImageFormat::PNG => "png",
             ImageFormat::JPEG => "jpeg",
@@ -357,7 +421,7 @@ impl Plot {
         kaleido
             .save(
                 filename.as_ref(),
-                plot_data.as_str(),
+                &serde_json::to_value(self).unwrap(),
                 image_format,
                 width,
                 height,
@@ -372,34 +436,6 @@ impl Plot {
         templates.join(PLOTLY_JS)
     }
 
-    fn render_plot_data(&self) -> String {
-        let mut plot_data = String::new();
-        for (idx, trace) in self.traces.iter().enumerate() {
-            let s = trace.serialize();
-            plot_data.push_str(format!("var trace_{} = {};\n", idx, s).as_str());
-        }
-
-        plot_data.push_str("var data = [");
-        for idx in 0..self.traces.len() {
-            if idx != self.traces.len() - 1 {
-                plot_data.push_str(format!("trace_{},", idx).as_str());
-            } else {
-                plot_data.push_str(format!("trace_{}", idx).as_str());
-            }
-        }
-        plot_data.push_str("];\n");
-        let layout_data = match &self.layout {
-            Some(layout) => format!("var layout = {};", Trace::serialize(layout)),
-            None => {
-                let mut s = String::from("var layout = {");
-                s.push_str("};");
-                s
-            }
-        };
-        plot_data.push_str(layout_data.as_str());
-        plot_data
-    }
-
     fn render(
         &self,
         export_image: bool,
@@ -407,10 +443,9 @@ impl Plot {
         image_width: usize,
         image_height: usize,
     ) -> String {
-        let plot_data = self.render_plot_data();
         let plotly_js = PlotlyJs {}.render().unwrap();
         let tmpl = PlotTemplate {
-            plot_data: plot_data.as_str(),
+            plot: self,
             plotly_javascript: plotly_js.as_str(),
             remote_plotly_js: self.remote_plotly_js,
             export_image,
@@ -422,45 +457,32 @@ impl Plot {
     }
 
     fn render_inline(&self, plot_div_id: &str) -> String {
-        let plot_data = self.render_plot_data();
-
         let tmpl = InlinePlotTemplate {
-            plot_data: plot_data.as_str(),
+            plot: self,
             plot_div_id,
         };
         tmpl.render().unwrap()
     }
 
     pub fn to_json(&self) -> String {
-        let mut plot_data: Vec<String> = Vec::new();
-        for trace in self.traces.iter() {
-            let s = trace.serialize();
-            plot_data.push(s);
-        }
-        let layout_data = match &self.layout {
-            Some(layout) => Trace::serialize(layout),
-            None => "{}".to_owned(),
-        };
+        serde_json::to_string(self).unwrap()
+    }
 
-        let mut json_data = String::new();
-        json_data.push_str(r#"{"data": ["#);
-
-        for (index, data) in plot_data.iter().enumerate() {
-            if index < plot_data.len() - 1 {
-                json_data.push_str(data);
-                json_data.push(',');
-            } else {
-                json_data.push_str(data);
-                json_data.push(']');
-            }
-        }
-        json_data.push_str(format!(r#", "layout": {}"#, layout_data).as_str());
-        json_data.push('}');
-        json_data
+    #[cfg(feature = "wasm")]
+    /// Convert a `Plot` to a native Javasript `js_sys::Object`.
+    pub fn to_js_object(&self) -> js_sys::Object {
+        use wasm_bindgen::JsCast;
+        // The only reason this could fail is if to_json() produces structurally incorrect JSON. That
+        // would be a bug, and would require fixing in the to_json()/serialization methods, rather than here
+        js_sys::JSON::parse(&self.to_json())
+            .expect("Invalid JSON")
+            .dyn_into::<js_sys::Object>()
+            .expect("Invalid JSON structure - expected an top-level Object")
     }
 
     #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("xdg-open")
             .args(&[temp_path])
             .output()
@@ -469,6 +491,7 @@ impl Plot {
 
     #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("open")
             .args(&[temp_path])
             .output()
@@ -477,6 +500,7 @@ impl Plot {
 
     #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("cmd")
             .arg("/C")
             .arg(format!(r#"start {}"#, temp_path))
@@ -485,8 +509,16 @@ impl Plot {
     }
 }
 
+impl PartialEq for Plot {
+    fn eq(&self, other: &Self) -> bool {
+        self.to_json() == other.to_json()
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use serde_json::{json, to_value};
+
     use super::*;
     use crate::Scatter;
 
@@ -495,13 +527,6 @@ mod tests {
         let mut plot = Plot::new();
         plot.add_trace(trace1);
         plot
-    }
-
-    #[test]
-    fn test_to_json() {
-        let plot = create_test_plot();
-        let plot_json = plot.to_json();
-        println!("{}", plot_json);
     }
 
     #[test]
@@ -531,6 +556,113 @@ mod tests {
     fn test_lab_display() {
         let plot = create_test_plot();
         plot.lab_display();
+    }
+
+    #[test]
+    fn test_plot_serialize_simple() {
+        let plot = create_test_plot();
+        let expected = json!({
+            "data": [
+                {
+                    "type": "scatter",
+                    "name": "trace1",
+                    "x": [0, 1, 2],
+                    "y": [6, 10, 2]
+                }
+            ],
+            "layout": {},
+            "config": {},
+        });
+
+        assert_eq!(to_value(plot).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_plot_serialize_with_layout() {
+        let mut plot = create_test_plot();
+        let layout = Layout::new().title("Title".into());
+        plot.set_layout(layout);
+
+        let expected = json!({
+            "data": [
+                {
+                    "type": "scatter",
+                    "name": "trace1",
+                    "x": [0, 1, 2],
+                    "y": [6, 10, 2]
+                }
+            ],
+            "layout": {
+                "title": {
+                    "text": "Title"
+                }
+            },
+            "config": {},
+        });
+
+        assert_eq!(to_value(plot).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_data_to_json() {
+        let plot = create_test_plot();
+        let expected = json!([
+            {
+                "type": "scatter",
+                "name": "trace1",
+                "x": [0, 1, 2],
+                "y": [6, 10, 2]
+            }
+        ]);
+
+        assert_eq!(to_value(plot.data()).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_empty_layout_to_json() {
+        let plot = create_test_plot();
+        let expected = json!({});
+
+        assert_eq!(to_value(plot.layout()).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_layout_to_json() {
+        let mut plot = create_test_plot();
+        let layout = Layout::new().title("TestTitle".into());
+        plot.set_layout(layout);
+
+        let expected = json!({
+            "title": {"text": "TestTitle"}
+        });
+
+        assert_eq!(to_value(plot.layout()).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_plot_eq() {
+        let plot1 = create_test_plot();
+        let plot2 = create_test_plot();
+
+        assert!(plot1 == plot2);
+    }
+
+    #[test]
+    fn test_plot_neq() {
+        let plot1 = create_test_plot();
+        let trace2 = Scatter::new(vec![10, 1, 2], vec![6, 10, 2]).name("trace2");
+        let mut plot2 = Plot::new();
+        plot2.add_trace(trace2);
+
+        assert!(plot1 != plot2);
+    }
+
+    #[test]
+    fn test_plot_clone() {
+        let plot1 = create_test_plot();
+        let plot2 = plot1.clone();
+
+        assert!(plot1 == plot2);
     }
 
     #[test]

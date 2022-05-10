@@ -1,52 +1,59 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
 </head>
+
 <body>
-<div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    <script type="text/javascript">if (window.MathJax) {MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}</script>
-    <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-    {% if remote_plotly_js -%}
-    <script src="https://cdn.plot.ly/plotly-2.8.3.min.js"></script>
-    {% else -%}
-    <script type="text/javascript">{{ plotly_javascript }}</script>
-    {% endif -%}
-    {% if  export_image -%}
-    <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;" hidden></div>
-    <div ><img id="image-export" class="plotly-graph-div"></img></div>
-    {% else -%}
-    <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-    <div ><img id="image-export" class="plotly-graph-div" hidden></img></div>
-    {% endif -%}
+    <div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+        <script
+            type="text/javascript">if (window.MathJax) { MathJax.Hub.Config({ SVG: { font: "STIX-Web" } }); }</script>
+        <script type="text/javascript">window.PlotlyConfig = { MathJaxConfig: 'local' };</script>
+        {% if remote_plotly_js -%}
+        <script src="https://cdn.plot.ly/plotly-2.8.3.min.js"></script>
+        {% else -%}
+        <script type="text/javascript">{{ plotly_javascript }}</script>
+        {% endif -%}
+        {% if export_image -%}
+        <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;" hidden></div>
+        <div><img id="image-export" class="plotly-graph-div"></img></div>
+        {% else -%}
+        <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+        <div><img id="image-export" class="plotly-graph-div" hidden></img></div>
+        {% endif -%}
 
-    <script type="text/javascript">
-                
-                window.PLOTLYENV=window.PLOTLYENV || {};                    
-                if (document.getElementById("plotly-html-element")) {
+        <script type="text/javascript">
+            window.PLOTLYENV = window.PLOTLYENV || {};
+            if (document.getElementById("plotly-html-element")) {
 
-                    var image_element = document.getElementById('image-export')
+                var image_element = document.getElementById('image-export');
 
-                    {{ plot_data }}
-
-                    Plotly.newPlot('plotly-html-element', data, layout,
-                        {"responsive": true})
-                        .then(
-                            function(gd) {
-                              Plotly.toImage(gd,{height:{{ image_height }},width:{{ image_width }}})
-                                 .then(
-                                     function(url) {
-                                         if({{ export_image }}) {
-                                             image_element.attr("src", url);
-                                             return Plotly.toImage(gd,{format:'{{ image_type }}',height:{{ image_height }},width:{{ image_width }}});
-                                         }
-                                    })
-                            });
-
-                };
-
-
-    </script>
-</div>
+                Plotly.newPlot('plotly-html-element', {{ plot|tojson|safe }})
+                    .then(
+                        function (gd) {
+                            Plotly.toImage(gd, {height: {{ image_height }}, width: {{ image_width }}})
+                                .then(
+                                    function (url) {
+                                        if ({{ export_image }}) {
+                                            image_element.attr("src", url);
+                                            return Plotly.toImage(
+                                                gd,
+                                                {
+                                                    format: '{{ image_type }}',
+                                                    height: {{ image_height }},
+                                                    width: {{ image_width }}
+                                                }
+                                            );
+                                        }
+                                    }
+                                )
+                        }
+                    );
+            };
+        </script>
+    </div>
 </body>
+
 </html>

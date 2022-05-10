@@ -4,7 +4,6 @@
     if (document.getElementById("{{ plot_div_id }}")) {
         var image_element = document.getElementById('image-export')
 
-        {{ plot_data }}
-        Plotly.newPlot('{{ plot_div_id }}', data, layout, {"responsive": true});
+        Plotly.newPlot('{{ plot_div_id }}', {{ plot|tojson|safe }});
     };
 </script>
