@@ -1,6 +1,6 @@
 //! Heat-map plot
 
-use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType};
+use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible};
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
@@ -16,7 +16,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -108,7 +108,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<HeatMap<Z, X, Y>> {
+    pub fn visible(mut self, visible: Visible) -> Box<HeatMap<Z, X, Y>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -261,7 +261,7 @@ where
     Y: Serialize + Default + Clone,
     Z: Serialize + Default + Clone,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

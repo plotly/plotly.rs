@@ -2,7 +2,7 @@
 
 use crate::common::{
     Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, Marker, Orientation, PlotType,
-    TextAnchor, TextPosition,
+    TextAnchor, TextPosition, Visible,
 };
 use crate::Trace;
 use serde::Serialize;
@@ -21,7 +21,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -103,7 +103,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Bar<X, Y>> {
+    pub fn visible(mut self, visible: Visible) -> Box<Bar<X, Y>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -299,7 +299,7 @@ where
     X: Serialize + Default + Clone,
     Y: Serialize + Default + Clone,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }
