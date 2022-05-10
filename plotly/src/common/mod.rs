@@ -1,10 +1,10 @@
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
 pub mod color;
 
 use crate::common::color::ColorWrapper;
-use crate::private;
-use crate::private::{to_num_or_string_wrapper, NumOrString, NumOrStringWrapper};
+use crate::private::NumOrString;
+use crate::private::{self, NumOrStringCollection};
 use color::Color;
 
 #[derive(Serialize, Clone, Debug)]
@@ -14,14 +14,24 @@ pub enum Direction {
     Decreasing { line: Line },
 }
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub enum Visible {
-    #[serde(rename = "x")]
     True,
-    #[serde(rename = "x")]
     False,
-    #[serde(rename = "x")]
     LegendOnly,
+}
+
+impl Serialize for Visible {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Self::True => serializer.serialize_bool(true),
+            Self::False => serializer.serialize_bool(false),
+            Self::LegendOnly => serializer.serialize_str("legendonly"),
+        }
+    }
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -553,7 +563,7 @@ pub enum DashType {
 }
 
 #[derive(Serialize, Clone, Debug)]
-pub struct ColorScaleElement(f64, String);
+pub struct ColorScaleElement(pub f64, pub String);
 
 #[derive(Serialize, Clone, Debug)]
 pub enum ColorScalePalette {
@@ -810,7 +820,7 @@ impl Gradient {
 pub struct TickFormatStop {
     enabled: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
-    dtick_range: Option<Vec<NumOrStringWrapper>>,
+    dtick_range: Option<NumOrStringCollection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -832,9 +842,8 @@ impl TickFormatStop {
         self
     }
 
-    pub fn dtick_range<C: NumOrString>(mut self, range: Vec<C>) -> TickFormatStop {
-        let wrapped = to_num_or_string_wrapper(range);
-        self.dtick_range = Some(wrapped);
+    pub fn dtick_range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> TickFormatStop {
+        self.dtick_range = Some(range.into());
         self
     }
 
@@ -931,13 +940,7 @@ pub struct ColorBar {
 
 impl Default for ColorBar {
     fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl ColorBar {
-    pub fn new() -> ColorBar {
-        ColorBar {
+        Self {
             thickness: 30,
             len: 1,
             x: 1.02,
@@ -953,8 +956,36 @@ impl ColorBar {
             tick_width: 1,
             show_tick_labels: true,
             separate_thousands: true,
-            ..Default::default()
+            thickness_mode: None,
+            len_mode: None,
+            outline_color: None,
+            border_color: None,
+            background_color: None,
+            tick_mode: None,
+            tick0: None,
+            dtick: None,
+            tick_vals: None,
+            tick_text: None,
+            ticks: None,
+            tick_color: None,
+            tick_font: None,
+            tick_angle: None,
+            tick_format: None,
+            tick_format_stops: None,
+            tick_prefix: None,
+            show_tick_prefix: None,
+            tick_suffix: None,
+            show_tick_suffix: None,
+            exponent_format: None,
+            show_exponent: None,
+            title: None,
         }
+    }
+}
+
+impl ColorBar {
+    pub fn new() -> ColorBar {
+        Default::default()
     }
 
     pub fn thickness_mode(mut self, thickness_mode: ThicknessMode) -> ColorBar {
@@ -1162,7 +1193,7 @@ pub struct Marker {
     size_ref: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
     size_min: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemode")]
     size_mode: Option<SizeMode>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
@@ -1621,5 +1652,22 @@ impl ErrorData {
     pub fn width(mut self, width: usize) -> ErrorData {
         self.width = Some(width);
         self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_visible() {
+        assert_eq!(to_value(Visible::True).unwrap(), json!(true));
+        assert_eq!(to_value(Visible::False).unwrap(), json!(false));
+        assert_eq!(
+            to_value(Visible::LegendOnly).unwrap(),
+            json!("legendonly")
+        );
     }
 }
