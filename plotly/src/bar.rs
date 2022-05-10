@@ -299,7 +299,7 @@ where
     X: Serialize + Default + Clone,
     Y: Serialize + Default + Clone,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

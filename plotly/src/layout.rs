@@ -1,11 +1,11 @@
+use serde::{Serialize, Serializer};
+
 use crate::common::color::{Color, ColorWrapper};
 use crate::common::{
     Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Side,
     TickFormatStop, TickMode, Title,
 };
-use crate::plot::Trace;
 use crate::private::{self, NumOrString, NumOrStringCollection};
-use serde::{Serialize, Serializer};
 
 #[derive(Serialize, Debug, Clone)]
 pub enum AxisType {
@@ -2437,6 +2437,10 @@ impl Layout {
         Default::default()
     }
 
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
     pub fn title(mut self, title: Title) -> Layout {
         self.title = Some(title);
         self
@@ -2777,12 +2781,6 @@ impl Layout {
     pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> Layout {
         self.extend_sunburst_colors = Some(extend_sunburst_colors);
         self
-    }
-}
-
-impl Trace for Layout {
-    fn serialize(&self) -> String {
-        serde_json::to_string(&self).unwrap()
     }
 }
 
