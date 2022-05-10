@@ -1,16 +1,16 @@
 //! Open-high-low-close (OHLC) plot
 
 use crate::common::color::NamedColor;
-use crate::common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType};
+use crate::common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible};
 use crate::private;
 use crate::Trace;
 use serde::Serialize;
 
-#[derive(Serialize, Debug, Default)]
+#[derive(Serialize, Debug, Default, Clone)]
 pub struct Ohlc<T, O>
 where
-    T: Serialize + Default,
-    O: Serialize + Default,
+    T: Serialize + Default + Clone,
+    O: Serialize + Default + Clone,
 {
     r#type: PlotType,
     x: Vec<T>,
@@ -21,7 +21,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
+    visible: Option<Visible>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
@@ -50,8 +50,8 @@ where
 
 impl<T, O> Ohlc<T, O>
 where
-    T: Serialize + Default,
-    O: Serialize + Default,
+    T: Serialize + Default + Clone,
+    O: Serialize + Default + Clone,
 {
     pub fn new(
         x: Vec<T>,
@@ -80,7 +80,7 @@ where
         Box::new(self)
     }
 
-    pub fn visible(mut self, visible: bool) -> Box<Ohlc<T, O>> {
+    pub fn visible(mut self, visible: Visible) -> Box<Ohlc<T, O>> {
         self.visible = Some(visible);
         Box::new(self)
     }
@@ -160,10 +160,10 @@ where
 
 impl<X, Y> Trace for Ohlc<X, Y>
 where
-    X: Serialize + Default,
-    Y: Serialize + Default,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }

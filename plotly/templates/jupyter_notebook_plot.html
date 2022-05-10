@@ -5,13 +5,10 @@
             window.PLOTLYENV=window.PLOTLYENV || {};
 
             if (document.getElementById("{{ plot_div_id }}")) {
-                {{ plot_data }}
                 Plotly.newPlot(
                     '{{ plot_div_id }}',
-                    data,
-                    layout,
-                    {"responsive": true}
-                ).then(function(){
+                    {{ plot|tojson|safe }}
+                ).then(function() {
                     var gd = document.getElementById('{{ plot_div_id }}');
                     var x = new MutationObserver(function (mutations, observer) { {
                             var display = window.getComputedStyle(gd).display;
@@ -32,8 +29,9 @@
                     var outputEl = gd.closest('.output');
                     if (outputEl) { {
                         x.observe(outputEl, {childList: true});
-                    } } })
+                    } }
+                })
             };
         });
-            </script>
+    </script>
 </div>

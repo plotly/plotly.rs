@@ -21,21 +21,25 @@ plotly_ndarray = ["ndarray"]
 wasm = ["getrandom", "js-sys", "wasm-bindgen", "wasm-bindgen-futures"]
 
 [dependencies]
-askama = "0.10.5"
+askama = { version = "0.11.0", features = ["serde-json"] }
+dyn-clone = "1"
+erased-serde = "0.3"
 getrandom = { version = "0.2", features = ["js"], optional = true }
 js-sys = { version = "0.3", optional = true }
-ndarray = { version = "0.15.1", optional = true }
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = true }
-rand = "0.8.3"
-rand_distr = "0.4.0"
-serde = { version = "1.0.125", features = ["derive"] }
-serde_json = "1.0.64"
+ndarray = { version = "0.15.4", optional = true }
+once_cell = "1"
+serde = { version = "1.0.132", features = ["derive"] }
+serde_json = "1.0.73"
+serde_repr = "0.1"
+rand = "0.8.4"
+rand_distr = "0.4.2"
 wasm-bindgen = { version = "0.2", optional = true }
 wasm-bindgen-futures = { version = "0.4", optional = true }
 
 [dev-dependencies]
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido" }
-itertools = "0.10.0"
+itertools = "0.10.3"
 itertools-num = "0.1.3"
 csv = "1.1.6"
-ndarray = "0.15.1"
+ndarray = "0.15.4"
