@@ -10,7 +10,6 @@ use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use crate::{Configuration, Layout};
 use rand_distr::Alphanumeric;
@@ -221,6 +220,7 @@ impl Plot {
     /// This will serialize the `Trace`s and `Layout` in an html page which is saved in the temp
     /// directory. For example on Linux it will generate a file `plotly_<22 random characters>.html`
     /// in the /tmp directory.
+    #[cfg(not(feature = "wasm"))]
     pub fn show(&self) {
         let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
@@ -251,6 +251,7 @@ impl Plot {
     /// Renders the contents of the `Plot`, creates a png raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
+    #[cfg(not(feature = "wasm"))]
     pub fn show_png(&self, width: usize, height: usize) {
         let rendered = self.render(true, "png", width, height);
         let rendered = rendered.as_bytes();
@@ -280,6 +281,7 @@ impl Plot {
     /// Renders the contents of the `Plot`, creates a jpeg raster and displays it in the system default browser.
     ///
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
+    #[cfg(not(feature = "wasm"))]
     pub fn show_jpeg(&self, width: usize, height: usize) {
         let rendered = self.render(true, "jpg", width, height);
         let rendered = rendered.as_bytes();
@@ -466,8 +468,21 @@ impl Plot {
         serde_json::to_string(self).unwrap()
     }
 
+    #[cfg(feature = "wasm")]
+    /// Convert a `Plot` to a native Javasript `js_sys::Object`.
+    pub fn to_js_object(&self) -> js_sys::Object {
+        use wasm_bindgen::JsCast;
+        // The only reason this could fail is if to_json() produces structurally incorrect JSON. That
+        // would be a bug, and would require fixing in the to_json()/serialization methods, rather than here
+        js_sys::JSON::parse(&self.to_json())
+            .expect("Invalid JSON")
+            .dyn_into::<js_sys::Object>()
+            .expect("Invalid JSON structure - expected an top-level Object")
+    }
+
     #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("xdg-open")
             .args(&[temp_path])
             .output()
@@ -476,6 +491,7 @@ impl Plot {
 
     #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("open")
             .args(&[temp_path])
             .output()
@@ -484,6 +500,7 @@ impl Plot {
 
     #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
+        use std::process::Command;
         Command::new("cmd")
             .arg("/C")
             .arg(format!(r#"start {}"#, temp_path))

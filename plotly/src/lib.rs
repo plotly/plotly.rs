@@ -9,6 +9,9 @@ extern crate serde;
 
 pub mod ndarray;
 
+#[cfg(feature = "wasm")]
+pub mod bindings;
+
 pub mod configuration;
 pub mod layout;
 pub mod plot;
