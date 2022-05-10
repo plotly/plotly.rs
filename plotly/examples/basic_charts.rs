@@ -1,9 +1,11 @@
 use itertools_num::linspace;
 use plotly::common::{
-    ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
+    ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
+    Orientation, Title,
 };
 use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter, ScatterPolar};
+use plotly::sankey::{Line as SankeyLine, Link, Node};
+use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Sankey, Scatter, ScatterPolar};
 use rand_distr::{Distribution, Normal, Uniform};
 
 // Scatter Plots
@@ -610,6 +612,48 @@ fn stacked_bar_chart(show: bool) {
     println!("{}", plot.to_inline_html(Some("stacked_bar_chart")));
 }
 
+// Sankey Diagrams
+fn basic_sankey_diagram(show: bool) {
+    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
+    let trace = Sankey::new()
+        .orientation(Orientation::Horizontal)
+        .node(
+            Node::new()
+                .pad(15)
+                .thickness(30)
+                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
+                .label(vec!["A1", "A2", "B1", "B2", "C1", "C2"])
+                .color_array(vec![
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                ]),
+        )
+        .link(
+            Link::new()
+                .value(vec![8, 4, 2, 8, 4, 2])
+                .source(vec![0, 1, 0, 2, 3, 3])
+                .target(vec![2, 3, 3, 4, 4, 5]),
+        );
+
+    let layout = Layout::new()
+        .title("Basic Sankey".into())
+        .font(Font::new().size(10));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    if show {
+        plot.show();
+    }
+
+    println!("{}", plot.to_inline_html(Some("basic_sankey_diagram")));
+}
+
 fn main() -> std::io::Result<()> {
     // Scatter Plots
     simple_scatter_plot(true);
@@ -633,5 +677,8 @@ fn main() -> std::io::Result<()> {
     basic_bar_chart(true);
     grouped_bar_chart(true);
     stacked_bar_chart(true);
+
+    // Sankey Diagrams
+    basic_sankey_diagram(true);
     Ok(())
 }
