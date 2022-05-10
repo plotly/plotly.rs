@@ -133,9 +133,10 @@ pub enum ConstrainText {
 }
 
 #[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "lowercase")]
 pub enum Orientation {
+    #[serde(rename = "v")]
     Vertical,
+    #[serde(rename = "h")]
     Horizontal,
 }
 
@@ -1592,8 +1593,8 @@ mod tests {
     #[test]
     #[rustfmt::skip]
     fn test_serialize_orientation() {
-        assert_eq!(to_value(Orientation::Vertical).unwrap(), json!("vertical"));
-        assert_eq!(to_value(Orientation::Horizontal).unwrap(), json!("horizontal"));
+        assert_eq!(to_value(Orientation::Vertical).unwrap(), json!("v"));
+        assert_eq!(to_value(Orientation::Horizontal).unwrap(), json!("h"));
     }
 
     #[test]
