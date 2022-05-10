@@ -13,6 +13,8 @@ pub mod configuration;
 pub mod layout;
 pub mod plot;
 
+pub mod themes;
+
 pub mod bar;
 pub mod box_plot;
 pub mod candlestick;

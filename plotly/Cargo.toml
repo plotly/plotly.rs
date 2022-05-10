@@ -21,10 +21,11 @@ plotly_ndarray = ["ndarray"]
 
 [dependencies]
 askama = { version = "0.11.0", features = ["serde-json"] }
-dyn-clone = { version = "1" }
+dyn-clone = "1"
 erased-serde = "0.3"
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.15.4", optional = true }
+once_cell = "1"
 serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
 serde_repr = "0.1"

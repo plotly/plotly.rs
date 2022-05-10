@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - impl `Clone`, `Serialize` and `PartialEq` for `Plot`
 - Support for [configuration options](https://plotly.com/javascript/configuration-options/)
+- Support for layout templates and pre-defined themes
 ### Changed
 - Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
 #47](https://github.com/igiagkiozis/plotly/issues/47))
