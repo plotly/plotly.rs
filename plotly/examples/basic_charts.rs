@@ -2,7 +2,7 @@ use itertools_num::linspace;
 use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
-use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
+use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder};
 use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter, ScatterPolar};
 use rand_distr::{Distribution, Normal, Uniform};
 
@@ -394,7 +394,7 @@ fn line_shape_options_for_interpolation(show: bool) {
     let layout = Layout::new().legend(
         Legend::new()
             .y(0.5)
-            .trace_order("reversed")
+            .trace_order(TraceOrder::Reversed)
             .font(Font::new().size(16)),
     );
     plot.set_layout(layout);
@@ -445,7 +445,7 @@ fn line_dash(show: bool) {
         .legend(
             Legend::new()
                 .y(0.5)
-                .trace_order("reversed")
+                .trace_order(TraceOrder::Reversed)
                 .font(Font::new().size(16)),
         )
         .x_axis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
