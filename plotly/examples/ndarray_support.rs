@@ -1,8 +1,10 @@
+#[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 use plotly::common::Mode;
 use plotly::ndarray::ArrayTraces;
 use plotly::{Plot, Scatter};
 
+#[cfg(feature = "plotly_ndarray")]
 fn single_ndarray_trace(show: bool) {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
@@ -18,6 +20,7 @@ fn single_ndarray_trace(show: bool) {
     println!("{}", plot.to_inline_html(Some("single_ndarray_trace")));
 }
 
+#[cfg(feature = "plotly_ndarray")]
 fn multiple_ndarray_traces_over_columns(show: bool) {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
@@ -46,6 +49,7 @@ fn multiple_ndarray_traces_over_columns(show: bool) {
     );
 }
 
+#[cfg(feature = "plotly_ndarray")]
 fn multiple_ndarray_traces_over_rows(show: bool) {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
@@ -74,6 +78,7 @@ fn multiple_ndarray_traces_over_rows(show: bool) {
     );
 }
 
+#[cfg(feature = "plotly_ndarray")]
 fn main() -> std::io::Result<()> {
     single_ndarray_trace(true);
     multiple_ndarray_traces_over_columns(true);
@@ -81,3 +86,6 @@ fn main() -> std::io::Result<()> {
 
     Ok(())
 }
+
+#[cfg(not(feature = "plotly_ndarray"))]
+fn main() {}

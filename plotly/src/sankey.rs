@@ -377,7 +377,7 @@ impl<V> Trace for Sankey<V>
 where
     V: Serialize + Default + Clone,
 {
-    fn serialize(&self) -> String {
+    fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap()
     }
 }

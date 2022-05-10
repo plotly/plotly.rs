@@ -1,7 +1,7 @@
 //! # Plotly.rs
 //!
 //! A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
-
+#![recursion_limit = "256"] // lets us use a large serde_json::json! macro for testing crate::layout::Axis
 #![allow(dead_code)]
 extern crate askama;
 extern crate rand;
@@ -9,8 +9,14 @@ extern crate serde;
 
 pub mod ndarray;
 
+#[cfg(feature = "wasm")]
+pub mod bindings;
+
+pub mod configuration;
 pub mod layout;
 pub mod plot;
+
+pub mod themes;
 
 pub mod bar;
 pub mod box_plot;
@@ -25,6 +31,7 @@ pub mod scatter;
 pub mod scatter_polar;
 pub mod surface;
 
+pub use crate::configuration::Configuration;
 pub use crate::layout::Layout;
 pub use crate::plot::ImageFormat;
 pub use crate::plot::Plot;
