@@ -55,6 +55,65 @@ pub enum HoverInfo {
     Skip,
 }
 
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct LegendGroupTitle {
+    text: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    font: Option<Font>,
+}
+
+impl LegendGroupTitle {
+    pub fn new(text: &str) -> Self {
+        Self {
+            text: text.to_string(),
+            ..Default::default()
+        }
+    }
+
+    pub fn font(mut self, font: Font) -> Self {
+        self.font = Some(font);
+        self
+    }
+}
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Domain {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    column: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    row: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<[f64; 2]>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<[f64; 2]>,
+}
+
+impl Domain {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn column(mut self, column: usize) -> Self {
+        self.column = Some(column);
+        self
+    }
+
+    pub fn row(mut self, row: usize) -> Self {
+        self.row = Some(row);
+        self
+    }
+
+    pub fn x(mut self, x: &[f64; 2]) -> Self {
+        self.x = Some(x.to_owned());
+        self
+    }
+
+    pub fn y(mut self, y: &[f64; 2]) -> Self {
+        self.y = Some(y.to_owned());
+        self
+    }
+}
+
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum TextPosition {
@@ -74,9 +133,10 @@ pub enum ConstrainText {
 }
 
 #[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "lowercase")]
 pub enum Orientation {
+    #[serde(rename = "v")]
     Vertical,
+    #[serde(rename = "h")]
     Horizontal,
 }
 
@@ -148,6 +208,7 @@ pub enum PlotType {
     Histogram,
     Histogram2dContour,
     Ohlc,
+    Sankey,
     Surface,
 }
 
@@ -1473,6 +1534,19 @@ mod tests {
     use crate::NamedColor;
 
     #[test]
+    fn test_serialize_domain() {
+        let domain = Domain::new().column(0).row(0).x(&[0., 1.]).y(&[0., 1.]);
+        let expected = json!({
+            "column": 0,
+            "row": 0,
+            "x": [0.0, 1.0],
+            "y": [0.0, 1.0],
+        });
+
+        assert_eq!(to_value(domain).unwrap(), expected);
+    }
+
+    #[test]
     fn test_serialize_direction() {
         // TODO: I think `Direction` would be better as a struct, with `fillcolor` and `line` attributes
         let inc = Direction::Increasing { line: Line::new() };
@@ -1519,8 +1593,8 @@ mod tests {
     #[test]
     #[rustfmt::skip]
     fn test_serialize_orientation() {
-        assert_eq!(to_value(Orientation::Vertical).unwrap(), json!("vertical"));
-        assert_eq!(to_value(Orientation::Horizontal).unwrap(), json!("horizontal"));
+        assert_eq!(to_value(Orientation::Vertical).unwrap(), json!("v"));
+        assert_eq!(to_value(Orientation::Horizontal).unwrap(), json!("h"));
     }
 
     #[test]
@@ -1583,6 +1657,7 @@ mod tests {
         assert_eq!(to_value(PlotType::Histogram).unwrap(), json!("histogram"));
         assert_eq!(to_value(PlotType::Histogram2dContour).unwrap(), json!("histogram2dcontour"));
         assert_eq!(to_value(PlotType::Ohlc).unwrap(), json!("ohlc"));
+        assert_eq!(to_value(PlotType::Sankey).unwrap(), json!("sankey"));
         assert_eq!(to_value(PlotType::Surface).unwrap(), json!("surface"));
     }
 

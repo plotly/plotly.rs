@@ -3513,7 +3513,7 @@ mod tests {
             "bordercolor": "#321321",
             "borderwidth": 500,
             "font": {},
-            "orientation": "vertical",
+            "orientation": "v",
             "traceorder": "normal",
             "tracegroupgap": 10,
             "itemsizing": "trace",
@@ -3980,7 +3980,7 @@ mod tests {
             .color("#000FFF")
             .active_color("#AAABBB");
         let expected = json!({
-            "orientation": "horizontal",
+            "orientation": "h",
             "bgcolor": "#FFF000",
             "color": "#000FFF",
             "activecolor": "#AAABBB",
