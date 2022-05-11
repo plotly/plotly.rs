@@ -25,7 +25,7 @@ pub trait Color {
     fn to_color(&self) -> ColorWrapper;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Rgb {
     r: u8,
     g: u8,
@@ -44,7 +44,7 @@ impl Color for Rgb {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Rgba {
     r: u8,
     g: u8,

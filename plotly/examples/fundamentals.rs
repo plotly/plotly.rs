@@ -1,5 +1,5 @@
 use itertools_num::linspace;
-use plotly::common::{Fill, Font, Mode};
+use plotly::common::{DashType, Fill, Font, Mode};
 use plotly::layout::{
     Axis, GridPattern, Layout, LayoutGrid, Margin, Shape, ShapeLayer, ShapeLine, ShapeType,
 };
@@ -56,7 +56,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
                 ShapeLine::new()
                     .color(NamedColor::LightSeaGreen)
                     .width(3.)
-                    .dash("dashdot"),
+                    .dash(DashType::DashDot),
             ),
     );
     layout.add_shape(
@@ -70,7 +70,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
                 ShapeLine::new()
                     .color(NamedColor::MediumPurple)
                     .width(3.)
-                    .dash("dot"),
+                    .dash(DashType::Dot),
             ),
     );
 
