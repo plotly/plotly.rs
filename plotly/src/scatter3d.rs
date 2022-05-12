@@ -16,6 +16,7 @@ use crate::private::{
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
+#[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 
 #[derive(Serialize, Clone, Debug, Default)]
