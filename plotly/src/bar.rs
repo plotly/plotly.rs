@@ -303,3 +303,90 @@ where
         serde_json::to_string(&self).unwrap()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use crate::common::ErrorType;
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_bar() {
+        let bar = Bar::new(vec![1, 2], vec![3, 4])
+            .name("Bar")
+            .visible(Visible::LegendOnly)
+            .show_legend(false)
+            .legend_group("legend-group")
+            .opacity(0.5)
+            .ids(vec!["1"])
+            .width(999)
+            .offset(5)
+            .offset_array(vec![5, 5])
+            .text("text")
+            .text_array(vec!["text"])
+            .text_position(TextPosition::None)
+            .text_position_array(vec![TextPosition::None])
+            .text_template("text_template")
+            .text_template_array(vec!["text_template"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .x_axis("xaxis")
+            .y_axis("yaxis")
+            .orientation(Orientation::Vertical)
+            .alignment_group("alignment_group")
+            .offset_group("offset_group")
+            .marker(Marker::new())
+            .text_angle(0.05)
+            .text_font(Font::new())
+            .error_x(ErrorData::new(ErrorType::Constant))
+            .error_y(ErrorData::new(ErrorType::Percent))
+            .clip_on_axis(true)
+            .constrain_text(ConstrainText::Both)
+            .hover_label(Label::new())
+            .inside_text_anchor(TextAnchor::End)
+            .inside_text_font(Font::new())
+            .outside_text_font(Font::new())
+            .x_calendar(Calendar::Nanakshahi)
+            .y_calendar(Calendar::Ummalqura);
+
+        let expected = json!({
+            "type": "bar",
+            "x": [1, 2],
+            "y": [3, 4],
+            "name": "Bar",
+            "visible": "legendonly",
+            "showlegend": false,
+            "legendgroup": "legend-group",
+            "opacity": 0.5,
+            "ids": ["1"],
+            "width": 999,
+            "offset": [5, 5],
+            "text": ["text"],
+            "textposition": ["none"],
+            "texttemplate": ["text_template"],
+            "hovertext": ["hover_text"],
+            "xaxis": "xaxis",
+            "yaxis": "yaxis",
+            "orientation": "v",
+            "alignmentgroup": "alignment_group",
+            "offsetgroup": "offset_group",
+            "marker": {},
+            "textangle": 0.05,
+            "textfont": {},
+            "error_x": {"type": "constant"},
+            "error_y": {"type": "percent"},
+            "cliponaxis": true,
+            "constraintext": "both",
+            "hoverlabel": {},
+            "insidetextanchor": "end",
+            "insidetextfont": {},
+            "outsidetextfont": {},
+            "xcalendar": "nanakshahi",
+            "ycalendar": "ummalqura",
+        });
+
+        assert_eq!(to_value(bar).unwrap(), expected);
+    }
+}
