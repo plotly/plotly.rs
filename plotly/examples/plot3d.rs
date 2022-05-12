@@ -99,9 +99,7 @@ fn surface_plot(show: bool) {
     plot.add_trace(trace);
     if show {
         plot.show();
-        plot.to_html("surface_plot.html");
     }
-    //println!("{}", plot.to_inline_html(Some("simple_line_plot")));
 }
 
 fn main() -> std::io::Result<()> {
