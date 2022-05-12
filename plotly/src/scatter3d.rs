@@ -1,23 +1,24 @@
 //! Scatter plot
 
-use crate::common::color::{Color, ColorWrapper};
+use serde::Serialize;
+
 use crate::common::{
+    color::{Color, ColorWrapper},
     Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };
 use crate::private;
 use crate::Trace;
-use serde::Serialize;
-
-#[cfg(feature = "plotly_ndarray")]
-use crate::ndarray::ArrayTraces;
 use crate::private::{
     copy_iterable_to_vec, NumOrString, NumOrStringCollection
 };
+
+
 #[cfg(feature = "plotly_ndarray")]
+use crate::ndarray::ArrayTraces;
 use ndarray::{Array, Ix1, Ix2};
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct Scatter3D<X, Y, Z>
 where
     X: Serialize + Clone + 'static,
@@ -127,70 +128,11 @@ where
     z_calendar: Option<Calendar>,
 }
 
-impl<X, Y, Z> Default for Scatter3D<X, Y, Z>
-where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
-    Z: Serialize + Clone + 'static,
-{
-    fn default() -> Self {
-        Scatter3D {
-            r#type: PlotType::Scatter3D,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            mode: None,
-            ids: None,
-            x: None,
-            x0: None,
-            dx: None,
-            y: None,
-            y0: None,
-            dy: None,
-            z: None,
-            z0: None,
-            dz: None,
-            text: None,
-            text_position: None,
-            text_template: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            meta: None,
-            custom_data: None,
-            x_axis: None,
-            y_axis: None,
-            z_axis: None,
-            orientation: None,
-            group_norm: None,
-            stack_group: None,
-            marker: None,
-            line: None,
-            text_font: None,
-            error_x: None,
-            error_y: None,
-            error_z: None,
-            clip_on_axis: None,
-            connect_gaps: None,
-            fill: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on: None,
-            stack_gaps: None,
-            x_calendar: None,
-            y_calendar: None,
-            z_calendar: None,
-        }
-    }
-}
-
 impl<X, Y, Z> Scatter3D<X, Y, Z>
 where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
-    Z: Serialize + Clone + 'static,
+    X: Serialize + Default + Clone + 'static,
+    Y: Serialize + Default + Clone + 'static,
+    Z: Serialize + Default + Clone + 'static,
 {
     pub fn new<I, K, L>(x: I, y: K, z: L) -> Box<Self>
     where
@@ -201,11 +143,11 @@ where
         let x = copy_iterable_to_vec(x);
         let y = copy_iterable_to_vec(y);
         let z = copy_iterable_to_vec(z);
-        Box::new(Scatter3D {
+        Box::new(Self {
+            r#type: PlotType::Scatter3D,
             x: Some(x),
             y: Some(y),
             z: Some(z),
-            r#type: PlotType::Scatter3D,
             ..Default::default()
         })
     }
