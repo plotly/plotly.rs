@@ -1,3 +1,5 @@
+pub mod themes;
+
 use serde::{Serialize, Serializer};
 use std::borrow::Cow;
 
