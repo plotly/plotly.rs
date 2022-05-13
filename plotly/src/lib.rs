@@ -32,7 +32,7 @@ pub use traces::{
 pub use traces::{box_plot, contour, histogram, sankey, surface};
 
 #[cfg(feature = "plotly_ndarray")]
-pub use ndarray::ArrayTraces;
+pub use crate::ndarray::ArrayTraces;
 
 // Not public API.
 #[doc(hidden)]

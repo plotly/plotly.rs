@@ -6,7 +6,6 @@ use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use rand::{thread_rng, Rng};
 use serde::Serialize;
-use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -139,6 +138,7 @@ pub struct Plot {
     remote_plotly_js: bool,
 }
 
+#[cfg(not(feature = "wasm"))]
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
 Consider using the `to_html` method to save the plot instead. If using the `kaleido` feature the
 `save` method can be used to produce a static image in one of the following formats:
@@ -220,6 +220,8 @@ impl Plot {
     /// in the /tmp directory.
     #[cfg(not(feature = "wasm"))]
     pub fn show(&self) {
+        use std::env;
+
         let rendered = self.render(false, "", 0, 0);
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
@@ -251,6 +253,8 @@ impl Plot {
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
     #[cfg(not(feature = "wasm"))]
     pub fn show_png(&self, width: usize, height: usize) {
+        use std::env;
+
         let rendered = self.render(true, "png", width, height);
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
@@ -281,6 +285,8 @@ impl Plot {
     /// To save the resulting png right-click on the resulting image and select `Save As...`.
     #[cfg(not(feature = "wasm"))]
     pub fn show_jpeg(&self, width: usize, height: usize) {
+        use std::env;
+
         let rendered = self.render(true, "jpg", width, height);
         let rendered = rendered.as_bytes();
         let mut temp = env::temp_dir();
@@ -472,7 +478,7 @@ impl Plot {
             .expect("Invalid JSON structure - expected a top-level Object")
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", not(feature = "wasm")))]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("xdg-open")
@@ -481,7 +487,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    #[cfg(target_os = "macos")]
+    #[cfg(all(target_os = "macos", not(feature = "wasm")))]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("open")
@@ -490,7 +496,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    #[cfg(target_os = "windows")]
+    #[cfg(all(target_os = "windows", not(feature = "wasm")))]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("cmd")
