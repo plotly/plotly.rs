@@ -479,6 +479,7 @@ mod tests {
         );
     }
 
+    #[test]
     fn color_from_f64() {
         assert_eq!(1.54.to_color(), ColorWrapper::F(1.54));
         assert_eq!(0.1.to_color(), ColorWrapper::F(0.1));
