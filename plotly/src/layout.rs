@@ -2462,39 +2462,39 @@ pub struct LayoutTemplate {
     grid: Option<LayoutGrid>,
     #[serde(skip_serializing_if = "Option::is_none")]
     calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
-    x_axis: Option<Axis>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
-    y_axis: Option<Axis>,
 
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    x_axis: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    y_axis: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis2")]
-    x_axis2: Option<Axis>,
+    x_axis2: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis2")]
-    y_axis2: Option<Axis>,
+    y_axis2: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis3")]
-    x_axis3: Option<Axis>,
+    x_axis3: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis3")]
-    y_axis3: Option<Axis>,
+    y_axis3: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis4")]
-    x_axis4: Option<Axis>,
+    x_axis4: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis4")]
-    y_axis4: Option<Axis>,
+    y_axis4: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis5")]
-    x_axis5: Option<Axis>,
+    x_axis5: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis5")]
-    y_axis5: Option<Axis>,
+    y_axis5: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis6")]
-    x_axis6: Option<Axis>,
+    x_axis6: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis6")]
-    y_axis6: Option<Axis>,
+    y_axis6: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis7")]
-    x_axis7: Option<Axis>,
+    x_axis7: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis7")]
-    y_axis7: Option<Axis>,
+    y_axis7: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis8")]
-    x_axis8: Option<Axis>,
+    x_axis8: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis8")]
-    y_axis8: Option<Axis>,
+    y_axis8: Option<Box<Axis>>,
 
     // ternary: Option<LayoutTernary>,
     // scene: Option<LayoutScene>,
@@ -2694,82 +2694,82 @@ impl LayoutTemplate {
     }
 
     pub fn x_axis(mut self, xaxis: Axis) -> Self {
-        self.x_axis = Some(xaxis);
+        self.x_axis = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis(mut self, yaxis: Axis) -> Self {
-        self.y_axis = Some(yaxis);
+        self.y_axis = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis2(mut self, xaxis: Axis) -> Self {
-        self.x_axis2 = Some(xaxis);
+        self.x_axis2 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis2(mut self, yaxis: Axis) -> Self {
-        self.y_axis2 = Some(yaxis);
+        self.y_axis2 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis3(mut self, xaxis: Axis) -> Self {
-        self.x_axis3 = Some(xaxis);
+        self.x_axis3 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis3(mut self, yaxis: Axis) -> Self {
-        self.y_axis3 = Some(yaxis);
+        self.y_axis3 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis4(mut self, xaxis: Axis) -> Self {
-        self.x_axis4 = Some(xaxis);
+        self.x_axis4 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis4(mut self, yaxis: Axis) -> Self {
-        self.y_axis4 = Some(yaxis);
+        self.y_axis4 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis5(mut self, xaxis: Axis) -> Self {
-        self.x_axis5 = Some(xaxis);
+        self.x_axis5 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis5(mut self, yaxis: Axis) -> Self {
-        self.y_axis5 = Some(yaxis);
+        self.y_axis5 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis6(mut self, xaxis: Axis) -> Self {
-        self.x_axis6 = Some(xaxis);
+        self.x_axis6 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis6(mut self, yaxis: Axis) -> Self {
-        self.y_axis6 = Some(yaxis);
+        self.y_axis6 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis7(mut self, xaxis: Axis) -> Self {
-        self.x_axis7 = Some(xaxis);
+        self.x_axis7 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis7(mut self, yaxis: Axis) -> Self {
-        self.y_axis7 = Some(yaxis);
+        self.y_axis7 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis8(mut self, xaxis: Axis) -> Self {
-        self.x_axis8 = Some(xaxis);
+        self.x_axis8 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis8(mut self, yaxis: Axis) -> Self {
-        self.y_axis8 = Some(yaxis);
+        self.y_axis8 = Some(Box::new(yaxis));
         self
     }
 
@@ -2945,7 +2945,7 @@ pub struct Layout {
     hover_label: Option<Label>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    template: Option<Cow<'static, Template>>,
+    template: Option<Box<Cow<'static, Template>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     grid: Option<LayoutGrid>,
@@ -2953,37 +2953,37 @@ pub struct Layout {
     calendar: Option<Calendar>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
-    x_axis: Option<Axis>,
+    x_axis: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
-    y_axis: Option<Axis>,
+    y_axis: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis2")]
-    x_axis2: Option<Axis>,
+    x_axis2: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis2")]
-    y_axis2: Option<Axis>,
+    y_axis2: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis3")]
-    x_axis3: Option<Axis>,
+    x_axis3: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis3")]
-    y_axis3: Option<Axis>,
+    y_axis3: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis4")]
-    x_axis4: Option<Axis>,
+    x_axis4: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis4")]
-    y_axis4: Option<Axis>,
+    y_axis4: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis5")]
-    x_axis5: Option<Axis>,
+    x_axis5: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis5")]
-    y_axis5: Option<Axis>,
+    y_axis5: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis6")]
-    x_axis6: Option<Axis>,
+    x_axis6: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis6")]
-    y_axis6: Option<Axis>,
+    y_axis6: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis7")]
-    x_axis7: Option<Axis>,
+    x_axis7: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis7")]
-    y_axis7: Option<Axis>,
+    y_axis7: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis8")]
-    x_axis8: Option<Axis>,
+    x_axis8: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis8")]
-    y_axis8: Option<Axis>,
+    y_axis8: Option<Box<Axis>>,
 
     // ternary: Option<LayoutTernary>,
     // scene: Option<LayoutScene>,
@@ -3187,82 +3187,82 @@ impl Layout {
     }
 
     pub fn x_axis(mut self, xaxis: Axis) -> Self {
-        self.x_axis = Some(xaxis);
+        self.x_axis = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis(mut self, yaxis: Axis) -> Self {
-        self.y_axis = Some(yaxis);
+        self.y_axis = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis2(mut self, xaxis: Axis) -> Self {
-        self.x_axis2 = Some(xaxis);
+        self.x_axis2 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis2(mut self, yaxis: Axis) -> Self {
-        self.y_axis2 = Some(yaxis);
+        self.y_axis2 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis3(mut self, xaxis: Axis) -> Self {
-        self.x_axis3 = Some(xaxis);
+        self.x_axis3 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis3(mut self, yaxis: Axis) -> Self {
-        self.y_axis3 = Some(yaxis);
+        self.y_axis3 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis4(mut self, xaxis: Axis) -> Self {
-        self.x_axis4 = Some(xaxis);
+        self.x_axis4 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis4(mut self, yaxis: Axis) -> Self {
-        self.y_axis4 = Some(yaxis);
+        self.y_axis4 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis5(mut self, xaxis: Axis) -> Self {
-        self.x_axis5 = Some(xaxis);
+        self.x_axis5 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis5(mut self, yaxis: Axis) -> Self {
-        self.y_axis5 = Some(yaxis);
+        self.y_axis5 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis6(mut self, xaxis: Axis) -> Self {
-        self.x_axis6 = Some(xaxis);
+        self.x_axis6 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis6(mut self, yaxis: Axis) -> Self {
-        self.y_axis6 = Some(yaxis);
+        self.y_axis6 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis7(mut self, xaxis: Axis) -> Self {
-        self.x_axis7 = Some(xaxis);
+        self.x_axis7 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis7(mut self, yaxis: Axis) -> Self {
-        self.y_axis7 = Some(yaxis);
+        self.y_axis7 = Some(Box::new(yaxis));
         self
     }
 
     pub fn x_axis8(mut self, xaxis: Axis) -> Self {
-        self.x_axis8 = Some(xaxis);
+        self.x_axis8 = Some(Box::new(xaxis));
         self
     }
 
     pub fn y_axis8(mut self, yaxis: Axis) -> Self {
-        self.y_axis8 = Some(yaxis);
+        self.y_axis8 = Some(Box::new(yaxis));
         self
     }
 
@@ -3271,11 +3271,12 @@ impl Layout {
         self
     }
 
-    pub fn add_annotation(&mut self, annotation: Annotation) {
+    pub fn add_annotation(mut self, annotation: Annotation) -> Self {
         if self.annotations.is_none() {
             self.annotations = Some(Vec::new());
         }
         self.annotations.as_mut().unwrap().push(annotation);
+        self
     }
 
     pub fn shapes(mut self, shapes: Vec<Shape>) -> Self {
@@ -3283,11 +3284,12 @@ impl Layout {
         self
     }
 
-    pub fn add_shape(&mut self, shape: Shape) {
+    pub fn add_shape(mut self, shape: Shape) -> Self {
         if self.shapes.is_none() {
             self.shapes = Some(Vec::new());
         }
         self.shapes.as_mut().unwrap().push(shape);
+        self
     }
 
     pub fn new_shape(mut self, new_shape: NewShape) -> Self {
@@ -3304,7 +3306,7 @@ impl Layout {
     where
         T: Into<Cow<'static, Template>>,
     {
-        self.template = Some(template.into());
+        self.template = Some(Box::new(template.into()));
         self
     }
 
@@ -4323,7 +4325,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // causes stack overflow on debug builds, but passes on release builds
     fn test_serialize_layout_template() {
         let layout_template = LayoutTemplate::new()
             .title("Title".into())
@@ -4466,7 +4467,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // causes stack overflow on debug builds, but passes on release builds
     fn test_serialize_layout() {
         let layout = Layout::new()
             .title("Title".into())
@@ -4512,6 +4512,8 @@ mod tests {
             .y_axis7(Axis::new())
             .y_axis8(Axis::new())
             .annotations(vec![Annotation::new()])
+            .add_annotation(Annotation::new())
+            .add_shape(Shape::new())
             .shapes(vec![Shape::new()])
             .new_shape(NewShape::new())
             .active_shape(ActiveShape::new())
@@ -4576,7 +4578,7 @@ mod tests {
             "yaxis6": {},
             "yaxis7": {},
             "yaxis8": {},
-            "annotations": [{}],
+            "annotations": [{}, {}],
             "shapes": [{}],
             "newshape": {},
             "activeshape": {},
