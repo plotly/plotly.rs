@@ -510,6 +510,7 @@ impl PartialEq for Plot {
 #[cfg(test)]
 mod tests {
     use serde_json::{json, to_value};
+    #[cfg(feature = "kaleido")]
     use std::path::PathBuf;
 
     use super::*;
