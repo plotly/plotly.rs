@@ -3271,12 +3271,11 @@ impl Layout {
         self
     }
 
-    pub fn add_annotation(mut self, annotation: Annotation) -> Self {
+    pub fn add_annotation(&mut self, annotation: Annotation) {
         if self.annotations.is_none() {
             self.annotations = Some(Vec::new());
         }
         self.annotations.as_mut().unwrap().push(annotation);
-        self
     }
 
     pub fn shapes(mut self, shapes: Vec<Shape>) -> Self {
@@ -3284,12 +3283,11 @@ impl Layout {
         self
     }
 
-    pub fn add_shape(mut self, shape: Shape) -> Self {
+    pub fn add_shape(&mut self, shape: Shape) {
         if self.shapes.is_none() {
             self.shapes = Some(Vec::new());
         }
         self.shapes.as_mut().unwrap().push(shape);
-        self
     }
 
     pub fn new_shape(mut self, new_shape: NewShape) -> Self {
@@ -4512,8 +4510,6 @@ mod tests {
             .y_axis7(Axis::new())
             .y_axis8(Axis::new())
             .annotations(vec![Annotation::new()])
-            .add_annotation(Annotation::new())
-            .add_shape(Shape::new())
             .shapes(vec![Shape::new()])
             .new_shape(NewShape::new())
             .active_shape(ActiveShape::new())
@@ -4578,7 +4574,7 @@ mod tests {
             "yaxis6": {},
             "yaxis7": {},
             "yaxis8": {},
-            "annotations": [{}, {}],
+            "annotations": [{}],
             "shapes": [{}],
             "newshape": {},
             "activeshape": {},
