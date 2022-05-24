@@ -25,8 +25,8 @@ pub use plot::{ImageFormat, Plot, Trace};
 
 // Bring the different trace types into the top-level scope
 pub use traces::{
-    Bar, BoxPlot, Candlestick, Contour, HeatMap, Histogram, Ohlc, Sankey, Scatter, Scatter3D,
-    ScatterPolar, Surface,
+    Bar, BoxPlot, Candlestick, Contour, HeatMap, Histogram, Mesh3D, Ohlc, Sankey, Scatter,
+    Scatter3D, ScatterPolar, Surface,
 };
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{box_plot, contour, histogram, sankey, surface};

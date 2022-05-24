@@ -205,6 +205,7 @@ pub enum PlotType {
     HeatMap,
     Histogram,
     Histogram2dContour,
+    Mesh3D,
     Ohlc,
     Sankey,
     Surface,
