@@ -177,7 +177,7 @@ mod tests {
         plot.add_trace(Bar::new(vec![0], vec![1]));
 
         let expected =
-            r##"{"template":{"layout":{"title":{"text":"","x":0.05},"font":{"color":"#F2F5FA"}"##; // etc...
+            r##"{"template":{"layout":{"title":{"text":"","x":0.05},"font":{"color":"#f2f5fa"}"##; // etc...
         assert!(plot.to_json().contains(expected));
     }
 }

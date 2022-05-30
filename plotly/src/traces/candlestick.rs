@@ -1,6 +1,6 @@
 //! Candlestick plot
 
-use crate::common::color::NamedColor;
+use crate::color::NamedColor;
 use crate::common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible};
 use crate::private;
 use crate::Trace;

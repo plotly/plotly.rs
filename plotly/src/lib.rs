@@ -18,7 +18,7 @@ pub mod layout;
 pub mod plot;
 mod traces;
 
-pub use common::color::{NamedColor, Rgb, Rgba};
+pub use common::color;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{ImageFormat, Plot, Trace};
