@@ -4,16 +4,91 @@ use serde::Serialize;
 
 use crate::color::Color;
 use crate::common::{
-    Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
-    Orientation, PlotType, Position, Visible,
+    Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode, PlotType,
+    Position, Visible,
 };
 use crate::private::{self, copy_iterable_to_vec, NumOrString, NumOrStringCollection};
 use crate::Trace;
 
 #[cfg(feature = "plotly_ndarray")]
-use crate::ndarray::ArrayTraces;
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1, Ix2};
+use ndarray::{Array, Ix1};
+
+#[derive(Debug, Default, Clone, Serialize)]
+pub struct ProjectionCoord {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    opacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    scale: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    show: Option<bool>,
+}
+
+impl ProjectionCoord {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Sets the projection opacity.
+    pub fn opacity(mut self, opacity: f64) -> Self {
+        self.opacity = Some(opacity);
+        self
+    }
+
+    /// Sets the scale factor determining the size of the projection marker points.
+    pub fn scale(mut self, scale: f64) -> Self {
+        self.scale = Some(scale);
+        self
+    }
+
+    /// Sets whether or not projections are shown along the current axis.
+    pub fn show(mut self, show: bool) -> Self {
+        self.show = Some(show);
+        self
+    }
+}
+
+#[derive(Debug, Default, Clone, Serialize)]
+pub struct Projection {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<ProjectionCoord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<ProjectionCoord>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    z: Option<ProjectionCoord>,
+}
+
+impl Projection {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn x(mut self, x: ProjectionCoord) -> Self {
+        self.x = Some(x);
+        self
+    }
+
+    pub fn y(mut self, y: ProjectionCoord) -> Self {
+        self.y = Some(y);
+        self
+    }
+
+    pub fn z(mut self, z: ProjectionCoord) -> Self {
+        self.z = Some(z);
+        self
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub enum SurfaceAxis {
+    #[serde(rename = "-1")]
+    MinusOne,
+    #[serde(rename = "0")]
+    Zero,
+    #[serde(rename = "1")]
+    One,
+    #[serde(rename = "2")]
+    Two,
+}
 
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Scatter3D<X, Y, Z>
@@ -31,36 +106,26 @@ where
     show_legend: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendrank")]
+    legend_rank: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<Mode>,
     #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<X>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    x0: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    dx: Option<f64>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<Vec<Y>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    y0: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    dy: Option<f64>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     z: Option<Vec<Z>>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    z0: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    dz: Option<f64>,
-
+    #[serde(skip_serializing_if = "Option::is_none", rename = "surfacecolor")]
+    surface_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "textposition")]
@@ -73,55 +138,42 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xhoverformat")]
+    x_hover_format: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yhoverformat")]
+    y_hover_format: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zhoverformat")]
+    z_hover_format: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "customdata")]
     custom_data: Option<NumOrStringCollection>,
-
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
-    x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
-    y_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
-    z_axis: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "groupnorm")]
-    group_norm: Option<GroupNorm>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "stackgroup")]
-    stack_group: Option<String>,
+    scene: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
-    text_font: Option<Font>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error_x: Option<ErrorData>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error_y: Option<ErrorData>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error_z: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "cliponaxis")]
-    clip_on_axis: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
     connect_gaps: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    fill: Option<Fill>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoveron")]
-    hover_on: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "stackgaps")]
-    stack_gaps: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    projection: Option<Projection>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "surfaceaxis")]
+    surface_axis: Option<SurfaceAxis>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
     x_calendar: Option<Calendar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
     y_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zcalendar")]
     z_calendar: Option<Calendar>,
 }
 
@@ -152,93 +204,18 @@ where
     #[cfg(feature = "plotly_ndarray")]
     pub fn from_array(x: Array<X, Ix1>, y: Array<Y, Ix1>, z: Array<Z, Ix1>) -> Box<Self> {
         Box::new(Scatter3D {
+            r#type: PlotType::Scatter3D,
             x: Some(x.to_vec()),
             y: Some(y.to_vec()),
             z: Some(z.to_vec()),
-            r#type: PlotType::Scatter3D,
             ..Default::default()
         })
     }
 
-    /// Produces `Scatter` traces from a 2 dimensional tensor (`traces_matrix`) indexed by `x`. This
-    /// function requires the `ndarray` feature.
-    ///
-    /// # Arguments
-    /// * `x`             - One dimensional array (or view) that represents the `x` axis coordinates.
-    /// * `traces_matrix` - Two dimensional array (or view) containing the `y` axis coordinates of
-    /// the traces.
-    /// * `array_traces`  - Determines whether the traces are arranged in the matrix over the
-    /// columns (`ArrayTraces::OverColumns`) or over the rows (`ArrayTraces::OverRows`).
-    ///
-    /// !TODO: make 3D
-    /// # Examples
-    ///
-    /// ```
-    /// use plotly::common::Mode;
-    /// use plotly::{Plot, Scatter, ArrayTraces};
-    /// use ndarray::{Array, Ix1, Ix2};
-    ///
-    /// fn ndarray_to_traces() {
-    ///     let n: usize = 11;
-    ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
-    ///     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
-    ///     let mut count = 0.;
-    ///     for mut row in ys.columns_mut() {
-    ///         for index in 0..row.len() {
-    ///             row[index] = count + (index as f64).powf(2.);
-    ///         }
-    ///         count += 1.;
-    ///     }
-    ///
-    ///     let traces = Scatter::default()
-    ///         .mode(Mode::LinesMarkers)
-    ///         .to_traces(t, ys, ArrayTraces::OverColumns);
-    ///
-    ///     let mut plot = Plot::new();
-    ///     plot.add_traces(traces);
-    ///     plot.show();
-    /// }
-    /// fn main() -> std::io::Result<()> {
-    ///     ndarray_to_traces();
-    ///     Ok(())
-    /// }
-    /// ```
-    #[cfg(feature = "plotly_ndarray")]
-    pub fn to_traces(
-        &self,
-        x: Array<X, Ix1>,
-        traces_matrix: Array<Y, Ix2>,
-        array_traces: ArrayTraces,
-    ) -> Vec<Box<dyn Trace>> {
-        let mut traces: Vec<Box<dyn Trace>> = Vec::new();
-        let mut trace_vectors = private::trace_vectors_from(traces_matrix, array_traces);
-        trace_vectors.reverse();
-        while !trace_vectors.is_empty() {
-            let mut sc = Box::new(self.clone());
-            sc.x = Some(x.to_vec());
-            let data = trace_vectors.pop();
-            if let Some(d) = data {
-                sc.y = Some(d);
-                traces.push(sc);
-            }
-        }
-
-        traces
-    }
-
-    /// Enables WebGL.
-    pub fn web_gl_mode(mut self, on: bool) -> Box<Self> {
-        self.r#type = if on {
-            PlotType::ScatterGL
-        } else {
-            PlotType::Scatter
-        };
-        Box::new(self)
-    }
-
-    /// Sets the trace name. The trace name appear as the legend item and on hover.
+    /// Sets the trace name. The trace name is used as the label for the trace in the legend, as well
+    /// as when the trace is hovered hover.
     pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_owned());
+        self.name = Some(name.to_string());
         Box::new(self)
     }
 
@@ -255,10 +232,25 @@ where
         Box::new(self)
     }
 
-    /// Sets the legend group for this trace. Traces part of the same legend group hide/show at the
+    /// Sets the legend group for this trace. Traces part of the same legend group show/hide at the
     /// same time when toggling legend items.
     pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_owned());
+        self.legend_group = Some(legend_group.to_string());
+        Box::new(self)
+    }
+
+    /// Sets the `LegendGroupTitle` object for the trace.
+    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
+        self.legend_group_title = Some(legend_group_title);
+        Box::new(self)
+    }
+
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left side while with
+    /// `"reversed" `legend.traceorder` they are on bottom/right side. The default legendrank is 1000, so that you
+    /// can use ranks less than 1000 to place certain items before all unranked items, and ranks greater than 1000 to
+    /// go after all unranked items.
+    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
+        self.legend_rank = Some(legend_rank);
         Box::new(self)
     }
 
@@ -285,57 +277,22 @@ where
         Box::new(self)
     }
 
-    /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
-    /// starting coordinate and `dx` the step.
-    pub fn x0<V: Into<NumOrString>>(mut self, x0: V) -> Box<Self> {
-        self.x0 = Some(x0.into());
+    /// Sets the surface fill color.
+    pub fn surface_color<C: Color>(mut self, color: C) -> Box<Self> {
+        self.surface_color = Some(Box::new(color));
         Box::new(self)
     }
 
-    /// Sets the x coordinate step. See `x0` for more info.
-    pub fn dx(mut self, dx: f64) -> Box<Self> {
-        self.dx = Some(dx);
-        Box::new(self)
-    }
-
-    /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the
-    /// starting coordinate and `dy` the step.
-    pub fn y0<V: Into<NumOrString>>(mut self, y0: V) -> Box<Self> {
-        self.y0 = Some(y0.into());
-        Box::new(self)
-    }
-
-    /// Sets the y coordinate step. See `y0` for more info.
-    pub fn dy(mut self, dy: f64) -> Box<Self> {
-        self.dy = Some(dy);
-        Box::new(self)
-    }
-
-    /// Alternate to `z`. Builds a linear space of z coordinates. Use with `dz` where `z0` is the
-    /// starting coordinate and `dz` the step.
-    pub fn z0<V: Into<NumOrString>>(mut self, z0: V) -> Box<Self> {
-        self.z0 = Some(z0.into());
-        Box::new(self)
-    }
-
-    /// Sets the z coordinate step. See `z0` for more info.
-    pub fn dz(mut self, dz: f64) -> Box<Self> {
-        self.dz = Some(dz);
-        Box::new(self)
-    }
-
-    /// Sets text elements associated with each (x,y) pair. If a single string, the same string
-    /// appears over all the data points. If an array of string, the items are mapped in order to
-    /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
-    /// `hover_text` is not set, these elements will be seen in the hover labels.
+    /// Sets text element associated with each (x, y, z) triplet. The same tet will be applied to each data
+    /// point. If the trace `HoverInfo` contains a "text" flag and `hover_text` is not set, these elements
+    /// will be seen in the hover labels.
     pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_owned()));
+        self.text = Some(Dim::Scalar(text.to_string()));
         Box::new(self)
     }
 
-    /// Sets text elements associated with each (x,y) pair. If a single string, the same string
-    /// appears over all the data points. If an array of string, the items are mapped in order to
-    /// the this trace's (x,y) coordinates. If trace `HoverInfo` contains a "text" flag and
+    /// Sets text elements associated with each (x, y, z) triplet. The items are mapped sequentially to
+    /// this trace's (x, y, z) coordinates. If trace `HoverInfo` contains a "text" flag and
     /// `hover_text` is not set, these elements will be seen in the hover labels.
     pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Self> {
         let text = private::owned_string_vector(text);
@@ -343,13 +300,13 @@ where
         Box::new(self)
     }
 
-    /// Sets the positions of the `text` elements with respects to the (x,y) coordinates.
+    /// Sets the positions of the `text` elements with respects to the (x, y) coordinates.
     pub fn text_position(mut self, text_position: Position) -> Box<Self> {
         self.text_position = Some(Dim::Scalar(text_position));
         Box::new(self)
     }
 
-    /// Sets the positions of the `text` elements with respects to the (x,y) coordinates.
+    /// Sets the positions of the `text` elements with respects to the (x, y) coordinates.
     pub fn text_position_array(mut self, text_position: Vec<Position>) -> Box<Self> {
         self.text_position = Some(Dim::Vector(text_position));
         Box::new(self)
@@ -365,7 +322,7 @@ where
     /// on the date formatting syntax. Every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available.
     pub fn text_template(mut self, text_template: &str) -> Box<Self> {
-        self.text_template = Some(Dim::Scalar(text_template.to_owned()));
+        self.text_template = Some(Dim::Scalar(text_template.to_string()));
         Box::new(self)
     }
 
@@ -384,26 +341,22 @@ where
         Box::new(self)
     }
 
-    /// Sets hover text elements associated with each (x,y) pair. If a single string, the same
-    /// string appears over all the data points. If an array of string, the items are mapped in
-    /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
-    /// "Text" flag.
+    /// Sets hover text elements associated with each (x, y, z) triplet. The same text will be associated
+    /// with all datas points. To be seen, the trace `hover_info` must contain a "Text" flag.
     pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
+        self.hover_text = Some(Dim::Scalar(hover_text.to_string()));
         Box::new(self)
     }
 
-    /// Sets hover text elements associated with each (x,y) pair. If a single string, the same
-    /// string appears over all the data points. If an array of string, the items are mapped in
-    /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
-    /// "Text" flag.
+    /// Sets hover text elements associated with each (x, y, z) triplet. The items are mapped sequentially across
+    /// this trace's (x,y) coordinates. To be seen, the trace `hover_info` must contain a "Text" flag.
     pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Self> {
         let hover_text = private::owned_string_vector(hover_text);
         self.hover_text = Some(Dim::Vector(hover_text));
         Box::new(self)
     }
 
-    /// Determines which trace information appear on hover. If `HoverInfo::None` or `HoverInfo::Skip`
+    /// Determines which trace information appears on hover. If `HoverInfo::None` or `HoverInfo::Skip`
     /// are set, no information is displayed upon hovering. But, if `HoverInfo::None` is set, click
     /// and hover events are still fired.
     pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
@@ -426,7 +379,7 @@ where
     /// secondary box, for example "<extra>{fullData.name}</extra>". To hide the secondary box
     /// completely, use an empty tag `<extra></extra>`.
     pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
         Box::new(self)
     }
 
@@ -450,6 +403,39 @@ where
         Box::new(self)
     }
 
+    /// Sets the hover text formatting rulefor `x` using d3 formatting mini-languages which are very similar
+    /// to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for
+    /// dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's
+    /// date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds
+    /// with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
+    /// "09~15~23.46". By default the values are formatted using `x_axis.hover_format`.
+    pub fn x_hover_format(mut self, hover_format: &str) -> Box<Self> {
+        self.x_hover_format = Some(hover_format.to_string());
+        Box::new(self)
+    }
+
+    /// Sets the hover text formatting rulefor `y` using d3 formatting mini-languages which are very similar
+    /// to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for
+    /// dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's
+    /// date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds
+    /// with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
+    /// "09~15~23.46". By default the values are formatted using `y_axis.hover_format`.
+    pub fn y_hover_format(mut self, hover_format: &str) -> Box<Self> {
+        self.y_hover_format = Some(hover_format.to_string());
+        Box::new(self)
+    }
+
+    /// Sets the hover text formatting rulefor `z` using d3 formatting mini-languages which are very similar
+    /// to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for
+    /// dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's
+    /// date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds
+    /// with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
+    /// "09~15~23.46". By default the values are formatted using `z_axis.hover_format`.
+    pub fn z_hover_format(mut self, hover_format: &str) -> Box<Self> {
+        self.z_hover_format = Some(hover_format.to_string());
+        Box::new(self)
+    }
+
     /// Assigns extra meta information associated with this trace that can be used in various text
     /// attributes. Attributes such as trace `name`, graph, axis and colorbar `title.text`,
     /// annotation `text` `rangeselector`, `updatemenues` and `sliders` `label` text all support
@@ -464,66 +450,23 @@ where
 
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
-    /// DOM elements
+    /// DOM elements.
     pub fn custom_data<V: Into<NumOrString> + Clone>(mut self, custom_data: Vec<V>) -> Box<Self> {
         self.custom_data = Some(custom_data.into());
         Box::new(self)
     }
 
-    /// Sets a reference between this trace's x coordinates and a 2D cartesian x axis. If "x" (
-    /// the default value), the x coordinates refer to `Layout::x_axis`. If "x2", the x coordinates
-    /// refer to `Layout::x_axis2`, and so on.
-    pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_owned());
+    /// Sets a reference between this trace's 3D coordinate system and a 3D scene. If "scene" (the
+    /// default value), the (x,y,z) coordinates refer to `layout.scene`. If "scene2", the (x, y, z)
+    /// coordinates refer to `layout.scene2`, and so on.
+    pub fn scene(mut self, scene: &str) -> Box<Self> {
+        self.scene = Some(scene.to_string());
         Box::new(self)
     }
 
-    /// Sets a reference between this trace's y coordinates and a 2D cartesian y axis. If "y"
-    /// (the default value), the y coordinates refer to `Layout::y_axis`. If "y2", the y coordinates
-    /// refer to `Layout::y_axis2`, and so on.
-    pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    /// Sets a reference between this trace's z coordinates and a 2D cartesian z axis. If "z"
-    /// (the default value), the z coordinates refer to `Layout::z_axis`. If "z2", the z coordinates
-    /// refer to `Layout::z_axis2`, and so on.
-    pub fn z_axis(mut self, axis: &str) -> Box<Self> {
-        self.z_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    /// Only relevant when `stackgroup` is used, and only the first `orientation` found in the
-    /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
-    /// Sets the stacking direction. With "v" ("h"), the y (x) values of subsequent traces are
-    /// added. Also affects the default value of `fill`.
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    /// Only relevant when `stackgroup` is used, and only the first `groupnorm` found in the
-    /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
-    /// Sets the normalization for the sum of this `stackgroup`. With "fraction", the value of each
-    /// trace at each location is divided by the sum of all trace values at that location. "percent"
-    /// is the same but multiplied by 100 to show percentages. If there are multiple subplots, or
-    /// multiple `stackgroup`s on one subplot, each will be normalized within its own set.
-    pub fn group_norm(mut self, group_norm: GroupNorm) -> Box<Self> {
-        self.group_norm = Some(group_norm);
-        Box::new(self)
-    }
-
-    /// Set several scatter traces (on the same subplot) to the same stackgroup in order to add
-    /// their y values (or their x values if `orientation` is "h"). If blank or omitted this trace
-    /// will not be stacked. Stacking also turns `fill` on by default, using "tonexty" ("tonextx")
-    /// if `orientation` is "h" ("v") and sets the default `mode` to "lines" irrespective of point
-    /// count. You can only stack on a numeric (linear or log) axis. Traces in a `stackgroup` will
-    /// only fill to (or be filled to) other traces in the same group. With multiple `stackgroup`s
-    /// or some traces stacked and some not, if fill-linked traces are not already consecutive, the
-    /// later ones will be pushed down in the drawing order.
-    pub fn stack_group(mut self, stack_group: &str) -> Box<Self> {
-        self.stack_group = Some(stack_group.to_owned());
+    /// Configure the projection for each axis.
+    pub fn projection(mut self, projection: Projection) -> Box<Self> {
+        self.projection = Some(projection);
         Box::new(self)
     }
 
@@ -536,12 +479,6 @@ where
     /// Line display properties.
     pub fn line(mut self, line: Line) -> Box<Self> {
         self.line = Some(line);
-        Box::new(self)
-    }
-
-    /// Sets the text font.
-    pub fn text_font(mut self, text_font: Font) -> Box<Self> {
-        self.text_font = Some(text_font);
         Box::new(self)
     }
 
@@ -563,43 +500,10 @@ where
         Box::new(self)
     }
 
-    /// Determines whether or not markers and text nodes are clipped about the subplot axes. To show
-    /// markers and text nodes above axis lines and tick labels, make sure to set `xaxis.layer` and
-    /// `yaxis.layer` to "below traces".
-    pub fn clip_on_axis(mut self, clip_on_axis: bool) -> Box<Self> {
-        self.clip_on_axis = Some(clip_on_axis);
-        Box::new(self)
-    }
-
     /// Determines whether or not gaps (i.e. {nan} or missing values) in the provided data arrays
     /// are connected.
     pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Self> {
         self.connect_gaps = Some(connect_gaps);
-        Box::new(self)
-    }
-
-    /// Sets the area to fill with a solid color. Defaults to "none" unless this trace is stacked,
-    /// then it gets "tonexty" ("tonextx") if `orientation` is "v" ("h") Use with `fillcolor` if not
-    /// "none". "tozerox" and "tozeroy" fill to x=0 and y=0 respectively. "tonextx" and "tonexty"
-    /// fill between the endpoints of this trace and the endpoints of the trace before it,
-    /// connecting those endpoints with straight lines (to make a stacked area graph); if there is
-    /// no trace before it, they behave like "tozerox" and "tozeroy". "toself" connects the
-    /// endpoints of the trace (or each segment of the trace if it has gaps) into a closed shape.
-    /// "tonext" fills the space between two traces if one completely encloses the other
-    /// (eg consecutive contour lines), and behaves like "toself" if there is no trace before it.
-    /// "tonext" should not be used if one trace does not enclose the other. Traces in a
-    /// `stackgroup` will only fill to (or be filled to) other traces in the same group. With
-    /// multiple `stackgroup`s or some traces stacked and some not, if fill-linked traces are not
-    /// already consecutive, the later ones will be pushed down in the drawing order.
-    pub fn fill(mut self, fill: Fill) -> Box<Self> {
-        self.fill = Some(fill);
-        Box::new(self)
-    }
-
-    /// Sets the fill color. Defaults to a half-transparent variant of the line color, marker color,
-    /// or marker line color, whichever is available.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Self> {
-        self.fill_color = Some(Box::new(fill_color));
         Box::new(self)
     }
 
@@ -609,23 +513,10 @@ where
         Box::new(self)
     }
 
-    /// Do the hover effects highlight individual points (markers or line points) or do they
-    /// highlight filled regions? If the fill is "toself" or "tonext" and there are no markers or
-    /// text, then the default is "fills", otherwise it is "points".
-    pub fn hover_on(mut self, hover_on: &str) -> Box<Self> {
-        self.hover_on = Some(hover_on.to_owned());
-        Box::new(self)
-    }
-
-    /// Only relevant when `stack_group` is used, and only the first `stack_gaps` found in the
-    /// `stackgroup` will be used - including if `visible` is set to `Visible::LegendOnly` but not
-    /// if it is set to `Visible::False`.
-    /// Determines how we handle locations at which other traces in this group have data but this
-    /// one does not. With "infer zero" we insert a zero at these locations. With "interpolate" we
-    /// linearly interpolate between existing values, and extrapolate a constant beyond the existing
-    /// values.
-    pub fn stack_gaps(mut self, stack_gaps: &str) -> Box<Self> {
-        self.stack_gaps = Some(stack_gaps.to_owned());
+    /// If `SurfaceAxis::MinusOne`, the scatter points are not filled with a surface. If one of the remaining
+    /// three variants, the scatter points are filled with a Delaunay surface about the x, y, z respectively.
+    pub fn surface_axis(mut self, surface_axis: SurfaceAxis) -> Box<Self> {
+        self.surface_axis = Some(surface_axis);
         Box::new(self)
     }
 
@@ -656,5 +547,125 @@ where
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+    use crate::common::ErrorType;
+
+    #[test]
+    fn test_serialize_projection() {
+        let projection = Projection::new()
+            .x(ProjectionCoord::new())
+            .y(ProjectionCoord::new())
+            .z(ProjectionCoord::new());
+        let expected = json!({"x": {}, "y": {}, "z": {}});
+
+        assert_eq!(to_value(projection).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_projection_coord() {
+        let projection_coord = ProjectionCoord::new().opacity(0.75).scale(5.0).show(false);
+        let expected = json!({"opacity": 0.75, "scale": 5.0, "show": false});
+
+        assert_eq!(to_value(projection_coord).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_surface_axis() {
+        assert_eq!(to_value(SurfaceAxis::MinusOne).unwrap(), json!("-1"));
+        assert_eq!(to_value(SurfaceAxis::Zero).unwrap(), json!("0"));
+        assert_eq!(to_value(SurfaceAxis::One).unwrap(), json!("1"));
+        assert_eq!(to_value(SurfaceAxis::Two).unwrap(), json!("2"));
+    }
+
+    #[test]
+    fn test_serialize_scatte3d() {
+        let plot = Scatter3D::new(vec![0, 1], vec![2, 3], vec![4, 5])
+            .name("trace_name")
+            .visible(Visible::True)
+            .show_legend(true)
+            .legend_group("legend_group")
+            .legend_rank(1000)
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .opacity(0.2)
+            .mode(Mode::LinesText)
+            .ids(vec!["1"])
+            .surface_color("#123456")
+            .text("text")
+            .text_array(vec!["text"])
+            .text_position(Position::BottomLeft)
+            .text_position_array(vec![Position::TopCenter])
+            .text_template("text_template")
+            .text_template_array(vec!["text_template"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .hover_info(HoverInfo::XAndYAndZ)
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .x_hover_format("x_hover_format")
+            .y_hover_format("y_hover_format")
+            .z_hover_format("z_hover_format")
+            .meta("meta")
+            .custom_data(vec!["custom_data"])
+            .scene("scene2")
+            .marker(Marker::new())
+            .line(Line::new())
+            .error_x(ErrorData::new(ErrorType::SquareRoot))
+            .error_y(ErrorData::new(ErrorType::Percent))
+            .error_z(ErrorData::new(ErrorType::Data))
+            .hover_label(Label::new())
+            .projection(Projection::new())
+            .surface_axis(SurfaceAxis::One)
+            .x_calendar(Calendar::Chinese)
+            .y_calendar(Calendar::Coptic)
+            .z_calendar(Calendar::Ummalqura);
+
+        let expected = json!({
+            "type": "scatter3d",
+            "x": [0, 1],
+            "y": [2, 3],
+            "z": [4, 5],
+            "name": "trace_name",
+            "visible": true,
+            "showlegend": true,
+            "legendgroup": "legend_group",
+            "legendrank": 1000,
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "opacity": 0.2,
+            "mode": "lines+text",
+            "ids": ["1"],
+            "surfacecolor": "#123456",
+            "text": ["text"],
+            "texttemplate": ["text_template"],
+            "textposition": ["top center"],
+            "hovertext": ["hover_text"],
+            "hovertemplate": ["hover_template"],
+            "hoverinfo": "x+y+z",
+            "xhoverformat": "x_hover_format",
+            "yhoverformat": "y_hover_format",
+            "zhoverformat": "z_hover_format",
+            "meta": "meta",
+            "customdata": ["custom_data"],
+            "scene": "scene2",
+            "marker": {},
+            "line": {},
+            "error_x": {"type": "sqrt"},
+            "error_y": {"type": "percent"},
+            "error_z": {"type": "data"},
+            "hoverlabel": {},
+            "projection": {},
+            "surfaceaxis": "1",
+            "xcalendar": "chinese",
+            "ycalendar": "coptic",
+            "zcalendar": "ummalqura",
+        });
+
+        assert_eq!(to_value(plot).unwrap(), expected);
     }
 }

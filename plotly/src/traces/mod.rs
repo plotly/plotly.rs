@@ -1,3 +1,5 @@
+//! The various supported traces
+
 mod bar;
 pub mod box_plot;
 mod candlestick;
