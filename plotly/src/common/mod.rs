@@ -1,11 +1,9 @@
-use serde::{Serialize, Serializer};
-
 pub mod color;
 
-use crate::common::color::ColorWrapper;
-use crate::private::NumOrString;
-use crate::private::{self, NumOrStringCollection};
-use color::Color;
+use serde::{Serialize, Serializer};
+
+use crate::color::{Color, ColorArray};
+use crate::private;
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(untagged)]
@@ -505,7 +503,7 @@ pub struct Line {
     #[serde(skip_serializing_if = "Option::is_none")]
     simplify: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -521,7 +519,7 @@ pub struct Line {
     #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
     reverse_scale: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "outliercolor")]
-    outlier_color: Option<ColorWrapper>,
+    outlier_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "outlierwidth")]
     outlier_width: Option<usize>,
 }
@@ -557,7 +555,7 @@ impl Line {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(color.to_color());
+        self.color = Some(Box::new(color));
         self
     }
 
@@ -597,7 +595,7 @@ impl Line {
     }
 
     pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Self {
-        self.outlier_color = Some(outlier_color.to_color());
+        self.outlier_color = Some(Box::new(outlier_color));
         self
     }
 
@@ -668,18 +666,21 @@ pub enum ExponentFormat {
 #[derive(Serialize, Clone, Debug)]
 pub struct Gradient {
     r#type: GradientType,
-    color: Dim<ColorWrapper>,
+    color: Dim<Box<dyn Color>>,
 }
 
 impl Gradient {
-    pub fn new<C: Color + Serialize>(gradient_type: GradientType, color: Dim<C>) -> Self {
-        let color = match color {
-            Dim::Scalar(c) => Dim::Scalar(c.to_color()),
-            Dim::Vector(c) => Dim::Vector(private::to_color_array(c)),
-        };
+    pub fn new<C: Color>(gradient_type: GradientType, color: C) -> Self {
         Gradient {
             r#type: gradient_type,
-            color,
+            color: Dim::Scalar(Box::new(color)),
+        }
+    }
+
+    pub fn new_array<C: Color>(gradient_type: GradientType, colors: Vec<C>) -> Self {
+        Gradient {
+            r#type: gradient_type,
+            color: Dim::Vector(ColorArray(colors).into()),
         }
     }
 }
@@ -688,7 +689,7 @@ impl Gradient {
 pub struct TickFormatStop {
     enabled: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
-    dtick_range: Option<NumOrStringCollection>,
+    dtick_range: Option<private::NumOrStringCollection>,
     #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -710,7 +711,7 @@ impl TickFormatStop {
         self
     }
 
-    pub fn dtick_range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> Self {
+    pub fn dtick_range<V: Into<private::NumOrString> + Clone>(mut self, range: Vec<V>) -> Self {
         self.dtick_range = Some(range.into());
         self
     }
@@ -750,15 +751,15 @@ pub struct ColorBar {
     #[serde(rename = "ypad")]
     y_pad: f64,
     #[serde(skip_serializing_if = "Option::is_none", rename = "outlinecolor")]
-    outline_color: Option<ColorWrapper>,
+    outline_color: Option<Box<dyn Color>>,
     #[serde(rename = "outlinewidth")]
     outline_width: usize,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<ColorWrapper>,
+    border_color: Option<Box<dyn Color>>,
     #[serde(rename = "borderwidth")]
     border_width: usize,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickmode")]
     tick_mode: Option<TickMode>,
     #[serde(rename = "nticks")]
@@ -778,7 +779,7 @@ pub struct ColorBar {
     #[serde(rename = "tickwidth")]
     tick_width: usize,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickcolor")]
-    tick_color: Option<ColorWrapper>,
+    tick_color: Option<Box<dyn Color>>,
     #[serde(rename = "showticklabels")]
     show_tick_labels: bool,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickfont")]
@@ -907,7 +908,7 @@ impl ColorBar {
     }
 
     pub fn outline_color<C: Color>(mut self, outline_color: C) -> ColorBar {
-        self.outline_color = Some(outline_color.to_color());
+        self.outline_color = Some(Box::new(outline_color));
         self
     }
 
@@ -917,7 +918,7 @@ impl ColorBar {
     }
 
     pub fn border_color<C: Color>(mut self, border_color: C) -> ColorBar {
-        self.border_color = Some(border_color.to_color());
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
@@ -927,7 +928,7 @@ impl ColorBar {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> ColorBar {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
@@ -977,7 +978,7 @@ impl ColorBar {
     }
 
     pub fn tick_color<C: Color>(mut self, tick_color: C) -> ColorBar {
-        self.tick_color = Some(tick_color.to_color());
+        self.tick_color = Some(Box::new(tick_color));
         self
     }
 
@@ -1077,7 +1078,7 @@ pub struct Marker {
     #[serde(skip_serializing_if = "Option::is_none")]
     gradient: Option<Gradient>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<Dim<ColorWrapper>>,
+    color: Option<Dim<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1097,7 +1098,7 @@ pub struct Marker {
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
     color_bar: Option<ColorBar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "outliercolor")]
-    outlier_color: Option<ColorWrapper>,
+    outlier_color: Option<Box<dyn Color>>,
 }
 
 impl Marker {
@@ -1156,13 +1157,12 @@ impl Marker {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(color.to_color()));
+        self.color = Some(Dim::Scalar(Box::new(color)));
         self
     }
 
-    pub fn color_array<C: Color>(mut self, color: Vec<C>) -> Self {
-        let color = private::to_color_array(color);
-        self.color = Some(Dim::Vector(color));
+    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.color = Some(Dim::Vector(ColorArray(colors).into()));
         self
     }
 
@@ -1212,7 +1212,7 @@ impl Marker {
     }
 
     pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Self {
-        self.outlier_color = Some(outlier_color.to_color());
+        self.outlier_color = Some(Box::new(outlier_color));
         self
     }
 }
@@ -1224,7 +1224,7 @@ pub struct Font {
     #[serde(skip_serializing_if = "Option::is_none")]
     size: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
 }
 
 impl Font {
@@ -1243,7 +1243,7 @@ impl Font {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(color.to_color());
+        self.color = Some(Box::new(color));
         self
     }
 }
@@ -1365,9 +1365,9 @@ impl Title {
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Label {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<ColorWrapper>,
+    border_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1382,12 +1382,12 @@ impl Label {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
     pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(border_color.to_color());
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
@@ -1450,7 +1450,7 @@ pub struct ErrorData {
     #[serde(skip_serializing_if = "Option::is_none")]
     copy_ystyle: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     thickness: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1511,7 +1511,7 @@ impl ErrorData {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(color.to_color());
+        self.color = Some(Box::new(color));
         self
     }
 
@@ -1531,7 +1531,7 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
-    use crate::NamedColor;
+    use crate::color::NamedColor;
 
     #[test]
     fn test_serialize_domain() {
@@ -1952,7 +1952,7 @@ mod tests {
             "smoothing": 1.0,
             "dash": "dash",
             "simplify": true,
-            "color": "#FFFFFF",
+            "color": "#ffffff",
             "cauto": true,
             "cmin": 0.0,
             "cmax": 1.0,
@@ -2020,8 +2020,12 @@ mod tests {
     #[test]
     #[rustfmt::skip]
     fn test_serialize_gradient() {
-        let gradient = Gradient::new(GradientType::Horizontal, Dim::Scalar("#ffffff"));
-        let expected = json!({"color": "#FFFFFF", "type": "horizontal"});
+        let gradient = Gradient::new(GradientType::Horizontal, "#ffffff");
+        let expected = json!({"color": "#ffffff", "type": "horizontal"});
+        assert_eq!(to_value(gradient).unwrap(), expected);
+
+        let gradient = Gradient::new_array(GradientType::Horizontal, vec!["#ffffff"]);
+        let expected = json!({"color": ["#ffffff"], "type": "horizontal"});
         assert_eq!(to_value(gradient).unwrap(), expected);
     }
 
@@ -2061,7 +2065,7 @@ mod tests {
             .size_min(1)
             .size_mode(SizeMode::Area)
             .line(Line::new())
-            .gradient(Gradient::new(GradientType::Radial, Dim::Scalar("#FFFFFF")))
+            .gradient(Gradient::new(GradientType::Radial, "#FFFFFF"))
             .color(NamedColor::Blue)
             .color_array(vec![NamedColor::Black, NamedColor::Blue])
             .cauto(true)
@@ -2072,7 +2076,7 @@ mod tests {
             .auto_color_scale(true)
             .reverse_scale(true)
             .show_scale(true)
-            // .color_bar(ColorBar::new()) awaiting fix in other branch
+            .color_bar(ColorBar::new())
             .outlier_color("#FFFFFF");
 
         let expected = json!({
@@ -2086,6 +2090,23 @@ mod tests {
             "line": {},
             "gradient": {"type": "radial", "color": "#FFFFFF"},
             "color": ["black", "blue"],
+            "colorbar": {
+                "borderwidth": 0,
+                "len": 1,
+                "nticks": 0,
+                "outlinewidth": 1,
+                "separate_thousands": true,
+                "showticklabels": true,
+                "thickness": 30,
+                "ticklen": 5,
+                "tickwidth": 1,
+                "x": 1.02,
+                "xanchor": "left",
+                "xpad": 10.0,
+                "y": 0.5,
+                "yanchor": "middle",
+                "ypad": 10.0,
+            },
             "cauto": true,
             "cmin": 0.0,
             "cmax": 1.0,

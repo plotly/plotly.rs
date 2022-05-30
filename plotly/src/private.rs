@@ -1,4 +1,3 @@
-use crate::common::color::{Color, ColorWrapper};
 use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
@@ -10,27 +9,6 @@ pub fn owned_string_vector<S: AsRef<str>>(s: Vec<S>) -> Vec<String> {
     s.iter()
         .map(|x| x.as_ref().to_string())
         .collect::<Vec<String>>()
-}
-
-pub fn to_color_array<C: Color>(v: Vec<C>) -> Vec<ColorWrapper> {
-    let mut sv: Vec<ColorWrapper> = Vec::with_capacity(v.len());
-    for e in v.iter() {
-        sv.push(e.to_color());
-    }
-    sv
-}
-
-pub fn is_valid_color_array(a: &[ColorWrapper]) -> bool {
-    let mut sv: Vec<String> = Vec::new();
-    let mut fv: Vec<f64> = Vec::new();
-    for e in a.iter() {
-        match e {
-            ColorWrapper::F(n) => fv.push(*n),
-            ColorWrapper::S(s) => sv.push(s.clone()),
-        }
-    }
-
-    !sv.is_empty() && !fv.is_empty()
 }
 
 #[derive(Serialize, Clone, Debug, PartialEq)]

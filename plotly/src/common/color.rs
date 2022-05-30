@@ -1,30 +1,49 @@
+//! This module provides several user interfaces for describing a color to be used throughout the rest of the library.
+//! The easiest way of describing a colour is to use a `&str` or `String`, which is simply serialized as-is and
+//! passed on to the underlying `plotly.js` library. `plotly.js` supports [`CSS color formats`], and will fallback
+//! to some default color if the color string is malformed.
+//!
+//! For a more type-safe approach, the `RGB` or `RGBA` structs can be used to construct a valid color, which will then
+//! get serialized to an appropriate string representation. Cross-browser compatible [`predefined colors`] are
+//! supported via the `NamedColor` enum.
+//!
+//! The `Color` trait is public, and so can be implemented for custom colour types. The user can then implement
+//! a valid serialization function according to their own requirements. On the whole, that should be largely
+//! unnecessary given the functionality already provided within this module.
+//!
+//! [`CSS color formats`]: https://www.w3schools.com/cssref/css_colors_legal.asp
+//! [`predefined colors`]: https://www.w3schools.com/cssref/css_colors.asp
+
+use dyn_clone::DynClone;
+use erased_serde::Serialize as ErasedSerialize;
 use serde::Serialize;
 
-#[derive(Serialize, Clone, Debug)]
-#[serde(untagged)]
-pub enum ColorWrapper {
-    S(String),
-    F(f64),
-}
+/// A marker trait allowing several ways to describe a color.
+pub trait Color: DynClone + ErasedSerialize + Send + Sync + std::fmt::Debug + 'static {}
 
-impl PartialEq for ColorWrapper {
-    fn eq(&self, other: &Self) -> bool {
-        let lhs = match self {
-            ColorWrapper::S(v) => v.to_owned(),
-            ColorWrapper::F(v) => format!("{}", v),
-        };
-        let rhs = match other {
-            ColorWrapper::S(v) => v.to_owned(),
-            ColorWrapper::F(v) => format!("{}", v),
-        };
-        lhs == rhs
+dyn_clone::clone_trait_object!(Color);
+erased_serde::serialize_trait_object!(Color);
+
+impl Color for NamedColor {}
+impl Color for &'static str {}
+impl Color for String {}
+impl Color for Rgb {}
+impl Color for Rgba {}
+
+/// ColorArray is only used internally to provide a helper method for converting Vec<impl Color2> to
+/// Vec<Box<dyn Color2>>, as we would otherwise fall foul of the orphan rules.
+pub(crate) struct ColorArray<C: Color>(pub(crate) Vec<C>);
+
+impl<C: Color> Into<Vec<Box<dyn Color>>> for ColorArray<C> {
+    fn into(self) -> Vec<Box<dyn Color>> {
+        self.0
+            .into_iter()
+            .map(|c| Box::new(c) as Box<dyn Color>)
+            .collect()
     }
 }
 
-pub trait Color {
-    fn to_color(&self) -> ColorWrapper;
-}
-
+/// A type-safe way of constructing a valid RGB color from constituent R, G and B channels.
 #[derive(Debug, Clone, Copy)]
 pub struct Rgb {
     r: u8,
@@ -33,17 +52,22 @@ pub struct Rgb {
 }
 
 impl Rgb {
+    /// Create a new Rgb instance.
     pub fn new(r: u8, g: u8, b: u8) -> Rgb {
         Rgb { r, g, b }
     }
 }
 
-impl Color for Rgb {
-    fn to_color(&self) -> ColorWrapper {
-        ColorWrapper::S(format!("rgb({}, {}, {})", self.r, self.g, self.b))
+impl Serialize for Rgb {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&format!("rgb({}, {}, {})", self.r, self.g, self.b))
     }
 }
 
+/// A type-safe way of constructing a valid RGBA color from constituent R, G, B and A channels.
 #[derive(Debug, Clone, Copy)]
 pub struct Rgba {
     r: u8,
@@ -53,22 +77,29 @@ pub struct Rgba {
 }
 
 impl Rgba {
+    /// Create a new Rgba instance.
     pub fn new(r: u8, g: u8, b: u8, a: f64) -> Rgba {
         Rgba { r, g, b, a }
     }
 }
 
-impl Color for Rgba {
-    fn to_color(&self) -> ColorWrapper {
-        ColorWrapper::S(format!(
+impl Serialize for Rgba {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&format!(
             "rgba({}, {}, {}, {})",
             self.r, self.g, self.b, self.a
         ))
     }
 }
 
-// https://www.w3.org/TR/css-color-3/#svg-color
-#[derive(Debug, Clone, Copy)]
+/// Cross-browser compatible [`predefined colors`].
+///
+/// [`predefined colors`]: https://www.w3schools.com/cssref/css_colors.asp
+#[derive(Debug, Clone, Copy, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum NamedColor {
     AliceBlue,
     AntiqueWhite,
@@ -78,7 +109,7 @@ pub enum NamedColor {
     Beige,
     Bisque,
     Black,
-    BlancheDalmond,
+    BlanchedAlmond,
     Blue,
     BlueViolet,
     Brown,
@@ -87,7 +118,7 @@ pub enum NamedColor {
     Chartreuse,
     Chocolate,
     Coral,
-    CornFlowerBlue,
+    CornflowerBlue,
     CornSilk,
     Crimson,
     Cyan,
@@ -189,6 +220,7 @@ pub enum NamedColor {
     Plum,
     PowderBlue,
     Purple,
+    RebeccaPurple,
     Red,
     RosyBrown,
     RoyalBlue,
@@ -220,303 +252,184 @@ pub enum NamedColor {
     Transparent,
 }
 
-impl Color for NamedColor {
-    fn to_color(&self) -> ColorWrapper {
-        match self {
-            NamedColor::AliceBlue => ColorWrapper::S("aliceblue".to_owned()),
-            NamedColor::AntiqueWhite => ColorWrapper::S("antiquewhite".to_owned()),
-            NamedColor::Aqua => ColorWrapper::S("aqua".to_owned()),
-            NamedColor::Aquamarine => ColorWrapper::S("aquamarine".to_owned()),
-            NamedColor::Azure => ColorWrapper::S("azure".to_owned()),
-            NamedColor::Beige => ColorWrapper::S("beige".to_owned()),
-            NamedColor::Bisque => ColorWrapper::S("bisque".to_owned()),
-            NamedColor::Black => ColorWrapper::S("black".to_owned()),
-            NamedColor::BlancheDalmond => ColorWrapper::S("blanchedalmond".to_owned()),
-            NamedColor::Blue => ColorWrapper::S("blue".to_owned()),
-            NamedColor::BlueViolet => ColorWrapper::S("blueviolet".to_owned()),
-            NamedColor::Brown => ColorWrapper::S("brown".to_owned()),
-            NamedColor::BurlyWood => ColorWrapper::S("burlywood".to_owned()),
-            NamedColor::CadetBlue => ColorWrapper::S("cadetblue".to_owned()),
-            NamedColor::Chartreuse => ColorWrapper::S("chartreuse".to_owned()),
-            NamedColor::Chocolate => ColorWrapper::S("chocolate".to_owned()),
-            NamedColor::Coral => ColorWrapper::S("coral".to_owned()),
-            NamedColor::CornFlowerBlue => ColorWrapper::S("cornflowerblue".to_owned()),
-            NamedColor::CornSilk => ColorWrapper::S("cornsilk".to_owned()),
-            NamedColor::Crimson => ColorWrapper::S("crimson".to_owned()),
-            NamedColor::Cyan => ColorWrapper::S("cyan".to_owned()),
-            NamedColor::DarkBlue => ColorWrapper::S("darkblue".to_owned()),
-            NamedColor::DarkCyan => ColorWrapper::S("darkcyan".to_owned()),
-            NamedColor::DarkGoldenrod => ColorWrapper::S("darkgoldenrod".to_owned()),
-            NamedColor::DarkGray => ColorWrapper::S("darkgray".to_owned()),
-            NamedColor::DarkGreen => ColorWrapper::S("darkgreen".to_owned()),
-            NamedColor::DarkGrey => ColorWrapper::S("darkgrey".to_owned()),
-            NamedColor::DarkKhaki => ColorWrapper::S("darkkhaki".to_owned()),
-            NamedColor::DarkMagenta => ColorWrapper::S("darkmagenta".to_owned()),
-            NamedColor::DarkOliveGreen => ColorWrapper::S("darkolivegreen".to_owned()),
-            NamedColor::DarkOrange => ColorWrapper::S("darkorange".to_owned()),
-            NamedColor::DarkOrchid => ColorWrapper::S("darkorchid".to_owned()),
-            NamedColor::DarkRed => ColorWrapper::S("darkred".to_owned()),
-            NamedColor::DarkSalmon => ColorWrapper::S("darksalmon".to_owned()),
-            NamedColor::DarkSeaGreen => ColorWrapper::S("darkseagreen".to_owned()),
-            NamedColor::DarkSlateBlue => ColorWrapper::S("darkslateblue".to_owned()),
-            NamedColor::DarkSlateGray => ColorWrapper::S("darkslategray".to_owned()),
-            NamedColor::DarkSlateGrey => ColorWrapper::S("darkslategrey".to_owned()),
-            NamedColor::DarkTurquoise => ColorWrapper::S("darkturquoise".to_owned()),
-            NamedColor::DarkViolet => ColorWrapper::S("darkviolet".to_owned()),
-            NamedColor::DeepPink => ColorWrapper::S("deeppink".to_owned()),
-            NamedColor::DeepSkyBlue => ColorWrapper::S("deepskyblue".to_owned()),
-            NamedColor::DimGray => ColorWrapper::S("dimgray".to_owned()),
-            NamedColor::DimGrey => ColorWrapper::S("dimgrey".to_owned()),
-            NamedColor::DodgerBlue => ColorWrapper::S("dodgerblue".to_owned()),
-            NamedColor::FireBrick => ColorWrapper::S("firebrick".to_owned()),
-            NamedColor::FloralWhite => ColorWrapper::S("floralwhite".to_owned()),
-            NamedColor::ForestGreen => ColorWrapper::S("forestgreen".to_owned()),
-            NamedColor::Fuchsia => ColorWrapper::S("fuchsia".to_owned()),
-            NamedColor::Gainsboro => ColorWrapper::S("gainsboro".to_owned()),
-            NamedColor::GhostWhite => ColorWrapper::S("ghostwhite".to_owned()),
-            NamedColor::Gold => ColorWrapper::S("gold".to_owned()),
-            NamedColor::Goldenrod => ColorWrapper::S("goldenrod".to_owned()),
-            NamedColor::Gray => ColorWrapper::S("gray".to_owned()),
-            NamedColor::Green => ColorWrapper::S("green".to_owned()),
-            NamedColor::GreenYellow => ColorWrapper::S("greenyellow".to_owned()),
-            NamedColor::Grey => ColorWrapper::S("grey".to_owned()),
-            NamedColor::Honeydew => ColorWrapper::S("honeydew".to_owned()),
-            NamedColor::HotPink => ColorWrapper::S("hotpink".to_owned()),
-            NamedColor::IndianRed => ColorWrapper::S("indianred".to_owned()),
-            NamedColor::Indigo => ColorWrapper::S("indigo".to_owned()),
-            NamedColor::Ivory => ColorWrapper::S("ivory".to_owned()),
-            NamedColor::Khaki => ColorWrapper::S("khaki".to_owned()),
-            NamedColor::Lavender => ColorWrapper::S("lavender".to_owned()),
-            NamedColor::LavenderBlush => ColorWrapper::S("lavenderblush".to_owned()),
-            NamedColor::LawnGreen => ColorWrapper::S("lawngreen".to_owned()),
-            NamedColor::LemonChiffon => ColorWrapper::S("lemonchiffon".to_owned()),
-            NamedColor::LightBlue => ColorWrapper::S("lightblue".to_owned()),
-            NamedColor::LightCoral => ColorWrapper::S("lightcoral".to_owned()),
-            NamedColor::LightCyan => ColorWrapper::S("lightcyan".to_owned()),
-            NamedColor::LightGoldenrodYellow => ColorWrapper::S("lightgoldenrodyellow".to_owned()),
-            NamedColor::LightGray => ColorWrapper::S("lightgray".to_owned()),
-            NamedColor::LightGreen => ColorWrapper::S("lightgreen".to_owned()),
-            NamedColor::LightGrey => ColorWrapper::S("lightgrey".to_owned()),
-            NamedColor::LightPink => ColorWrapper::S("lightpink".to_owned()),
-            NamedColor::LightSalmon => ColorWrapper::S("lightsalmon".to_owned()),
-            NamedColor::LightSeaGreen => ColorWrapper::S("lightseagreen".to_owned()),
-            NamedColor::LightSkyBlue => ColorWrapper::S("lightskyblue".to_owned()),
-            NamedColor::LightSlateGray => ColorWrapper::S("lightslategray".to_owned()),
-            NamedColor::LightSlateGrey => ColorWrapper::S("lightslategrey".to_owned()),
-            NamedColor::LightSteelBlue => ColorWrapper::S("lightsteelblue".to_owned()),
-            NamedColor::LightYellow => ColorWrapper::S("lightyellow".to_owned()),
-            NamedColor::Lime => ColorWrapper::S("lime".to_owned()),
-            NamedColor::LimeGreen => ColorWrapper::S("limegreen".to_owned()),
-            NamedColor::Linen => ColorWrapper::S("linen".to_owned()),
-            NamedColor::Magenta => ColorWrapper::S("magenta".to_owned()),
-            NamedColor::Maroon => ColorWrapper::S("maroon".to_owned()),
-            NamedColor::MediumAquamarine => ColorWrapper::S("mediumaquamarine".to_owned()),
-            NamedColor::MediumBlue => ColorWrapper::S("mediumblue".to_owned()),
-            NamedColor::MediumOrchid => ColorWrapper::S("mediumorchid".to_owned()),
-            NamedColor::MediumPurple => ColorWrapper::S("mediumpurple".to_owned()),
-            NamedColor::MediumSeaGreen => ColorWrapper::S("mediumseagreen".to_owned()),
-            NamedColor::MediumSlateBlue => ColorWrapper::S("mediumslateblue".to_owned()),
-            NamedColor::MediumSpringGreen => ColorWrapper::S("mediumspringgreen".to_owned()),
-            NamedColor::MediumTurquoise => ColorWrapper::S("mediumturquoise".to_owned()),
-            NamedColor::MediumVioletRed => ColorWrapper::S("mediumvioletred".to_owned()),
-            NamedColor::MidnightBlue => ColorWrapper::S("midnightblue".to_owned()),
-            NamedColor::MintCream => ColorWrapper::S("mintcream".to_owned()),
-            NamedColor::MistyRose => ColorWrapper::S("mistyrose".to_owned()),
-            NamedColor::Moccasin => ColorWrapper::S("moccasin".to_owned()),
-            NamedColor::NavajoWhite => ColorWrapper::S("navajowhite".to_owned()),
-            NamedColor::Navy => ColorWrapper::S("navy".to_owned()),
-            NamedColor::OldLace => ColorWrapper::S("oldlace".to_owned()),
-            NamedColor::Olive => ColorWrapper::S("olive".to_owned()),
-            NamedColor::OliveDrab => ColorWrapper::S("olivedrab".to_owned()),
-            NamedColor::Orange => ColorWrapper::S("orange".to_owned()),
-            NamedColor::OrangeRed => ColorWrapper::S("orangered".to_owned()),
-            NamedColor::Orchid => ColorWrapper::S("orchid".to_owned()),
-            NamedColor::PaleGoldenrod => ColorWrapper::S("palegoldenrod".to_owned()),
-            NamedColor::PaleGreen => ColorWrapper::S("palegreen".to_owned()),
-            NamedColor::PaleTurquoise => ColorWrapper::S("paleturquoise".to_owned()),
-            NamedColor::PaleVioletRed => ColorWrapper::S("palevioletred".to_owned()),
-            NamedColor::PapayaWhip => ColorWrapper::S("papayawhip".to_owned()),
-            NamedColor::PeachPuff => ColorWrapper::S("peachpuff".to_owned()),
-            NamedColor::Peru => ColorWrapper::S("peru".to_owned()),
-            NamedColor::Pink => ColorWrapper::S("pink".to_owned()),
-            NamedColor::Plum => ColorWrapper::S("plum".to_owned()),
-            NamedColor::PowderBlue => ColorWrapper::S("powderblue".to_owned()),
-            NamedColor::Purple => ColorWrapper::S("purple".to_owned()),
-            NamedColor::Red => ColorWrapper::S("red".to_owned()),
-            NamedColor::RosyBrown => ColorWrapper::S("rosybrown".to_owned()),
-            NamedColor::RoyalBlue => ColorWrapper::S("royalblue".to_owned()),
-            NamedColor::SaddleBrown => ColorWrapper::S("saddlebrown".to_owned()),
-            NamedColor::Salmon => ColorWrapper::S("salmon".to_owned()),
-            NamedColor::SandyBrown => ColorWrapper::S("sandybrown".to_owned()),
-            NamedColor::SeaGreen => ColorWrapper::S("seagreen".to_owned()),
-            NamedColor::Seashell => ColorWrapper::S("seashell".to_owned()),
-            NamedColor::Sienna => ColorWrapper::S("sienna".to_owned()),
-            NamedColor::Silver => ColorWrapper::S("silver".to_owned()),
-            NamedColor::SkyBlue => ColorWrapper::S("skyblue".to_owned()),
-            NamedColor::SlateBlue => ColorWrapper::S("slateblue".to_owned()),
-            NamedColor::SlateGray => ColorWrapper::S("slategray".to_owned()),
-            NamedColor::SlateGrey => ColorWrapper::S("slategrey".to_owned()),
-            NamedColor::Snow => ColorWrapper::S("snow".to_owned()),
-            NamedColor::SpringGreen => ColorWrapper::S("springgreen".to_owned()),
-            NamedColor::SteelBlue => ColorWrapper::S("steelblue".to_owned()),
-            NamedColor::Tan => ColorWrapper::S("tan".to_owned()),
-            NamedColor::Teal => ColorWrapper::S("teal".to_owned()),
-            NamedColor::Thistle => ColorWrapper::S("thistle".to_owned()),
-            NamedColor::Tomato => ColorWrapper::S("tomato".to_owned()),
-            NamedColor::Turquoise => ColorWrapper::S("turquoise".to_owned()),
-            NamedColor::Violet => ColorWrapper::S("violet".to_owned()),
-            NamedColor::Wheat => ColorWrapper::S("wheat".to_owned()),
-            NamedColor::White => ColorWrapper::S("white".to_owned()),
-            NamedColor::WhiteSmoke => ColorWrapper::S("whitesmoke".to_owned()),
-            NamedColor::Yellow => ColorWrapper::S("yellow".to_owned()),
-            NamedColor::YellowGreen => ColorWrapper::S("yellowgreen".to_owned()),
-            NamedColor::Transparent => ColorWrapper::S("transparent".to_owned()),
-        }
-    }
-}
-
-impl Color for f64 {
-    fn to_color(&self) -> ColorWrapper {
-        ColorWrapper::F(*self)
-    }
-}
-
-fn string_types_to_color_wrapper<S: AsRef<str> + std::fmt::Display + Sized>(v: S) -> ColorWrapper {
-    if v.as_ref().len() < 6 || v.as_ref().len() > 7 {
-        panic!("{} is not a valid hex color!", v);
-    }
-    if v.as_ref().len() == 6 && v.as_ref().starts_with('#') {
-        panic!("{} is not a valid hex color!", v);
-    }
-    if v.as_ref().len() == 7 && !v.as_ref().starts_with('#') {
-        panic!("{} is not a valid hex color!", v);
-    }
-    let valid_characters = "#ABCDEF0123456789";
-    let mut s = v.as_ref().to_uppercase();
-    if s.len() == 6 {
-        s = format!("#{}", s);
-    }
-    for c in s.chars() {
-        if !valid_characters.contains(c) {
-            panic!("{} is not a valid hex color!", v);
-        }
-    }
-
-    ColorWrapper::S(s)
-}
-
-// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
-// as it `may` implement AsRef<str> in the future.
-impl Color for str {
-    fn to_color(&self) -> ColorWrapper {
-        string_types_to_color_wrapper(self)
-    }
-}
-
-// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
-// as it `may` implement AsRef<str> in the future.
-impl Color for &str {
-    fn to_color(&self) -> ColorWrapper {
-        string_types_to_color_wrapper(self)
-    }
-}
-
-// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
-// as it `may` implement AsRef<str> in the future.
-impl Color for String {
-    fn to_color(&self) -> ColorWrapper {
-        string_types_to_color_wrapper(self)
-    }
-}
-
-// Implementations split intentionally; otherwise there is a conflict with the f64 implementation
-// as it `may` implement AsRef<str> in the future.
-impl Color for &String {
-    fn to_color(&self) -> ColorWrapper {
-        string_types_to_color_wrapper(self)
-    }
-}
-
 #[cfg(test)]
 mod tests {
+    use serde_json::{json, to_value};
+
     use super::*;
 
     #[test]
-    fn hex_color_normalization_str() {
-        assert_eq!("#aabbcc".to_color(), ColorWrapper::S("#AABBCC".to_owned()));
-        assert_eq!("aabbcc".to_color(), ColorWrapper::S("#AABBCC".to_owned()));
-        assert_eq!("aaBBcc".to_color(), ColorWrapper::S("#AABBCC".to_owned()));
-        assert_eq!("FABCDe".to_color(), ColorWrapper::S("#FABCDE".to_owned()));
-        assert_eq!("123456".to_color(), ColorWrapper::S("#123456".to_owned()));
-        assert_eq!("7890EE".to_color(), ColorWrapper::S("#7890EE".to_owned()));
+    fn test_serialize_rgb() {
+        let rgb = Rgb::new(80, 90, 100);
+        assert_eq!(to_value(rgb).unwrap(), json!("rgb(80, 90, 100)"));
     }
 
     #[test]
-    fn hex_color_normalization_string() {
-        assert_eq!(
-            String::from("#aabbcc").to_color(),
-            ColorWrapper::S("#AABBCC".to_owned())
-        );
-        assert_eq!(
-            String::from("aabbcc").to_color(),
-            ColorWrapper::S("#AABBCC".to_owned())
-        );
-        assert_eq!(
-            String::from("aaBBcc").to_color(),
-            ColorWrapper::S("#AABBCC".to_owned())
-        );
-        assert_eq!(
-            String::from("FABCDe").to_color(),
-            ColorWrapper::S("#FABCDE".to_owned())
-        );
-        assert_eq!(
-            String::from("123456").to_color(),
-            ColorWrapper::S("#123456".to_owned())
-        );
-        assert_eq!(
-            String::from("7890EE").to_color(),
-            ColorWrapper::S("#7890EE".to_owned())
-        );
-    }
-
-    fn color_from_f64() {
-        assert_eq!(1.54.to_color(), ColorWrapper::F(1.54));
-        assert_eq!(0.1.to_color(), ColorWrapper::F(0.1));
+    fn test_serialize_rgba() {
+        let rgb = Rgba::new(80, 90, 100, 0.2);
+        assert_eq!(to_value(rgb).unwrap(), json!("rgba(80, 90, 100, 0.2)"));
     }
 
     #[test]
-    #[should_panic]
-    fn too_short_str() {
-        "abc".to_color();
+    fn test_serialize_str() {
+        let color = "any_arbitrary_string";
+        assert_eq!(to_value(color).unwrap(), json!("any_arbitrary_string"));
     }
 
     #[test]
-    #[should_panic]
-    fn too_short_string() {
-        String::from("abc").to_color();
+    fn test_serialize_string() {
+        let color = "any_arbitrary_string".to_string();
+        assert_eq!(to_value(color).unwrap(), json!("any_arbitrary_string"));
     }
 
     #[test]
-    #[should_panic]
-    fn too_long_str() {
-        "abcdef0".to_color();
-    }
-
-    #[test]
-    #[should_panic]
-    fn too_long_string() {
-        String::from("abcdef0").to_color();
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_characters_str() {
-        "abdefg".to_color();
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_characters_string() {
-        String::from("abdefg").to_color();
+    #[rustfmt::skip]
+    fn test_serialize_named_color() {
+        assert_eq!(to_value(NamedColor::AliceBlue).unwrap(), json!("aliceblue"));
+        assert_eq!(to_value(NamedColor::AntiqueWhite).unwrap(), json!("antiquewhite"));
+        assert_eq!(to_value(NamedColor::Aqua).unwrap(), json!("aqua"));
+        assert_eq!(to_value(NamedColor::Aquamarine).unwrap(), json!("aquamarine"));
+        assert_eq!(to_value(NamedColor::Azure).unwrap(), json!("azure"));
+        assert_eq!(to_value(NamedColor::Beige).unwrap(), json!("beige"));
+        assert_eq!(to_value(NamedColor::Bisque).unwrap(), json!("bisque"));
+        assert_eq!(to_value(NamedColor::Black).unwrap(), json!("black"));
+        assert_eq!(to_value(NamedColor::BlanchedAlmond).unwrap(), json!("blanchedalmond"));
+        assert_eq!(to_value(NamedColor::Blue).unwrap(), json!("blue"));
+        assert_eq!(to_value(NamedColor::BlueViolet).unwrap(), json!("blueviolet"));
+        assert_eq!(to_value(NamedColor::Brown).unwrap(), json!("brown"));
+        assert_eq!(to_value(NamedColor::BurlyWood).unwrap(), json!("burlywood"));
+        assert_eq!(to_value(NamedColor::CadetBlue).unwrap(), json!("cadetblue"));
+        assert_eq!(to_value(NamedColor::Chartreuse).unwrap(), json!("chartreuse"));
+        assert_eq!(to_value(NamedColor::Chocolate).unwrap(), json!("chocolate"));
+        assert_eq!(to_value(NamedColor::Coral).unwrap(), json!("coral"));
+        assert_eq!(to_value(NamedColor::CornflowerBlue).unwrap(), json!("cornflowerblue"));
+        assert_eq!(to_value(NamedColor::CornSilk).unwrap(), json!("cornsilk"));
+        assert_eq!(to_value(NamedColor::Crimson).unwrap(), json!("crimson"));
+        assert_eq!(to_value(NamedColor::Cyan).unwrap(), json!("cyan"));
+        assert_eq!(to_value(NamedColor::DarkBlue).unwrap(), json!("darkblue"));
+        assert_eq!(to_value(NamedColor::DarkCyan).unwrap(), json!("darkcyan"));
+        assert_eq!(to_value(NamedColor::DarkGoldenrod).unwrap(), json!("darkgoldenrod"));
+        assert_eq!(to_value(NamedColor::DarkGray).unwrap(), json!("darkgray"));
+        assert_eq!(to_value(NamedColor::DarkGrey).unwrap(), json!("darkgrey"));
+        assert_eq!(to_value(NamedColor::DarkGreen).unwrap(), json!("darkgreen"));
+        assert_eq!(to_value(NamedColor::DarkOrange).unwrap(), json!("darkorange"));
+        assert_eq!(to_value(NamedColor::DarkOrchid).unwrap(), json!("darkorchid"));
+        assert_eq!(to_value(NamedColor::DarkRed).unwrap(), json!("darkred"));
+        assert_eq!(to_value(NamedColor::DarkSalmon).unwrap(), json!("darksalmon"));
+        assert_eq!(to_value(NamedColor::DarkSeaGreen).unwrap(), json!("darkseagreen"));
+        assert_eq!(to_value(NamedColor::DarkSlateBlue).unwrap(), json!("darkslateblue"));
+        assert_eq!(to_value(NamedColor::DarkSlateGray).unwrap(), json!("darkslategray"));
+        assert_eq!(to_value(NamedColor::DarkSlateGrey).unwrap(), json!("darkslategrey"));
+        assert_eq!(to_value(NamedColor::DarkTurquoise).unwrap(), json!("darkturquoise"));
+        assert_eq!(to_value(NamedColor::DarkViolet).unwrap(), json!("darkviolet"));
+        assert_eq!(to_value(NamedColor::DeepPink).unwrap(), json!("deeppink"));
+        assert_eq!(to_value(NamedColor::DeepSkyBlue).unwrap(), json!("deepskyblue"));
+        assert_eq!(to_value(NamedColor::DimGray).unwrap(), json!("dimgray"));
+        assert_eq!(to_value(NamedColor::DimGrey).unwrap(), json!("dimgrey"));
+        assert_eq!(to_value(NamedColor::DodgerBlue).unwrap(), json!("dodgerblue"));
+        assert_eq!(to_value(NamedColor::FireBrick).unwrap(), json!("firebrick"));
+        assert_eq!(to_value(NamedColor::FloralWhite).unwrap(), json!("floralwhite"));
+        assert_eq!(to_value(NamedColor::ForestGreen).unwrap(), json!("forestgreen"));
+        assert_eq!(to_value(NamedColor::Fuchsia).unwrap(), json!("fuchsia"));
+        assert_eq!(to_value(NamedColor::Gainsboro).unwrap(), json!("gainsboro"));
+        assert_eq!(to_value(NamedColor::GhostWhite).unwrap(), json!("ghostwhite"));
+        assert_eq!(to_value(NamedColor::Gold).unwrap(), json!("gold"));
+        assert_eq!(to_value(NamedColor::Goldenrod).unwrap(), json!("goldenrod"));
+        assert_eq!(to_value(NamedColor::Gray).unwrap(), json!("gray"));
+        assert_eq!(to_value(NamedColor::Grey).unwrap(), json!("grey"));
+        assert_eq!(to_value(NamedColor::Green).unwrap(), json!("green"));
+        assert_eq!(to_value(NamedColor::GreenYellow).unwrap(), json!("greenyellow"));
+        assert_eq!(to_value(NamedColor::Honeydew).unwrap(), json!("honeydew"));
+        assert_eq!(to_value(NamedColor::HotPink).unwrap(), json!("hotpink"));
+        assert_eq!(to_value(NamedColor::IndianRed).unwrap(), json!("indianred"));
+        assert_eq!(to_value(NamedColor::Indigo).unwrap(), json!("indigo"));
+        assert_eq!(to_value(NamedColor::Ivory).unwrap(), json!("ivory"));
+        assert_eq!(to_value(NamedColor::Khaki).unwrap(), json!("khaki"));
+        assert_eq!(to_value(NamedColor::Lavender).unwrap(), json!("lavender"));
+        assert_eq!(to_value(NamedColor::LavenderBlush).unwrap(), json!("lavenderblush"));
+        assert_eq!(to_value(NamedColor::LawnGreen).unwrap(), json!("lawngreen"));
+        assert_eq!(to_value(NamedColor::LemonChiffon).unwrap(), json!("lemonchiffon"));
+        assert_eq!(to_value(NamedColor::LightBlue).unwrap(), json!("lightblue"));
+        assert_eq!(to_value(NamedColor::LightCoral).unwrap(), json!("lightcoral"));
+        assert_eq!(to_value(NamedColor::LightCyan).unwrap(), json!("lightcyan"));
+        assert_eq!(to_value(NamedColor::LightGoldenrodYellow).unwrap(), json!("lightgoldenrodyellow"));
+        assert_eq!(to_value(NamedColor::LightGray).unwrap(), json!("lightgray"));
+        assert_eq!(to_value(NamedColor::LightGrey).unwrap(), json!("lightgrey"));
+        assert_eq!(to_value(NamedColor::LightGreen).unwrap(), json!("lightgreen"));
+        assert_eq!(to_value(NamedColor::LightPink).unwrap(), json!("lightpink"));
+        assert_eq!(to_value(NamedColor::LightSalmon).unwrap(), json!("lightsalmon"));
+        assert_eq!(to_value(NamedColor::LightSeaGreen).unwrap(), json!("lightseagreen"));
+        assert_eq!(to_value(NamedColor::LightSkyBlue).unwrap(), json!("lightskyblue"));
+        assert_eq!(to_value(NamedColor::LightSlateGray).unwrap(), json!("lightslategray"));
+        assert_eq!(to_value(NamedColor::LightSlateGrey).unwrap(), json!("lightslategrey"));
+        assert_eq!(to_value(NamedColor::LightSteelBlue).unwrap(), json!("lightsteelblue"));
+        assert_eq!(to_value(NamedColor::LightYellow).unwrap(), json!("lightyellow"));
+        assert_eq!(to_value(NamedColor::Lime).unwrap(), json!("lime"));
+        assert_eq!(to_value(NamedColor::LimeGreen).unwrap(), json!("limegreen"));
+        assert_eq!(to_value(NamedColor::Linen).unwrap(), json!("linen"));
+        assert_eq!(to_value(NamedColor::Magenta).unwrap(), json!("magenta"));
+        assert_eq!(to_value(NamedColor::Maroon).unwrap(), json!("maroon"));
+        assert_eq!(to_value(NamedColor::MediumAquamarine).unwrap(), json!("mediumaquamarine"));
+        assert_eq!(to_value(NamedColor::MediumBlue).unwrap(), json!("mediumblue"));
+        assert_eq!(to_value(NamedColor::MediumOrchid).unwrap(), json!("mediumorchid"));
+        assert_eq!(to_value(NamedColor::MediumPurple).unwrap(), json!("mediumpurple"));
+        assert_eq!(to_value(NamedColor::MediumSeaGreen).unwrap(), json!("mediumseagreen"));
+        assert_eq!(to_value(NamedColor::MediumSlateBlue).unwrap(), json!("mediumslateblue"));
+        assert_eq!(to_value(NamedColor::MediumSpringGreen).unwrap(), json!("mediumspringgreen"));
+        assert_eq!(to_value(NamedColor::MediumTurquoise).unwrap(), json!("mediumturquoise"));
+        assert_eq!(to_value(NamedColor::MediumVioletRed).unwrap(), json!("mediumvioletred"));
+        assert_eq!(to_value(NamedColor::MidnightBlue).unwrap(), json!("midnightblue"));
+        assert_eq!(to_value(NamedColor::MintCream).unwrap(), json!("mintcream"));
+        assert_eq!(to_value(NamedColor::MistyRose).unwrap(), json!("mistyrose"));
+        assert_eq!(to_value(NamedColor::Moccasin).unwrap(), json!("moccasin"));
+        assert_eq!(to_value(NamedColor::NavajoWhite).unwrap(), json!("navajowhite"));
+        assert_eq!(to_value(NamedColor::Navy).unwrap(), json!("navy"));
+        assert_eq!(to_value(NamedColor::OldLace).unwrap(), json!("oldlace"));
+        assert_eq!(to_value(NamedColor::Olive).unwrap(), json!("olive"));
+        assert_eq!(to_value(NamedColor::OliveDrab).unwrap(), json!("olivedrab"));
+        assert_eq!(to_value(NamedColor::Orange).unwrap(), json!("orange"));
+        assert_eq!(to_value(NamedColor::OrangeRed).unwrap(), json!("orangered"));
+        assert_eq!(to_value(NamedColor::Orchid).unwrap(), json!("orchid"));
+        assert_eq!(to_value(NamedColor::PaleGoldenrod).unwrap(), json!("palegoldenrod"));
+        assert_eq!(to_value(NamedColor::PaleGreen).unwrap(), json!("palegreen"));
+        assert_eq!(to_value(NamedColor::PaleTurquoise).unwrap(), json!("paleturquoise"));
+        assert_eq!(to_value(NamedColor::PaleVioletRed).unwrap(), json!("palevioletred"));
+        assert_eq!(to_value(NamedColor::PapayaWhip).unwrap(), json!("papayawhip"));
+        assert_eq!(to_value(NamedColor::PeachPuff).unwrap(), json!("peachpuff"));
+        assert_eq!(to_value(NamedColor::Peru).unwrap(), json!("peru"));
+        assert_eq!(to_value(NamedColor::Pink).unwrap(), json!("pink"));
+        assert_eq!(to_value(NamedColor::Plum).unwrap(), json!("plum"));
+        assert_eq!(to_value(NamedColor::PowderBlue).unwrap(), json!("powderblue"));
+        assert_eq!(to_value(NamedColor::Purple).unwrap(), json!("purple"));
+        assert_eq!(to_value(NamedColor::RebeccaPurple).unwrap(), json!("rebeccapurple"));
+        assert_eq!(to_value(NamedColor::Red).unwrap(), json!("red"));
+        assert_eq!(to_value(NamedColor::RosyBrown).unwrap(), json!("rosybrown"));
+        assert_eq!(to_value(NamedColor::RoyalBlue).unwrap(), json!("royalblue"));
+        assert_eq!(to_value(NamedColor::SaddleBrown).unwrap(), json!("saddlebrown"));
+        assert_eq!(to_value(NamedColor::Salmon).unwrap(), json!("salmon"));
+        assert_eq!(to_value(NamedColor::SandyBrown).unwrap(), json!("sandybrown"));
+        assert_eq!(to_value(NamedColor::SeaGreen).unwrap(), json!("seagreen"));
+        assert_eq!(to_value(NamedColor::Seashell).unwrap(), json!("seashell"));
+        assert_eq!(to_value(NamedColor::Sienna).unwrap(), json!("sienna"));
+        assert_eq!(to_value(NamedColor::Silver).unwrap(), json!("silver"));
+        assert_eq!(to_value(NamedColor::SkyBlue).unwrap(), json!("skyblue"));
+        assert_eq!(to_value(NamedColor::SlateBlue).unwrap(), json!("slateblue"));
+        assert_eq!(to_value(NamedColor::SlateGray).unwrap(), json!("slategray"));
+        assert_eq!(to_value(NamedColor::SlateGrey).unwrap(), json!("slategrey"));
+        assert_eq!(to_value(NamedColor::Snow).unwrap(), json!("snow"));
+        assert_eq!(to_value(NamedColor::SpringGreen).unwrap(), json!("springgreen"));
+        assert_eq!(to_value(NamedColor::SteelBlue).unwrap(), json!("steelblue"));
+        assert_eq!(to_value(NamedColor::Tan).unwrap(), json!("tan"));
+        assert_eq!(to_value(NamedColor::Teal).unwrap(), json!("teal"));
+        assert_eq!(to_value(NamedColor::Thistle).unwrap(), json!("thistle"));
+        assert_eq!(to_value(NamedColor::Tomato).unwrap(), json!("tomato"));
+        assert_eq!(to_value(NamedColor::Turquoise).unwrap(), json!("turquoise"));
+        assert_eq!(to_value(NamedColor::Violet).unwrap(), json!("violet"));
+        assert_eq!(to_value(NamedColor::Wheat).unwrap(), json!("wheat"));
+        assert_eq!(to_value(NamedColor::White).unwrap(), json!("white"));
+        assert_eq!(to_value(NamedColor::WhiteSmoke).unwrap(), json!("whitesmoke"));
+        assert_eq!(to_value(NamedColor::Yellow).unwrap(), json!("yellow"));
+        assert_eq!(to_value(NamedColor::YellowGreen).unwrap(), json!("yellowgreen"));
+        assert_eq!(to_value(NamedColor::Transparent).unwrap(), json!("transparent"));
     }
 }

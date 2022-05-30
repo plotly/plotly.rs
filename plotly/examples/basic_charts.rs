@@ -5,7 +5,10 @@ use plotly::common::{
 };
 use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder};
 use plotly::sankey::{Line as SankeyLine, Link, Node};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Sankey, Scatter, ScatterPolar};
+use plotly::{
+    color::{NamedColor, Rgb, Rgba},
+    Bar, Plot, Sankey, Scatter, ScatterPolar,
+};
 use rand_distr::{Distribution, Normal, Uniform};
 
 // Scatter Plots
@@ -254,11 +257,6 @@ fn large_data_sets(show: bool) {
         .sample_iter(&mut rng)
         .take(n)
         .collect();
-    let colors: Vec<f64> = Normal::new(0., 1.)
-        .unwrap()
-        .sample_iter(&mut rng)
-        .take(n)
-        .collect();
 
     let x: Vec<f64> = r
         .iter()
@@ -276,7 +274,6 @@ fn large_data_sets(show: bool) {
         .marker(
             Marker::new()
                 .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
-                .color_array(colors)
                 .line(Line::new().width(1.)),
         );
     let mut plot = Plot::new();
@@ -406,7 +403,6 @@ fn line_shape_options_for_interpolation(show: bool) {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    plot.show_png(1024, 680);
     if show {
         plot.show();
     }

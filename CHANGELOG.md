@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `askama` to `0.11.0`.
 - `rand` to `0.8.4`.
 - `rand_distr` to `0.4.2`.
+- `plotly.js` to `2.12.1`
 
 ## [0.7.0] - 2022-01-01
 ### Added

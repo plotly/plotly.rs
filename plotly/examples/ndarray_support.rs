@@ -1,7 +1,10 @@
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
+#[cfg(feature = "plotly_ndarray")]
 use plotly::common::Mode;
+#[cfg(feature = "plotly_ndarray")]
 use plotly::ndarray::ArrayTraces;
+#[cfg(feature = "plotly_ndarray")]
 use plotly::{Plot, Scatter};
 
 #[cfg(feature = "plotly_ndarray")]

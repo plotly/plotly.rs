@@ -13,6 +13,7 @@ fn simple_scatter3d_plot(show: bool) {
     let trace = Scatter3D::new(t, y, z).mode(Mode::Markers);
     let mut plot = Plot::new();
     plot.add_trace(trace);
+
     if show {
         plot.show();
     }
@@ -23,7 +24,6 @@ fn customized_scatter3d_plot(show: bool) {
     let t: Vec<f64> = linspace::<f64>(0., 10., n).collect();
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
-    let colorlookup = t.clone();
     let sizelookup = z.clone();
 
     let trace = Scatter3D::new(t.clone(), y.clone(), z.iter().map(|i| -i))
@@ -37,9 +37,9 @@ fn customized_scatter3d_plot(show: bool) {
                         .map(|i| (i.abs() * 25f64) as usize)
                         .collect(),
                 )
-                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
-                .color_array(colorlookup.clone()),
+                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
         );
+
     let trace2 = Scatter3D::new(t, z, y).mode(Mode::Markers).marker(
         Marker::new()
             .size_array(
@@ -48,9 +48,9 @@ fn customized_scatter3d_plot(show: bool) {
                     .map(|i| (i.abs() * 25f64) as usize)
                     .collect(),
             )
-            .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
-            .color_array(colorlookup),
+            .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
     );
+
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.add_trace(trace2);
@@ -60,6 +60,7 @@ fn customized_scatter3d_plot(show: bool) {
         .z_axis(Axis::new().title("z Axis".into()))
         .y_axis(Axis::new().title(Title::new("This is the label of the Y axes")));
     plot.set_layout(layout);
+
     if show {
         plot.show();
     }
@@ -75,6 +76,7 @@ fn simple_line3d_plot(show: bool) {
     let trace = Scatter3D::new(t, y, z).mode(Mode::Lines);
     let mut plot = Plot::new();
     plot.add_trace(trace);
+
     if show {
         plot.show();
     }
@@ -97,6 +99,7 @@ fn surface_plot(show: bool) {
     let trace = Surface::new(z).x(x).y(y);
     let mut plot = Plot::new();
     plot.add_trace(trace);
+
     if show {
         plot.show();
     }

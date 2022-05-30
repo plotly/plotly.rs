@@ -1,18 +1,14 @@
-//! Scatter plot
+//! Scatter3D plot
 
 use serde::Serialize;
 
+use crate::color::Color;
 use crate::common::{
-    color::{Color, ColorWrapper},
     Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };
-use crate::private;
+use crate::private::{self, copy_iterable_to_vec, NumOrString, NumOrStringCollection};
 use crate::Trace;
-use crate::private::{
-    copy_iterable_to_vec, NumOrString, NumOrStringCollection
-};
-
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
@@ -114,7 +110,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     fill: Option<Fill>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<ColorWrapper>,
+    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoveron")]
@@ -603,7 +599,7 @@ where
     /// Sets the fill color. Defaults to a half-transparent variant of the line color, marker color,
     /// or marker line color, whichever is available.
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Self> {
-        self.fill_color = Some(fill_color.to_color());
+        self.fill_color = Some(Box::new(fill_color));
         Box::new(self)
     }
 

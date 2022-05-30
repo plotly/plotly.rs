@@ -1,6 +1,6 @@
 use plotly::common::{AxisSide, Font, Title};
 use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder};
-use plotly::{Plot, Rgb, Scatter};
+use plotly::{color::Rgb, Plot, Scatter};
 
 // Subplots
 fn simple_subplot(show: bool) {

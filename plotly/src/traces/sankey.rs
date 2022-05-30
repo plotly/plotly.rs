@@ -2,11 +2,11 @@
 
 use serde::Serialize;
 
-use crate::common::color::{Color, ColorWrapper};
+use crate::color::{Color, ColorArray};
 use crate::common::{Dim, Domain, Font, HoverInfo, Label, LegendGroupTitle, Orientation, PlotType};
-use crate::{private, Trace};
+use crate::Trace;
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum Arrangement {
     Snap,
@@ -15,10 +15,10 @@ pub enum Arrangement {
     Fixed,
 }
 
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Default)]
 pub struct Line {
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<Dim<ColorWrapper>>,
+    color: Option<Dim<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
 }
@@ -29,13 +29,12 @@ impl Line {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(color.to_color()));
+        self.color = Some(Dim::Scalar(Box::new(color)));
         self
     }
 
-    pub fn color_array<C: Color>(mut self, color: Vec<C>) -> Self {
-        let color = private::to_color_array(color);
-        self.color = Some(Dim::Vector(color));
+    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.color = Some(Dim::Vector(ColorArray(colors).into()));
         self
     }
 
@@ -45,11 +44,11 @@ impl Line {
     }
 }
 
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Default, Clone)]
 pub struct Node {
     // Missing: customdata, groups
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<Dim<ColorWrapper>>,
+    color: Option<Dim<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     label: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
@@ -76,13 +75,12 @@ impl Node {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(color.to_color()));
+        self.color = Some(Dim::Scalar(Box::new(color)));
         self
     }
 
-    pub fn color_array<C: Color>(mut self, color: Vec<C>) -> Self {
-        let color = private::to_color_array(color);
-        self.color = Some(Dim::Vector(color));
+    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.color = Some(Dim::Vector(ColorArray(colors).into()));
         self
     }
 
@@ -132,14 +130,14 @@ impl Node {
     }
 }
 
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Default, Clone)]
 pub struct Link<V>
 where
     V: Serialize + Default + Clone,
 {
     // Missing: colorscales, customdata
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<Dim<ColorWrapper>>,
+    color: Option<Dim<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
@@ -165,13 +163,12 @@ where
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(color.to_color()));
+        self.color = Some(Dim::Scalar(Box::new(color)));
         self
     }
 
-    pub fn color_array<C: Color>(mut self, color: Vec<C>) -> Self {
-        let color = private::to_color_array(color);
-        self.color = Some(Dim::Vector(color));
+    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.color = Some(Dim::Vector(ColorArray(colors).into()));
         self
     }
 
@@ -211,7 +208,7 @@ where
     }
 }
 
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Default, Clone)]
 pub struct Sankey<V>
 where
     V: Serialize + Default + Clone,
@@ -387,7 +384,7 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
-    use crate::NamedColor;
+    use crate::color::NamedColor;
 
     #[test]
     fn test_serialize_basic_sankey_trace() {
