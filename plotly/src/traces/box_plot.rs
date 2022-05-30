@@ -1,6 +1,6 @@
 //! Box plot
 
-use crate::common::color::{Color, ColorWrapper};
+use crate::color::Color;
 use crate::common::{
     Calendar, Dim, HoverInfo, Label, Line, Marker, Orientation, PlotType, Visible,
 };
@@ -134,7 +134,7 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "quartilemethod")]
     quartile_method: Option<QuartileMethod>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<ColorWrapper>,
+    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoveron")]
@@ -364,7 +364,7 @@ where
     }
 
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<BoxPlot<Y, X>> {
-        self.fill_color = Some(fill_color.to_color());
+        self.fill_color = Some(Box::new(fill_color));
         Box::new(self)
     }
 

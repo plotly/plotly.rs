@@ -3,7 +3,10 @@ use plotly::box_plot::{BoxMean, BoxPoints};
 use plotly::common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation, Title};
 use plotly::histogram::{Bins, Cumulative, HistFunc, HistNorm};
 use plotly::layout::{Axis, BarMode, BoxMode, Layout, Margin};
-use plotly::{Bar, BoxPlot, Histogram, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{
+    color::{NamedColor, Rgb, Rgba},
+    Bar, BoxPlot, Histogram, Plot, Scatter,
+};
 use rand_distr::{Distribution, Normal, Uniform};
 
 // Error Bars

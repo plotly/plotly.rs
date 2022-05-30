@@ -3,12 +3,12 @@ pub mod themes;
 use serde::{Serialize, Serializer};
 use std::borrow::Cow;
 
-use crate::common::color::{Color, ColorWrapper};
+use crate::color::{Color, ColorArray};
 use crate::common::{
     Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font, Label,
     Orientation, TickFormatStop, TickMode, Title,
 };
-use crate::private::{self, NumOrString, NumOrStringCollection};
+use crate::private::{NumOrString, NumOrStringCollection};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -157,9 +157,9 @@ pub enum GroupClick {
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Legend {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<ColorWrapper>,
+    border_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
     border_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -200,12 +200,12 @@ impl Legend {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
     pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(border_color.to_color());
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
@@ -424,9 +424,9 @@ impl RangeSliderYAxis {
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct RangeSlider {
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<ColorWrapper>,
+    border_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
     border_width: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "autorange")]
@@ -447,12 +447,12 @@ impl RangeSlider {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
     pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(border_color.to_color());
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
@@ -582,11 +582,11 @@ pub struct RangeSelector {
     #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "activecolor")]
-    active_color: Option<ColorWrapper>,
+    active_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<ColorWrapper>,
+    border_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
     border_width: Option<usize>,
 }
@@ -632,17 +632,17 @@ impl RangeSelector {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
     pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
-        self.active_color = Some(active_color.to_color());
+        self.active_color = Some(Box::new(active_color));
         self
     }
 
     pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(border_color.to_color());
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
@@ -755,7 +755,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -800,7 +800,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickwidth")]
     tick_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "tickcolor")]
-    tick_color: Option<ColorWrapper>,
+    tick_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showticklabels")]
     show_tick_labels: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "automargin")]
@@ -808,7 +808,7 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "showspikes")]
     show_spikes: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikecolor")]
-    spike_color: Option<ColorWrapper>,
+    spike_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikethickness")]
     spike_thickness: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "spikedash")]
@@ -844,25 +844,25 @@ pub struct Axis {
     #[serde(skip_serializing_if = "Option::is_none", rename = "showline")]
     show_line: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "linecolor")]
-    line_color: Option<ColorWrapper>,
+    line_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "linewidth")]
     line_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showgrid")]
     show_grid: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "gridcolor")]
-    grid_color: Option<ColorWrapper>,
+    grid_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "gridwidth")]
     grid_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zeroline")]
     zero_line: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zerolinecolor")]
-    zero_line_color: Option<ColorWrapper>,
+    zero_line_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zerolinewidth")]
     zero_line_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "showdividers")]
     show_dividers: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dividercolor")]
-    divider_color: Option<ColorWrapper>,
+    divider_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "dividerwidth")]
     divider_width: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -901,7 +901,7 @@ impl Axis {
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(color.to_color());
+        self.color = Some(Box::new(color));
         self
     }
 
@@ -1001,7 +1001,7 @@ impl Axis {
     }
 
     pub fn tick_color<C: Color>(mut self, tick_color: C) -> Self {
-        self.tick_color = Some(tick_color.to_color());
+        self.tick_color = Some(Box::new(tick_color));
         self
     }
 
@@ -1021,7 +1021,7 @@ impl Axis {
     }
 
     pub fn spike_color<C: Color>(mut self, spike_color: C) -> Self {
-        self.spike_color = Some(spike_color.to_color());
+        self.spike_color = Some(Box::new(spike_color));
         self
     }
 
@@ -1111,7 +1111,7 @@ impl Axis {
     }
 
     pub fn line_color<C: Color>(mut self, line_color: C) -> Self {
-        self.line_color = Some(line_color.to_color());
+        self.line_color = Some(Box::new(line_color));
         self
     }
 
@@ -1126,7 +1126,7 @@ impl Axis {
     }
 
     pub fn grid_color<C: Color>(mut self, grid_color: C) -> Self {
-        self.grid_color = Some(grid_color.to_color());
+        self.grid_color = Some(Box::new(grid_color));
         self
     }
 
@@ -1141,7 +1141,7 @@ impl Axis {
     }
 
     pub fn zero_line_color<C: Color>(mut self, zero_line_color: C) -> Self {
-        self.zero_line_color = Some(zero_line_color.to_color());
+        self.zero_line_color = Some(Box::new(zero_line_color));
         self
     }
 
@@ -1156,7 +1156,7 @@ impl Axis {
     }
 
     pub fn divider_color<C: Color>(mut self, divider_color: C) -> Self {
-        self.divider_color = Some(divider_color.to_color());
+        self.divider_color = Some(Box::new(divider_color));
         self
     }
 
@@ -1435,11 +1435,11 @@ pub struct ModeBar {
     #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "activecolor")]
-    active_color: Option<ColorWrapper>,
+    active_color: Option<Box<dyn Color>>,
 }
 
 impl ModeBar {
@@ -1453,17 +1453,17 @@ impl ModeBar {
     }
 
     pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(color.to_color());
+        self.color = Some(Box::new(color));
         self
     }
 
     pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
-        self.active_color = Some(active_color.to_color());
+        self.active_color = Some(Box::new(active_color));
         self
     }
 }
@@ -1501,7 +1501,7 @@ pub enum FillRule {
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct ShapeLine {
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1515,7 +1515,7 @@ impl ShapeLine {
 
     /// Sets the line color.
     pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(color.to_color());
+        self.color = Some(Box::new(color));
         self
     }
 
@@ -1568,7 +1568,7 @@ pub struct Shape {
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<ShapeLine>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<ColorWrapper>,
+    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillrule")]
     fill_rule: Option<FillRule>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1724,7 +1724,7 @@ impl Shape {
 
     /// Sets the color filling the shape's interior. Only applies to closed shapes.
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
-        self.fill_color = Some(fill_color.to_color());
+        self.fill_color = Some(Box::new(fill_color));
         self
     }
 
@@ -1777,7 +1777,7 @@ pub struct NewShape {
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<ShapeLine>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<ColorWrapper>,
+    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillrule")]
     fill_rule: Option<FillRule>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1803,7 +1803,7 @@ impl NewShape {
     /// alpha greater than half, drag inside the active shape starts moving the shape underneath,
     /// otherwise a new shape could be started over.
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
-        self.fill_color = Some(fill_color.to_color());
+        self.fill_color = Some(Box::new(fill_color));
         self
     }
 
@@ -1839,7 +1839,7 @@ impl NewShape {
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct ActiveShape {
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<ColorWrapper>,
+    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
 }
@@ -1851,7 +1851,7 @@ impl ActiveShape {
 
     /// Sets the color filling the active shape' interior.
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
-        self.fill_color = Some(fill_color.to_color());
+        self.fill_color = Some(Box::new(fill_color));
         self
     }
 
@@ -1913,9 +1913,9 @@ pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none")]
     valign: Option<VAlign>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
-    background_color: Option<ColorWrapper>,
+    background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
-    border_color: Option<ColorWrapper>,
+    border_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "borderpad")]
     border_pad: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "borderwidth")]
@@ -1923,7 +1923,7 @@ pub struct Annotation {
     #[serde(skip_serializing_if = "Option::is_none", rename = "showarrow")]
     show_arrow: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "arrowcolor")]
-    arrow_color: Option<ColorWrapper>,
+    arrow_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "arrowhead")]
     arrow_head: Option<u8>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "startarrowhead")]
@@ -2050,13 +2050,13 @@ impl Annotation {
 
     /// Sets the background color of the annotation.
     pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(background_color.to_color());
+        self.background_color = Some(Box::new(background_color));
         self
     }
 
     /// Sets the color of the border enclosing the annotation `text`.
     pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(border_color.to_color());
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
@@ -2081,7 +2081,7 @@ impl Annotation {
 
     /// Sets the color of the annotation arrow.
     pub fn arrow_color<C: Color>(mut self, arrow_color: C) -> Self {
-        self.arrow_color = Some(arrow_color.to_color());
+        self.arrow_color = Some(Box::new(arrow_color));
         self
     }
 
@@ -2434,13 +2434,13 @@ pub struct LayoutTemplate {
     #[serde(skip_serializing_if = "Option::is_none")]
     separators: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "paper_bgcolor")]
-    paper_background_color: Option<ColorWrapper>,
+    paper_background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "plot_bgcolor")]
-    plot_background_color: Option<ColorWrapper>,
+    plot_background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
     color_scale: Option<LayoutColorScale>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    colorway: Option<Vec<ColorWrapper>>,
+    colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
     color_axis: Option<ColorAxis>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
@@ -2541,12 +2541,12 @@ pub struct LayoutTemplate {
     waterfall_group_gap: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "piecolorway")]
-    pie_colorway: Option<Vec<ColorWrapper>>,
+    pie_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "extendpiecolors")]
     extend_pie_colors: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
-    sunburst_colorway: Option<Vec<ColorWrapper>>,
+    sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(
         skip_serializing_if = "Option::is_none",
         rename = "extendsunburstcolors"
@@ -2610,12 +2610,12 @@ impl LayoutTemplate {
     }
 
     pub fn paper_background_color<C: Color>(mut self, paper_background_color: C) -> Self {
-        self.paper_background_color = Some(paper_background_color.to_color());
+        self.paper_background_color = Some(Box::new(paper_background_color));
         self
     }
 
     pub fn plot_background_color<C: Color>(mut self, plot_background_color: C) -> Self {
-        self.plot_background_color = Some(plot_background_color.to_color());
+        self.plot_background_color = Some(Box::new(plot_background_color));
         self
     }
 
@@ -2625,8 +2625,7 @@ impl LayoutTemplate {
     }
 
     pub fn colorway<C: Color>(mut self, colorway: Vec<C>) -> Self {
-        let colorway = private::to_color_array(colorway);
-        self.colorway = Some(colorway);
+        self.colorway = Some(ColorArray(colorway).into());
         self
     }
 
@@ -2875,8 +2874,7 @@ impl LayoutTemplate {
     }
 
     pub fn pie_colorway<C: Color>(mut self, pie_colorway: Vec<C>) -> Self {
-        let pie_colorway = private::to_color_array(pie_colorway);
-        self.pie_colorway = Some(pie_colorway);
+        self.pie_colorway = Some(ColorArray(pie_colorway).into());
         self
     }
 
@@ -2886,8 +2884,7 @@ impl LayoutTemplate {
     }
 
     pub fn sunburst_colorway<C: Color>(mut self, sunburst_colorway: Vec<C>) -> Self {
-        let sunburst_colorway = private::to_color_array(sunburst_colorway);
-        self.sunburst_colorway = Some(sunburst_colorway);
+        self.sunburst_colorway = Some(ColorArray(sunburst_colorway).into());
         self
     }
 
@@ -2920,13 +2917,13 @@ pub struct Layout {
     #[serde(skip_serializing_if = "Option::is_none")]
     separators: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "paper_bgcolor")]
-    paper_background_color: Option<ColorWrapper>,
+    paper_background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "plot_bgcolor")]
-    plot_background_color: Option<ColorWrapper>,
+    plot_background_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
     color_scale: Option<LayoutColorScale>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    colorway: Option<Vec<ColorWrapper>>,
+    colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
     color_axis: Option<ColorAxis>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "modebar")]
@@ -3030,12 +3027,12 @@ pub struct Layout {
     waterfall_group_gap: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "piecolorway")]
-    pie_colorway: Option<Vec<ColorWrapper>>,
+    pie_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "extendpiecolors")]
     extend_pie_colors: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "sunburstcolorway")]
-    sunburst_colorway: Option<Vec<ColorWrapper>>,
+    sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(
         skip_serializing_if = "Option::is_none",
         rename = "extendsunburstcolors"
@@ -3103,12 +3100,12 @@ impl Layout {
     }
 
     pub fn paper_background_color<C: Color>(mut self, paper_background_color: C) -> Self {
-        self.paper_background_color = Some(paper_background_color.to_color());
+        self.paper_background_color = Some(Box::new(paper_background_color));
         self
     }
 
     pub fn plot_background_color<C: Color>(mut self, plot_background_color: C) -> Self {
-        self.plot_background_color = Some(plot_background_color.to_color());
+        self.plot_background_color = Some(Box::new(plot_background_color));
         self
     }
 
@@ -3118,8 +3115,7 @@ impl Layout {
     }
 
     pub fn colorway<C: Color>(mut self, colorway: Vec<C>) -> Self {
-        let colorway = private::to_color_array(colorway);
-        self.colorway = Some(colorway);
+        self.colorway = Some(ColorArray(colorway).into());
         self
     }
 
@@ -3376,8 +3372,7 @@ impl Layout {
     }
 
     pub fn pie_colorway<C: Color>(mut self, pie_colorway: Vec<C>) -> Self {
-        let pie_colorway = private::to_color_array(pie_colorway);
-        self.pie_colorway = Some(pie_colorway);
+        self.pie_colorway = Some(ColorArray(pie_colorway).into());
         self
     }
 
@@ -3387,8 +3382,7 @@ impl Layout {
     }
 
     pub fn sunburst_colorway<C: Color>(mut self, sunburst_colorway: Vec<C>) -> Self {
-        let sunburst_colorway = private::to_color_array(sunburst_colorway);
-        self.sunburst_colorway = Some(sunburst_colorway);
+        self.sunburst_colorway = Some(ColorArray(sunburst_colorway).into());
         self
     }
 
@@ -3926,10 +3920,10 @@ mod tests {
             "linecolor": "#CCCDDD",
             "linewidth": 9,
             "showgrid": false,
-            "gridcolor": "#FFF000",
+            "gridcolor": "#fff000",
             "gridwidth": 8,
             "zeroline": true,
-            "zerolinecolor": "#F0F0F0",
+            "zerolinecolor": "#f0f0f0",
             "zerolinewidth": 7,
             "showdividers": false,
             "dividercolor": "#AFAFAF",
