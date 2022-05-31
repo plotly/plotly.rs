@@ -14,8 +14,6 @@ fn simple_scatter3d_plot(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.save("basic-scatter3d.png", ImageFormat::PNG, 1024, 680, 1.0);
-
     if show {
         plot.show();
     }
@@ -110,9 +108,8 @@ fn surface_plot(show: bool) {
 fn main() -> std::io::Result<()> {
     // Scatter3D Plots
     simple_scatter3d_plot(true);
-    simple_line3d_plot(false);
-    customized_scatter3d_plot(false);
-    customized_scatter3d_plot(false);
-    surface_plot(false);
+    simple_line3d_plot(true);
+    customized_scatter3d_plot(true);
+    surface_plot(true);
     Ok(())
 }
