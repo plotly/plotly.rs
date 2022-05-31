@@ -11,6 +11,7 @@
         - [Scatter Plots](./recipes/basic_charts/scatter_plots.md)
         - [Line Charts](./recipes/basic_charts/line_charts.md)
         - [Bar Charts](./recipes/basic_charts/bar_charts.md)        
+        - [Sankey Diagrams](./recipes/basic_charts/sankey_diagrams.md)        
     - [Statistical Charts](./recipes/statistical_charts.md)
         - [Error Bars](./recipes/statistical_charts/error_bars.md)
         - [Box Plots](./recipes/statistical_charts/box_plots.md)

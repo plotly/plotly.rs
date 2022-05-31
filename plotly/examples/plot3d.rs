@@ -1,7 +1,7 @@
 use itertools_num::linspace;
 use plotly::common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title};
 use plotly::layout::{Axis, Layout};
-use plotly::{ImageFormat, Plot, Scatter3D, Surface};
+use plotly::{Plot, Scatter3D, Surface};
 
 // 3D Scatter Plots
 fn simple_scatter3d_plot(show: bool) {
@@ -57,8 +57,8 @@ fn customized_scatter3d_plot(show: bool) {
     let layout = Layout::new()
         .title("Helix".into())
         .x_axis(Axis::new().title("x (A meaningful axis name goes here)".into()))
-        .z_axis(Axis::new().title("z Axis".into()))
-        .y_axis(Axis::new().title(Title::new("This is the label of the Y axes")));
+        .y_axis(Axis::new().title(Title::new("This is the label of the Y axis")))
+        .z_axis(Axis::new().title("z Axis".into()));
     plot.set_layout(layout);
 
     if show {
