@@ -18,38 +18,28 @@
 
 # Getting Started
 
-To start using [Plotly.rs](https://github.com/igiagkiozis/plotly) in your project add the following to your `Cargo.toml`:
+To start using [plotly.rs](https://github.com/igiagkiozis/plotly) in your project add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
 plotly = "0.7.0"
 ```
 
-To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the `kaleido` feature. This feature depends on [plotly/Kaleido](https://github.com/plotly/Kaleido); a cross-platform library for generating static images. All the necessary binaries have been included with `plotly_kaleido` for `linux`, `windows` and `macos`. Previous versions of [Plotly.rs](https://github.com/igiagkiozis/plotly) used the `orca` feature; however this has been deprecated as it provided the same functionality but required additional installation steps. To enable the `kaleido` feature add the following to your `Cargo.toml` instead: 
+[Plotly.rs](https://github.com/igiagkiozis/plotly) is ultimately a thin wrapper around the `plotly.js` library. The main job of this library is to provide `structs` and `enums` which get serialized to `json` and passed to the `plotly.js` library to actually do the heavy lifting. As such, if you are familiar with `plotly.js` or its derivatives (e.g. the equivalent Python library), then you should find [`plotly.rs`](https://github.com/igiagkiozis/plotly) intuitive to use.
 
-```toml
-[dependencies]
-plotly = { version = "0.7.0", features = ["kaleido"] }
-```
+A `Plot` struct contains one or more `Trace` objects which describe the structure of data to be displayed. Optional `Layout` and `Configuration` structs can be used to specify the layout and config of the plot, respectively.
 
-Plotly Kaleido is an open source project 
+The builder pattern is used extensively throughout the library, which means you only need to specify the attributes and details you desire. Any attributes that are not set will fall back to the default value used by `plotly.js`.
 
-
-[Plotly.rs](https://github.com/igiagkiozis/plotly) has three main components: 
-
-- Traces; these are containers for the data for display,
-- Layout, fine tunes the display of traces on the canvas and more generally controls the way that the plot is displayed, and,
-- Plot; is the component that brings traces and the layout together to display the plot in either html format or rasterise the resulting view.
-
-All available traces (e.g. `Scatter`, `Bar`, `Histogram` etc), the `Layout` and `Plot` have been hoisted in the `plotly` namespace so that they can be imported simply using the following: 
+All available traces (e.g. `Scatter`, `Bar`, `Histogram`, etc), the `Layout`, `Configuration` and  `Plot` have been hoisted in the `plotly` namespace so that they can be imported simply using the following: 
 
 ```rust
 use plotly::{Plot, Layout, Scatter};
 ```
 
 The aforementioned components can be combined to produce as simple plot as follows: 
+
 ```rust
-extern crate plotly;
 use plotly::common::Mode;
 use plotly::{Plot, Scatter};
 
@@ -75,26 +65,37 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
-which results in the following figure: 
+which results in the following figure (displayed here as a static png file): 
 
 ![line_and_scatter_plot](img/line_and_scatter_plot.png)
 
-The above code will generate an html page of the `Plot` and display it in the default browser. The `html` for the plot is stored in the platform specific temporary directory. To save the `html` result the following can be used: 
+The above code will generate an interactive `html` page of the `Plot` and display it in the default browser. The `html` for the plot is stored in the platform specific temporary directory. To save the `html` result, you can do so quite simply: 
 
 ```rust
-plot.to_html("/home/user/line_and_scatter_plot.html");
+plot.write_html("/home/user/line_and_scatter_plot.html");
 ```
 
-It is often the case that plots are produced to be included in a document and a different format for the plot is desirable (e.g. png, jpeg etc). Given that the `html` version of the plot is composed of vector graphics, the display when converted to a non-vector format (e.g. png) is not guaranteed to be identical to the one displayed in `html`. This means that some fine tuning may be required to get to the desired output. To support that iterative workflow the `Plot` has `show_*` methods which display the rasterised output to the target format, for example this: 
+It is often the case that plots are produced to be included in a document and a different format for the plot is desirable (e.g. png, jpeg, etc). Given that the `html` version of the plot is composed of vector graphics, the display when converted to a non-vector format (e.g. png) is not guaranteed to be identical to the one displayed in `html`. This means that some fine tuning may be required to get to the desired output. To support that iterative workflow, `Plot` has a `show_image()` method which will display the rasterised output to the target format, for example: 
 
 ```rust
-plot.show_png(1280, 900);
+plot.show_image(ImageFormat::PNG, 1280, 900);
 ```
 
-will display in the browser the rasterised plot; 1280 pixels wide and 900 pixels tall, in png format. Once a satisfactory result is achieved, and assuming the `kaleido` feature is enabled, the plot can be saved using the following: 
+will display in the browser the rasterised plot; 1280 pixels wide and 900 pixels tall, in png format.
+
+Once a satisfactory result is achieved, and assuming the [`kaleido`](getting_started#saving-plots) feature is enabled, the plot can be saved using the following: 
 
 ```rust
-plot.save("/home/user/plot_name.ext", ImageFormat::PNG, 1280, 900, 1.0);
+plot.write_image("/home/user/plot_name.ext", ImageFormat::PNG, 1280, 900, 1.0);
 ```
 
-The extension in the file-name path is optional as the appropriate extension (`ImageFormat::PNG`) will be included. Note that in all functions that save files to disk both relative and absolute paths are supported.
+The extension in the file-name path is optional as the appropriate extension (`ImageFormat::PNG`) will be included. Note that in all functions that save files to disk, both relative and absolute paths are supported.
+
+## Saving Plots
+
+To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the `kaleido` feature. This feature depends on [plotly/Kaleido](https://github.com/plotly/Kaleido): a cross-platform open source library for generating static images. All the necessary binaries have been included with `plotly_kaleido` for `Linux`, `Windows` and `MacOS`. Previous versions of [plotly.rs](https://github.com/igiagkiozis/plotly) used the `orca` feature, however, this has been deprecated as it provided the same functionality but required additional installation steps. To enable the `kaleido` feature add the following to your `Cargo.toml`: 
+
+```toml
+[dependencies]
+plotly = { version = "0.7.0", features = ["kaleido"] }
+```
