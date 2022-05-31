@@ -1,10 +1,11 @@
 //! Surface plot
 
+use serde::Serialize;
+
 use crate::color::{Color, ColorArray};
 use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible};
 use crate::private;
 use crate::Trace;
-use serde::Serialize;
 
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Lighting {

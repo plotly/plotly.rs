@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for WASM environments
 - Lots of tests
 - Support for `Sankey` diagrams
+- `Plot3D`: Add 3D plots for scatter, line and surface data
 ### Changed
 - Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
 #47](https://github.com/igiagkiozis/plotly/issues/47))

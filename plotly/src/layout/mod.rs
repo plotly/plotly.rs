@@ -2955,34 +2955,51 @@ pub struct Layout {
     x_axis: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
     y_axis: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis")]
+    z_axis: Option<Box<Axis>>,
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis2")]
     x_axis2: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis2")]
     y_axis2: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis2")]
+    z_axis2: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis3")]
     x_axis3: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis3")]
     y_axis3: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis3")]
+    z_axis3: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis4")]
     x_axis4: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis4")]
     y_axis4: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis4")]
+    z_axis4: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis5")]
     x_axis5: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis5")]
     y_axis5: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis5")]
+    z_axis5: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis6")]
     x_axis6: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis6")]
     y_axis6: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis6")]
+    z_axis6: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis7")]
     x_axis7: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis7")]
     y_axis7: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis7")]
+    z_axis7: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis8")]
     x_axis8: Option<Box<Axis>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis8")]
     y_axis8: Option<Box<Axis>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zaxis8")]
+    z_axis8: Option<Box<Axis>>,
 
     // ternary: Option<LayoutTernary>,
     // scene: Option<LayoutScene>,
@@ -3194,7 +3211,12 @@ impl Layout {
         self
     }
 
-    pub fn x_axis2(mut self, xaxis: Axis) -> Self {
+    pub fn z_axis(mut self, zaxis: Axis) -> Layout {
+        self.z_axis = Some(Box::new(zaxis));
+        self
+    }
+
+    pub fn x_axis2(mut self, xaxis: Axis) -> Layout {
         self.x_axis2 = Some(Box::new(xaxis));
         self
     }

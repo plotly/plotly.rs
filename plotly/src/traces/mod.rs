@@ -1,3 +1,5 @@
+//! The various supported traces
+
 mod bar;
 pub mod box_plot;
 mod candlestick;
@@ -7,6 +9,7 @@ pub mod histogram;
 mod ohlc;
 pub mod sankey;
 mod scatter;
+mod scatter3d;
 mod scatter_polar;
 pub mod surface;
 
@@ -19,5 +22,6 @@ pub use histogram::Histogram;
 pub use ohlc::Ohlc;
 pub use sankey::Sankey;
 pub use scatter::Scatter;
+pub use scatter3d::Scatter3D;
 pub use scatter_polar::ScatterPolar;
 pub use surface::Surface;

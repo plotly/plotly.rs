@@ -1,4 +1,4 @@
-# Line Charts
+# Sankey Diagrams
 
 The following imports have been used to produce the plots below:
 
@@ -14,8 +14,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 
 The `to_inline_html` method is used to produce the html plot displayed in this page.
 
-
-## Adding Names to Line and Scatter Plot
+## Constructing a basic Sankey diagram
 ```rust
 let trace = Sankey::new()
         .orientation(Orientation::Horizontal)
@@ -52,17 +51,13 @@ let trace = Sankey::new()
     if show {
         plot.show();
     }
-
-    println!("{}", plot.to_inline_html(Some("basic_sankey_diagram")));
 }
 ```
-<div id="basic_sankey_diagram" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<div id="basic-sankey-diagram" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("basic_sankey_diagram")) {
-        var image_element = document.getElementById('image-export')
-
-        Plotly.newPlot('basic_sankey_diagram', {
+    if (document.getElementById("basic-sankey-diagram")) {
+        Plotly.newPlot('basic-sankey-diagram', {
   "data": [
     {
       "type": "sankey",
