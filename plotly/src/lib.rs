@@ -26,10 +26,10 @@ pub use plot::{ImageFormat, Plot, Trace};
 // Bring the different trace types into the top-level scope
 pub use traces::{
     Bar, BoxPlot, Candlestick, Contour, HeatMap, Histogram, Image, Mesh3D, Ohlc, Sankey, Scatter,
-    Scatter3D, ScatterPolar, Surface,
+    Scatter3D, ScatterPolar, ScatterMapbox, Surface,
 };
 // Also provide easy access to modules which contain additional trace-specific types
-pub use traces::{box_plot, contour, histogram, image, mesh3d, sankey, surface};
+pub use traces::{box_plot, contour, histogram, image, mesh3d, sankey, scatter_mapbox, surface};
 
 #[cfg(feature = "plotly_ndarray")]
 pub use crate::ndarray::ArrayTraces;

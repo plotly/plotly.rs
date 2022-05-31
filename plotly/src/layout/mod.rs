@@ -2381,6 +2381,68 @@ pub enum SelectDirection {
     Any,
 }
 
+#[derive(Serialize, Clone, Debug)]
+pub struct Center {
+    lat: f64,
+    lon: f64,
+}
+
+impl Center
+{
+    pub fn new(lat: f64, lon: f64) -> Self
+    {
+        Center { lat, lon }
+    }
+}
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Mapbox
+{
+    #[serde(skip_serializing_if = "Option::is_none", rename = "accesstoken")]
+    access_token: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    bearing: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    center: Option<Center>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pitch: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    zoom: Option<f64>,
+}
+
+impl Mapbox
+{
+    pub fn new() -> Self
+    {
+        Default::default()
+    }
+
+    pub fn access_token(mut self, access_token: &str) -> Self {
+        self.access_token = Some(access_token.to_owned());
+        self
+    }
+
+    pub fn bearing(mut self, bearing: f64) -> Self {
+        self.bearing = Some(bearing);
+        self
+    }
+
+    pub fn center(mut self, center: Center) -> Self {
+        self.center = Some(center);
+        self
+    }
+
+    pub fn pitch(mut self, pitch: f64) -> Self {
+        self.pitch = Some(pitch);
+        self
+    }
+
+    pub fn zoom(mut self, zoom: f64) -> Self {
+        self.zoom = Some(zoom);
+        self
+    }
+}
+
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Template {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -3055,6 +3117,11 @@ pub struct Layout {
         rename = "extendsunburstcolors"
     )]
     extend_sunburst_colors: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    mapbox: Option<Mapbox>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "mapbox_style")]
+    mapbox_style: Option<String>,
 }
 
 impl Layout {
@@ -3410,6 +3477,16 @@ impl Layout {
 
     pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> Self {
         self.extend_sunburst_colors = Some(extend_sunburst_colors);
+        self
+    }
+
+    pub fn mapbox(mut self, mapbox: Mapbox) -> Self {
+        self.mapbox = Some(mapbox);
+        self
+    }
+
+    pub fn mapbox_style(mut self, mapbox_style: &str) -> Self {
+        self.mapbox_style = Some(mapbox_style.to_owned());
         self
     }
 }

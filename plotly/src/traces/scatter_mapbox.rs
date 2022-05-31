@@ -1,4 +1,4 @@
-//! Image plot
+//! Mapbox scatter plot
 
 use serde::Serialize;
 
@@ -13,27 +13,39 @@ use crate::private::{
     copy_iterable_to_vec, NumOrString, NumOrStringCollection
 };
 
-#[derive(Serialize, Clone, Debug)]
-#[serde(untagged)]
-pub enum PixelColor<U> {
-    Color3([U; 3]),
-    Color4([U; 4]),
-}
+/*
 
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "lowercase")]
-pub enum ColorModel {
-    RGB,
-    RGBA,
-    RGBA256,
-    HSL,
-    HSLA,
-}
+fig = go.Figure(go.Scattermapbox(
+        lat=['45.5017'],
+        lon=['-73.5673'],
+        mode='markers',
+        marker=go.scattermapbox.Marker(
+            size=14
+        ),
+        text=['Montreal'],
+    ))
+
+fig.update_layout(
+    hovermode='closest',
+    mapbox=dict(
+        accesstoken=mapbox_access_token,
+        bearing=0,
+        center=go.layout.mapbox.Center(
+            lat=45,
+            lon=-73
+        ),
+        pitch=0,
+        zoom=5
+    )
+)
+
+# this line switches from mapbox to openstreetmap
+fig.update_layout(mapbox_style="open-street-map")
+
+*/
 
 #[derive(Serialize, Clone, Debug, Default)]
-pub struct Image<U>
-where
-    U: Serialize + Clone + 'static,
+pub struct ScatterMapbox
 {
     // Transcribed from https://plotly.com/python/reference/image/.
     
@@ -43,30 +55,31 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
 
+    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    show_legend: Option<bool>,
     //<legendrank>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    legend_group: Option<String>,
     //<legendgrouptitle>
     
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    mode: Option<Mode>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    x0: Option<NumOrString>,
+    lat: Option<Vec<f64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    dx: Option<f64>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    y0: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    dy: Option<f64>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    z: Option<Vec<Vec<PixelColor<U>>>>,
-    //<source>
+    lon: Option<Vec<f64>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "textposition")]
+    text_position: Option<Dim<Position>>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "texttemplate")]
+    text_template: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
     hover_text: Option<Dim<String>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
@@ -79,36 +92,69 @@ where
     #[serde(skip_serializing_if = "Option::is_none")]
     custom_data: Option<NumOrStringCollection>,
 
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
-    x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
-    y_axis: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    subplot: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    marker: Option<Marker>,
 
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colormodel")]
-    color_model: Option<ColorModel>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    line: Option<Line>,
+    
+    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
+    text_font: Option<Font>,
+    
+    #[serde(skip_serializing_if = "Option::is_none", rename = "selectedpoints")]
+    selected_points: Option<Vec<usize>>,
 
-    #[serde(skip_serializing_if = "Option::is_none", rename = "zmax")]
-    z_max: Option<PixelColor<U>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "zmin")]
-    z_min: Option<PixelColor<U>>,
-    //<zsmooth>
-
-    //<hoverlabel>
-
+    //<selected>
+    //<unselected>
+    //<below>
+    //<connectgaps
+    
+    #[serde(skip_serializing_if = "Option::is_none")]
+    fill: Option<Fill>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
+    fill_color: Option<ColorWrapper>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    hover_label: Option<Label>,
+    
     //<uirevision>
 }
 
-impl<U> Image<U>
-where
-    U: Serialize + Default + Clone + 'static,
+impl ScatterMapbox
 {
-    pub fn new(z: Vec<Vec<PixelColor<U>>>) -> Box<Self>
+    pub fn new(lat: Vec<f64>, lon: Vec<f64>) -> Box<Self>
     {
         Box::new(Self {
-            r#type: PlotType::Image,
-            z: Some(z),
+            r#type: PlotType::ScatterMapbox,
+            lat: Some(lat),
+            lon: Some(lon),
             ..Default::default()
         })
+    }
+
+    /// Determines the drawing mode for this scatter trace. If the provided `Mode` includes
+    /// "Text" then the `text` elements appear at the coordinates. Otherwise, the `text` elements
+    /// appear on hover. If there are less than 20 points and the trace is not stacked then the
+    /// default is `Mode::LinesMarkers`, otherwise it is `Mode::Lines`.
+    pub fn mode(mut self, mode: Mode) -> Box<Self> {
+        self.mode = Some(mode);
+        Box::new(self)
+    }
+
+    /// Determines how points are displayed and joined.
+    pub fn marker(mut self, marker: Marker) -> Box<Self> {
+        self.marker = Some(marker);
+        Box::new(self)
+    }
+
+    /// Sets text elements associated with each (x,y) pair. If a single string, the same string
+    /// appears over all the data points. If an array of string, the items are mapped in order to
+    /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
+    /// `hover_text` is not set, these elements will be seen in the hover labels.
+    pub fn text(mut self, text: Dim<String>) -> Box<Self> {
+        self.text = Some(text);
+        Box::new(self)
     }
 
     /*
@@ -141,15 +187,6 @@ where
     /// Sets the opacity of the trace.
     pub fn opacity(mut self, opacity: f64) -> Box<Self> {
         self.opacity = Some(opacity);
-        Box::new(self)
-    }
-
-    /// Determines the drawing mode for this scatter trace. If the provided `Mode` includes
-    /// "Text" then the `text` elements appear at the coordinates. Otherwise, the `text` elements
-    /// appear on hover. If there are less than 20 points and the trace is not stacked then the
-    /// default is `Mode::LinesMarkers`, otherwise it is `Mode::Lines`.
-    pub fn mode(mut self, mode: Mode) -> Box<Self> {
-        self.mode = Some(mode);
         Box::new(self)
     }
 
@@ -197,15 +234,6 @@ where
     /// Sets the z coordinate step. See `z0` for more info.
     pub fn dz(mut self, dz: f64) -> Box<Self> {
         self.dz = Some(dz);
-        Box::new(self)
-    }
-
-    /// Sets text elements associated with each (x,y) pair. If a single string, the same string
-    /// appears over all the data points. If an array of string, the items are mapped in order to
-    /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
-    /// `hover_text` is not set, these elements will be seen in the hover labels.
-    pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_owned()));
         Box::new(self)
     }
 
@@ -403,12 +431,6 @@ where
         Box::new(self)
     }
 
-    /// Determines how points are displayed and joined.
-    pub fn marker(mut self, marker: Marker) -> Box<Self> {
-        self.marker = Some(marker);
-        Box::new(self)
-    }
-
     /// Line display properties.
     pub fn line(mut self, line: Line) -> Box<Self> {
         self.line = Some(line);
@@ -525,9 +547,7 @@ where
     */
 }
 
-impl<U> Trace for Image<U>
-where
-    U: Serialize + Clone + 'static,
+impl Trace for ScatterMapbox
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
