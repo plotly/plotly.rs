@@ -99,3 +99,57 @@ To add the ability to save plots in the following formats: png, jpeg, webp, svg,
 [dependencies]
 plotly = { version = "0.7.0", features = ["kaleido"] }
 ```
+
+## WebAssembly Support
+
+As of v0.8.0, [plotly.rs](https://github.com/igiagkiozis/plotly) can now be used in a `Wasm` environment by enabling the `wasm` feature in your `Cargo.toml`:
+
+```toml
+[dependencies]
+plotly = { version = ">=0.8.0" features = ["wasm"] }
+```
+
+The `wasm` feature exposes rudimentary bindings to the `plotly.js` library, which can then be used in a `wasm` environment such as the [`Yew`](https://yew.rs/) frontend framework.
+
+To make a very simple `Plot` component might look something like:
+
+```rust
+use yew::prelude::*;
+
+#[derive(Properties, PartialEq)]
+pub struct PlotProps {
+    pub id: String,
+    pub plot: plotly::Plot,
+    pub class: Option<Classes>,
+}
+
+#[function_component(Plot)]
+pub fn plot(props: &PlotProps) -> Html {
+    let PlotProps { id, plot, class } = props;
+
+    let p = yew_hooks::use_async::<_, _, ()>({
+        let id = id.clone();
+        let plot = plot.clone();
+        async move {
+            plotly::bindings::new_plot(&id, &plot).await;
+            Ok(())
+        }
+    });
+
+    {
+        let id = id.clone();
+        let plot = plot.clone();
+        use_effect_with_deps(
+            move |(_, _)| {
+                p.run();
+                || ()
+            },
+            (id, plot),
+        );
+    }
+
+    html! {
+        <div id={id.clone()} class={class.clone()}></div>
+    }
+}
+```
