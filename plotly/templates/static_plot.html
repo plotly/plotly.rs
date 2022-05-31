@@ -12,11 +12,24 @@
             <script type="text/javascript">{% include "plotly.min.js" %}</script>
             {% endif -%}
 
-            <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+            <div id="plotly-html-element" hidden></div>
+            <img id="plotly-img-element"></img>
 
             <script type="module">
                 const graph_div = document.getElementById("plotly-html-element");
                 await Plotly.newPlot(graph_div, {{ plot|tojson|safe }});
+                
+                const img_element = document.getElementById("plotly-img-element");
+                const data_url = await Plotly.toImage(
+                    graph_div,
+                    {
+                        format: "{{ format }}",
+                        width: {{ width }},
+                        height: {{ height }},
+                    }
+                );
+
+                img_element.setAttribute("src", data_url);
             </script>
         </div>
     </body>
