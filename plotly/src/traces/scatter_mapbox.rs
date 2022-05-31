@@ -3,7 +3,7 @@
 use serde::Serialize;
 
 use crate::common::{
-    color::{Color, ColorWrapper},
+    color::Color,
     Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };
@@ -47,7 +47,7 @@ fig.update_layout(mapbox_style="open-street-map")
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct ScatterMapbox
 {
-    // Transcribed from https://plotly.com/python/reference/image/.
+    // Transcribed from https://plotly.com/python/reference/scattermapbox/.
     
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -114,7 +114,7 @@ pub struct ScatterMapbox
     #[serde(skip_serializing_if = "Option::is_none")]
     fill: Option<Fill>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
-    fill_color: Option<ColorWrapper>,
+    fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
     

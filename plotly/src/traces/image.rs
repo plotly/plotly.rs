@@ -3,7 +3,7 @@
 use serde::Serialize;
 
 use crate::common::{
-    color::{Color, ColorWrapper},
+    color::Color,
     Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };

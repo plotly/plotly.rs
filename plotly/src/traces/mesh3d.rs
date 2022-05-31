@@ -3,7 +3,7 @@
 use serde::Serialize;
 
 use crate::common::{
-    color::{Color, ColorWrapper},
+    color::Color,
     Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };
@@ -64,13 +64,13 @@ where
     k: Option<Vec<usize>>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "facecolor")]
-    face_color: Option<Vec<ColorWrapper>>,
+    face_color: Option<Vec<Box<dyn Color>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     intensity: Option<Vec<f64>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "intensitymode")]
     intensity_mode: Option<IntensityMode>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "vertexcolor")]
-    vertex_color: Option<Vec<ColorWrapper>>,
+    vertex_color: Option<Vec<Box<dyn Color>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
@@ -91,7 +91,7 @@ where
     //<scene>
     //<coloraxis>
     #[serde(skip_serializing_if = "Option::is_none")]
-    color: Option<ColorWrapper>,
+    color: Option<Box<dyn Color>>,
     
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
     color_bar: Option<ColorBar>,
