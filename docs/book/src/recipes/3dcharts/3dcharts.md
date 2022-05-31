@@ -29,8 +29,6 @@ plot.add_trace(trace);
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
     if (document.getElementById("basic-scatter3d")) {
-        var image_element = document.getElementById('image-export')
-
         Plotly.newPlot('basic-scatter3d', {
   "data": [
     {
