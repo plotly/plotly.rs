@@ -22,6 +22,8 @@
        - [Time Series and Date Axes](./recipes/financial_charts/time_series_and_date_axes.md)
        - [Candlestick Charts](./recipes/financial_charts/candlestick_charts.md)
        - [OHLC Charts](./recipes/financial_charts/ohlc_charts.md)
+    - [3D Charts](./recipes/3dcharts.md)
+        - [Scatter 3D](./recipes/3dcharts/3dcharts.md)
     - [Subplots](./recipes/subplots.md)
         - [Subplots](./recipes/subplots/subplots.md)
         - [Multiple Axes](./recipes/subplots/multiple_axes.md)

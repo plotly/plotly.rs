@@ -1,7 +1,7 @@
 use itertools_num::linspace;
 use plotly::common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title};
 use plotly::layout::{Axis, Layout};
-use plotly::{Plot, Scatter3D, Surface};
+use plotly::{ImageFormat, Plot, Scatter3D, Surface};
 
 // 3D Scatter Plots
 fn simple_scatter3d_plot(show: bool) {
@@ -13,6 +13,8 @@ fn simple_scatter3d_plot(show: bool) {
     let trace = Scatter3D::new(t, y, z).mode(Mode::Markers);
     let mut plot = Plot::new();
     plot.add_trace(trace);
+
+    plot.save("basic-scatter3d.png", ImageFormat::PNG, 1024, 680, 1.0);
 
     if show {
         plot.show();
@@ -108,9 +110,9 @@ fn surface_plot(show: bool) {
 fn main() -> std::io::Result<()> {
     // Scatter3D Plots
     simple_scatter3d_plot(true);
-    simple_line3d_plot(true);
-    customized_scatter3d_plot(true);
+    simple_line3d_plot(false);
     customized_scatter3d_plot(false);
-    surface_plot(true);
+    customized_scatter3d_plot(false);
+    surface_plot(false);
     Ok(())
 }

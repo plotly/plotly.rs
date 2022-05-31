@@ -1,4 +1,4 @@
-# Line Charts
+# Sankey Diagrams
 
 The following imports have been used to produce the plots below:
 
@@ -14,8 +14,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 
 The `to_inline_html` method is used to produce the html plot displayed in this page.
 
-
-## Adding Names to Line and Scatter Plot
+## Constructing a basic Sankey diagram
 ```rust
 let trace = Sankey::new()
         .orientation(Orientation::Horizontal)
