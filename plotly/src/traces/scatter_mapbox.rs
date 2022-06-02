@@ -13,37 +13,6 @@ use crate::private::{
     copy_iterable_to_vec, NumOrString, NumOrStringCollection
 };
 
-/*
-
-fig = go.Figure(go.Scattermapbox(
-        lat=['45.5017'],
-        lon=['-73.5673'],
-        mode='markers',
-        marker=go.scattermapbox.Marker(
-            size=14
-        ),
-        text=['Montreal'],
-    ))
-
-fig.update_layout(
-    hovermode='closest',
-    mapbox=dict(
-        accesstoken=mapbox_access_token,
-        bearing=0,
-        center=go.layout.mapbox.Center(
-            lat=45,
-            lon=-73
-        ),
-        pitch=0,
-        zoom=5
-    )
-)
-
-# this line switches from mapbox to openstreetmap
-fig.update_layout(mapbox_style="open-street-map")
-
-*/
-
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct ScatterMapbox
 {
@@ -133,37 +102,12 @@ impl ScatterMapbox
         })
     }
 
-    /// Determines the drawing mode for this scatter trace. If the provided `Mode` includes
-    /// "Text" then the `text` elements appear at the coordinates. Otherwise, the `text` elements
-    /// appear on hover. If there are less than 20 points and the trace is not stacked then the
-    /// default is `Mode::LinesMarkers`, otherwise it is `Mode::Lines`.
-    pub fn mode(mut self, mode: Mode) -> Box<Self> {
-        self.mode = Some(mode);
-        Box::new(self)
-    }
-
-    /// Determines how points are displayed and joined.
-    pub fn marker(mut self, marker: Marker) -> Box<Self> {
-        self.marker = Some(marker);
-        Box::new(self)
-    }
-
-    /// Sets text elements associated with each (x,y) pair. If a single string, the same string
-    /// appears over all the data points. If an array of string, the items are mapped in order to
-    /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
-    /// `hover_text` is not set, these elements will be seen in the hover labels.
-    pub fn text(mut self, text: Dim<String>) -> Box<Self> {
-        self.text = Some(text);
-        Box::new(self)
-    }
-
-    /*
     /// Sets the trace name. The trace name appear as the legend item and on hover.
     pub fn name(mut self, name: &str) -> Box<Self> {
         self.name = Some(name.to_owned());
         Box::new(self)
     }
-
+    
     /// Determines whether or not this trace is visible. If `Visible::LegendOnly`, the trace is not
     /// drawn, but can appear as a legend item (provided that the legend itself is visible).
     pub fn visible(mut self, visible: Visible) -> Box<Self> {
@@ -177,19 +121,27 @@ impl ScatterMapbox
         Box::new(self)
     }
 
-    /// Sets the legend group for this trace. Traces part of the same legend group hide/show at the
-    /// same time when toggling legend items.
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
-    }
+    //<legendrank>
+    
+    //legend_group: Option<String>,
 
+    //<legendgrouptitle>
+    
     /// Sets the opacity of the trace.
     pub fn opacity(mut self, opacity: f64) -> Box<Self> {
         self.opacity = Some(opacity);
         Box::new(self)
     }
-
+    
+    /// Determines the drawing mode for this scatter trace. If the provided `Mode` includes
+    /// "Text" then the `text` elements appear at the coordinates. Otherwise, the `text` elements
+    /// appear on hover. If there are less than 20 points and the trace is not stacked then the
+    /// default is `Mode::LinesMarkers`, otherwise it is `Mode::Lines`.
+    pub fn mode(mut self, mode: Mode) -> Box<Self> {
+        self.mode = Some(mode);
+        Box::new(self)
+    }
+    
     /// Assigns id labels to each datum. These ids for object constancy of data points during
     /// animation. Should be an array of strings, not numbers or any other type.
     pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Box<Self> {
@@ -198,55 +150,24 @@ impl ScatterMapbox
         Box::new(self)
     }
 
-    /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
-    /// starting coordinate and `dx` the step.
-    pub fn x0<V: Into<NumOrString>>(mut self, x0: V) -> Box<Self> {
-        self.x0 = Some(x0.into());
-        Box::new(self)
-    }
-
-    /// Sets the x coordinate step. See `x0` for more info.
-    pub fn dx(mut self, dx: f64) -> Box<Self> {
-        self.dx = Some(dx);
-        Box::new(self)
-    }
-
-    /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the
-    /// starting coordinate and `dy` the step.
-    pub fn y0<V: Into<NumOrString>>(mut self, y0: V) -> Box<Self> {
-        self.y0 = Some(y0.into());
-        Box::new(self)
-    }
-
-    /// Sets the y coordinate step. See `y0` for more info.
-    pub fn dy(mut self, dy: f64) -> Box<Self> {
-        self.dy = Some(dy);
-        Box::new(self)
-    }
-
-    /// Alternate to `z`. Builds a linear space of z coordinates. Use with `dz` where `z0` is the
-    /// starting coordinate and `dz` the step.
-    pub fn z0<V: Into<NumOrString>>(mut self, z0: V) -> Box<Self> {
-        self.z0 = Some(z0.into());
-        Box::new(self)
-    }
-
-    /// Sets the z coordinate step. See `z0` for more info.
-    pub fn dz(mut self, dz: f64) -> Box<Self> {
-        self.dz = Some(dz);
-        Box::new(self)
-    }
-
     /// Sets text elements associated with each (x,y) pair. If a single string, the same string
     /// appears over all the data points. If an array of string, the items are mapped in order to
-    /// the this trace's (x,y) coordinates. If trace `HoverInfo` contains a "text" flag and
+    /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
+    /// `hover_text` is not set, these elements will be seen in the hover labels.
+    pub fn text(mut self, text: Dim<String>) -> Box<Self> {
+        self.text = Some(text);
+        Box::new(self)
+    }
+
+    /// Sets text elements associated with each (x, y, z) triplet. The items are mapped sequentially to
+    /// this trace's (x, y, z) coordinates. If trace `HoverInfo` contains a "text" flag and
     /// `hover_text` is not set, these elements will be seen in the hover labels.
     pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Self> {
         let text = private::owned_string_vector(text);
         self.text = Some(Dim::Vector(text));
         Box::new(self)
     }
-
+    
     /// Sets the positions of the `text` elements with respects to the (x,y) coordinates.
     pub fn text_position(mut self, text_position: Position) -> Box<Self> {
         self.text_position = Some(Dim::Scalar(text_position));
@@ -258,7 +179,7 @@ impl ScatterMapbox
         self.text_position = Some(Dim::Vector(text_position));
         Box::new(self)
     }
-
+    
     /// Template string used for rendering the information text that appear on points. Note that
     /// this will override `textinfo`. Variables are inserted using %{variable}, for example
     /// "y: %{y}". Numbers are formatted using d3-format's syntax %{variable:d3-format}, for example
@@ -287,7 +208,7 @@ impl ScatterMapbox
         self.text_template = Some(Dim::Vector(text_template));
         Box::new(self)
     }
-
+    
     /// Sets hover text elements associated with each (x,y) pair. If a single string, the same
     /// string appears over all the data points. If an array of string, the items are mapped in
     /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
@@ -306,7 +227,7 @@ impl ScatterMapbox
         self.hover_text = Some(Dim::Vector(hover_text));
         Box::new(self)
     }
-
+    
     /// Determines which trace information appear on hover. If `HoverInfo::None` or `HoverInfo::Skip`
     /// are set, no information is displayed upon hovering. But, if `HoverInfo::None` is set, click
     /// and hover events are still fired.
@@ -365,7 +286,7 @@ impl ScatterMapbox
         self.meta = Some(meta.into());
         Box::new(self)
     }
-
+    
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
     /// DOM elements
@@ -374,60 +295,11 @@ impl ScatterMapbox
         Box::new(self)
     }
 
-    /// Sets a reference between this trace's x coordinates and a 2D cartesian x axis. If "x" (
-    /// the default value), the x coordinates refer to `Layout::x_axis`. If "x2", the x coordinates
-    /// refer to `Layout::x_axis2`, and so on.
-    pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    /// Sets a reference between this trace's y coordinates and a 2D cartesian y axis. If "y"
-    /// (the default value), the y coordinates refer to `Layout::y_axis`. If "y2", the y coordinates
-    /// refer to `Layout::y_axis2`, and so on.
-    pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    /// Sets a reference between this trace's z coordinates and a 2D cartesian z axis. If "z"
-    /// (the default value), the z coordinates refer to `Layout::z_axis`. If "z2", the z coordinates
-    /// refer to `Layout::z_axis2`, and so on.
-    pub fn z_axis(mut self, axis: &str) -> Box<Self> {
-        self.z_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    /// Only relevant when `stackgroup` is used, and only the first `orientation` found in the
-    /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
-    /// Sets the stacking direction. With "v" ("h"), the y (x) values of subsequent traces are
-    /// added. Also affects the default value of `fill`.
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    /// Only relevant when `stackgroup` is used, and only the first `groupnorm` found in the
-    /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
-    /// Sets the normalization for the sum of this `stackgroup`. With "fraction", the value of each
-    /// trace at each location is divided by the sum of all trace values at that location. "percent"
-    /// is the same but multiplied by 100 to show percentages. If there are multiple subplots, or
-    /// multiple `stackgroup`s on one subplot, each will be normalized within its own set.
-    pub fn group_norm(mut self, group_norm: GroupNorm) -> Box<Self> {
-        self.group_norm = Some(group_norm);
-        Box::new(self)
-    }
-
-    /// Set several scatter traces (on the same subplot) to the same stackgroup in order to add
-    /// their y values (or their x values if `orientation` is "h"). If blank or omitted this trace
-    /// will not be stacked. Stacking also turns `fill` on by default, using "tonexty" ("tonextx")
-    /// if `orientation` is "h" ("v") and sets the default `mode` to "lines" irrespective of point
-    /// count. You can only stack on a numeric (linear or log) axis. Traces in a `stackgroup` will
-    /// only fill to (or be filled to) other traces in the same group. With multiple `stackgroup`s
-    /// or some traces stacked and some not, if fill-linked traces are not already consecutive, the
-    /// later ones will be pushed down in the drawing order.
-    pub fn stack_group(mut self, stack_group: &str) -> Box<Self> {
-        self.stack_group = Some(stack_group.to_owned());
+    //subplot: Option<String>,
+    
+    /// Determines how points are displayed and joined.
+    pub fn marker(mut self, marker: Marker) -> Box<Self> {
+        self.marker = Some(marker);
         Box::new(self)
     }
 
@@ -436,46 +308,20 @@ impl ScatterMapbox
         self.line = Some(line);
         Box::new(self)
     }
-
+    
     /// Sets the text font.
     pub fn text_font(mut self, text_font: Font) -> Box<Self> {
         self.text_font = Some(text_font);
         Box::new(self)
     }
+    
+    //selected_points: Option<Vec<usize>>,
 
-    /// x-axis error display properties.
-    pub fn error_x(mut self, error_x: ErrorData) -> Box<Self> {
-        self.error_x = Some(error_x);
-        Box::new(self)
-    }
-
-    /// y-axis error display properties.
-    pub fn error_y(mut self, error_y: ErrorData) -> Box<Self> {
-        self.error_y = Some(error_y);
-        Box::new(self)
-    }
-
-    /// z-axis error display properties.
-    pub fn error_z(mut self, error_z: ErrorData) -> Box<Self> {
-        self.error_z = Some(error_z);
-        Box::new(self)
-    }
-
-    /// Determines whether or not markers and text nodes are clipped about the subplot axes. To show
-    /// markers and text nodes above axis lines and tick labels, make sure to set `xaxis.layer` and
-    /// `yaxis.layer` to "below traces".
-    pub fn clip_on_axis(mut self, clip_on_axis: bool) -> Box<Self> {
-        self.clip_on_axis = Some(clip_on_axis);
-        Box::new(self)
-    }
-
-    /// Determines whether or not gaps (i.e. {nan} or missing values) in the provided data arrays
-    /// are connected.
-    pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Self> {
-        self.connect_gaps = Some(connect_gaps);
-        Box::new(self)
-    }
-
+    //<selected>
+    //<unselected>
+    //<below>
+    //<connectgaps
+    
     /// Sets the area to fill with a solid color. Defaults to "none" unless this trace is stacked,
     /// then it gets "tonexty" ("tonextx") if `orientation` is "v" ("h") Use with `fillcolor` if not
     /// "none". "tozerox" and "tozeroy" fill to x=0 and y=0 respectively. "tonextx" and "tonexty"
@@ -493,11 +339,11 @@ impl ScatterMapbox
         self.fill = Some(fill);
         Box::new(self)
     }
-
+    
     /// Sets the fill color. Defaults to a half-transparent variant of the line color, marker color,
     /// or marker line color, whichever is available.
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Self> {
-        self.fill_color = Some(fill_color.to_color());
+        self.fill_color = Some(Box::new(fill_color));
         Box::new(self)
     }
 
@@ -506,45 +352,8 @@ impl ScatterMapbox
         self.hover_label = Some(hover_label);
         Box::new(self)
     }
-
-    /// Do the hover effects highlight individual points (markers or line points) or do they
-    /// highlight filled regions? If the fill is "toself" or "tonext" and there are no markers or
-    /// text, then the default is "fills", otherwise it is "points".
-    pub fn hover_on(mut self, hover_on: &str) -> Box<Self> {
-        self.hover_on = Some(hover_on.to_owned());
-        Box::new(self)
-    }
-
-    /// Only relevant when `stack_group` is used, and only the first `stack_gaps` found in the
-    /// `stackgroup` will be used - including if `visible` is set to `Visible::LegendOnly` but not
-    /// if it is set to `Visible::False`.
-    /// Determines how we handle locations at which other traces in this group have data but this
-    /// one does not. With "infer zero" we insert a zero at these locations. With "interpolate" we
-    /// linearly interpolate between existing values, and extrapolate a constant beyond the existing
-    /// values.
-    pub fn stack_gaps(mut self, stack_gaps: &str) -> Box<Self> {
-        self.stack_gaps = Some(stack_gaps.to_owned());
-        Box::new(self)
-    }
-
-    /// Sets the calendar system to use with `x` date data.
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {
-        self.x_calendar = Some(x_calendar);
-        Box::new(self)
-    }
-
-    /// Sets the calendar system to use with `y` date data.
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Self> {
-        self.y_calendar = Some(y_calendar);
-        Box::new(self)
-    }
-
-    /// Sets the calendar system to use with `z` date data.
-    pub fn z_calendar(mut self, z_calendar: Calendar) -> Box<Self> {
-        self.z_calendar = Some(z_calendar);
-        Box::new(self)
-    }
-    */
+    
+    //<uirevision>
 }
 
 impl Trace for ScatterMapbox
