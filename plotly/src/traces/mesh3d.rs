@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle,
+    Calendar, ColorBar, ColorScale, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle,
     Line, Marker, Mode, Orientation, PlotType, Position, Visible,
 };
 use crate::private;
@@ -17,13 +17,168 @@ use crate::private::{
 #[serde(untagged)]
 pub enum IntensityMode {
     Vertex,
-    Cell
+    Cell,
 }
 
-// Defined for documentation purposes only.
-impl Default for IntensityMode {
-    fn default() -> Self { IntensityMode::Vertex }
+#[derive(Serialize, Clone, Debug)]
+#[serde(untagged)]
+pub enum DelaunayAxis {
+    X,
+    Y,
+    Z,
 }
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Contour {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    color: Option<Box<dyn Color>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    show: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    width: Option<usize>,
+}
+
+impl Contour {
+    pub fn new() -> Box<Self> {
+        Default::default()
+    }
+    
+    /// Sets the color of the contour lines.
+    pub fn color<C: Color>(mut self, color: C) -> Box<Self> {
+        self.color = Some(Box::new(color));
+        Box::new(self)
+    }
+
+    /// Sets whether or not dynamic contours are shown on hover.
+    pub fn show(mut self, show: bool) -> Box<Self> {
+        self.show = Some(show);
+        Box::new(self)
+    }
+
+    /// Sets the width of the contour lines.
+    pub fn width(mut self, width: usize) -> Box<Self> {
+        assert!(1 <= width && width <= 16);
+        self.width = Some(width);
+        Box::new(self)
+    }
+}
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Lighting {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ambient: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    diffuse: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "facenormalsepsilon")]
+    face_normals_epsilon: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    fresnel: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    roughness: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    specular: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "vertex_normals_epsilon")]
+    vertex_normals_epsilon: Option<f64>,
+}
+
+impl Lighting {
+    pub fn new() -> Box<Self> {
+        Default::default()
+    }
+
+    /// Ambient light increases overall color visibility but can wash out the image.
+    pub fn ambient(mut self, ambient: f64) -> Box<Self> {
+        assert!(0.0 <= ambient && ambient <= 1.0);
+        self.ambient = Some(ambient);
+        Box::new(self)
+    }
+
+    /// Represents the extent that incident rays are reflected in a range of angles.
+    pub fn diffuse(mut self, diffuse: f64) -> Box<Self> {
+        assert!(0.0 <= diffuse && diffuse <= 1.0);
+        self.diffuse = Some(diffuse);
+        Box::new(self)
+    }
+
+    /// Epsilon for face normals calculation avoids math issues arising from degenerate geometry.
+    pub fn facenormalsepsilon(mut self, face_normals_epsilon: f64) -> Box<Self> {
+        assert!(0.0 <= face_normals_epsilon && face_normals_epsilon <= 1.0);
+        self.face_normals_epsilon = Some(face_normals_epsilon);
+        Box::new(self)
+    }
+
+    /// Represents the reflectance as a dependency of the viewing angle; e.g. paper is reflective when viewing it from the edge of the paper (almost 90 degrees), causing shine.
+    pub fn fresnel(mut self, fresnel: f64) -> Box<Self> {
+        assert!(0.0 <= fresnel && fresnel <= 5.0);
+        self.fresnel = Some(fresnel);
+        Box::new(self)
+    }
+
+    /// Alters specular reflection; the rougher the surface, the wider and less contrasty the shine.
+    pub fn roughness(mut self, roughness: f64) -> Box<Self> {
+        assert!(0.0 <= roughness && roughness <= 1.0);
+        self.roughness = Some(roughness);
+        Box::new(self)
+    }
+
+    /// Represents the level that incident rays are reflected in a single direction, causing shine.
+    pub fn specular(mut self, specular: f64) -> Box<Self> {
+        assert!(0.0 <= specular && specular <= 2.0);
+        self.specular = Some(specular);
+        Box::new(self)
+    }
+
+    /// Epsilon for vertex normals calculation avoids math issues arising from degenerate geometry.
+    pub fn vertexnormalsepsilon(mut self, vertex_normals_epsilon: f64) -> Box<Self> {
+        assert!(0.0 <= vertex_normals_epsilon && vertex_normals_epsilon <= 1.0);
+        self.vertex_normals_epsilon = Some(vertex_normals_epsilon);
+        Box::new(self)
+    }
+}
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct LightPosition {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<Vec<f64>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    y: Option<Vec<f64>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    z: Option<Vec<f64>>,
+}
+
+impl LightPosition {
+    pub fn new() -> Box<Self> {
+        Default::default()
+    }
+
+    /// Numeric vector, representing the X coordinate for each vertex.
+    pub fn x(mut self, x: Vec<f64>) -> Box<Self> {
+        for &xi in &x {
+            assert!(-100_000.0 <= xi && xi <= 100_000.0);
+        }
+        self.x = Some(x);
+        Box::new(self)
+    }
+
+    /// Numeric vector, representing the Y coordinate for each vertex.
+    pub fn y(mut self, y: Vec<f64>) -> Box<Self> {
+        for &yi in &y {
+            assert!(-100_000.0 <= yi && yi <= 100_000.0);
+        }
+        self.y = Some(y);
+        Box::new(self)
+    }
+
+    /// Numeric vector, representing the Z coordinate for each vertex.
+    pub fn z(mut self, z: Vec<f64>) -> Box<Self> {
+        for &zi in &z {
+            assert!(-100_000.0 <= zi && zi <= 100_000.0);
+        }
+        self.z = Some(z);
+        Box::new(self)
+    }
+}
+
 
 // TODO line break documentation properly
 
@@ -108,10 +263,34 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
     color_bar: Option<ColorBar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar_orientation")]
-    orientation: Option<Orientation>,  // Move this into ColorBar?
+    color_bar_orientation: Option<Orientation>,  // Move this into ColorBar?
 
-    //<autocolorscale,colorscale,showscale,reversescale,zhoverformat>
-    //<cauto,cmid,cmin,alphahull,delaunayaxis,contour>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "autocolorscale")]
+    auto_color_scale: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
+    color_scale: Option<ColorScale>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "showscale")]
+    show_scale: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
+    reverse_scale: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zhoverformat")]
+    z_hover_format: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    cauto: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    cmax: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    cmid: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    cmin: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "alphahull")]
+    alpha_hull: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "delaunayaxis")]
+    delaunay_axis: Option<DelaunayAxis>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    contour: Option<Contour>,
     
     #[serde(skip_serializing_if = "Option::is_none", rename = "flatshading")]
     flat_shading: Option<bool>,
@@ -119,7 +298,10 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
 
-    //<lighting,lightposition>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    lighting: Option<Lighting>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "lightposition")]
+    light_position: Option<LightPosition>,
     
     #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
     x_calendar: Option<Calendar>,
@@ -128,7 +310,8 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
     z_calendar: Option<Calendar>,
 
-    //<uirevision>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<X, Y, Z> Mesh3D<X, Y, Z>
@@ -392,12 +575,80 @@ where
     /// Sets the stacking direction. With "v" ("h"), the y (x) values of subsequent traces are
     /// added. Also affects the default value of `fill`.
     pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
+        self.color_bar_orientation = Some(orientation);
         Box::new(self)
     }
 
-    //<autocolorscale,colorscale,showscale,reversescale,zhoverformat>
-    //<cauto,cmid,cmin,alphahull,delaunayaxis,contour>
+    /// Determines whether the colorscale is a default palette (`autocolorscale: True`) or the palette determined by `colorscale`. In case `colorscale` is unspecified or `autocolorscale` is True, the default palette will be chosen according to whether numbers in the `color` array are all positive, all negative or mixed.
+    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Box<Self> {
+        self.auto_color_scale = Some(auto_color_scale);
+        Box::new(self)
+    }
+
+    /// Sets the colorscale. The colorscale must be an array containing arrays mapping a normalized value to an rgb, rgba, hex, hsl, hsv, or named color string. At minimum, a mapping for the lowest (0) and highest (1) values are required. For example, `[[0, 'rgb(0,0,255)'], [1, 'rgb(255,0,0)']]`. To control the bounds of the colorscale in color space, use `cmin` and `cmax`. Alternatively, `colorscale` may be a palette name string of the following list: Blackbody,Bluered,Blues,Cividis,Earth,Electric,Greens,Greys,Hot,Jet,Picnic,Portland,Rainbow,RdBu,Reds,Viridis,YlGnBu,YlOrRd.
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Box<Self> {
+        self.color_scale = Some(color_scale);
+        Box::new(self)
+    }
+
+    /// Determines whether or not a colorbar is displayed for this trace.
+    pub fn show_scale(mut self, show_scale: bool) -> Box<Self> {
+        self.show_scale = Some(show_scale);
+        Box::new(self)
+    }
+
+    /// Reverses the color mapping if True. If True, `cmin` will correspond to the last color in the array and `cmax` will correspond to the first color.
+    pub fn reverse_scale(mut self, reverse_scale: bool) -> Box<Self> {
+        self.reverse_scale = Some(reverse_scale);
+        Box::new(self)
+    }
+
+    /// Sets the hover text formatting rulefor `z` using d3 formatting mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display "09~15~23.46". By default the values are formatted using `zaxis.hoverformat`.
+    pub fn zhoverformat(mut self, z_hover_format: &str) -> Box<Self> {
+        self.z_hover_format = Some(z_hover_format.to_owned());
+        Box::new(self)
+    }
+
+    /// Determines whether or not the color domain is computed with respect to the input data (here `intensity`) or the bounds set in `cmin` and `cmax` Defaults to `False` when `cmin` and `cmax` are set by the user.
+    pub fn cauto(mut self, cauto: bool) -> Box<Self> {
+        self.cauto = Some(cauto);
+        Box::new(self)
+    }
+
+    /// Sets the upper bound of the color domain. Value should have the same units as `intensity` and if set, `cmin` must be set as well.
+    pub fn cmax(mut self, cmax: f64) -> Box<Self> {
+        self.cmax = Some(cmax);
+        Box::new(self)
+    }
+    
+    /// Sets the lower bound of the color domain. Value should have the same units as `intensity` and if set, `cmax` must be set as well.
+    pub fn cmin(mut self, cmin: f64) -> Box<Self> {
+        self.cmin = Some(cmin);
+        Box::new(self)
+    }
+
+    /// Sets the mid-point of the color domain by scaling `cmin` and/or `cmax` to be equidistant to this point. Value should have the same units as `intensity`. Has no effect when `cauto` is `False`.
+    pub fn cmid(mut self, cmid: f64) -> Box<Self> {
+        self.cmid = Some(cmid);
+        Box::new(self)
+    }
+
+    /// Determines how the mesh surface triangles are derived from the set of vertices (points) represented by the `x`, `y` and `z` arrays, if the `i`, `j`, `k` arrays are not supplied. For general use of `mesh3d` it is preferred that `i`, `j`, `k` are supplied. If "-1", Delaunay triangulation is used, which is mainly suitable if the mesh is a single, more or less layer surface that is perpendicular to `delaunayaxis`. In case the `delaunayaxis` intersects the mesh surface at more than one point it will result triangles that are very long in the dimension of `delaunayaxis`. If ">0", the alpha-shape algorithm is used. In this case, the positive `alphahull` value signals the use of the alpha-shape algorithm, _and_ its value acts as the parameter for the mesh fitting. If "0", the convex-hull algorithm is used. It is suitable for convex bodies or if the intention is to enclose the `x`, `y` and `z` point set into a convex hull.
+    pub fn alphahull(mut self, alpha_hull: f64) -> Box<Self> {
+        self.alpha_hull = Some(alpha_hull);
+        Box::new(self)
+    }
+
+    /// Sets the Delaunay axis, which is the axis that is perpendicular to the surface of the Delaunay triangulation. It has an effect if `i`, `j`, `k` are not provided and `alphahull` is set to indicate Delaunay triangulation.
+    pub fn delaunayaxis(mut self, delaunay_axis: DelaunayAxis) -> Box<Self> {
+        self.delaunay_axis = Some(delaunay_axis);
+        Box::new(self)
+    }
+
+    pub fn contour(mut self, contour: Contour) -> Box<Self> {
+        self.contour = Some(contour);
+        Box::new(self)
+    }
     
     /// Determines whether or not normal smoothing is applied to the meshes, creating meshes with an angular, low-poly look via flat reflections.
     pub fn flatshading(mut self, flat_shading: bool) -> Box<Self> {
@@ -411,7 +662,15 @@ where
         Box::new(self)
     }
 
-    //<lighting,lightposition>
+    pub fn lighting(mut self, lighting: Lighting) -> Box<Self> {
+        self.lighting = Some(lighting);
+        Box::new(self)
+    }
+
+    pub fn lightposition(mut self, light_position: LightPosition) -> Box<Self> {
+        self.light_position = Some(light_position);
+        Box::new(self)
+    }
     
     /// Sets the calendar system to use with `x` date data.
     pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {
@@ -431,7 +690,11 @@ where
         Box::new(self)
     }
 
-    //<uirevision>
+    /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
+    pub fn uirevision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
+        self.ui_revision = Some(ui_revision.into());
+        Box::new(self)
+    }
 }
 
 impl<X, Y, Z> Trace for Mesh3D<X, Y, Z>
