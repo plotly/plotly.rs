@@ -4,8 +4,8 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
-    Orientation, PlotType, Position, Visible,
+    Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle,
+    Line, Marker, Mode, Orientation, PlotType, Position, Visible,
 };
 use crate::private;
 use crate::Trace;
@@ -19,6 +19,13 @@ pub enum IntensityMode {
     Vertex,
     Cell
 }
+
+// Defined for documentation purposes only.
+impl Default for IntensityMode {
+    fn default() -> Self { IntensityMode::Vertex }
+}
+
+// TODO line break documentation properly
 
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Mesh3D<X, Y, Z>
@@ -37,10 +44,12 @@ where
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
-    //<legendrank>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendrank")]
+    legend_rank: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
     legend_group: Option<String>,
-    //<legendgrouptitle>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
@@ -79,16 +88,20 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    //<xhoverformat>
-    //<yhoverformat>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "xhoverformat")]
+    x_hover_format: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "yhoverformat")]
+    y_hover_format: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrString>,
     #[serde(skip_serializing_if = "Option::is_none")]
     custom_data: Option<NumOrStringCollection>,
 
-    //<scene>
-    //<coloraxis>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    scene: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "coloraxis")]
+    color_axis: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Box<dyn Color>>,
     
@@ -97,15 +110,16 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar_orientation")]
     orientation: Option<Orientation>,  // Move this into ColorBar?
 
-    //<...>
+    //<autocolorscale,colorscale,showscale,reversescale,zhoverformat>
+    //<cauto,cmid,cmin,alphahull,delaunayaxis,contour>
     
     #[serde(skip_serializing_if = "Option::is_none", rename = "flatshading")]
     flat_shading: Option<bool>,
-    
-    //<...>
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
+
+    //<lighting,lightposition>
     
     #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
     x_calendar: Option<Calendar>,
@@ -171,7 +185,14 @@ where
         Box::new(self)
     }
 
-    //<legendrank>
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
+    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
+    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
+    /// and ranks greater than 1000 to go after all unranked items.
+    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
+        self.legend_rank = Some(legend_rank);
+        Box::new(self)
+    }
     
     /// Sets the legend group for this trace. Traces part of the same legend group hide/show at the
     /// same time when toggling legend items.
@@ -180,7 +201,11 @@ where
         Box::new(self)
     }
 
-    //<legendgrouptitle>
+    /// Set and style the title to appear for the legend group
+    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
+        self.legend_group_title = Some(legend_group_title);
+        Box::new(self)
+    }
     
     /// Sets the opacity of the trace.
     pub fn opacity(mut self, opacity: f64) -> Box<Self> {
@@ -196,7 +221,12 @@ where
         Box::new(self)
     }
 
-    //face_color: Option<Vec<Box<dyn Color>>>,
+    /// Sets the color of each face. Overrides "color" and "vertexcolor".
+    pub fn facecolor<C: Color + 'static>(mut self, face_color: Vec<C>) -> Box<Self> {
+        let dyn_face_color: Vec::<Box::<dyn Color>> = face_color.into_iter().map(|c| Box::new(c) as _).collect();
+        self.face_color = Some(dyn_face_color);
+        Box::new(self)
+    }
     
     /// Sets the intensity values for vertices or cells as defined by `intensitymode`.
     /// It can be used for plotting fields on meshes.
@@ -205,9 +235,18 @@ where
         Box::new(self)
     }
 
-    //intensity_mode: Option<IntensityMode>,
-    
-    //vertex_color: Option<Vec<Box<dyn Color>>>,
+    /// Determines the source of `intensity` values.
+    pub fn intensitymode(mut self, intensity_mode: IntensityMode) -> Box<Self> {
+        self.intensity_mode = Some(intensity_mode);
+        Box::new(self)
+    }
+
+    /// Sets the color of each vertex Overrides "color". While Red, green and blue colors are in the range of 0 and 255; in the case of having vertex color data in RGBA format, the alpha color should be normalized to be between 0 and 1.
+    pub fn vertexcolor<C: Color + 'static>(mut self, vertex_color: Vec<C>) -> Box<Self> {
+        let dyn_vertex_color: Vec::<Box::<dyn Color>> = vertex_color.into_iter().map(|c| Box::new(c) as _).collect();
+        self.vertex_color = Some(dyn_vertex_color);
+        Box::new(self)
+    }
 
     /// Sets text elements associated with each (x,y) pair. If a single string, the same string
     /// appears over all the data points. If an array of string, the items are mapped in order to
@@ -290,10 +329,18 @@ where
         self.hover_template = Some(Dim::Vector(hover_template));
         Box::new(self)
     }
-    
-    //<xhoverformat>
-    
-    //<yhoverformat>
+
+    /// Sets the hover text formatting rulefor `x` using d3 formatting mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display "09~15~23.46"By default the values are formatted using `xaxis.hoverformat`.
+    pub fn xhoverformat(mut self, x_hover_format: &str) -> Box<Self> {
+        self.x_hover_format = Some(x_hover_format.to_owned());
+        Box::new(self)
+    }
+
+    /// Sets the hover text formatting rulefor `y` using d3 formatting mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display "09~15~23.46"By default the values are formatted using `yaxis.hoverformat`.
+    pub fn yhoverformat(mut self, y_hover_format: &str) -> Box<Self> {
+        self.y_hover_format = Some(y_hover_format.to_owned());
+        Box::new(self)
+    }
 
     /// Assigns extra meta information associated with this trace that can be used in various text
     /// attributes. Attributes such as trace `name`, graph, axis and colorbar `title.text`,
@@ -309,19 +356,36 @@ where
     
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
-    /// DOM elements
+    /// DOM elements.
     pub fn custom_data<V: Into<NumOrString> + Clone>(mut self, custom_data: Vec<V>) -> Box<Self> {
         self.custom_data = Some(custom_data.into());
         Box::new(self)
     }
 
-    //<scene>
+    /// Sets a reference between this trace's 3D coordinate system and a 3D scene. If "scene" (the
+    /// default value), the (x,y,z) coordinates refer to `layout.scene`. If "scene2", the (x, y, z)
+    /// coordinates refer to `layout.scene2`, and so on.
+    pub fn scene(mut self, scene: &str) -> Box<Self> {
+        self.scene = Some(scene.to_string());
+        Box::new(self)
+    }
 
-    //<coloraxis>
+    /// Sets a reference between this trace's 3D coordinate system and a 3D scene. If "scene" (the default value), the (x,y,z) coordinates refer to `layout.scene`. If "scene2", the (x,y,z) coordinates refer to `layout.scene2`, and so on.
+    pub fn coloraxis(mut self, color_axis: &str) -> Box<Self> {
+        self.color_axis = Some(color_axis.to_string());
+        Box::new(self)
+    }
     
-    //color: Option<Box<dyn Color>>,
+    /// Sets the color of the whole mesh.
+    pub fn color<C: Color>(mut self, color: C) -> Box<Self> {
+        self.color = Some(Box::new(color));
+        Box::new(self)
+    }
     
-    //color_bar: Option<ColorBar>,
+    pub fn colorbar(mut self, color_bar: ColorBar) -> Box<Self> {
+        self.color_bar = Some(color_bar);
+        Box::new(self)
+    }
 
     /// Only relevant when `stackgroup` is used, and only the first `orientation` found in the
     /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
@@ -332,17 +396,22 @@ where
         Box::new(self)
     }
 
-    //<...>
+    //<autocolorscale,colorscale,showscale,reversescale,zhoverformat>
+    //<cauto,cmid,cmin,alphahull,delaunayaxis,contour>
     
-    //flat_shading: Option<bool>,
-    
-    //<...>
+    /// Determines whether or not normal smoothing is applied to the meshes, creating meshes with an angular, low-poly look via flat reflections.
+    pub fn flatshading(mut self, flat_shading: bool) -> Box<Self> {
+        self.flat_shading = Some(flat_shading);
+        Box::new(self)
+    }
 
     /// Properties of label displayed on mouse hover.
     pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
         self.hover_label = Some(hover_label);
         Box::new(self)
     }
+
+    //<lighting,lightposition>
     
     /// Sets the calendar system to use with `x` date data.
     pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {

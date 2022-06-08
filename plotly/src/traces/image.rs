@@ -110,6 +110,9 @@ where
             ..Default::default()
         })
     }
+    // TODO Add constructor documentation, and add more convenient constructors
+    // from arrays (optional) and images (imageio, new optional).
+    
 
     /// Sets the trace name. The trace name appear as the legend item and on hover.
     pub fn name(mut self, name: &str) -> Box<Self> {
