@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
+    Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode,
     Orientation, PlotType, Position, Visible,
 };
 use crate::private;
@@ -12,6 +12,46 @@ use crate::Trace;
 use crate::private::{
     copy_iterable_to_vec, NumOrString, NumOrStringCollection
 };
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct SelectionMarker {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    color: Option<Box<dyn Color>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    opacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    size: Option<Dim<usize>>,
+}
+
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Selection {
+    marker: SelectionMarker,
+}
+
+impl Selection {
+    pub fn new() -> Box<Self> {
+        Box::new(Default::default())
+    }
+
+    /// Sets the marker color of un/selected points.
+    pub fn color<C: Color>(mut self, color: C) -> Box<Self> {
+        self.marker.color = Some(Box::new(color));
+        Box::new(self)
+    }
+
+    /// Sets the marker opacity of un/selected points.
+    pub fn opacity(mut self, opacity: f64) -> Box<Self> {
+        assert!(0.0 <= opacity && opacity <= 1.0);
+        self.marker.opacity = Some(opacity);
+        Box::new(self)
+    }
+
+    /// Sets the marker size of un/selected points.
+    pub fn size(mut self, size: usize) -> Box<Self> {
+        self.marker.size = Some(Dim::Scalar(size));
+        Box::new(self)
+    }
+}
 
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct ScatterMapbox
@@ -26,10 +66,12 @@ pub struct ScatterMapbox
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
     show_legend: Option<bool>,
-    //<legendrank>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendrank")]
+    legend_rank: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
     legend_group: Option<String>,
-    //<legendgrouptitle>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
@@ -75,10 +117,15 @@ pub struct ScatterMapbox
     #[serde(skip_serializing_if = "Option::is_none", rename = "selectedpoints")]
     selected_points: Option<Vec<usize>>,
 
-    //<selected>
-    //<unselected>
-    //<below>
-    //<connectgaps
+    #[serde(skip_serializing_if = "Option::is_none")]
+    selected: Option<Selection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    unselected: Option<Selection>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    below: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
+    connect_gaps: Option<bool>,
     
     #[serde(skip_serializing_if = "Option::is_none")]
     fill: Option<Fill>,
@@ -87,8 +134,11 @@ pub struct ScatterMapbox
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
     
-    //<uirevision>
+    #[serde(skip_serializing_if = "Option::is_none", rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
+
+// TODO insert _ in setter names
 
 impl ScatterMapbox
 {
@@ -121,11 +171,27 @@ impl ScatterMapbox
         Box::new(self)
     }
 
-    //<legendrank>
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
+    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
+    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
+    /// and ranks greater than 1000 to go after all unranked items.
+    pub fn legendrank(mut self, legend_rank: usize) -> Box<Self> {
+        self.legend_rank = Some(legend_rank);
+        Box::new(self)
+    }
     
-    //legend_group: Option<String>,
+    /// Sets the legend group for this trace. Traces part of the same legend group show/hide at the
+    /// same time when toggling legend items.
+    pub fn legendgroup(mut self, legend_group: &str) -> Box<Self> {
+        self.legend_group = Some(legend_group.to_string());
+        Box::new(self)
+    }
 
-    //<legendgrouptitle>
+    /// Set and style the title to appear for the legend group
+    pub fn legendgrouptitle(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
+        self.legend_group_title = Some(legend_group_title);
+        Box::new(self)
+    }
     
     /// Sets the opacity of the trace.
     pub fn opacity(mut self, opacity: f64) -> Box<Self> {
@@ -315,12 +381,37 @@ impl ScatterMapbox
         Box::new(self)
     }
     
-    //selected_points: Option<Vec<usize>>,
+    /// Vector containing integer indices of selected points. Has an effect only for traces that support
+    /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
+    /// on for all points.
+    pub fn selected_points(mut self, selected_points: Vec<usize>) -> Box<Self> {
+        self.selected_points = Some(selected_points);
+        Box::new(self)
+    }
 
-    //<selected>
-    //<unselected>
-    //<below>
-    //<connectgaps
+    /// Sets the style of selected points.
+    pub fn selected(mut self, selected: Selection) -> Box<Self> {
+        self.selected = Some(selected);
+        Box::new(self)
+    }
+
+    /// Sets the style of unselected points.
+    pub fn unselected(mut self, unselected: Selection) -> Box<Self> {
+        self.unselected = Some(unselected);
+        Box::new(self)
+    }
+
+    /// Determines if this scattermapbox trace's layers are to be inserted before the layer with the specified ID. By default, scattermapbox layers are inserted above all the base layers. To place the scattermapbox layers above every other layer, set `below` to "''".
+    pub fn below(mut self, below: &str) -> Box<Self> {
+        self.below = Some(below.to_owned());
+        Box::new(self)
+    }
+
+    /// Determines whether or not gaps (i.e. {nan} or missing values) in the provided data arrays are connected.
+    pub fn connectgaps(mut self, connect_gaps: bool) -> Box<Self> {
+        self.connect_gaps = Some(connect_gaps);
+        Box::new(self)
+    }
     
     /// Sets the area to fill with a solid color. Defaults to "none" unless this trace is stacked,
     /// then it gets "tonexty" ("tonextx") if `orientation` is "v" ("h") Use with `fillcolor` if not
@@ -353,7 +444,11 @@ impl ScatterMapbox
         Box::new(self)
     }
     
-    //<uirevision>
+    /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
+    pub fn uirevision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
+        self.ui_revision = Some(ui_revision.into());
+        Box::new(self)
+    }
 }
 
 impl Trace for ScatterMapbox
