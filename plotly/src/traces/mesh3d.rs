@@ -14,14 +14,14 @@ use crate::private::{
 };
 
 #[derive(Serialize, Clone, Debug)]
-#[serde(untagged)]
+#[serde(rename_all = "lowercase")]
 pub enum IntensityMode {
     Vertex,
     Cell,
 }
 
 #[derive(Serialize, Clone, Debug)]
-#[serde(untagged)]
+#[serde(rename_all = "lowercase")]
 pub enum DelaunayAxis {
     X,
     Y,
