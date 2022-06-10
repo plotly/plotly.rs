@@ -20,24 +20,23 @@ pub enum PixelColor<U> {
     Color4([U; 4]),
 }
 
-/*
-/// A marker trait allowing several ways to describe an image.
-pub trait ImageData: DynClone + ErasedSerialize + Send + Sync + std::fmt::Debug + 'static {}
+/// A (marker?) trait allowing several ways to describe an image.
+pub trait ImageData {}
+// DynClone + ErasedSerialize + Send + Sync + std::fmt::Debug + 'static ?
 
-dyn_clone::clone_trait_object!(Color);
-erased_serde::serialize_trait_object!(Color);
+//dyn_clone::clone_trait_object!(ImageData);
+//erased_serde::serialize_trait_object!(ImageData);
 
-impl ImageData for Vec<Vec<[U; 3]>> {}
-impl ImageData for Vec<Vec<[U; 4]>> {}
+impl<U> ImageData for Vec<Vec<[U; 3]>> {}
+impl<U> ImageData for Vec<Vec<[U; 4]>> {}
 #[cfg(feature = "plotly_imageio")]
 impl ImageData for RgbImage {}
 #[cfg(feature = "plotly_imageio")]
 impl ImageData for RgbaImage {}
 #[cfg(feature = "plotly_ndarray")]
-impl ImageData for Array<[U; 3], Ix2> {}
+impl<U> ImageData for Array<[U; 3], Ix2> {}
 #[cfg(feature = "plotly_ndarray")]
-impl ImageData for Array<[U; 4], Ix2> {}
-*/
+impl<U> ImageData for Array<[U; 4], Ix2> {}
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
@@ -90,7 +89,7 @@ where
     dy: Option<f64>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    z: Option<Vec<Vec<PixelColor<U>>>>,
+    z: Option<Vec<Vec<PixelColor<U>>>>, // Option<Box<dyn ImageData>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     source: Option<String>,
 
