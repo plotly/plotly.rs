@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Calendar, ColorBar, ColorScale, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle,
+    Calendar, ColorBar, ColorScale, ColorScalePalette, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle,
     Line, Marker, Mode, Orientation, PlotType, Position, Visible,
 };
 use crate::private;
@@ -39,7 +39,7 @@ pub struct Contour {
 }
 
 impl Contour {
-    pub fn new() -> Box<Self> {
+    pub fn new() -> Self {
         Default::default()
     }
     
@@ -77,12 +77,12 @@ pub struct Lighting {
     roughness: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     specular: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "vertex_normals_epsilon")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "vertexnormalsepsilon")]
     vertex_normals_epsilon: Option<f64>,
 }
 
 impl Lighting {
-    pub fn new() -> Box<Self> {
+    pub fn new() -> Self {
         Default::default()
     }
 
@@ -147,7 +147,7 @@ pub struct LightPosition {
 }
 
 impl LightPosition {
-    pub fn new() -> Box<Self> {
+    pub fn new() -> Self {
         Default::default()
     }
 
@@ -250,7 +250,7 @@ where
 
     #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "customdata")]
     custom_data: Option<NumOrStringCollection>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -307,7 +307,7 @@ where
     x_calendar: Option<Calendar>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
     y_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "zcalendar")]
     z_calendar: Option<Calendar>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "uirevision")]
@@ -553,7 +553,7 @@ where
         Box::new(self)
     }
 
-    /// Sets a reference between this trace's 3D coordinate system and a 3D scene. If "scene" (the default value), the (x,y,z) coordinates refer to `layout.scene`. If "scene2", the (x,y,z) coordinates refer to `layout.scene2`, and so on.
+    /// Sets a reference to a shared color axis. References to these shared color axes are "coloraxis", "coloraxis2", "coloraxis3", etc. Settings for these shared color axes are set in the layout, under `layout.coloraxis`, `layout.coloraxis2`, etc. Note that multiple color scales can be linked to the same color axis.
     pub fn coloraxis(mut self, color_axis: &str) -> Box<Self> {
         self.color_axis = Some(color_axis.to_string());
         Box::new(self)
@@ -705,5 +705,205 @@ where
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+    use assert_json_diff::assert_json_eq;
+
+    use super::*;
+    use crate::common::ErrorType;
+
+    #[test]
+    fn test_serialize_intensity_mode() {
+        assert_eq!(to_value(IntensityMode::Vertex).unwrap(), json!("vertex"));
+        assert_eq!(to_value(IntensityMode::Cell).unwrap(), json!("cell"));
+    }
+
+    #[test]
+    fn test_serialize_delaunay_axis() {
+        assert_eq!(to_value(DelaunayAxis::X).unwrap(), json!("x"));
+        assert_eq!(to_value(DelaunayAxis::Y).unwrap(), json!("y"));
+        assert_eq!(to_value(DelaunayAxis::Z).unwrap(), json!("z"));
+    }
+
+    #[test]
+    fn test_serialize_contour() {
+        let contour = Contour::new()
+            .color("#123456")
+            .show(true)
+            .width(6);
+        let expected = json!({"color": "#123456", "show": true, "width": 6});
+
+        assert_eq!(to_value(contour).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_lighting() {
+        let lighting = Lighting::new()
+            .ambient(0.1)
+            .diffuse(0.2)
+            .facenormalsepsilon(0.3)
+            .fresnel(0.4)
+            .roughness(0.5)
+            .specular(0.6)
+            .vertexnormalsepsilon(0.7);
+        let expected = json!({
+            "ambient": 0.1,
+            "diffuse": 0.2,
+            "facenormalsepsilon": 0.3,
+            "fresnel": 0.4,
+            "roughness": 0.5,
+            "specular": 0.6,
+            "vertexnormalsepsilon": 0.7,
+        });
+
+        assert_eq!(to_value(lighting).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_light_position() {
+        let light_position = LightPosition::new()
+            .x(vec![10.0])
+            .y(vec![20.0])
+            .z(vec![30.0]);
+        let expected = json!({"x": [10.0], "y": [20.0], "z": [30.0]});
+
+        assert_eq!(to_value(light_position).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_mesh3d() {
+        let mesh3d = Mesh3D::new(
+            vec![0.0, 1.0, 2.0],
+            vec![3.0, 4.0, 5.0],
+            vec![6.0, 7.0, 8.0],
+            vec![0],
+            vec![1],
+            vec![2]
+        )
+            .name("trace_name")
+            .visible(Visible::True)
+            .show_legend(true)
+            .legend_rank(1000)
+            .legend_group("legend_group")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .opacity(0.5)
+            .ids(vec!["one"])
+            .facecolor(vec!["#ff00ff"])
+            .intensity(vec![1.0])
+            .intensitymode(IntensityMode::Vertex)
+            .vertexcolor(vec!["#ff0000", "#00ff00", "#0000ff"])
+            .text("text")
+            .text_array(vec!["text"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .hover_info(HoverInfo::XAndYAndZ)
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .xhoverformat("x_hover_format")
+            .yhoverformat("y_hover_format")
+            .meta("meta")
+            .custom_data(vec!["custom_data"])
+            .scene("scene2")
+            .coloraxis("coloraxis2")
+            .color("#cccccc")
+            .colorbar(ColorBar::new())
+            .orientation(Orientation::Horizontal)
+            .auto_color_scale(false)
+            .color_scale(ColorScale::Palette(ColorScalePalette::Rainbow))
+            .show_scale(true)
+            .reverse_scale(true)
+            .zhoverformat("z_hover_format")
+            .cauto(false)
+            .cmax(1.0)
+            .cmin(0.0)
+            .cmid(0.2)
+            .alphahull(7.5)
+            .delaunayaxis(DelaunayAxis::Y)
+            .contour(Contour::new())
+            .flatshading(true)
+            .hover_label(Label::new())
+            .lighting(Lighting::new())
+            .lightposition(LightPosition::new())
+            .x_calendar(Calendar::Chinese)
+            .y_calendar(Calendar::Coptic)
+            .z_calendar(Calendar::Ummalqura)
+            .uirevision(2.5);
+            
+        let expected = json!({
+            "type": "mesh3d",
+            "x": [0.0, 1.0, 2.0],
+            "y": [3.0, 4.0, 5.0],
+            "z": [6.0, 7.0, 8.0],
+            "i": [0],
+            "j": [1],
+            "k": [2],
+            "name": "trace_name",
+            "visible": true,
+            "showlegend": true,
+            "legendrank": 1000,
+            "legendgroup": "legend_group",
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "opacity": 0.5,
+            "ids": ["one"],
+            "facecolor": ["#ff00ff"],
+            "intensity": [1.0],
+            "intensitymode": "vertex",
+            "vertexcolor": ["#ff0000", "#00ff00", "#0000ff"],
+            "text": ["text"],
+            "hovertext": ["hover_text"],
+            "hoverinfo": "x+y+z",
+            "hovertemplate": ["hover_template"],
+            "xhoverformat": "x_hover_format",
+            "yhoverformat": "y_hover_format",
+            "meta": "meta",
+            "customdata": ["custom_data"],
+            "scene": "scene2",
+            "coloraxis": "coloraxis2",
+            "color": "#cccccc",
+            "colorbar": {
+                "borderwidth": 0,
+                "len": 1,
+                "nticks": 0,
+                "outlinewidth": 1,
+                "separate_thousands": true,
+                "showticklabels": true,
+                "thickness": 30,
+                "ticklen": 5,
+                "tickwidth": 1,
+                "x": 1.02,
+                "xanchor": "left",
+                "xpad": 10.0,
+                "y": 0.5,
+                "yanchor": "middle",
+                "ypad": 10.0,
+            },
+            "colorbar_orientation": "h",
+            "autocolorscale": false,
+            "colorscale": "Rainbow",
+            "showscale": true,
+            "reversescale": true,
+            "zhoverformat": "z_hover_format",
+            "cauto": false,
+            "cmax": 1.0,
+            "cmin": 0.0,
+            "cmid": 0.2,
+            "alphahull": 7.5,
+            "delaunayaxis": "y",
+            "contour": {},
+            "flatshading": true,
+            "hoverlabel": {},
+            "lighting": {},
+            "lightposition": {},
+            "xcalendar": "chinese",
+            "ycalendar": "coptic",
+            "zcalendar": "ummalqura",
+            "uirevision": 2.5
+        });
+
+        assert_json_eq!(to_value(mesh3d).unwrap(), expected);
     }
 }

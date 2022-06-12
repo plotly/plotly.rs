@@ -22,7 +22,7 @@ pub use candlestick::Candlestick;
 pub use contour::Contour;
 pub use heat_map::HeatMap;
 pub use histogram::Histogram;
-pub use image::Image;
+pub use self::image::Image;
 pub use mesh3d::Mesh3D;
 pub use ohlc::Ohlc;
 pub use sankey::Sankey;
