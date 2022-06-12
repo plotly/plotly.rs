@@ -148,8 +148,6 @@ where
     ui_revision: Option<NumOrString>,
 }
 
-// TODO insert _ in setter names
-
 impl<Lat, Lon> ScatterMapbox<Lat, Lon>
 where
     Lat: Serialize + Clone + 'static + std::default::Default,  // TODO why is "+ Default" necessary?
@@ -194,20 +192,20 @@ where
     /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
     /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
     /// and ranks greater than 1000 to go after all unranked items.
-    pub fn legendrank(mut self, legend_rank: usize) -> Box<Self> {
+    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
         self.legend_rank = Some(legend_rank);
         Box::new(self)
     }
     
     /// Sets the legend group for this trace. Traces part of the same legend group show/hide at the
     /// same time when toggling legend items.
-    pub fn legendgroup(mut self, legend_group: &str) -> Box<Self> {
+    pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
         self.legend_group = Some(legend_group.to_string());
         Box::new(self)
     }
 
     /// Set and style the title to appear for the legend group
-    pub fn legendgrouptitle(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
+    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
         self.legend_group_title = Some(legend_group_title);
         Box::new(self)
     }
@@ -431,7 +429,7 @@ where
     }
 
     /// Determines whether or not gaps (i.e. {nan} or missing values) in the provided data arrays are connected.
-    pub fn connectgaps(mut self, connect_gaps: bool) -> Box<Self> {
+    pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Self> {
         self.connect_gaps = Some(connect_gaps);
         Box::new(self)
     }
@@ -468,7 +466,7 @@ where
     }
     
     /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
-    pub fn uirevision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
+    pub fn ui_revision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
         self.ui_revision = Some(ui_revision.into());
         Box::new(self)
     }
@@ -514,9 +512,9 @@ mod tests {
             .name("name")
             .visible(Visible::True)
             .show_legend(true)
-            .legendrank(1000)
-            .legendgroup("legend group")
-            .legendgrouptitle(LegendGroupTitle::new("Legend Group Title"))
+            .legend_rank(1000)
+            .legend_group("legend group")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .opacity(0.5)
             .mode(Mode::LinesText)
             .ids(vec!["one"])
@@ -541,11 +539,11 @@ mod tests {
             .selected(Selection::new().color("#111111"))
             .unselected(Selection::new().color("#777777"))
             .below("")
-            .connectgaps(false)
+            .connect_gaps(false)
             .fill(Fill::None)
             .fill_color("#ff0000aa")
             .hover_label(Label::new())
-            .uirevision(6);
+            .ui_revision(6);
         let expected = json!({
             "type": "scattermapbox",
             "lat": [45.5017],

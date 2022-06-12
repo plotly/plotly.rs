@@ -101,7 +101,7 @@ impl Lighting {
     }
 
     /// Epsilon for face normals calculation avoids math issues arising from degenerate geometry.
-    pub fn facenormalsepsilon(mut self, face_normals_epsilon: f64) -> Self {
+    pub fn face_normals_epsilon(mut self, face_normals_epsilon: f64) -> Self {
         assert!(0.0 <= face_normals_epsilon && face_normals_epsilon <= 1.0);
         self.face_normals_epsilon = Some(face_normals_epsilon);
         self
@@ -129,7 +129,7 @@ impl Lighting {
     }
 
     /// Epsilon for vertex normals calculation avoids math issues arising from degenerate geometry.
-    pub fn vertexnormalsepsilon(mut self, vertex_normals_epsilon: f64) -> Self {
+    pub fn vertex_normals_epsilon(mut self, vertex_normals_epsilon: f64) -> Self {
         assert!(0.0 <= vertex_normals_epsilon && vertex_normals_epsilon <= 1.0);
         self.vertex_normals_epsilon = Some(vertex_normals_epsilon);
         self
@@ -277,14 +277,14 @@ where
     #[serde(skip_serializing_if = "Option::is_none", rename = "zhoverformat")]
     z_hover_format: Option<String>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    cauto: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    cmax: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    cmid: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    cmin: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "cauto")]
+    c_auto: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "cmax")]
+    c_max: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "cmid")]
+    c_mid: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "cmin")]
+    c_min: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "alphahull")]
     alpha_hull: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "delaunayaxis")]
@@ -405,7 +405,7 @@ where
     }
 
     /// Sets the color of each face. Overrides "color" and "vertexcolor".
-    pub fn facecolor<C: Color + 'static>(mut self, face_color: Vec<C>) -> Box<Self> {
+    pub fn face_color<C: Color + 'static>(mut self, face_color: Vec<C>) -> Box<Self> {
         let dyn_face_color: Vec::<Box::<dyn Color>> = face_color.into_iter().map(|c| Box::new(c) as _).collect();
         self.face_color = Some(dyn_face_color);
         Box::new(self)
@@ -419,13 +419,13 @@ where
     }
 
     /// Determines the source of `intensity` values.
-    pub fn intensitymode(mut self, intensity_mode: IntensityMode) -> Box<Self> {
+    pub fn intensity_mode(mut self, intensity_mode: IntensityMode) -> Box<Self> {
         self.intensity_mode = Some(intensity_mode);
         Box::new(self)
     }
 
     /// Sets the color of each vertex Overrides "color". While Red, green and blue colors are in the range of 0 and 255; in the case of having vertex color data in RGBA format, the alpha color should be normalized to be between 0 and 1.
-    pub fn vertexcolor<C: Color + 'static>(mut self, vertex_color: Vec<C>) -> Box<Self> {
+    pub fn vertex_color<C: Color + 'static>(mut self, vertex_color: Vec<C>) -> Box<Self> {
         let dyn_vertex_color: Vec::<Box::<dyn Color>> = vertex_color.into_iter().map(|c| Box::new(c) as _).collect();
         self.vertex_color = Some(dyn_vertex_color);
         Box::new(self)
@@ -514,13 +514,13 @@ where
     }
 
     /// Sets the hover text formatting rulefor `x` using d3 formatting mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display "09~15~23.46"By default the values are formatted using `xaxis.hoverformat`.
-    pub fn xhoverformat(mut self, x_hover_format: &str) -> Box<Self> {
+    pub fn x_hover_format(mut self, x_hover_format: &str) -> Box<Self> {
         self.x_hover_format = Some(x_hover_format.to_owned());
         Box::new(self)
     }
 
     /// Sets the hover text formatting rulefor `y` using d3 formatting mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display "09~15~23.46"By default the values are formatted using `yaxis.hoverformat`.
-    pub fn yhoverformat(mut self, y_hover_format: &str) -> Box<Self> {
+    pub fn y_hover_format(mut self, y_hover_format: &str) -> Box<Self> {
         self.y_hover_format = Some(y_hover_format.to_owned());
         Box::new(self)
     }
@@ -554,7 +554,7 @@ where
     }
 
     /// Sets a reference to a shared color axis. References to these shared color axes are "coloraxis", "coloraxis2", "coloraxis3", etc. Settings for these shared color axes are set in the layout, under `layout.coloraxis`, `layout.coloraxis2`, etc. Note that multiple color scales can be linked to the same color axis.
-    pub fn coloraxis(mut self, color_axis: &str) -> Box<Self> {
+    pub fn color_axis(mut self, color_axis: &str) -> Box<Self> {
         self.color_axis = Some(color_axis.to_string());
         Box::new(self)
     }
@@ -565,7 +565,7 @@ where
         Box::new(self)
     }
     
-    pub fn colorbar(mut self, color_bar: ColorBar) -> Box<Self> {
+    pub fn color_bar(mut self, color_bar: ColorBar) -> Box<Self> {
         self.color_bar = Some(color_bar);
         Box::new(self)
     }
@@ -604,43 +604,43 @@ where
     }
 
     /// Sets the hover text formatting rulefor `z` using d3 formatting mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date formatter: "%h" for half of the year as a decimal number as well as "%{n}f" for fractional seconds with n digits. For example, "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display "09~15~23.46". By default the values are formatted using `zaxis.hoverformat`.
-    pub fn zhoverformat(mut self, z_hover_format: &str) -> Box<Self> {
+    pub fn z_hover_format(mut self, z_hover_format: &str) -> Box<Self> {
         self.z_hover_format = Some(z_hover_format.to_owned());
         Box::new(self)
     }
 
     /// Determines whether or not the color domain is computed with respect to the input data (here `intensity`) or the bounds set in `cmin` and `cmax` Defaults to `False` when `cmin` and `cmax` are set by the user.
-    pub fn cauto(mut self, cauto: bool) -> Box<Self> {
-        self.cauto = Some(cauto);
+    pub fn c_auto(mut self, c_auto: bool) -> Box<Self> {
+        self.c_auto = Some(c_auto);
         Box::new(self)
     }
 
     /// Sets the upper bound of the color domain. Value should have the same units as `intensity` and if set, `cmin` must be set as well.
-    pub fn cmax(mut self, cmax: f64) -> Box<Self> {
-        self.cmax = Some(cmax);
+    pub fn c_max(mut self, c_max: f64) -> Box<Self> {
+        self.c_max = Some(c_max);
         Box::new(self)
     }
     
     /// Sets the lower bound of the color domain. Value should have the same units as `intensity` and if set, `cmax` must be set as well.
-    pub fn cmin(mut self, cmin: f64) -> Box<Self> {
-        self.cmin = Some(cmin);
+    pub fn c_min(mut self, c_min: f64) -> Box<Self> {
+        self.c_min = Some(c_min);
         Box::new(self)
     }
 
     /// Sets the mid-point of the color domain by scaling `cmin` and/or `cmax` to be equidistant to this point. Value should have the same units as `intensity`. Has no effect when `cauto` is `False`.
-    pub fn cmid(mut self, cmid: f64) -> Box<Self> {
-        self.cmid = Some(cmid);
+    pub fn c_mid(mut self, c_mid: f64) -> Box<Self> {
+        self.c_mid = Some(c_mid);
         Box::new(self)
     }
 
     /// Determines how the mesh surface triangles are derived from the set of vertices (points) represented by the `x`, `y` and `z` arrays, if the `i`, `j`, `k` arrays are not supplied. For general use of `mesh3d` it is preferred that `i`, `j`, `k` are supplied. If "-1", Delaunay triangulation is used, which is mainly suitable if the mesh is a single, more or less layer surface that is perpendicular to `delaunayaxis`. In case the `delaunayaxis` intersects the mesh surface at more than one point it will result triangles that are very long in the dimension of `delaunayaxis`. If ">0", the alpha-shape algorithm is used. In this case, the positive `alphahull` value signals the use of the alpha-shape algorithm, _and_ its value acts as the parameter for the mesh fitting. If "0", the convex-hull algorithm is used. It is suitable for convex bodies or if the intention is to enclose the `x`, `y` and `z` point set into a convex hull.
-    pub fn alphahull(mut self, alpha_hull: f64) -> Box<Self> {
+    pub fn alpha_hull(mut self, alpha_hull: f64) -> Box<Self> {
         self.alpha_hull = Some(alpha_hull);
         Box::new(self)
     }
 
     /// Sets the Delaunay axis, which is the axis that is perpendicular to the surface of the Delaunay triangulation. It has an effect if `i`, `j`, `k` are not provided and `alphahull` is set to indicate Delaunay triangulation.
-    pub fn delaunayaxis(mut self, delaunay_axis: DelaunayAxis) -> Box<Self> {
+    pub fn delaunay_axis(mut self, delaunay_axis: DelaunayAxis) -> Box<Self> {
         self.delaunay_axis = Some(delaunay_axis);
         Box::new(self)
     }
@@ -651,7 +651,7 @@ where
     }
     
     /// Determines whether or not normal smoothing is applied to the meshes, creating meshes with an angular, low-poly look via flat reflections.
-    pub fn flatshading(mut self, flat_shading: bool) -> Box<Self> {
+    pub fn flat_shading(mut self, flat_shading: bool) -> Box<Self> {
         self.flat_shading = Some(flat_shading);
         Box::new(self)
     }
@@ -667,7 +667,7 @@ where
         Box::new(self)
     }
 
-    pub fn lightposition(mut self, light_position: LightPosition) -> Box<Self> {
+    pub fn light_position(mut self, light_position: LightPosition) -> Box<Self> {
         self.light_position = Some(light_position);
         Box::new(self)
     }
@@ -691,7 +691,7 @@ where
     }
 
     /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
-    pub fn uirevision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
+    pub fn ui_revision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
         self.ui_revision = Some(ui_revision.into());
         Box::new(self)
     }
@@ -746,11 +746,11 @@ mod tests {
         let lighting = Lighting::new()
             .ambient(0.1)
             .diffuse(0.2)
-            .facenormalsepsilon(0.3)
+            .face_normals_epsilon(0.3)
             .fresnel(0.4)
             .roughness(0.5)
             .specular(0.6)
-            .vertexnormalsepsilon(0.7);
+            .vertex_normals_epsilon(0.7);
         let expected = json!({
             "ambient": 0.1,
             "diffuse": 0.2,
@@ -793,10 +793,10 @@ mod tests {
             .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .opacity(0.5)
             .ids(vec!["one"])
-            .facecolor(vec!["#ff00ff"])
+            .face_color(vec!["#ff00ff"])
             .intensity(vec![1.0])
-            .intensitymode(IntensityMode::Vertex)
-            .vertexcolor(vec!["#ff0000", "#00ff00", "#0000ff"])
+            .intensity_mode(IntensityMode::Vertex)
+            .vertex_color(vec!["#ff0000", "#00ff00", "#0000ff"])
             .text("text")
             .text_array(vec!["text"])
             .hover_text("hover_text")
@@ -804,35 +804,35 @@ mod tests {
             .hover_info(HoverInfo::XAndYAndZ)
             .hover_template("hover_template")
             .hover_template_array(vec!["hover_template"])
-            .xhoverformat("x_hover_format")
-            .yhoverformat("y_hover_format")
+            .x_hover_format("x_hover_format")
+            .y_hover_format("y_hover_format")
             .meta("meta")
             .custom_data(vec!["custom_data"])
             .scene("scene2")
-            .coloraxis("coloraxis2")
+            .color_axis("coloraxis2")
             .color("#cccccc")
-            .colorbar(ColorBar::new())
+            .color_bar(ColorBar::new())
             .orientation(Orientation::Horizontal)
             .auto_color_scale(false)
             .color_scale(ColorScale::Palette(ColorScalePalette::Rainbow))
             .show_scale(true)
             .reverse_scale(true)
-            .zhoverformat("z_hover_format")
-            .cauto(false)
-            .cmax(1.0)
-            .cmin(0.0)
-            .cmid(0.2)
-            .alphahull(7.5)
-            .delaunayaxis(DelaunayAxis::Y)
+            .z_hover_format("z_hover_format")
+            .c_auto(false)
+            .c_max(1.0)
+            .c_min(0.0)
+            .c_mid(0.2)
+            .alpha_hull(7.5)
+            .delaunay_axis(DelaunayAxis::Y)
             .contour(Contour::new())
-            .flatshading(true)
+            .flat_shading(true)
             .hover_label(Label::new())
             .lighting(Lighting::new())
-            .lightposition(LightPosition::new())
+            .light_position(LightPosition::new())
             .x_calendar(Calendar::Chinese)
             .y_calendar(Calendar::Coptic)
             .z_calendar(Calendar::Ummalqura)
-            .uirevision(2.5);
+            .ui_revision(2.5);
             
         let expected = json!({
             "type": "mesh3d",

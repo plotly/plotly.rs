@@ -164,13 +164,13 @@ where
     /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
     /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
     /// and ranks greater than 1000 to go after all unranked items.
-    pub fn legendrank(mut self, legend_rank: usize) -> Box<Self> {
+    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
         self.legend_rank = Some(legend_rank);
         Box::new(self)
     }
 
     /// Set and style the title to appear for the legend group
-    pub fn legendgrouptitle(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
+    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
         self.legend_group_title = Some(legend_group_title);
         Box::new(self)
     }
@@ -338,25 +338,25 @@ where
     }
 
     /// Color model used to map the numerical color components described in `z` into colors. If `source` is specified, this attribute will be set to `rgba256` otherwise it defaults to `rgb`.
-    pub fn colormodel(mut self, color_model: ColorModel) -> Box<Self> {
+    pub fn color_model(mut self, color_model: ColorModel) -> Box<Self> {
         self.color_model = Some(color_model);
         Box::new(self)
     }
 
     /// Array defining the higher bound for each color component. Note that the default value will depend on the colormodel. For the `rgb` colormodel, it is [255, 255, 255]. For the `rgba` colormodel, it is [255, 255, 255, 1]. For the `rgba256` colormodel, it is [255, 255, 255, 255]. For the `hsl` colormodel, it is [360, 100, 100]. For the `hsla` colormodel, it is [360, 100, 100, 1].
-    pub fn zmax(mut self, z_max: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
+    pub fn z_max(mut self, z_max: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
         self.z_max = Some(z_max);
         Box::new(self)
     }
 
     /// Array defining the lower bound for each color component. Note that the default value will depend on the colormodel. For the `rgb` colormodel, it is [0, 0, 0]. For the `rgba` colormodel, it is [0, 0, 0, 0]. For the `rgba256` colormodel, it is [0, 0, 0, 0]. For the `hsl` colormodel, it is [0, 0, 0]. For the `hsla` colormodel, it is [0, 0, 0, 0].
-    pub fn zmin(mut self, z_min: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
+    pub fn z_min(mut self, z_min: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
         self.z_min = Some(z_min);
         Box::new(self)
     }
 
     /// Picks a smoothing algorithm used to smooth `z` data. This only applies for image traces that use the `source` attribute.
-    pub fn zsmooth(mut self, z_smooth: ZSmooth) -> Box<Self> {
+    pub fn z_smooth(mut self, z_smooth: ZSmooth) -> Box<Self> {
         self.z_smooth = Some(z_smooth);
         Box::new(self)
     }
@@ -368,7 +368,7 @@ where
     }
 
     /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
-    pub fn uirevision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
+    pub fn ui_revision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
         self.ui_revision = Some(ui_revision.into());
         Box::new(self)
     }
@@ -418,8 +418,8 @@ mod tests {
         let image = Image::new(vec![vec![b, w, b, w, b], vec![w, b, w, b, w]])
             .name("image name")
             .visible(Visible::True)
-            .legendrank(1000)
-            .legendgrouptitle(LegendGroupTitle::new("Legend Group Title"))
+            .legend_rank(1000)
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .opacity(0.5)
             .ids(vec!["one"])
             .x0(0.0)
@@ -438,12 +438,12 @@ mod tests {
             .custom_data(vec!["custom_data"])
             .x_axis("x2")
             .y_axis("y2")
-            .colormodel(ColorModel::RGBA)
-            .zmax(vec![vec![w, w, w, w, w], vec![w, w, w, w, w]])
-            .zmin(vec![vec![b, b, b, b, b], vec![b, b, b, b, b]])
-            .zsmooth(ZSmooth::Fast)
+            .color_model(ColorModel::RGBA)
+            .z_max(vec![vec![w, w, w, w, w], vec![w, w, w, w, w]])
+            .z_min(vec![vec![b, b, b, b, b], vec![b, b, b, b, b]])
+            .z_smooth(ZSmooth::Fast)
             .hover_label(Label::new())
-            .uirevision(6);
+            .ui_revision(6);
 
         let b = [0, 0, 0, 255];
         let w = [255, 255, 255, 255];
