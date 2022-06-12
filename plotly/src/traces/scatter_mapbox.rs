@@ -103,7 +103,7 @@ where
 
     #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "customdata")]
     custom_data: Option<NumOrStringCollection>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

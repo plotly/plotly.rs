@@ -12,7 +12,7 @@ use crate::private::{
     NumOrString, NumOrStringCollection
 };
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum PixelColor<U> {
     Color3([U; 3]),
@@ -103,7 +103,7 @@ where
 
     #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", rename = "customdata")]
     custom_data: Option<NumOrStringCollection>,
 
     #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
@@ -133,6 +133,8 @@ impl<U> Image<U>
 where
     U: Serialize + Default + Clone + 'static,
 {
+    /// A 2-dimensional array in which each element is an array of 3 or 4 numbers representing a
+    /// color.
     pub fn new(z: Vec<Vec<PixelColor<U>>>) -> Box<Self>
     {
         Box::new(Self {
@@ -208,13 +210,6 @@ where
         Box::new(self)
     }
 
-    /// A 2-dimensional array in which each element is an array of 3 or 4 numbers representing a
-    /// color.
-    pub fn z(mut self, z: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
-        self.z = Some(z);
-        Box::new(self)
-    }
-
     /// Specifies the data URI of the image to be visualized. The URI consists of "data:image/[<media subtype>][;base64],<data>"
     pub fn source(mut self, source: &str) -> Box<Self> {
         self.source = Some(source.to_owned());
@@ -280,6 +275,26 @@ where
     /// completely, use an empty tag `<extra></extra>`.
     pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        Box::new(self)
+    }
+
+    /// Template string used for rendering the information that appear on hover box. Note that this
+    /// will override `HoverInfo`. Variables are inserted using %{variable}, for example "y: %{y}".
+    /// Numbers are formatted using d3-format's syntax %{variable:d3-format}, for example
+    /// "Price: %{y:$.2f}".
+    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format for details
+    /// on the formatting syntax. Dates are formatted using d3-time-format's syntax
+    /// %{variable|d3-time-format}, for example "Day: %{2019-01-01|%A}".
+    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format for details
+    /// on the date formatting syntax. The variables available in `hovertemplate` are the ones
+    /// emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event-data.
+    /// Additionally, every attributes that can be specified per-point (the ones that are
+    /// `arrayOk: true`) are available. Anything contained in tag `<extra>` is displayed in the
+    /// secondary box, for example "<extra>{fullData.name}</extra>". To hide the secondary box
+    /// completely, use an empty tag `<extra></extra>`.
+    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Self> {
+        let hover_template = private::owned_string_vector(hover_template);
+        self.hover_template = Some(Dim::Vector(hover_template));
         Box::new(self)
     }
 
@@ -362,5 +377,103 @@ where
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+    use assert_json_diff::assert_json_eq;
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_pixel_color() {
+        assert_eq!(to_value(PixelColor::Color3([255, 100, 150])).unwrap(), json!([255, 100, 150]));
+        assert_eq!(to_value(PixelColor::Color4([150, 140, 190, 50])).unwrap(), json!([150, 140, 190, 50]));
+    }
+
+    #[test]
+    fn test_serialize_color_model() {
+        assert_eq!(to_value(ColorModel::RGB).unwrap(), json!("rgb"));
+        assert_eq!(to_value(ColorModel::RGBA).unwrap(), json!("rgba"));
+        assert_eq!(to_value(ColorModel::RGBA256).unwrap(), json!("rgba256"));
+        assert_eq!(to_value(ColorModel::HSL).unwrap(), json!("hsl"));
+        assert_eq!(to_value(ColorModel::HSLA).unwrap(), json!("hsla"));
+    }
+
+    #[test]
+    fn test_serialize_z_smooth() {
+        assert_eq!(to_value(ZSmooth::Fast).unwrap(), json!("fast"));
+        assert_eq!(to_value(ZSmooth::False).unwrap(), json!("false"));
+    }
+
+    #[test]
+    fn test_serialize_image() {
+        let b = PixelColor::Color4([0, 0, 0, 255]);
+        let w = PixelColor::Color4([255, 255, 255, 255]);
+        let image = Image::new(vec![vec![b, w, b, w, b], vec![w, b, w, b, w]])
+            .name("image name")
+            .visible(Visible::True)
+            .legendrank(1000)
+            .legendgrouptitle(LegendGroupTitle::new("Legend Group Title"))
+            .opacity(0.5)
+            .ids(vec!["one"])
+            .x0(0.0)
+            .dx(1.0)
+            .y0(2.0)
+            .dy(3.0)
+            .source("https://raw.githubusercontent.com/michaelbabyn/plot_data/master/bridge.jpg")
+            .text("text")
+            .text_array(vec!["text"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .hover_info(HoverInfo::XAndYAndZ)
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .meta("meta")
+            .custom_data(vec!["custom_data"])
+            .x_axis("x2")
+            .y_axis("y2")
+            .colormodel(ColorModel::RGBA)
+            .zmax(vec![vec![w, w, w, w, w], vec![w, w, w, w, w]])
+            .zmin(vec![vec![b, b, b, b, b], vec![b, b, b, b, b]])
+            .zsmooth(ZSmooth::Fast)
+            .hover_label(Label::new())
+            .uirevision(6);
+
+        let b = [0, 0, 0, 255];
+        let w = [255, 255, 255, 255];
+        let expected = json!({
+            "type": "image",
+            "z": [[b, w, b, w, b], [w, b, w, b, w]],
+            "name": "image name",
+            "visible": true,
+            "legendrank": 1000,
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "opacity": 0.5,
+            "ids": ["one"],
+            "x0": 0.0,
+            "dx": 1.0,
+            "y0": 2.0,
+            "dy": 3.0,
+            "source": "https://raw.githubusercontent.com/michaelbabyn/plot_data/master/bridge.jpg",
+            "text": ["text"],
+            "hovertext": ["hover_text"],
+            "hoverinfo": "x+y+z",
+            "hovertemplate": ["hover_template"],
+            "meta": "meta",
+            "customdata": ["custom_data"],
+            "xaxis": "x2",
+            "yaxis": "y2",
+            "colormodel": "rgba",
+            "zmax": [[w, w, w, w, w], [w, w, w, w, w]],
+            "zmin": [[b, b, b, b, b], [b, b, b, b, b]],
+            "zsmooth": "fast",
+            "hoverlabel": {},
+            "uirevision": 6,
+        });
+
+        assert_json_eq!(to_value(image).unwrap(), expected);
     }
 }

@@ -714,7 +714,8 @@ mod tests {
     use assert_json_diff::assert_json_eq;
 
     use super::*;
-    use crate::common::ErrorType;
+
+    use crate::common::ColorScalePalette;
 
     #[test]
     fn test_serialize_intensity_mode() {
