@@ -12,6 +12,9 @@ use crate::private::{
     NumOrString, NumOrStringCollection
 };
 
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix2};
+
 #[derive(Serialize, Clone, Copy, Debug)]
 #[serde(untagged)]
 pub enum PixelColor<U> {
