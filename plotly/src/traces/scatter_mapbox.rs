@@ -3,21 +3,18 @@
 use serde::Serialize;
 
 use crate::common::{
-    color::Color,
-    Dim, Font, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode,
-    PlotType, Position, Visible,
+    color::Color, Dim, Font, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode, PlotType,
+    Position, Visible,
 };
 use crate::private;
+use crate::private::{copy_iterable_to_vec, NumOrString, NumOrStringCollection};
 use crate::Trace;
-use crate::private::{
-    copy_iterable_to_vec, NumOrString, NumOrStringCollection
-};
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum Fill {
     None,
-    ToSelf
+    ToSelf,
 }
 
 #[derive(Serialize, Clone, Debug, Default)]
@@ -67,7 +64,6 @@ where
     Lon: Serialize + Clone + 'static,
 {
     // Transcribed from https://plotly.com/python/reference/scattermapbox/.
-    
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
@@ -82,7 +78,7 @@ where
     legend_group: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
     legend_group_title: Option<LegendGroupTitle>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -120,10 +116,10 @@ where
 
     #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
     text_font: Option<Font>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "selectedpoints")]
     selected_points: Option<Vec<usize>>,
 
@@ -136,21 +132,21 @@ where
     below: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
     connect_gaps: Option<bool>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     fill: Option<Fill>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
     hover_label: Option<Label>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "uirevision")]
     ui_revision: Option<NumOrString>,
 }
 
 impl<Lat, Lon> ScatterMapbox<Lat, Lon>
 where
-    Lat: Serialize + Clone + 'static + std::default::Default,  // TODO why is "+ Default" necessary?
+    Lat: Serialize + Clone + 'static + std::default::Default, // TODO why is "+ Default" necessary?
     Lon: Serialize + Clone + 'static + std::default::Default,
 {
     pub fn new<Lat1, Lon1>(lat: Lat1, lon: Lon1) -> Box<Self>
@@ -160,7 +156,7 @@ where
     {
         let lat = copy_iterable_to_vec(lat);
         let lon = copy_iterable_to_vec(lon);
-        
+
         Box::new(Self {
             r#type: PlotType::ScatterMapbox,
             lat: Some(lat),
@@ -174,7 +170,7 @@ where
         self.name = Some(name.to_owned());
         Box::new(self)
     }
-    
+
     /// Determines whether or not this trace is visible. If `Visible::LegendOnly`, the trace is not
     /// drawn, but can appear as a legend item (provided that the legend itself is visible).
     pub fn visible(mut self, visible: Visible) -> Box<Self> {
@@ -196,7 +192,7 @@ where
         self.legend_rank = Some(legend_rank);
         Box::new(self)
     }
-    
+
     /// Sets the legend group for this trace. Traces part of the same legend group show/hide at the
     /// same time when toggling legend items.
     pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
@@ -209,13 +205,13 @@ where
         self.legend_group_title = Some(legend_group_title);
         Box::new(self)
     }
-    
+
     /// Sets the opacity of the trace.
     pub fn opacity(mut self, opacity: f64) -> Box<Self> {
         self.opacity = Some(opacity);
         Box::new(self)
     }
-    
+
     /// Determines the drawing mode for this scatter trace. If the provided `Mode` includes
     /// "Text" then the `text` elements appear at the coordinates. Otherwise, the `text` elements
     /// appear on hover. If there are less than 20 points and the trace is not stacked then the
@@ -224,7 +220,7 @@ where
         self.mode = Some(mode);
         Box::new(self)
     }
-    
+
     /// Assigns id labels to each datum. These ids for object constancy of data points during
     /// animation. Should be an array of strings, not numbers or any other type.
     pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Box<Self> {
@@ -250,7 +246,7 @@ where
         self.text = Some(Dim::Vector(text));
         Box::new(self)
     }
-    
+
     /// Sets the positions of the `text` elements with respects to the (x,y) coordinates.
     pub fn text_position(mut self, text_position: Position) -> Box<Self> {
         self.text_position = Some(Dim::Scalar(text_position));
@@ -262,7 +258,7 @@ where
         self.text_position = Some(Dim::Vector(text_position));
         Box::new(self)
     }
-    
+
     /// Template string used for rendering the information text that appear on points. Note that
     /// this will override `textinfo`. Variables are inserted using %{variable}, for example
     /// "y: %{y}". Numbers are formatted using d3-format's syntax %{variable:d3-format}, for example
@@ -291,7 +287,7 @@ where
         self.text_template = Some(Dim::Vector(text_template));
         Box::new(self)
     }
-    
+
     /// Sets hover text elements associated with each (x,y) pair. If a single string, the same
     /// string appears over all the data points. If an array of string, the items are mapped in
     /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
@@ -310,7 +306,7 @@ where
         self.hover_text = Some(Dim::Vector(hover_text));
         Box::new(self)
     }
-    
+
     /// Determines which trace information appear on hover. If `HoverInfo::None` or `HoverInfo::Skip`
     /// are set, no information is displayed upon hovering. But, if `HoverInfo::None` is set, click
     /// and hover events are still fired.
@@ -369,7 +365,7 @@ where
         self.meta = Some(meta.into());
         Box::new(self)
     }
-    
+
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
     /// DOM elements
@@ -378,12 +374,13 @@ where
         Box::new(self)
     }
 
-    /// Sets a reference between this trace's data coordinates and a mapbox subplot. If "mapbox" (the default value), the data refer to `layout.mapbox`. If "mapbox2", the data refer to `layout.mapbox2`, and so on.
+    /// Sets a reference between this trace's data coordinates and a mapbox subplot. If "mapbox" (the default
+    /// value), the data refer to `layout.mapbox`. If "mapbox2", the data refer to `layout.mapbox2`, and so on.
     pub fn subplot(mut self, subplot: &str) -> Box<Self> {
         self.subplot = Some(subplot.to_owned());
         Box::new(self)
     }
-    
+
     /// Determines how points are displayed and joined.
     pub fn marker(mut self, marker: Marker) -> Box<Self> {
         self.marker = Some(marker);
@@ -395,13 +392,13 @@ where
         self.line = Some(line);
         Box::new(self)
     }
-    
+
     /// Sets the text font.
     pub fn text_font(mut self, text_font: Font) -> Box<Self> {
         self.text_font = Some(text_font);
         Box::new(self)
     }
-    
+
     /// Vector containing integer indices of selected points. Has an effect only for traces that support
     /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
     /// on for all points.
@@ -422,7 +419,9 @@ where
         Box::new(self)
     }
 
-    /// Determines if this scattermapbox trace's layers are to be inserted before the layer with the specified ID. By default, scattermapbox layers are inserted above all the base layers. To place the scattermapbox layers above every other layer, set `below` to "''".
+    /// Determines if this scattermapbox trace's layers are to be inserted before the layer with the specified ID.
+    /// By default, scattermapbox layers are inserted above all the base layers. To place the scattermapbox layers
+    /// above every other layer, set `below` to "''".
     pub fn below(mut self, below: &str) -> Box<Self> {
         self.below = Some(below.to_owned());
         Box::new(self)
@@ -433,7 +432,7 @@ where
         self.connect_gaps = Some(connect_gaps);
         Box::new(self)
     }
-    
+
     /// Sets the area to fill with a solid color. Defaults to "none" unless this trace is stacked,
     /// then it gets "tonexty" ("tonextx") if `orientation` is "v" ("h") Use with `fillcolor` if not
     /// "none". "tozerox" and "tozeroy" fill to x=0 and y=0 respectively. "tonextx" and "tonexty"
@@ -451,7 +450,7 @@ where
         self.fill = Some(fill);
         Box::new(self)
     }
-    
+
     /// Sets the fill color. Defaults to a half-transparent variant of the line color, marker color,
     /// or marker line color, whichever is available.
     pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Self> {
@@ -464,8 +463,16 @@ where
         self.hover_label = Some(hover_label);
         Box::new(self)
     }
-    
-    /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
+
+    /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces,
+    /// as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to
+    /// `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout`
+    /// attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled
+    /// by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is
+    /// controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace
+    /// index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array,
+    /// such that the same trace has a different index, you can still preserve user-driven changes if you give
+    /// each trace a `uid` that stays with it as it moves.
     pub fn ui_revision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
         self.ui_revision = Some(ui_revision.into());
         Box::new(self)
@@ -484,8 +491,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
     use assert_json_diff::assert_json_eq;
+    use serde_json::{json, to_value};
 
     use super::*;
 
@@ -494,13 +501,10 @@ mod tests {
         assert_eq!(to_value(Fill::None).unwrap(), json!("none"));
         assert_eq!(to_value(Fill::ToSelf).unwrap(), json!("toself"));
     }
-    
+
     #[test]
     fn test_serialize_selection() {
-        let selection = Selection::new()
-            .color("#123456")
-            .opacity(0.5)
-            .size(6);
+        let selection = Selection::new().color("#123456").opacity(0.5).size(6);
         let expected = json!({"marker": {"color": "#123456", "opacity": 0.5, "size": 6}});
 
         assert_eq!(to_value(selection).unwrap(), expected);

@@ -2,15 +2,10 @@
 
 use serde::Serialize;
 
-use crate::common::{
-    Dim, HoverInfo, Label, LegendGroupTitle,
-    PlotType, Visible,
-};
+use crate::common::{Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible};
 use crate::private;
+use crate::private::{NumOrString, NumOrStringCollection};
 use crate::Trace;
-use crate::private::{
-    NumOrString, NumOrStringCollection
-};
 
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix2};
@@ -54,7 +49,7 @@ pub enum ColorModel {
 #[serde(rename_all = "lowercase")]
 pub enum ZSmooth {
     Fast,
-    False
+    False,
 }
 
 #[derive(Serialize, Clone, Debug, Default)]
@@ -63,7 +58,6 @@ where
     U: Serialize + Clone + 'static,
 {
     // Transcribed from https://plotly.com/python/reference/image/.
-    
     r#type: PlotType,
     #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
@@ -74,7 +68,7 @@ where
     legend_rank: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
     legend_group_title: Option<LegendGroupTitle>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -121,7 +115,7 @@ where
     z_max: Option<Vec<Vec<PixelColor<U>>>>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "zmin")]
     z_min: Option<Vec<Vec<PixelColor<U>>>>,
-    
+
     #[serde(skip_serializing_if = "Option::is_none", rename = "zsmooth")]
     z_smooth: Option<ZSmooth>,
 
@@ -138,8 +132,7 @@ where
 {
     /// A 2-dimensional array in which each element is an array of 3 or 4 numbers representing a
     /// color.
-    pub fn new(z: Vec<Vec<PixelColor<U>>>) -> Box<Self>
-    {
+    pub fn new(z: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
         Box::new(Self {
             r#type: PlotType::Image,
             z: Some(z),
@@ -152,7 +145,7 @@ where
         self.name = Some(name.to_owned());
         Box::new(self)
     }
-    
+
     /// Determines whether or not this trace is visible. If `Visible::LegendOnly`, the trace is not
     /// drawn, but can appear as a legend item (provided that the legend itself is visible).
     pub fn visible(mut self, visible: Visible) -> Box<Self> {
@@ -174,13 +167,13 @@ where
         self.legend_group_title = Some(legend_group_title);
         Box::new(self)
     }
-    
+
     /// Sets the opacity of the trace.
     pub fn opacity(mut self, opacity: f64) -> Box<Self> {
         self.opacity = Some(opacity);
         Box::new(self)
     }
-    
+
     /// Assigns id labels to each datum. These ids for object constancy of data points during
     /// animation. Should be an array of strings, not numbers or any other type.
     pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Box<Self> {
@@ -213,7 +206,8 @@ where
         Box::new(self)
     }
 
-    /// Specifies the data URI of the image to be visualized. The URI consists of "data:image/[<media subtype>][;base64],<data>"
+    /// Specifies the data URI of the image to be visualized. The URI consists of
+    /// "data:image/[<media subtype>][;base64],<data>".
     pub fn source(mut self, source: &str) -> Box<Self> {
         self.source = Some(source.to_owned());
         Box::new(self)
@@ -236,7 +230,7 @@ where
         self.text = Some(Dim::Vector(text));
         Box::new(self)
     }
-    
+
     /// Sets hover text elements associated with each (x,y) pair. If a single string, the same
     /// string appears over all the data points. If an array of string, the items are mapped in
     /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
@@ -253,7 +247,7 @@ where
         self.hover_text = Some(Dim::Vector(hover_text));
         Box::new(self)
     }
-    
+
     /// Determines which trace information appear on hover. If `HoverInfo::None` or `HoverInfo::Skip`
     /// are set, no information is displayed upon hovering. But, if `HoverInfo::None` is set, click
     /// and hover events are still fired.
@@ -261,7 +255,7 @@ where
         self.hover_info = Some(hover_info);
         Box::new(self)
     }
-    
+
     /// Template string used for rendering the information that appear on hover box. Note that this
     /// will override `HoverInfo`. Variables are inserted using %{variable}, for example "y: %{y}".
     /// Numbers are formatted using d3-format's syntax %{variable:d3-format}, for example
@@ -312,7 +306,7 @@ where
         self.meta = Some(meta.into());
         Box::new(self)
     }
-    
+
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
     /// DOM elements
@@ -328,7 +322,7 @@ where
         self.x_axis = Some(axis.to_owned());
         Box::new(self)
     }
-    
+
     /// Sets a reference between this trace's y coordinates and a 2D cartesian y axis. If "y"
     /// (the default value), the y coordinates refer to `Layout::y_axis`. If "y2", the y coordinates
     /// refer to `Layout::y_axis2`, and so on.
@@ -337,25 +331,33 @@ where
         Box::new(self)
     }
 
-    /// Color model used to map the numerical color components described in `z` into colors. If `source` is specified, this attribute will be set to `rgba256` otherwise it defaults to `rgb`.
+    /// Color model used to map the numerical color components described in `z` into colors. If `source` is
+    /// specified, this attribute will be set to `rgba256` otherwise it defaults to `rgb`.
     pub fn color_model(mut self, color_model: ColorModel) -> Box<Self> {
         self.color_model = Some(color_model);
         Box::new(self)
     }
 
-    /// Array defining the higher bound for each color component. Note that the default value will depend on the colormodel. For the `rgb` colormodel, it is [255, 255, 255]. For the `rgba` colormodel, it is [255, 255, 255, 1]. For the `rgba256` colormodel, it is [255, 255, 255, 255]. For the `hsl` colormodel, it is [360, 100, 100]. For the `hsla` colormodel, it is [360, 100, 100, 1].
+    /// Array defining the higher bound for each color component. Note that the default value will depend on the
+    /// colormodel. For the `rgb` colormodel, it is [255, 255, 255]. For the `rgba` colormodel, it is
+    /// [255, 255, 255, 1]. For the `rgba256` colormodel, it is [255, 255, 255, 255]. For the `hsl` colormodel,
+    /// it is [360, 100, 100]. For the `hsla` colormodel, it is [360, 100, 100, 1].
     pub fn z_max(mut self, z_max: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
         self.z_max = Some(z_max);
         Box::new(self)
     }
 
-    /// Array defining the lower bound for each color component. Note that the default value will depend on the colormodel. For the `rgb` colormodel, it is [0, 0, 0]. For the `rgba` colormodel, it is [0, 0, 0, 0]. For the `rgba256` colormodel, it is [0, 0, 0, 0]. For the `hsl` colormodel, it is [0, 0, 0]. For the `hsla` colormodel, it is [0, 0, 0, 0].
+    /// Array defining the lower bound for each color component. Note that the default value will depend on the
+    /// colormodel. For the `rgb` colormodel, it is [0, 0, 0]. For the `rgba` colormodel, it is [0, 0, 0, 0].
+    /// For the `rgba256` colormodel, it is [0, 0, 0, 0]. For the `hsl` colormodel, it is [0, 0, 0]. For the
+    /// `hsla` colormodel, it is [0, 0, 0, 0].
     pub fn z_min(mut self, z_min: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
         self.z_min = Some(z_min);
         Box::new(self)
     }
 
-    /// Picks a smoothing algorithm used to smooth `z` data. This only applies for image traces that use the `source` attribute.
+    /// Picks a smoothing algorithm used to smooth `z` data. This only applies for image traces that use the
+    /// `source` attribute.
     pub fn z_smooth(mut self, z_smooth: ZSmooth) -> Box<Self> {
         self.z_smooth = Some(z_smooth);
         Box::new(self)
@@ -367,7 +369,15 @@ where
         Box::new(self)
     }
 
-    /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces, as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout` attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array, such that the same trace has a different index, you can still preserve user-driven changes if you give each trace a `uid` that stays with it as it moves.
+    /// Controls persistence of some user-driven changes to the trace: `constraintrange` in `parcoords` traces,
+    /// as well as some `editable: True` modifications such as `name` and `colorbar.title`. Defaults to
+    /// `layout.uirevision`. Note that other user-driven trace attribute changes are controlled by `layout`
+    /// attributes: `trace.visible` is controlled by `layout.legend.uirevision`, `selectedpoints` is controlled
+    /// by `layout.selectionrevision`, and `colorbar.(x|y)` (accessible with `config: {editable: True}`) is
+    /// controlled by `layout.editrevision`. Trace changes are tracked by `uid`, which only falls back on trace
+    /// index if no `uid` is provided. So if your app can add/remove traces before the end of the `data` array,
+    /// such that the same trace has a different index, you can still preserve user-driven changes if you give
+    /// each trace a `uid` that stays with it as it moves.
     pub fn ui_revision<V: Into<NumOrString>>(mut self, ui_revision: V) -> Box<Self> {
         self.ui_revision = Some(ui_revision.into());
         Box::new(self)
@@ -385,15 +395,21 @@ where
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
     use assert_json_diff::assert_json_eq;
+    use serde_json::{json, to_value};
 
     use super::*;
 
     #[test]
     fn test_serialize_pixel_color() {
-        assert_eq!(to_value(PixelColor::Color3([255, 100, 150])).unwrap(), json!([255, 100, 150]));
-        assert_eq!(to_value(PixelColor::Color4([150, 140, 190, 50])).unwrap(), json!([150, 140, 190, 50]));
+        assert_eq!(
+            to_value(PixelColor::Color3([255, 100, 150])).unwrap(),
+            json!([255, 100, 150])
+        );
+        assert_eq!(
+            to_value(PixelColor::Color4([150, 140, 190, 50])).unwrap(),
+            json!([150, 140, 190, 50])
+        );
     }
 
     #[test]
