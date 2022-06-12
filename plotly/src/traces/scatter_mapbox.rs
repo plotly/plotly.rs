@@ -10,7 +10,7 @@ use crate::common::{
 use crate::private;
 use crate::Trace;
 use crate::private::{
-    NumOrString, NumOrStringCollection
+    copy_iterable_to_vec, NumOrString, NumOrStringCollection
 };
 
 #[derive(Serialize, Clone, Debug, Default)]
@@ -54,7 +54,10 @@ impl Selection {
 }
 
 #[derive(Serialize, Clone, Debug, Default)]
-pub struct ScatterMapbox
+pub struct ScatterMapbox<Lat, Lon>
+where
+    Lat: Serialize + Clone + 'static,
+    Lon: Serialize + Clone + 'static,
 {
     // Transcribed from https://plotly.com/python/reference/scattermapbox/.
     
@@ -81,9 +84,9 @@ pub struct ScatterMapbox
     ids: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    lat: Option<Vec<f64>>,
+    lat: Option<Vec<Lat>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    lon: Option<Vec<f64>>,
+    lon: Option<Vec<Lon>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
@@ -140,10 +143,19 @@ pub struct ScatterMapbox
 
 // TODO insert _ in setter names
 
-impl ScatterMapbox
+impl<Lat, Lon> ScatterMapbox<Lat, Lon>
+where
+    Lat: Serialize + Clone + 'static + std::default::Default,  // TODO why is "+ Default" necessary?
+    Lon: Serialize + Clone + 'static + std::default::Default,
 {
-    pub fn new(lat: Vec<f64>, lon: Vec<f64>) -> Box<Self>
+    pub fn new<Lat1, Lon1>(lat: Lat1, lon: Lon1) -> Box<Self>
+    where
+        Lat1: IntoIterator<Item = Lat>,
+        Lon1: IntoIterator<Item = Lon>,
     {
+        let lat = copy_iterable_to_vec(lat);
+        let lon = copy_iterable_to_vec(lon);
+        
         Box::new(Self {
             r#type: PlotType::ScatterMapbox,
             lat: Some(lat),
@@ -451,7 +463,10 @@ impl ScatterMapbox
     }
 }
 
-impl Trace for ScatterMapbox
+impl<Lat, Lon> Trace for ScatterMapbox<Lat, Lon>
+where
+    Lat: Serialize + Clone + 'static,
+    Lon: Serialize + Clone + 'static,
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
