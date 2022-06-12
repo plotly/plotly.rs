@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Dim, Fill, Font, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode,
+    Dim, Font, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode,
     PlotType, Position, Visible,
 };
 use crate::private;
@@ -12,6 +12,13 @@ use crate::Trace;
 use crate::private::{
     copy_iterable_to_vec, NumOrString, NumOrStringCollection
 };
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum Fill {
+    None,
+    ToSelf
+}
 
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct SelectionMarker {
@@ -29,27 +36,27 @@ pub struct Selection {
 }
 
 impl Selection {
-    pub fn new() -> Box<Self> {
-        Box::new(Default::default())
+    pub fn new() -> Self {
+        Default::default()
     }
 
     /// Sets the marker color of un/selected points.
-    pub fn color<C: Color>(mut self, color: C) -> Box<Self> {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.marker.color = Some(Box::new(color));
-        Box::new(self)
+        self
     }
 
     /// Sets the marker opacity of un/selected points.
-    pub fn opacity(mut self, opacity: f64) -> Box<Self> {
+    pub fn opacity(mut self, opacity: f64) -> Self {
         assert!(0.0 <= opacity && opacity <= 1.0);
         self.marker.opacity = Some(opacity);
-        Box::new(self)
+        self
     }
 
     /// Sets the marker size of un/selected points.
-    pub fn size(mut self, size: usize) -> Box<Self> {
+    pub fn size(mut self, size: usize) -> Self {
         self.marker.size = Some(Dim::Scalar(size));
-        Box::new(self)
+        self
     }
 }
 
@@ -232,8 +239,8 @@ where
     /// appears over all the data points. If an array of string, the items are mapped in order to
     /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
     /// `hover_text` is not set, these elements will be seen in the hover labels.
-    pub fn text(mut self, text: Dim<String>) -> Box<Self> {
-        self.text = Some(text);
+    pub fn text(mut self, text: &str) -> Box<Self> {
+        self.text = Some(Dim::Scalar(text.to_owned()));
         Box::new(self)
     }
 
@@ -373,7 +380,11 @@ where
         Box::new(self)
     }
 
-    //subplot: Option<String>,
+    /// Sets a reference between this trace's data coordinates and a mapbox subplot. If "mapbox" (the default value), the data refer to `layout.mapbox`. If "mapbox2", the data refer to `layout.mapbox2`, and so on.
+    pub fn subplot(mut self, subplot: &str) -> Box<Self> {
+        self.subplot = Some(subplot.to_owned());
+        Box::new(self)
+    }
     
     /// Determines how points are displayed and joined.
     pub fn marker(mut self, marker: Marker) -> Box<Self> {
@@ -470,5 +481,107 @@ where
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+    use assert_json_diff::assert_json_eq;
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_fill() {
+        assert_eq!(to_value(Fill::None).unwrap(), json!("none"));
+        assert_eq!(to_value(Fill::ToSelf).unwrap(), json!("toself"));
+    }
+    
+    #[test]
+    fn test_serialize_selection() {
+        let selection = Selection::new()
+            .color("#123456")
+            .opacity(0.5)
+            .size(6);
+        let expected = json!({"marker": {"color": "#123456", "opacity": 0.5, "size": 6}});
+
+        assert_eq!(to_value(selection).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_scatter_mapbox() {
+        let scatter_mapbox = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
+            .name("name")
+            .visible(Visible::True)
+            .show_legend(true)
+            .legendrank(1000)
+            .legendgroup("legend group")
+            .legendgrouptitle(LegendGroupTitle::new("Legend Group Title"))
+            .opacity(0.5)
+            .mode(Mode::LinesText)
+            .ids(vec!["one"])
+            .text("text")
+            .text_array(vec!["text"])
+            .text_position(Position::BottomLeft)
+            .text_position_array(vec![Position::TopCenter])
+            .text_template("text_template")
+            .text_template_array(vec!["text_template"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .hover_info(HoverInfo::XAndYAndZ)
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .meta("meta")
+            .custom_data(vec!["custom_data"])
+            .subplot("mapbox2")
+            .marker(Marker::new())
+            .line(Line::new())
+            .text_font(Font::new())
+            .selected_points(vec![0])
+            .selected(Selection::new().color("#111111"))
+            .unselected(Selection::new().color("#777777"))
+            .below("")
+            .connectgaps(false)
+            .fill(Fill::None)
+            .fill_color("#ff0000aa")
+            .hover_label(Label::new())
+            .uirevision(6);
+        let expected = json!({
+            "type": "scattermapbox",
+            "lat": [45.5017],
+            "lon": [-73.5673],
+            "name": "name",
+            "visible": true,
+            "showlegend": true,
+            "legendrank": 1000,
+            "legendgroup": "legend group",
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "opacity": 0.5,
+            "mode": "lines+text",
+            "ids": ["one"],
+            "text": ["text"],
+            "textposition": ["top center"],
+            "texttemplate": ["text_template"],
+            "hovertext": ["hover_text"],
+            "hoverinfo": "x+y+z",
+            "hovertemplate": ["hover_template"],
+            "meta": "meta",
+            "customdata": ["custom_data"],
+            "subplot": "mapbox2",
+            "marker": {},
+            "line": {},
+            "textfont": {},
+            "selectedpoints": [0],
+            "selected": {"marker": {"color": "#111111"}},
+            "unselected": {"marker": {"color": "#777777"}},
+            "below": "",
+            "connectgaps": false,
+            "fill": "none",
+            "fillcolor": "#ff0000aa",
+            "hoverlabel": {},
+            "uirevision": 6,
+        });
+
+        assert_json_eq!(to_value(scatter_mapbox).unwrap(), expected);
     }
 }

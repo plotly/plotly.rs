@@ -44,22 +44,22 @@ impl Contour {
     }
     
     /// Sets the color of the contour lines.
-    pub fn color<C: Color>(mut self, color: C) -> Box<Self> {
+    pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(Box::new(color));
-        Box::new(self)
+        self
     }
 
     /// Sets whether or not dynamic contours are shown on hover.
-    pub fn show(mut self, show: bool) -> Box<Self> {
+    pub fn show(mut self, show: bool) -> Self {
         self.show = Some(show);
-        Box::new(self)
+        self
     }
 
     /// Sets the width of the contour lines.
-    pub fn width(mut self, width: usize) -> Box<Self> {
+    pub fn width(mut self, width: usize) -> Self {
         assert!(1 <= width && width <= 16);
         self.width = Some(width);
-        Box::new(self)
+        self
     }
 }
 
@@ -87,52 +87,52 @@ impl Lighting {
     }
 
     /// Ambient light increases overall color visibility but can wash out the image.
-    pub fn ambient(mut self, ambient: f64) -> Box<Self> {
+    pub fn ambient(mut self, ambient: f64) -> Self {
         assert!(0.0 <= ambient && ambient <= 1.0);
         self.ambient = Some(ambient);
-        Box::new(self)
+        self
     }
 
     /// Represents the extent that incident rays are reflected in a range of angles.
-    pub fn diffuse(mut self, diffuse: f64) -> Box<Self> {
+    pub fn diffuse(mut self, diffuse: f64) -> Self {
         assert!(0.0 <= diffuse && diffuse <= 1.0);
         self.diffuse = Some(diffuse);
-        Box::new(self)
+        self
     }
 
     /// Epsilon for face normals calculation avoids math issues arising from degenerate geometry.
-    pub fn facenormalsepsilon(mut self, face_normals_epsilon: f64) -> Box<Self> {
+    pub fn facenormalsepsilon(mut self, face_normals_epsilon: f64) -> Self {
         assert!(0.0 <= face_normals_epsilon && face_normals_epsilon <= 1.0);
         self.face_normals_epsilon = Some(face_normals_epsilon);
-        Box::new(self)
+        self
     }
 
     /// Represents the reflectance as a dependency of the viewing angle; e.g. paper is reflective when viewing it from the edge of the paper (almost 90 degrees), causing shine.
-    pub fn fresnel(mut self, fresnel: f64) -> Box<Self> {
+    pub fn fresnel(mut self, fresnel: f64) -> Self {
         assert!(0.0 <= fresnel && fresnel <= 5.0);
         self.fresnel = Some(fresnel);
-        Box::new(self)
+        self
     }
 
     /// Alters specular reflection; the rougher the surface, the wider and less contrasty the shine.
-    pub fn roughness(mut self, roughness: f64) -> Box<Self> {
+    pub fn roughness(mut self, roughness: f64) -> Self {
         assert!(0.0 <= roughness && roughness <= 1.0);
         self.roughness = Some(roughness);
-        Box::new(self)
+        self
     }
 
     /// Represents the level that incident rays are reflected in a single direction, causing shine.
-    pub fn specular(mut self, specular: f64) -> Box<Self> {
+    pub fn specular(mut self, specular: f64) -> Self {
         assert!(0.0 <= specular && specular <= 2.0);
         self.specular = Some(specular);
-        Box::new(self)
+        self
     }
 
     /// Epsilon for vertex normals calculation avoids math issues arising from degenerate geometry.
-    pub fn vertexnormalsepsilon(mut self, vertex_normals_epsilon: f64) -> Box<Self> {
+    pub fn vertexnormalsepsilon(mut self, vertex_normals_epsilon: f64) -> Self {
         assert!(0.0 <= vertex_normals_epsilon && vertex_normals_epsilon <= 1.0);
         self.vertex_normals_epsilon = Some(vertex_normals_epsilon);
-        Box::new(self)
+        self
     }
 }
 
@@ -152,30 +152,30 @@ impl LightPosition {
     }
 
     /// Numeric vector, representing the X coordinate for each vertex.
-    pub fn x(mut self, x: Vec<f64>) -> Box<Self> {
+    pub fn x(mut self, x: Vec<f64>) -> Self {
         for &xi in &x {
             assert!(-100_000.0 <= xi && xi <= 100_000.0);
         }
         self.x = Some(x);
-        Box::new(self)
+        self
     }
 
     /// Numeric vector, representing the Y coordinate for each vertex.
-    pub fn y(mut self, y: Vec<f64>) -> Box<Self> {
+    pub fn y(mut self, y: Vec<f64>) -> Self {
         for &yi in &y {
             assert!(-100_000.0 <= yi && yi <= 100_000.0);
         }
         self.y = Some(y);
-        Box::new(self)
+        self
     }
 
     /// Numeric vector, representing the Z coordinate for each vertex.
-    pub fn z(mut self, z: Vec<f64>) -> Box<Self> {
+    pub fn z(mut self, z: Vec<f64>) -> Self {
         for &zi in &z {
             assert!(-100_000.0 <= zi && zi <= 100_000.0);
         }
         self.z = Some(z);
-        Box::new(self)
+        self
     }
 }
 
