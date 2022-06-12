@@ -4,8 +4,8 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Calendar, ColorBar, ColorScale, ColorScalePalette, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle,
-    Line, Marker, Mode, Orientation, PlotType, Position, Visible,
+    Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle,
+    Orientation, PlotType, Visible,
 };
 use crate::private;
 use crate::Trace;

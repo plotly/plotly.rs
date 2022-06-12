@@ -4,13 +4,13 @@ use serde::Serialize;
 
 use crate::common::{
     color::Color,
-    Calendar, ColorBar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode,
-    Orientation, PlotType, Position, Visible,
+    Dim, Fill, Font, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode,
+    PlotType, Position, Visible,
 };
 use crate::private;
 use crate::Trace;
 use crate::private::{
-    copy_iterable_to_vec, NumOrString, NumOrStringCollection
+    NumOrString, NumOrStringCollection
 };
 
 #[derive(Serialize, Clone, Debug, Default)]
