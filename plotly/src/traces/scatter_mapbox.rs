@@ -45,7 +45,6 @@ impl Selection {
 
     /// Sets the marker opacity of un/selected points.
     pub fn opacity(mut self, opacity: f64) -> Self {
-        assert!(0.0 <= opacity && opacity <= 1.0);
         self.marker.opacity = Some(opacity);
         self
     }
