@@ -1,9 +1,9 @@
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix2};
 use serde::Serialize;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix2};
 
 pub fn owned_string_vector<S: AsRef<str>>(s: Vec<S>) -> Vec<String> {
     s.iter()
@@ -159,13 +159,13 @@ mod tests {
         let x: NumOrString = 100.0_f32.into();
         assert_eq!(x, NumOrString::F(100.));
 
-        let x: NumOrString = (-100 as isize).into();
+        let x: NumOrString = (-100_isize).into();
         assert_eq!(x, NumOrString::I(-100));
 
-        let x: NumOrString = (-100 as i64).into();
+        let x: NumOrString = (-100_i64).into();
         assert_eq!(x, NumOrString::I(-100));
 
-        let x: NumOrString = (-100 as i32).into();
+        let x: NumOrString = (-100_i32).into();
         assert_eq!(x, NumOrString::I(-100));
 
         let x: NumOrString = 100_usize.into();

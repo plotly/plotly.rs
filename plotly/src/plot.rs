@@ -1,3 +1,7 @@
+use std::fs::File;
+use std::io::Write;
+use std::path::Path;
+
 use askama::Template;
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
@@ -6,9 +10,6 @@ use rand::{
     thread_rng,
 };
 use serde::Serialize;
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
 
 use crate::{Configuration, Layout};
 
@@ -120,6 +121,10 @@ impl Traces {
 
     pub fn len(&self) -> usize {
         self.traces.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.traces.is_empty()
     }
 
     pub fn iter(&self) -> std::slice::Iter<'_, Box<dyn Trace>> {
@@ -466,8 +471,9 @@ impl PartialEq for Plot {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
     use std::path::PathBuf;
+
+    use serde_json::{json, to_value};
 
     use super::*;
     use crate::Scatter;

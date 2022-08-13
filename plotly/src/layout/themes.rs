@@ -7,8 +7,7 @@ use crate::{
 
 pub static DEFAULT: Lazy<Template> = Lazy::new(|| {
     let layout_template = LayoutTemplate::new();
-    let template = Template::new().layout(layout_template);
-    template
+    Template::new().layout(layout_template)
 });
 
 pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
@@ -82,8 +81,7 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
                 .zero_line_color("#EBF0F8")
                 .zero_line_width(2),
         );
-    let template = Template::new().layout(layout_template);
-    template
+    Template::new().layout(layout_template)
 });
 
 pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
@@ -159,8 +157,7 @@ pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
                 .zero_line_color("#283442")
                 .zero_line_width(2),
         );
-    let template = Template::new().layout(layout_template);
-    template
+    Template::new().layout(layout_template)
 });
 
 #[cfg(test)]

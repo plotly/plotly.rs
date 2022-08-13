@@ -187,7 +187,7 @@ where
     Vector(Vec<T>),
 }
 
-#[derive(Serialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum PlotType {
     Scatter,

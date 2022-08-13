@@ -2328,12 +2328,14 @@ impl Template {
     }
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<Cow<'static, Template>> for Template {
     fn into(self) -> Cow<'static, Template> {
         Cow::Owned(self)
     }
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<Cow<'static, Template>> for &'static Template {
     fn into(self) -> Cow<'static, Template> {
         Cow::Borrowed(self)

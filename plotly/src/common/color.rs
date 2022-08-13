@@ -30,10 +30,11 @@ impl Color for String {}
 impl Color for Rgb {}
 impl Color for Rgba {}
 
-/// ColorArray is only used internally to provide a helper method for converting Vec<impl Color2> to
-/// Vec<Box<dyn Color2>>, as we would otherwise fall foul of the orphan rules.
+/// ColorArray is only used internally to provide a helper method for converting Vec<impl Color> to
+/// Vec<Box<dyn Color>>, as we would otherwise fall foul of the orphan rules.
 pub(crate) struct ColorArray<C: Color>(pub(crate) Vec<C>);
 
+#[allow(clippy::from_over_into)]
 impl<C: Color> Into<Vec<Box<dyn Color>>> for ColorArray<C> {
     fn into(self) -> Vec<Box<dyn Color>> {
         self.0
