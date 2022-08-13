@@ -1,12 +1,14 @@
 extern crate directories;
 extern crate zip;
-use directories::ProjectDirs;
+
 use std::env;
 use std::fs;
 use std::io;
 use std::io::Result;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+
+use directories::ProjectDirs;
 
 #[cfg(target_os = "linux")]
 const KALEIDO_URL: &str =
@@ -50,7 +52,7 @@ fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
             }
         }
 
-        if (&*file.name()).ends_with('/') {
+        if (file.name()).ends_with('/') {
             println!(
                 "File {} extracted to \"{}\"",
                 i,
