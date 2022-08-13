@@ -53,10 +53,10 @@ pub enum HoverInfo {
     Skip,
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct LegendGroupTitle {
     text: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
 }
 
@@ -74,15 +74,12 @@ impl LegendGroupTitle {
     }
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Domain {
-    #[serde(skip_serializing_if = "Option::is_none")]
     column: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     row: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<[f64; 2]>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<[f64; 2]>,
 }
 
@@ -490,37 +487,28 @@ pub enum LineShape {
     Vhv,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Line {
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     shape: Option<LineShape>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     smoothing: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     dash: Option<DashType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     simplify: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmin: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmax: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmid: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
+    #[serde(rename = "colorscale")]
     color_scale: Option<ColorScale>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autocolorscale")]
+    #[serde(rename = "autocolorscale")]
     auto_color_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
+    #[serde(rename = "reversescale")]
     reverse_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "outliercolor")]
+    #[serde(rename = "outliercolor")]
     outlier_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "outlierwidth")]
+    #[serde(rename = "outlierwidth")]
     outlier_width: Option<usize>,
 }
 
@@ -685,16 +673,15 @@ impl Gradient {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct TickFormatStop {
     enabled: bool,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "dtickrange")]
+    #[serde(rename = "dtickrange")]
     dtick_range: Option<private::NumOrStringCollection>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "templateitemname")]
+    #[serde(rename = "templateitemname")]
     template_item_name: Option<String>,
 }
 
@@ -732,12 +719,13 @@ impl TickFormatStop {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug)]
 pub struct ColorBar {
-    #[serde(skip_serializing_if = "Option::is_none", rename = "thicknessmode")]
+    #[serde(rename = "thicknessmode")]
     thickness_mode: Option<ThicknessMode>,
     thickness: usize,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "lenmode")]
+    #[serde(rename = "lenmode")]
     len_mode: Option<ThicknessMode>,
     len: usize,
     x: f64,
@@ -750,60 +738,56 @@ pub struct ColorBar {
     y_anchor: Anchor,
     #[serde(rename = "ypad")]
     y_pad: f64,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "outlinecolor")]
+    #[serde(rename = "outlinecolor")]
     outline_color: Option<Box<dyn Color>>,
     #[serde(rename = "outlinewidth")]
     outline_width: usize,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
+    #[serde(rename = "bordercolor")]
     border_color: Option<Box<dyn Color>>,
     #[serde(rename = "borderwidth")]
     border_width: usize,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickmode")]
+    #[serde(rename = "tickmode")]
     tick_mode: Option<TickMode>,
     #[serde(rename = "nticks")]
     n_ticks: usize,
-    #[serde(skip_serializing_if = "Option::is_none")]
     tick0: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     dtick: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickvals")]
+    #[serde(rename = "tickvals")]
     tick_vals: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ticktext")]
+    #[serde(rename = "ticktext")]
     tick_text: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ticks: Option<String>,
     #[serde(rename = "ticklen")]
     tick_len: usize,
     #[serde(rename = "tickwidth")]
     tick_width: usize,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickcolor")]
+    #[serde(rename = "tickcolor")]
     tick_color: Option<Box<dyn Color>>,
     #[serde(rename = "showticklabels")]
     show_tick_labels: bool,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickfont")]
+    #[serde(rename = "tickfont")]
     tick_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickangle")]
+    #[serde(rename = "tickangle")]
     tick_angle: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickformat")]
+    #[serde(rename = "tickformat")]
     tick_format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickformatstops")]
+    #[serde(rename = "tickformatstops")]
     tick_format_stops: Option<Vec<TickFormatStop>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickprefix")]
+    #[serde(rename = "tickprefix")]
     tick_prefix: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showtickprefix")]
+    #[serde(rename = "showtickprefix")]
     show_tick_prefix: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ticksuffix")]
+    #[serde(rename = "ticksuffix")]
     tick_suffix: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showticksuffix")]
+    #[serde(rename = "showticksuffix")]
     show_tick_suffix: Option<String>,
     separate_thousands: bool,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "exponentformat")]
+    #[serde(rename = "exponentformat")]
     exponent_format: Option<ExponentFormat>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showexponent")]
+    #[serde(rename = "showexponent")]
     show_exponent: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     title: Option<Title>,
 }
 
@@ -1057,47 +1041,38 @@ pub enum AxisSide {
     Right,
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Marker {
-    #[serde(skip_serializing_if = "Option::is_none")]
     symbol: Option<MarkerSymbol>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     size: Option<Dim<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "maxdisplayed")]
+    #[serde(rename = "maxdisplayed")]
     max_displayed: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sizeref")]
+    #[serde(rename = "sizeref")]
     size_ref: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemin")]
+    #[serde(rename = "sizemin")]
     size_min: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sizemode")]
+    #[serde(rename = "sizemode")]
     size_mode: Option<SizeMode>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     gradient: Option<Gradient>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmin: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmax: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmid: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
+    #[serde(rename = "colorscale")]
     color_scale: Option<ColorScale>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autocolorscale")]
+    #[serde(rename = "autocolorscale")]
     auto_color_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
+    #[serde(rename = "reversescale")]
     reverse_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showscale")]
+    #[serde(rename = "showscale")]
     show_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
+    #[serde(rename = "colorbar")]
     color_bar: Option<ColorBar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "outliercolor")]
+    #[serde(rename = "outliercolor")]
     outlier_color: Option<Box<dyn Color>>,
 }
 
@@ -1217,13 +1192,11 @@ impl Marker {
     }
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Font {
-    #[serde(skip_serializing_if = "Option::is_none")]
     family: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     size: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Box<dyn Color>>,
 }
 
@@ -1279,26 +1252,22 @@ impl Pad {
     }
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Title {
     text: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     side: Option<Side>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xref")]
+    #[serde(rename = "xref")]
     x_ref: Option<Reference>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yref")]
+    #[serde(rename = "yref")]
     y_ref: Option<Reference>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xanchor")]
+    #[serde(rename = "xanchor")]
     x_anchor: Option<Anchor>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yanchor")]
+    #[serde(rename = "yanchor")]
     y_anchor: Option<Anchor>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pad: Option<Pad>,
 }
 
@@ -1362,17 +1331,16 @@ impl Title {
     }
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Label {
-    #[serde(skip_serializing_if = "Option::is_none", rename = "bgcolor")]
+    #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "bordercolor")]
+    #[serde(rename = "bordercolor")]
     border_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     align: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "namelength")]
+    #[serde(rename = "namelength")]
     name_length: Option<Dim<i32>>,
 }
 
@@ -1428,32 +1396,25 @@ impl Default for ErrorType {
     }
 }
 
+#[serde_with(skip_serializing_none)]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct ErrorData {
     r#type: ErrorType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     array: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     symmetric: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "arrayminus")]
+    #[serde(rename = "arrayminus")]
     array_minus: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "valueminus")]
+    #[serde(rename = "valueminus")]
     value_minus: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "traceref")]
+    #[serde(rename = "traceref")]
     trace_ref: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tracerefminus")]
+    #[serde(rename = "tracerefminus")]
     trace_ref_minus: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     copy_ystyle: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     thickness: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<usize>,
 }
 

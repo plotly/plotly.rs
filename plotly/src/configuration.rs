@@ -11,17 +11,13 @@ pub enum ImageButtonFormats {
 }
 
 // TODO: should this be behind the plotly-kaleido feature?
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct ToImageButtonOptions {
-    #[serde(skip_serializing_if = "Option::is_none")]
     format: Option<ImageButtonFormats>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     filename: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     height: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     scale: Option<usize>,
 }
 
@@ -150,69 +146,45 @@ pub enum PlotGLPixelRatio {
     Four,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Configuration {
     // reference is here: https://github.com/plotly/plotly.js/blob/master/src/plot_api/plot_config.js
     // missing: edits, show_sources, mode_bar_buttons, set_background, logging, notify_on_logging,
     // global_transforms, mode_bar_buttons_to_add and locales
-    #[serde(skip_serializing_if = "Option::is_none")]
     typeset_math: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     autosizable: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     scroll_zoom: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     fill_frame: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     frame_margins: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     editable: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     static_plot: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     to_image_button_options: Option<ToImageButtonOptions>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     display_mode_bar: Option<DisplayModeBar>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     mode_bar_buttons_to_remove: Option<Vec<ModeBarButtonName>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show_link: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "plotlyServerURL")]
+    #[serde(rename = "plotlyServerURL")]
     plotly_server_url: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "topojsonURL")]
+    #[serde(rename = "topojsonURL")]
     topojson_url: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     link_text: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     mapbox_access_token: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show_edit_in_chart_studio: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     locale: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "displaylogo")]
+    #[serde(rename = "displaylogo")]
     display_logo: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     responsive: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     double_click: Option<DoubleClick>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     double_click_delay: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show_axis_drag_handles: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show_axis_range_entry_boxes: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show_tips: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     send_data: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     watermark: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "plotGlPixelRatio")]
+    #[serde(rename = "plotGlPixelRatio")]
     plot_gl_pixel_ratio: Option<PlotGLPixelRatio>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show_send_to_cloud: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     queue_length: Option<usize>,
 }
 
