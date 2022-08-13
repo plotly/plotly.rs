@@ -1,11 +1,13 @@
 //! Open-high-low-close (OHLC) plot
 
+use serde::Serialize;
+
 use crate::color::NamedColor;
 use crate::common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible};
 use crate::private;
 use crate::Trace;
-use serde::Serialize;
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Ohlc<T, O>
 where
@@ -18,33 +20,26 @@ where
     high: Vec<O>,
     low: Vec<O>,
     close: Vec<O>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     increasing: Option<Direction>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     decreasing: Option<Direction>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "tickwidth")]
+    #[serde(rename = "tickwidth")]
     tick_width: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
 }
 

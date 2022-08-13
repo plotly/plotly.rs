@@ -1,18 +1,16 @@
 //! Histogram plot
 
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
+use serde::Serialize;
+
 use crate::common::{
     Calendar, Dim, ErrorData, HoverInfo, Label, Marker, Orientation, PlotType, Visible,
 };
-use crate::Trace;
-use serde::Serialize;
-
-use crate::private;
-use crate::private::copy_iterable_to_vec;
-
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1, Ix2};
+use crate::private;
+use crate::Trace;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Bins {
@@ -28,10 +26,9 @@ impl Bins {
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum HistFunc {
-    #[serde(rename = "count")]
     Count,
-    #[serde(rename = "sum")]
     Sum,
     #[serde(rename = "avg")]
     Average,
@@ -42,44 +39,38 @@ pub enum HistFunc {
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum HistNorm {
     #[serde(rename = "")]
     Default,
-    #[serde(rename = "percent")]
     Percent,
-    #[serde(rename = "probability")]
     Probability,
-    #[serde(rename = "density")]
     Density,
     #[serde(rename = "probability density")]
     ProbabilityDensity,
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum HistDirection {
-    #[serde(rename = "increasing")]
     Increasing,
-    #[serde(rename = "decreasing")]
     Decreasing,
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum CurrentBin {
-    #[serde(rename = "include")]
     Include,
-    #[serde(rename = "exclude")]
     Exclude,
-    #[serde(rename = "half")]
     Half,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Cumulative {
-    #[serde(skip_serializing_if = "Option::is_none")]
     enabled: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     direction: Option<HistDirection>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "currentbin")]
+    #[serde(rename = "currentbin")]
     current_bin: Option<CurrentBin>,
 }
 
@@ -108,74 +99,65 @@ impl Cumulative {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug)]
 pub struct Histogram<H>
 where
     H: Serialize + Clone + Default + 'static,
 {
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<H>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<Vec<H>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    #[serde(rename = "xaxis")]
     x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    #[serde(rename = "yaxis")]
     y_axis: Option<String>,
     orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "histfunc")]
+    #[serde(rename = "histfunc")]
     hist_func: Option<HistFunc>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "histnorm")]
+    #[serde(rename = "histnorm")]
     hist_norm: Option<HistNorm>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "alignmentgroup")]
+    #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "offsetgroup")]
+    #[serde(rename = "offsetgroup")]
     offset_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "nbinsx")]
+    #[serde(rename = "nbinsx")]
     n_bins_x: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "nbinsy")]
+    #[serde(rename = "nbinsy")]
     n_bins_y: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autobinx")]
+    #[serde(rename = "autobinx")]
     auto_bin_x: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autobiny")]
+    #[serde(rename = "autobiny")]
     auto_bin_y: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "bingroup")]
+    #[serde(rename = "bingroup")]
     bin_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xbins")]
+    #[serde(rename = "xbins")]
     x_bins: Option<Bins>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ybins")]
+    #[serde(rename = "ybins")]
     y_bins: Option<Bins>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_x: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_y: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cumulative: Option<Cumulative>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
 }
 
@@ -230,7 +212,7 @@ where
     where
         I: IntoIterator<Item = H>,
     {
-        let x = copy_iterable_to_vec(x);
+        let x = private::copy_iterable_to_vec(x);
         Box::new(Histogram {
             r#type: PlotType::Histogram,
             x: Some(x),
@@ -242,8 +224,8 @@ where
     where
         I: IntoIterator<Item = H>,
     {
-        let x = copy_iterable_to_vec(x);
-        let y = copy_iterable_to_vec(y);
+        let x = private::copy_iterable_to_vec(x);
+        let y = private::copy_iterable_to_vec(y);
         Box::new(Histogram {
             r#type: PlotType::Histogram,
             x: Some(x),
@@ -256,7 +238,7 @@ where
     where
         I: IntoIterator<Item = H>,
     {
-        let y = copy_iterable_to_vec(y);
+        let y = private::copy_iterable_to_vec(y);
         Box::new(Histogram {
             r#type: PlotType::Histogram,
             y: Some(y),

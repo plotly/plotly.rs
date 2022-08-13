@@ -1,14 +1,15 @@
 //! Bar plot
 
+use serde::Serialize;
+
 use crate::common::{
     Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, Marker, Orientation, PlotType,
     TextAnchor, TextPosition, Visible,
 };
-use crate::Trace;
-use serde::Serialize;
-
 use crate::private;
+use crate::Trace;
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Bar<X, Y>
 where
@@ -18,69 +19,58 @@ where
     x: Vec<X>,
     y: Vec<Y>,
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     offset: Option<Dim<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textposition")]
+    #[serde(rename = "textposition")]
     text_position: Option<Dim<TextPosition>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "texttemplate")]
+    #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    #[serde(rename = "xaxis")]
     x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    #[serde(rename = "yaxis")]
     y_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "alignmentgroup")]
+    #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "offsetgroup")]
+    #[serde(rename = "offsetgroup")]
     offset_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textangle")]
+    #[serde(rename = "textangle")]
     text_angle: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
+    #[serde(rename = "textfont")]
     text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_x: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_y: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "cliponaxis")]
+    #[serde(rename = "cliponaxis")]
     clip_on_axis: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "constraintext")]
+    #[serde(rename = "constraintext")]
     constrain_text: Option<ConstrainText>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "insidetextanchor")]
+    #[serde(rename = "insidetextanchor")]
     inside_text_anchor: Option<TextAnchor>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "insidetextfont")]
+    #[serde(rename = "insidetextfont")]
     inside_text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "outsidetextfont")]
+    #[serde(rename = "outsidetextfont")]
     outside_text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
 }
 
@@ -308,9 +298,8 @@ where
 mod tests {
     use serde_json::{json, to_value};
 
-    use crate::common::ErrorType;
-
     use super::*;
+    use crate::common::ErrorType;
 
     #[test]
     fn test_serialize_bar() {

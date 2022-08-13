@@ -1,5 +1,7 @@
 //! Scatter3D plot
 
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1};
 use serde::Serialize;
 
 use crate::color::Color;
@@ -7,19 +9,14 @@ use crate::common::{
     Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode, PlotType,
     Position, Visible,
 };
-use crate::private::{self, copy_iterable_to_vec, NumOrString, NumOrStringCollection};
+use crate::private;
 use crate::Trace;
 
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1};
-
+#[serde_with::skip_serializing_none]
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct ProjectionCoord {
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     scale: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     show: Option<bool>,
 }
 
@@ -47,13 +44,11 @@ impl ProjectionCoord {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct Projection {
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<ProjectionCoord>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<ProjectionCoord>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     z: Option<ProjectionCoord>,
 }
 
@@ -90,6 +85,7 @@ pub enum SurfaceAxis {
     Two,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Scatter3D<X, Y, Z>
 where
@@ -98,82 +94,65 @@ where
     Z: Serialize + Clone + 'static,
 {
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendrank")]
+    #[serde(rename = "legendrank")]
     legend_rank: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
+    #[serde(rename = "legendgrouptitle")]
     legend_group_title: Option<LegendGroupTitle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<Mode>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<X>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<Vec<Y>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     z: Option<Vec<Z>>,
 
-    #[serde(skip_serializing_if = "Option::is_none", rename = "surfacecolor")]
+    #[serde(rename = "surfacecolor")]
     surface_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textposition")]
+    #[serde(rename = "textposition")]
     text_position: Option<Dim<Position>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "texttemplate")]
+    #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xhoverformat")]
+    #[serde(rename = "xhoverformat")]
     x_hover_format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yhoverformat")]
+    #[serde(rename = "yhoverformat")]
     y_hover_format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "zhoverformat")]
+    #[serde(rename = "zhoverformat")]
     z_hover_format: Option<String>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    meta: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "customdata")]
-    custom_data: Option<NumOrStringCollection>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    meta: Option<private::NumOrString>,
+    #[serde(rename = "customdata")]
+    custom_data: Option<private::NumOrStringCollection>,
     scene: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_x: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_y: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_z: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
+    #[serde(rename = "connectgaps")]
     connect_gaps: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     projection: Option<Projection>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "surfaceaxis")]
+    #[serde(rename = "surfaceaxis")]
     surface_axis: Option<SurfaceAxis>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "zcalendar")]
+    #[serde(rename = "zcalendar")]
     z_calendar: Option<Calendar>,
 }
 
@@ -189,9 +168,9 @@ where
         K: IntoIterator<Item = Y>,
         L: IntoIterator<Item = Z>,
     {
-        let x = copy_iterable_to_vec(x);
-        let y = copy_iterable_to_vec(y);
-        let z = copy_iterable_to_vec(z);
+        let x = private::copy_iterable_to_vec(x);
+        let y = private::copy_iterable_to_vec(y);
+        let z = private::copy_iterable_to_vec(z);
         Box::new(Self {
             r#type: PlotType::Scatter3D,
             x: Some(x),
@@ -443,7 +422,7 @@ where
     /// `%{meta[i]}` where `i` is the index or key of the `meta` item in question. To access trace
     /// `meta` in layout attributes, use `%{data[n[.meta[i]}` where `i` is the index or key of the
     /// `meta` and `n` is the trace index.
-    pub fn meta<V: Into<NumOrString>>(mut self, meta: V) -> Box<Self> {
+    pub fn meta<V: Into<private::NumOrString>>(mut self, meta: V) -> Box<Self> {
         self.meta = Some(meta.into());
         Box::new(self)
     }
@@ -451,7 +430,10 @@ where
     /// Assigns extra data each datum. This may be useful when listening to hover, click and
     /// selection events. Note that, "scatter" traces also appends customdata items in the markers
     /// DOM elements.
-    pub fn custom_data<V: Into<NumOrString> + Clone>(mut self, custom_data: Vec<V>) -> Box<Self> {
+    pub fn custom_data<V: Into<private::NumOrString> + Clone>(
+        mut self,
+        custom_data: Vec<V>,
+    ) -> Box<Self> {
         self.custom_data = Some(custom_data.into());
         Box::new(self)
     }

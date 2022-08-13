@@ -7,17 +7,13 @@ use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotT
 use crate::private;
 use crate::Trace;
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Lighting {
-    #[serde(skip_serializing_if = "Option::is_none")]
     ambient: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     diffuse: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     specular: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     roughness: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     fresnel: Option<f64>,
 }
 
@@ -65,13 +61,11 @@ impl Position {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct PlaneProject {
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     z: Option<bool>,
 }
 
@@ -96,29 +90,22 @@ impl PlaneProject {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct PlaneContours {
-    #[serde(skip_serializing_if = "Option::is_none")]
     show: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     start: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     end: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     size: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     project: Option<PlaneProject>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "usecolormap")]
+    #[serde(rename = "usecolormap")]
     use_colormap: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     highlight: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "highlightcolor")]
+    #[serde(rename = "highlightcolor")]
     highlight_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "highlightwidth")]
+    #[serde(rename = "highlightwidth")]
     highlight_width: Option<usize>,
 }
 
@@ -183,13 +170,11 @@ impl PlaneContours {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct SurfaceContours {
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<PlaneContours>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<PlaneContours>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     z: Option<PlaneContours>,
 }
 
@@ -214,6 +199,7 @@ impl SurfaceContours {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct Surface<X, Y, Z>
 where
@@ -222,66 +208,54 @@ where
     Z: Serialize + Clone,
 {
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<X>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<Vec<Y>>,
     z: Vec<Vec<Z>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "surfacecolor")]
+    #[serde(rename = "surfacecolor")]
     surface_color: Option<Vec<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
+    #[serde(rename = "colorbar")]
     color_bar: Option<ColorBar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autocolorscale")]
+    #[serde(rename = "autocolorscale")]
     auto_color_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
+    #[serde(rename = "colorscale")]
     color_scale: Option<ColorScale>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showscale")]
+    #[serde(rename = "showscale")]
     show_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
+    #[serde(rename = "reversescale")]
     reverse_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cauto: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmin: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmax: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cmid: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
+    #[serde(rename = "connectgaps")]
     connect_gaps: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     contours: Option<SurfaceContours>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hidesurface")]
+    #[serde(rename = "hidesurface")]
     hide_surface: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     lighting: Option<Lighting>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "lightposition")]
+    #[serde(rename = "lightposition")]
     light_position: Option<Position>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "zcalendar")]
+    #[serde(rename = "zcalendar")]
     z_calendar: Option<Calendar>,
 }
 
