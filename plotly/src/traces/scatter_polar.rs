@@ -1,5 +1,7 @@
 //! Polar scatter plot
 
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
 use serde::Serialize;
 
 use crate::color::Color;
@@ -7,14 +9,12 @@ use crate::common::{
     Dim, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode, Orientation, PlotType,
     Position, Visible,
 };
+#[cfg(feature = "plotly_ndarray")]
+use crate::ndarray::ArrayTraces;
 use crate::private::{self, NumOrString, NumOrStringCollection};
 use crate::Trace;
 
-#[cfg(feature = "plotly_ndarray")]
-use crate::ndarray::ArrayTraces;
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1, Ix2};
-
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug)]
 pub struct ScatterPolar<Theta, R>
 where
@@ -22,86 +22,66 @@ where
     R: Serialize + Clone + 'static,
 {
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     mode: Option<Mode>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     theta: Option<Vec<Theta>>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     theta0: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     dtheta: Option<f64>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     r: Option<Vec<R>>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     r0: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     dr: Option<f64>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     subplot: Option<String>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textposition")]
+    #[serde(rename = "textposition")]
     text_position: Option<Dim<Position>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "texttemplate")]
+    #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     meta: Option<NumOrString>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     custom_data: Option<NumOrStringCollection>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "groupnorm")]
+    #[serde(rename = "groupnorm")]
     group_norm: Option<GroupNorm>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "selectedpoints")]
+    #[serde(rename = "selectedpoints")]
     selected_points: Option<Vec<u32>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "stackgroup")]
+    #[serde(rename = "stackgroup")]
     stack_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
+    #[serde(rename = "textfont")]
     text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "cliponaxis")]
+    #[serde(rename = "cliponaxis")]
     clip_on_axis: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
+    #[serde(rename = "connectgaps")]
     connect_gaps: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     fill: Option<Fill>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
+    #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoveron")]
+    #[serde(rename = "hoveron")]
     hover_on: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "stackgaps")]
+    #[serde(rename = "stackgaps")]
     stack_gaps: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     uid: Option<String>,
 }
 

@@ -15,11 +15,10 @@ pub enum Arrangement {
     Fixed,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Default)]
 pub struct Line {
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
 }
 
@@ -44,28 +43,22 @@ impl Line {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Default, Clone)]
 pub struct Node {
     // Missing: customdata, groups
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     label: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pad: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     thickness: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<f64>,
 }
 
@@ -130,27 +123,23 @@ impl Node {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Default, Clone)]
 pub struct Link<V>
 where
     V: Serialize + Default + Clone,
 {
     // Missing: colorscales, customdata
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     source: Option<Vec<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     target: Option<Vec<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<Vec<V>>,
 }
 
@@ -208,6 +197,7 @@ where
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Default, Clone)]
 pub struct Sankey<V>
 where
@@ -215,37 +205,29 @@ where
 {
     // Missing: meta, customdata, uirevision
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendrank")]
+    #[serde(rename = "legendrank")]
     legend_rank: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
+    #[serde(rename = "legendgrouptitle")]
     legend_group_title: Option<LegendGroupTitle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     domain: Option<Domain>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     node: Option<Node>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     link: Option<Link<V>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
+    #[serde(rename = "textfont")]
     text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "selectedpoints")]
+    #[serde(rename = "selectedpoints")]
     selected_points: Option<Vec<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     arrangement: Option<Arrangement>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "valueformat")]
+    #[serde(rename = "valueformat")]
     value_format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "valuesuffix")]
+    #[serde(rename = "valuesuffix")]
     value_suffix: Option<String>,
 }
 

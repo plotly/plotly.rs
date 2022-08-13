@@ -1,12 +1,13 @@
 //! Box plot
 
+use serde::{Serialize, Serializer};
+
 use crate::color::Color;
 use crate::common::{
     Calendar, Dim, HoverInfo, Label, Line, Marker, Orientation, PlotType, Visible,
 };
 use crate::private;
 use crate::Trace;
-use serde::{Serialize, Serializer};
 
 #[derive(Debug, Clone)]
 pub enum BoxMean {
@@ -51,15 +52,14 @@ impl Serialize for BoxPoints {
 }
 
 #[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
 pub enum QuartileMethod {
-    #[serde(rename = "linear")]
     Linear,
-    #[serde(rename = "exclusive")]
     Exclusive,
-    #[serde(rename = "inclusive")]
     Inclusive,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct BoxPlot<Y, X>
 where
@@ -67,85 +67,68 @@ where
     X: Serialize + Default + Clone,
 {
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<Vec<X>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<Vec<Y>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    #[serde(rename = "xaxis")]
     x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    #[serde(rename = "yaxis")]
     y_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "alignmentgroup")]
+    #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "offsetgroup")]
+    #[serde(rename = "offsetgroup")]
     offset_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "boxmean")]
+    #[serde(rename = "boxmean")]
     box_mean: Option<BoxMean>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "boxpoints")]
+    #[serde(rename = "boxpoints")]
     box_points: Option<BoxPoints>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     notched: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "notchwidth")]
+    #[serde(rename = "notchwidth")]
     notch_width: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "whiskerwidth")]
+    #[serde(rename = "whiskerwidth")]
     whisker_width: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     q1: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     median: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     q3: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "lowerfence")]
+    #[serde(rename = "lowerfence")]
     lower_fence: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "notchspan")]
+    #[serde(rename = "notchspan")]
     notch_span: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     mean: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "sd")]
+    #[serde(rename = "sd")]
     standard_deviation: Option<Vec<f64>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "quartilemethod")]
+    #[serde(rename = "quartilemethod")]
     quartile_method: Option<QuartileMethod>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "fillcolor")]
+    #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoveron")]
+    #[serde(rename = "hoveron")]
     hover_on: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "pointpos")]
+    #[serde(rename = "pointpos")]
     point_pos: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     jitter: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
 }
 

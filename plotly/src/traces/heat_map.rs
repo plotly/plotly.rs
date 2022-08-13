@@ -1,10 +1,12 @@
 //! Heat-map plot
 
+use serde::Serialize;
+
 use crate::common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible};
 use crate::private;
 use crate::Trace;
-use serde::Serialize;
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct HeatMap<Z, X, Y>
 where
@@ -13,64 +15,54 @@ where
     Z: Serialize + Default + Clone,
 {
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     opacity: Option<f64>,
     x: Option<Vec<X>>,
     y: Option<Vec<Y>>,
     z: Vec<Z>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    #[serde(rename = "xaxis")]
     x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    #[serde(rename = "yaxis")]
     y_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorbar")]
+    #[serde(rename = "colorbar")]
     color_bar: Option<ColorBar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autocolorscale")]
+    #[serde(rename = "autocolorscale")]
     auto_color_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "colorscale")]
+    #[serde(rename = "colorscale")]
     color_scale: Option<ColorScale>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showscale")]
+    #[serde(rename = "showscale")]
     show_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "reversescale")]
+    #[serde(rename = "reversescale")]
     reverse_scale: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     zauto: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "zhoverformat")]
+    #[serde(rename = "zhoverformat")]
     zhover_format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     zmax: Option<Z>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     zmid: Option<Z>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     zmin: Option<Z>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     zsmooth: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "connectgaps")]
+    #[serde(rename = "connectgaps")]
     connect_gaps: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverongaps")]
+    #[serde(rename = "hoverongaps")]
     hover_on_gaps: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     transpose: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
 }
 
