@@ -53,7 +53,7 @@ pub enum HoverInfo {
     Skip,
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct LegendGroupTitle {
     text: String,
@@ -74,7 +74,7 @@ impl LegendGroupTitle {
     }
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Domain {
     column: Option<usize>,
@@ -1041,7 +1041,7 @@ pub enum AxisSide {
     Right,
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Marker {
     symbol: Option<MarkerSymbol>,
@@ -1192,7 +1192,7 @@ impl Marker {
     }
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Font {
     family: Option<String>,
@@ -1252,7 +1252,7 @@ impl Pad {
     }
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Title {
     text: String,
@@ -1331,7 +1331,7 @@ impl Title {
     }
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Label {
     #[serde(rename = "bgcolor")]
@@ -1396,7 +1396,7 @@ impl Default for ErrorType {
     }
 }
 
-#[serde_with::(skip_serializing_none)]
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct ErrorData {
     r#type: ErrorType,
