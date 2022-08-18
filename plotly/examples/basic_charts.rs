@@ -1,12 +1,12 @@
 use itertools_num::linspace;
-use plotly::common::{
-    ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
-    Orientation, Title,
-};
-use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder};
-use plotly::sankey::{Line as SankeyLine, Link, Node};
 use plotly::{
     color::{NamedColor, Rgb, Rgba},
+    common::{
+        ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
+        Orientation, Title,
+    },
+    layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder},
+    sankey::{Line as SankeyLine, Link, Node},
     Bar, Plot, Sankey, Scatter, ScatterPolar,
 };
 use rand_distr::{Distribution, Normal, Uniform};
