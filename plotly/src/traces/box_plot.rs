@@ -223,7 +223,6 @@ where
 {
     pub fn new(y: Vec<Y>) -> Box<BoxPlot<f64, Y>> {
         Box::new(BoxPlot {
-            x: None::<Vec<f64>>,
             y: Some(y),
             ..Default::default()
         })
@@ -514,88 +513,104 @@ mod tests {
     }
 
     #[test]
+    fn test_box_plot_new() {
+        let trace = BoxPlot::new(vec![0.0, 0.1]);
+        let expected = json!({
+            "type": "box",
+            "y": [0.0, 0.1]
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
     fn test_serialize_box_plot() {
         let trace = BoxPlot::new_xy(vec![1, 2, 3], vec![4, 5, 6])
-            .name("box")
-            .visible(Visible::LegendOnly)
-            .show_legend(false)
-            .legend_group("one")
-            .ids(vec!["1", "2"])
-            .width(50)
-            .text("hi")
-            .text_array(vec!["hi", "there"])
-            .hover_text("ok")
-            .hover_text_array(vec!["okey", "dokey"])
-            .x_axis("xaxis")
-            .y_axis("yaxis")
-            .hover_template_array(vec!["templ1", "templ2"])
-            .orientation(Orientation::Horizontal)
             .alignment_group("alignment_group")
-            .offset_group("offset_group")
-            .marker(Marker::new())
-            .line(Line::new())
             .box_mean(BoxMean::StandardDeviation)
             .box_points(BoxPoints::All)
-            .notched(true)
-            .notch_width(0.1)
-            .whisker_width(0.2)
-            .q1(vec![2., 3.])
-            .median(vec![4., 5.])
-            .q3(vec![6., 7.])
-            .lower_fence(vec![0., 1.])
-            .upper_fence(vec![8., 9.])
-            .notch_span(vec![10., 11.])
-            .mean(vec![12., 13.])
-            .standard_deviation(vec![14., 15.])
-            .quartile_method(QuartileMethod::Exclusive)
             .fill_color("#522622")
+            .hover_info(HoverInfo::Name)
             .hover_label(Label::new())
             .hover_on(HoverOn::BoxesAndPoints)
-            .point_pos(-1.)
+            .hover_template("templ2")
+            .hover_template_array(vec!["templ1", "templ2"])
+            .hover_text("ok")
+            .hover_text_array(vec!["okey", "dokey"])
+            .ids(vec!["1", "2"])
             .jitter(0.5)
+            .line(Line::new())
+            .legend_group("one")
+            .lower_fence(vec![0., 1.])
+            .marker(Marker::new())
+            .mean(vec![12., 13.])
+            .median(vec![4., 5.])
+            .name("box")
+            .notch_span(vec![10., 11.])
+            .notch_width(0.1)
+            .notched(true)
+            .offset_group("offset_group")
+            .opacity(0.6)
+            .orientation(Orientation::Horizontal)
+            .point_pos(-1.)
+            .q1(vec![2., 3.])
+            .q3(vec![6., 7.])
+            .quartile_method(QuartileMethod::Exclusive)
+            .show_legend(false)
+            .standard_deviation(vec![14., 15.])
+            .text("hi")
+            .text_array(vec!["hi", "there"])
+            .upper_fence(vec![8., 9.])
+            .visible(Visible::LegendOnly)
+            .whisker_width(0.2)
+            .width(50)
+            .x_axis("xaxis")
             .x_calendar(Calendar::Chinese)
+            .y_axis("yaxis")
             .y_calendar(Calendar::Coptic);
 
         let expected = json!({
             "type": "box",
-            "x": [1, 2, 3],
-            "y": [4, 5, 6],
-            "name": "box",
-            "visible": "legendonly",
-            "showlegend": false,
-            "legendgroup": "one",
-            "ids": ["1", "2"],
-            "width": 50,
-            "text": ["hi", "there"],
-            "hovertext": ["okey", "dokey"],
-            "xaxis": "xaxis",
-            "yaxis": "yaxis",
-            "hovertemplate": ["templ1", "templ2"],
-            "orientation": "h",
             "alignmentgroup": "alignment_group",
-            "offsetgroup": "offset_group",
-            "marker": {},
-            "line": {},
             "boxmean": "sd",
             "boxpoints": "all",
-            "notched": true,
-            "notchwidth": 0.1,
-            "whiskerwidth": 0.2,
-            "q1": [2.0, 3.0],
-            "median": [4.0, 5.0],
-            "q3": [6.0, 7.0],
-            "lowerfence": [0.0, 1.0],
-            "upperfence": [8.0, 9.0],
-            "notchspan": [10.0, 11.0],
-            "mean": [12.0, 13.0],
-            "sd": [14.0, 15.0],
-            "quartilemethod": "exclusive",
             "fillcolor": "#522622",
+            "ids": ["1", "2"],
+            "hoverinfo": "name",
             "hoverlabel": {},
             "hoveron": "boxes+points",
-            "pointpos": -1.0,
+            "hovertemplate": ["templ1", "templ2"],
+            "hovertext": ["okey", "dokey"],
             "jitter": 0.5,
+            "legendgroup": "one",
+            "line": {},
+            "lowerfence": [0.0, 1.0],
+            "marker": {},
+            "mean": [12.0, 13.0],
+            "median": [4.0, 5.0],
+            "name": "box",
+            "notchspan": [10.0, 11.0],
+            "notched": true,
+            "notchwidth": 0.1,
+            "offsetgroup": "offset_group",
+            "opacity": 0.6,
+            "orientation": "h",
+            "pointpos": -1.0,
+            "q1": [2.0, 3.0],
+            "q3": [6.0, 7.0],
+            "quartilemethod": "exclusive",
+            "sd": [14.0, 15.0],
+            "showlegend": false,
+            "text": ["hi", "there"],
+            "upperfence": [8.0, 9.0],
+            "visible": "legendonly",
+            "whiskerwidth": 0.2,
+            "width": 50,
+            "x": [1, 2, 3],
+            "xaxis": "xaxis",
             "xcalendar": "chinese",
+            "y": [4, 5, 6],
+            "yaxis": "yaxis",
             "ycalendar": "coptic"
         });
 

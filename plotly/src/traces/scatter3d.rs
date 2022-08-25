@@ -4,13 +4,14 @@
 use ndarray::{Array, Ix1};
 use serde::Serialize;
 
-use crate::color::Color;
-use crate::common::{
-    Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode, PlotType,
-    Position, Visible,
+use crate::{
+    color::Color,
+    common::{
+        Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Line, Marker, Mode, PlotType,
+        Position, Visible,
+    },
+    private, Trace,
 };
-use crate::private;
-use crate::Trace;
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, Default, Clone, Serialize)]
@@ -85,13 +86,36 @@ pub enum SurfaceAxis {
     Two,
 }
 
+/// Construct a scatter3D trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::Scatter3D;
+///
+/// let trace = Scatter3D::new(
+///     vec![0.0, 1.0],
+///     vec![2.0, 3.0],
+///     vec![4.0, 5.0],
+/// );
+///
+/// let expected = serde_json::json!({
+///     "type": "scatter3d",
+///     "x": [0.0, 1.0],
+///     "y": [2.0, 3.0],
+///     "z": [4.0, 5.0],
+///
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug)]
 pub struct Scatter3D<X, Y, Z>
 where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
-    Z: Serialize + Clone + 'static,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+    Z: Serialize + Clone,
 {
     r#type: PlotType,
     name: Option<String>,
@@ -156,21 +180,63 @@ where
     z_calendar: Option<Calendar>,
 }
 
+impl<X, Y, Z> Default for Scatter3D<X, Y, Z>
+where
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
+{
+    fn default() -> Self {
+        Self {
+            r#type: PlotType::Scatter3D,
+            name: None,
+            visible: None,
+            show_legend: None,
+            legend_group: None,
+            legend_rank: None,
+            legend_group_title: None,
+            opacity: None,
+            mode: None,
+            ids: None,
+            x: None,
+            y: None,
+            z: None,
+            surface_color: None,
+            text: None,
+            text_position: None,
+            text_template: None,
+            hover_text: None,
+            hover_info: None,
+            hover_template: None,
+            x_hover_format: None,
+            y_hover_format: None,
+            z_hover_format: None,
+            meta: None,
+            custom_data: None,
+            scene: None,
+            marker: None,
+            line: None,
+            error_x: None,
+            error_y: None,
+            error_z: None,
+            connect_gaps: None,
+            hover_label: None,
+            projection: None,
+            surface_axis: None,
+            x_calendar: None,
+            y_calendar: None,
+            z_calendar: None,
+        }
+    }
+}
+
 impl<X, Y, Z> Scatter3D<X, Y, Z>
 where
-    X: Serialize + Default + Clone + 'static,
-    Y: Serialize + Default + Clone + 'static,
-    Z: Serialize + Default + Clone + 'static,
+    X: Serialize + Default + Clone,
+    Y: Serialize + Default + Clone,
+    Z: Serialize + Default + Clone,
 {
-    pub fn new<I, K, L>(x: I, y: K, z: L) -> Box<Self>
-    where
-        I: IntoIterator<Item = X>,
-        K: IntoIterator<Item = Y>,
-        L: IntoIterator<Item = Z>,
-    {
-        let x = private::copy_iterable_to_vec(x);
-        let y = private::copy_iterable_to_vec(y);
-        let z = private::copy_iterable_to_vec(z);
+    pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Self> {
         Box::new(Self {
             r#type: PlotType::Scatter3D,
             x: Some(x),
@@ -523,9 +589,9 @@ where
 
 impl<X, Y, Z> Trace for Scatter3D<X, Y, Z>
 where
-    X: Serialize + Clone + 'static,
-    Y: Serialize + Clone + 'static,
-    Z: Serialize + Clone + 'static,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
+    Z: Serialize + Clone,
 {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
@@ -567,17 +633,41 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatte3d() {
-        let plot = Scatter3D::new(vec![0, 1], vec![2, 3], vec![4, 5])
-            .name("trace_name")
-            .visible(Visible::True)
-            .show_legend(true)
+    fn test_serialize_default_scatter3d() {
+        let trace = Scatter3D::<f64, f64, f64>::default();
+        let expected = json!({"type": "scatter3d"}).to_string();
+
+        assert_eq!(trace.to_json(), expected);
+    }
+
+    #[test]
+    fn test_serialize_scatter3d() {
+        let trace = Scatter3D::new(vec![0, 1], vec![2, 3], vec![4, 5])
+            .connect_gaps(true)
+            .custom_data(vec!["custom_data"])
+            .error_x(ErrorData::new(ErrorType::SquareRoot))
+            .error_y(ErrorData::new(ErrorType::Percent))
+            .error_z(ErrorData::new(ErrorType::Data))
+            .hover_label(Label::new())
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .hover_info(HoverInfo::XAndYAndZ)
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .ids(vec!["1"])
             .legend_group("legend_group")
             .legend_rank(1000)
             .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
-            .opacity(0.2)
+            .line(Line::new())
+            .marker(Marker::new())
+            .meta("meta")
             .mode(Mode::LinesText)
-            .ids(vec!["1"])
+            .name("trace_name")
+            .opacity(0.2)
+            .projection(Projection::new())
+            .scene("scene2")
+            .show_legend(true)
+            .surface_axis(SurfaceAxis::One)
             .surface_color("#123456")
             .text("text")
             .text_array(vec!["text"])
@@ -585,69 +675,55 @@ mod tests {
             .text_position_array(vec![Position::TopCenter])
             .text_template("text_template")
             .text_template_array(vec!["text_template"])
-            .hover_text("hover_text")
-            .hover_text_array(vec!["hover_text"])
-            .hover_info(HoverInfo::XAndYAndZ)
-            .hover_template("hover_template")
-            .hover_template_array(vec!["hover_template"])
-            .x_hover_format("x_hover_format")
-            .y_hover_format("y_hover_format")
-            .z_hover_format("z_hover_format")
-            .meta("meta")
-            .custom_data(vec!["custom_data"])
-            .scene("scene2")
-            .marker(Marker::new())
-            .line(Line::new())
-            .error_x(ErrorData::new(ErrorType::SquareRoot))
-            .error_y(ErrorData::new(ErrorType::Percent))
-            .error_z(ErrorData::new(ErrorType::Data))
-            .hover_label(Label::new())
-            .projection(Projection::new())
-            .surface_axis(SurfaceAxis::One)
+            .visible(Visible::True)
             .x_calendar(Calendar::Chinese)
+            .x_hover_format("x_hover_format")
             .y_calendar(Calendar::Coptic)
-            .z_calendar(Calendar::Ummalqura);
+            .y_hover_format("y_hover_format")
+            .z_calendar(Calendar::Ummalqura)
+            .z_hover_format("z_hover_format");
 
         let expected = json!({
             "type": "scatter3d",
-            "x": [0, 1],
-            "y": [2, 3],
-            "z": [4, 5],
-            "name": "trace_name",
-            "visible": true,
-            "showlegend": true,
-            "legendgroup": "legend_group",
-            "legendrank": 1000,
-            "legendgrouptitle": {"text": "Legend Group Title"},
-            "opacity": 0.2,
-            "mode": "lines+text",
-            "ids": ["1"],
-            "surfacecolor": "#123456",
-            "text": ["text"],
-            "texttemplate": ["text_template"],
-            "textposition": ["top center"],
-            "hovertext": ["hover_text"],
-            "hovertemplate": ["hover_template"],
-            "hoverinfo": "x+y+z",
-            "xhoverformat": "x_hover_format",
-            "yhoverformat": "y_hover_format",
-            "zhoverformat": "z_hover_format",
-            "meta": "meta",
+            "connectgaps": true,
             "customdata": ["custom_data"],
-            "scene": "scene2",
-            "marker": {},
-            "line": {},
             "error_x": {"type": "sqrt"},
             "error_y": {"type": "percent"},
             "error_z": {"type": "data"},
+            "ids": ["1"],
+            "hoverinfo": "x+y+z",
             "hoverlabel": {},
+            "hovertemplate": ["hover_template"],
+            "hovertext": ["hover_text"],
+            "legendgroup": "legend_group",
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "legendrank": 1000,
+            "line": {},
+            "marker": {},
+            "meta": "meta",
+            "mode": "lines+text",
+            "name": "trace_name",
+            "opacity": 0.2,
             "projection": {},
+            "scene": "scene2",
+            "showlegend": true,
             "surfaceaxis": "1",
+            "surfacecolor": "#123456",
+            "text": ["text"],
+            "textposition": ["top center"],
+            "texttemplate": ["text_template"],
+            "visible": true,
+            "x": [0, 1],
+            "xhoverformat": "x_hover_format",
             "xcalendar": "chinese",
+            "y": [2, 3],
             "ycalendar": "coptic",
+            "yhoverformat": "y_hover_format",
+            "z": [4, 5],
             "zcalendar": "ummalqura",
+            "zhoverformat": "z_hover_format",
         });
 
-        assert_eq!(to_value(plot).unwrap(), expected);
+        assert_eq!(to_value(trace).unwrap(), expected);
     }
 }

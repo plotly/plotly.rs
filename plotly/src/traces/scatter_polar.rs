@@ -1,19 +1,37 @@
-//! Polar scatter plot
+//! Polar scatter trace
 
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 use serde::Serialize;
 
-use crate::color::Color;
-use crate::common::{
-    Dim, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode, Orientation, PlotType,
-    Position, Visible,
-};
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-use crate::private::{self, NumOrString, NumOrStringCollection};
-use crate::Trace;
+use crate::{
+    color::Color,
+    common::{
+        Dim, Fill, Font, HoverInfo, HoverOn, Label, Line, Marker, Mode, PlotType, Position, Visible,
+    },
+    private::{self, NumOrString, NumOrStringCollection},
+    Trace,
+};
 
+/// Construct a polar scatter trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::ScatterPolar;
+///
+/// let trace = ScatterPolar::new(vec![0, 1, 2], vec![2, 1, 0]);
+///
+/// let expected = serde_json::json!({
+///     "type": "scatterpolar",
+///     "theta": [0, 1, 2],
+///     "r": [2, 1, 0]
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug)]
 pub struct ScatterPolar<Theta, R>
@@ -32,12 +50,10 @@ where
     mode: Option<Mode>,
     ids: Option<Vec<String>>,
     theta: Option<Vec<Theta>>,
-
     theta0: Option<NumOrString>,
     dtheta: Option<f64>,
 
     r: Option<Vec<R>>,
-
     r0: Option<NumOrString>,
     dr: Option<f64>,
 
@@ -56,15 +72,11 @@ where
     hover_template: Option<Dim<String>>,
 
     meta: Option<NumOrString>,
+    #[serde(rename = "customdata")]
     custom_data: Option<NumOrStringCollection>,
 
-    orientation: Option<Orientation>,
-    #[serde(rename = "groupnorm")]
-    group_norm: Option<GroupNorm>,
     #[serde(rename = "selectedpoints")]
     selected_points: Option<Vec<u32>>,
-    #[serde(rename = "stackgroup")]
-    stack_group: Option<String>,
     marker: Option<Marker>,
     line: Option<Line>,
     #[serde(rename = "textfont")]
@@ -79,10 +91,7 @@ where
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
     #[serde(rename = "hoveron")]
-    hover_on: Option<String>,
-    #[serde(rename = "stackgaps")]
-    stack_gaps: Option<String>,
-    uid: Option<String>,
+    hover_on: Option<HoverOn>,
 }
 
 impl<Theta, R> Default for ScatterPolar<Theta, R>
@@ -115,10 +124,7 @@ where
             hover_template: None,
             meta: None,
             custom_data: None,
-            orientation: None,
-            group_norm: None,
             selected_points: None,
-            stack_group: None,
             marker: None,
             line: None,
             text_font: None,
@@ -128,8 +134,6 @@ where
             fill_color: None,
             hover_label: None,
             hover_on: None,
-            stack_gaps: None,
-            uid: None,
         }
     }
 }
@@ -139,17 +143,10 @@ where
     Theta: Serialize + Clone + 'static,
     R: Serialize + Clone + 'static,
 {
-    pub fn new<I, K>(theta: I, r: K) -> Box<Self>
-    where
-        I: IntoIterator<Item = Theta>,
-        K: IntoIterator<Item = R>,
-    {
-        let theta = private::copy_iterable_to_vec(theta);
-        let r = private::copy_iterable_to_vec(r);
+    pub fn new(theta: Vec<Theta>, r: Vec<R>) -> Box<Self> {
         Box::new(Self {
             theta: Some(theta),
             r: Some(r),
-            r#type: PlotType::ScatterPolar,
             ..Default::default()
         })
     }
@@ -159,7 +156,6 @@ where
         Box::new(Self {
             theta: Some(theta.to_vec()),
             r: Some(r.to_vec()),
-            r#type: PlotType::ScatterPolar,
             ..Default::default()
         })
     }
@@ -241,7 +237,7 @@ where
 
     /// Sets the trace name. The trace name appear as the legend item and on hover.
     pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_owned());
+        self.name = Some(name.to_string());
         Box::new(self)
     }
 
@@ -261,7 +257,7 @@ where
     /// Sets the legend group for this trace. Traces part of the same legend group hide/show at the
     /// same time when toggling legend items.
     pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_owned());
+        self.legend_group = Some(legend_group.to_string());
         Box::new(self)
     }
 
@@ -288,27 +284,27 @@ where
         Box::new(self)
     }
 
-    /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
-    /// starting coordinate and `dx` the step.
+    /// Alternate to `theta`. Builds a linear space of theta coordinates. Use with `dtheta` where `theta0` is the
+    /// starting coordinate and `dtheta` the step.
     pub fn theta0<V: Into<NumOrString>>(mut self, theta0: V) -> Box<Self> {
         self.theta0 = Some(theta0.into());
         Box::new(self)
     }
 
-    /// Sets the x coordinate step. See `x0` for more info.
+    /// Sets the theta coordinate step. See `theta0` for more info.
     pub fn dtheta(mut self, dtheta: f64) -> Box<Self> {
         self.dtheta = Some(dtheta);
         Box::new(self)
     }
 
-    /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the
-    /// starting coordinate and `dy` the step.
+    /// Alternate to `r`. Builds a linear space of r coordinates. Use with `dr` where `r0` is the
+    /// starting coordinate and `dr` the step.
     pub fn r0<V: Into<NumOrString>>(mut self, r0: V) -> Box<Self> {
         self.r0 = Some(r0.into());
         Box::new(self)
     }
 
-    /// Sets the y coordinate step. See `y0` for more info.
+    /// Sets the r coordinate step. See `r0` for more info.
     pub fn dr(mut self, dr: f64) -> Box<Self> {
         self.dr = Some(dr);
         Box::new(self)
@@ -318,7 +314,7 @@ where
     /// (the default value), the data refer to `layout.polar`. If "polar2", the data refer to
     /// `layout.polar2`, and so on.
     pub fn subplot(mut self, subplot: &str) -> Box<Self> {
-        self.subplot = Some(subplot.to_owned());
+        self.subplot = Some(subplot.to_string());
         Box::new(self)
     }
 
@@ -327,7 +323,7 @@ where
     /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
     /// `hover_text` is not set, these elements will be seen in the hover labels.
     pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_owned()));
+        self.text = Some(Dim::Scalar(text.to_string()));
         Box::new(self)
     }
 
@@ -363,7 +359,7 @@ where
     /// on the date formatting syntax. Every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available.
     pub fn text_template(mut self, text_template: &str) -> Box<Self> {
-        self.text_template = Some(Dim::Scalar(text_template.to_owned()));
+        self.text_template = Some(Dim::Scalar(text_template.to_string()));
         Box::new(self)
     }
 
@@ -387,7 +383,7 @@ where
     /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
     /// "Text" flag.
     pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
+        self.hover_text = Some(Dim::Scalar(hover_text.to_string()));
         Box::new(self)
     }
 
@@ -424,7 +420,7 @@ where
     /// secondary box, for example "<extra>{fullData.name}</extra>". To hide the secondary box
     /// completely, use an empty tag `<extra></extra>`.
     pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
         Box::new(self)
     }
 
@@ -468,45 +464,12 @@ where
         Box::new(self)
     }
 
-    /// Only relevant when `stackgroup` is used, and only the first `orientation` found in the
-    /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
-    /// Sets the stacking direction. With "v" ("h"), the y (x) values of subsequent traces are
-    /// added. Also affects the default value of `fill`.
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    /// Only relevant when `stackgroup` is used, and only the first `groupnorm` found in the
-    /// `stackgroup` will be used - including if `visible` is "legendonly" but not if it is `false`.
-    /// Sets the normalization for the sum of this `stackgroup`. With "fraction", the value of each
-    /// trace at each location is divided by the sum of all trace values at that location. "percent"
-    /// is the same but multiplied by 100 to show percentages. If there are multiple subplots, or
-    /// multiple `stackgroup`s on one subplot, each will be normalized within its own set.
-    pub fn group_norm(mut self, group_norm: GroupNorm) -> Box<Self> {
-        self.group_norm = Some(group_norm);
-        Box::new(self)
-    }
-
     /// Array containing integer indices of selected points. Has an effect only for traces that
     /// support selections. Note that an empty array means an empty selection where the
     /// `unselected` are turned on for all points, whereas, any other non-array values means no
     /// selection all where the `selected` and `unselected` styles have no effect.
     pub fn selected_points(mut self, selected_points: Vec<u32>) -> Box<Self> {
         self.selected_points = Some(selected_points);
-        Box::new(self)
-    }
-
-    /// Set several scatter traces (on the same subplot) to the same stackgroup in order to add
-    /// their y values (or their x values if `orientation` is "h"). If blank or omitted this trace
-    /// will not be stacked. Stacking also turns `fill` on by default, using "tonexty" ("tonextx")
-    /// if `orientation` is "h" ("v") and sets the default `mode` to "lines" irrespective of point
-    /// count. You can only stack on a numeric (linear or log) axis. Traces in a `stackgroup` will
-    /// only fill to (or be filled to) other traces in the same group. With multiple `stackgroup`s
-    /// or some traces stacked and some not, if fill-linked traces are not already consecutive, the
-    /// later ones will be pushed down in the drawing order.
-    pub fn stack_group(mut self, stack_group: &str) -> Box<Self> {
-        self.stack_group = Some(stack_group.to_owned());
         Box::new(self)
     }
 
@@ -577,27 +540,8 @@ where
     /// Do the hover effects highlight individual points (markers or line points) or do they
     /// highlight filled regions? If the fill is "toself" or "tonext" and there are no markers or
     /// text, then the default is "fills", otherwise it is "points".
-    pub fn hover_on(mut self, hover_on: &str) -> Box<Self> {
-        self.hover_on = Some(hover_on.to_owned());
-        Box::new(self)
-    }
-
-    /// Only relevant when `stack_group` is used, and only the first `stack_gaps` found in the
-    /// `stackgroup` will be used - including if `visible` is set to `Visible::LegendOnly` but not
-    /// if it is set to `Visible::False`.
-    /// Determines how we handle locations at which other traces in this group have data but this
-    /// one does not. With "infer zero" we insert a zero at these locations. With "interpolate" we
-    /// linearly interpolate between existing values, and extrapolate a constant beyond the existing
-    /// values.
-    pub fn stack_gaps(mut self, stack_gaps: &str) -> Box<Self> {
-        self.stack_gaps = Some(stack_gaps.to_owned());
-        Box::new(self)
-    }
-
-    /// Assign an id to this trace, Use this to provide object constancy between traces during
-    /// animations and transitions.
-    pub fn uid(mut self, uid: &str) -> Box<Self> {
-        self.uid = Some(uid.to_owned());
+    pub fn hover_on(mut self, hover_on: HoverOn) -> Box<Self> {
+        self.hover_on = Some(hover_on);
         Box::new(self)
     }
 }
@@ -608,6 +552,96 @@ where
     R: Serialize + Clone + 'static,
 {
     fn to_json(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+        serde_json::to_string(self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_default_scatter_polar() {
+        let trace = ScatterPolar::<u32, u32>::default();
+        let expected = json!({"type": "scatterpolar"});
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_scatter_polar() {
+        let trace = ScatterPolar::new(vec![0, 1], vec![2, 3])
+            .clip_on_axis(true)
+            .connect_gaps(false)
+            .custom_data(vec!["custom_data"])
+            .dr(1.0)
+            .dtheta(2.0)
+            .fill(Fill::ToNext)
+            .fill_color("#789456")
+            .hover_info(HoverInfo::Name)
+            .hover_label(Label::new())
+            .hover_on(HoverOn::Fills)
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .ids(vec!["1"])
+            .legend_group("legend_group")
+            .line(Line::new())
+            .marker(Marker::new())
+            .meta("meta")
+            .mode(Mode::LinesMarkers)
+            .name("scatter_polar_trace")
+            .opacity(0.6)
+            .r0(0)
+            .show_legend(false)
+            .text("text")
+            .text_array(vec!["text"])
+            .text_font(Font::new())
+            .text_position(Position::MiddleCenter)
+            .text_position_array(vec![Position::MiddleLeft])
+            .text_template("text_template")
+            .text_template_array(vec!["text_template"])
+            .theta0(5)
+            .visible(Visible::True)
+            .web_gl_mode(true);
+
+        let expected = json!({
+            "type": "scatterpolargl",
+            "theta": [0, 1],
+            "r": [2, 3],
+            "cliponaxis": true,
+            "connectgaps": false,
+            "customdata": ["custom_data"],
+            "dr": 1.0,
+            "dtheta": 2.0,
+            "fill": "tonext",
+            "fillcolor": "#789456",
+            "hoverinfo": "name",
+            "hoverlabel": {},
+            "hoveron": "fills",
+            "hovertext": ["hover_text"],
+            "hovertemplate": ["hover_template"],
+            "ids": ["1"],
+            "legendgroup": "legend_group",
+            "line": {},
+            "marker": {},
+            "meta": "meta",
+            "mode": "lines+markers",
+            "name": "scatter_polar_trace",
+            "opacity": 0.6,
+            "r0": 0,
+            "theta0": 5,
+            "showlegend": false,
+            "text": ["text"],
+            "textfont": {},
+            "textposition": ["middle left"],
+            "texttemplate": ["text_template"],
+            "visible": true
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
     }
 }

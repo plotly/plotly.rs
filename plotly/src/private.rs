@@ -102,17 +102,10 @@ where
     }
 }
 
-pub fn copy_iterable_to_vec<T, I>(iterable: I) -> Vec<T>
-where
-    I: IntoIterator<Item = T>,
-{
-    iterable.into_iter().collect::<Vec<T>>()
-}
-
 #[cfg(feature = "plotly_ndarray")]
 pub fn trace_vectors_from<T>(traces_matrix: Array<T, Ix2>, array_traces: ArrayTraces) -> Vec<Vec<T>>
 where
-    T: Clone + 'static,
+    T: Clone,
 {
     let mut traces: Vec<Vec<T>> = Vec::new();
     let dim_index = if array_traces == ArrayTraces::OverColumns {

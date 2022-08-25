@@ -132,10 +132,22 @@ impl Contours {
 /// ```
 /// use plotly::Contour;
 ///
-/// let trace = Contour::new();
-/// let expected = serde_json::json!({});
+/// let trace = Contour::new(
+///     vec![0.0, 2.5, 5.0],
+///     vec![0.0, 7.5, 15.0],
+///     vec![
+///         vec![0.0, 5.0, 10.0],
+///         vec![5.0, 2.5, 0.0],
+///         vec![10.0, 5.0, 0.0],
+///     ],
+/// );
 ///
-/// todo!()
+/// let expected = serde_json::json!({
+///     "type": "contour",
+///     "x": [0.0, 2.5, 5.0],
+///     "y": [0.0, 7.5, 15.0],
+///     "z": [[0.0, 5.0, 10.0], [5.0, 2.5, 0.0], [10.0, 5.0, 0.0]]
+/// });
 ///
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
 /// ```
@@ -575,7 +587,18 @@ mod tests {
     #[test]
     fn test_serialize_default_contour() {
         let trace: Contour<f64, f64, f64> = Contour::default();
-        let expected = json!({"type": "contour"});
+        let expected = json!({"type": "contour"}).to_string();
+
+        assert_eq!(trace.to_json(), expected);
+    }
+
+    #[test]
+    fn test_new_z_contour() {
+        let trace = Contour::new_z(vec![1.0]);
+        let expected = json!({
+            "type": "contour",
+            "z": [1.0]
+        });
 
         assert_eq!(to_value(trace).unwrap(), expected);
     }
@@ -583,43 +606,45 @@ mod tests {
     #[test]
     fn test_serialize_contour() {
         let trace = Contour::new(vec![0., 1.], vec![2., 3.], vec![4., 5.])
-            .x0(0.)
-            .dx(1.)
-            .y0(0.)
-            .dy(1.)
-            .name("contour trace")
-            .visible(Visible::True)
-            .show_legend(false)
-            .legend_group("group_1")
-            .opacity(0.6)
-            .text(vec!["p1", "p2"])
-            .hover_text(vec!["p3", "p4"])
-            .hover_info(HoverInfo::XAndYAndZ)
-            .hover_template("ok {1}")
-            .x_axis("x0")
-            .y_axis("y0")
-            .hover_template_array(vec!["ok {1}", "ok {2}"])
-            .line(Line::new())
-            .color_bar(ColorBar::new())
             .auto_color_scale(true)
+            .auto_contour(true)
+            .color_bar(ColorBar::new())
             .color_scale(ColorScale::Palette(ColorScalePalette::Blackbody))
-            .show_scale(true)
+            .connect_gaps(true)
+            .contours(Contours::new())
+            .dx(1.)
+            .dy(1.)
+            .fill_color("#123456")
+            .hover_info(HoverInfo::XAndYAndZ)
+            .hover_label(Label::new())
+            .hover_on_gaps(false)
+            .hover_template("ok {1}")
+            .hover_template_array(vec!["ok {1}", "ok {2}"])
+            .hover_text(vec!["p3", "p4"])
+            .legend_group("group_1")
+            .line(Line::new())
+            .n_contours(5)
+            .name("contour trace")
+            .opacity(0.6)
             .reverse_scale(true)
+            .show_scale(true)
+            .show_legend(false)
+            .text(vec!["p1", "p2"])
+            .transpose(true)
+            .visible(Visible::True)
+            .x(vec![0.0, 1.0])
+            .x_axis("x0")
+            .x_calendar(Calendar::Ethiopian)
+            .x0(0.)
+            .y(vec![2.0, 3.0])
+            .y_axis("y0")
+            .y_calendar(Calendar::Gregorian)
+            .y0(0.)
             .zauto(false)
             .zhover_format("fmt")
             .zmax(10.)
-            .zmin(0.)
             .zmid(5.)
-            .auto_contour(true)
-            .connect_gaps(true)
-            .contours(Contours::new())
-            .fill_color("#123456")
-            .hover_label(Label::new())
-            .hover_on_gaps(false)
-            .n_contours(5)
-            .transpose(true)
-            .x_calendar(Calendar::Ethiopian)
-            .y_calendar(Calendar::Gregorian);
+            .zmin(0.);
 
         let expected = json!({
             "type": "contour",

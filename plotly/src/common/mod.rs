@@ -139,15 +139,6 @@ pub enum Orientation {
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
-pub enum GroupNorm {
-    #[serde(rename = "")]
-    Default,
-    Fraction,
-    Percent,
-}
-
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "lowercase")]
 pub enum Fill {
     ToZeroY,
     ToZeroX,
@@ -207,13 +198,6 @@ pub enum PlotType {
     Ohlc,
     Sankey,
     Surface,
-}
-
-// TODO: delete this impl
-impl Default for PlotType {
-    fn default() -> Self {
-        PlotType::Scatter
-    }
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -1466,6 +1450,15 @@ impl ErrorData {
     }
 }
 
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum HoverOn {
+    Points,
+    Fills,
+    #[serde(rename = "points+fills")]
+    PointsAndFills,
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::{json, to_value};
@@ -1535,13 +1528,6 @@ mod tests {
     fn test_serialize_orientation() {
         assert_eq!(to_value(Orientation::Vertical).unwrap(), json!("v"));
         assert_eq!(to_value(Orientation::Horizontal).unwrap(), json!("h"));
-    }
-
-    #[test]
-    fn test_serialize_group_norm() {
-        assert_eq!(to_value(GroupNorm::Default).unwrap(), json!(""));
-        assert_eq!(to_value(GroupNorm::Fraction).unwrap(), json!("fraction"));
-        assert_eq!(to_value(GroupNorm::Percent).unwrap(), json!("percent"));
     }
 
     #[test]
@@ -2296,5 +2282,14 @@ mod tests {
         assert_eq!(to_value(Visible::True).unwrap(), json!(true));
         assert_eq!(to_value(Visible::False).unwrap(), json!(false));
         assert_eq!(to_value(Visible::LegendOnly).unwrap(), json!("legendonly"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_hover_on() {
+        assert_eq!(to_value(HoverOn::Points).unwrap(), json!("points"));
+        assert_eq!(to_value(HoverOn::Fills).unwrap(), json!("fills"));
+        assert_eq!(to_value(HoverOn::PointsAndFills).unwrap(), json!("points+fills"));
+
     }
 }

@@ -1,19 +1,54 @@
-//! Scatter plot
+//! Scatter trace
 
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1, Ix2};
 use serde::Serialize;
 
-use crate::color::Color;
-use crate::common::{
-    Calendar, Dim, ErrorData, Fill, Font, GroupNorm, HoverInfo, Label, Line, Marker, Mode,
-    Orientation, PlotType, Position, Visible,
-};
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-use crate::private;
-use crate::Trace;
+use crate::{
+    color::Color,
+    common::{
+        Calendar, Dim, ErrorData, Fill, Font, HoverInfo, HoverOn, Label, Line, Marker, Mode,
+        Orientation, PlotType, Position, Visible,
+    },
+    private, Trace,
+};
 
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum GroupNorm {
+    #[serde(rename = "")]
+    Default,
+    Fraction,
+    Percent,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum StackGaps {
+    #[serde(rename = "infer zero")]
+    InferZero,
+    Interpolate,
+}
+
+/// Construct a scatter trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::Scatter;
+///
+/// let trace = Scatter::new(vec![0, 1, 2], vec![2, 1, 0]);
+///
+/// let expected = serde_json::json!({
+///     "type": "scatter",
+///     "x": [0, 1, 2],
+///     "y": [2, 1, 0]
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug)]
 pub struct Scatter<X, Y>
@@ -54,6 +89,7 @@ where
     hover_template: Option<Dim<String>>,
 
     meta: Option<private::NumOrString>,
+    #[serde(rename = "customdata")]
     custom_data: Option<private::NumOrStringCollection>,
 
     #[serde(rename = "xaxis")]
@@ -81,9 +117,9 @@ where
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
     #[serde(rename = "hoveron")]
-    hover_on: Option<String>,
+    hover_on: Option<HoverOn>,
     #[serde(rename = "stackgaps")]
-    stack_gaps: Option<String>,
+    stack_gaps: Option<StackGaps>,
     #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
     #[serde(rename = "ycalendar")]
@@ -147,17 +183,10 @@ where
     X: Serialize + Clone + 'static,
     Y: Serialize + Clone + 'static,
 {
-    pub fn new<I, K>(x: I, y: K) -> Box<Self>
-    where
-        I: IntoIterator<Item = X>,
-        K: IntoIterator<Item = Y>,
-    {
-        let x = private::copy_iterable_to_vec(x);
-        let y = private::copy_iterable_to_vec(y);
-        Box::new(Scatter {
+    pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Self> {
+        Box::new(Self {
             x: Some(x),
             y: Some(y),
-            r#type: PlotType::Scatter,
             ..Default::default()
         })
     }
@@ -167,7 +196,6 @@ where
         Box::new(Scatter {
             x: Some(x.to_vec()),
             y: Some(y.to_vec()),
-            r#type: PlotType::Scatter,
             ..Default::default()
         })
     }
@@ -249,7 +277,7 @@ where
 
     /// Sets the trace name. The trace name appear as the legend item and on hover.
     pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_owned());
+        self.name = Some(name.to_string());
         Box::new(self)
     }
 
@@ -269,7 +297,7 @@ where
     /// Sets the legend group for this trace. Traces part of the same legend group hide/show at the
     /// same time when toggling legend items.
     pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_owned());
+        self.legend_group = Some(legend_group.to_string());
         Box::new(self)
     }
 
@@ -327,7 +355,7 @@ where
     /// the this trace's (x,y) coordinates. If the trace `HoverInfo` contains a "text" flag and
     /// `hover_text` is not set, these elements will be seen in the hover labels.
     pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_owned()));
+        self.text = Some(Dim::Scalar(text.to_string()));
         Box::new(self)
     }
 
@@ -363,7 +391,7 @@ where
     /// on the date formatting syntax. Every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available.
     pub fn text_template(mut self, text_template: &str) -> Box<Self> {
-        self.text_template = Some(Dim::Scalar(text_template.to_owned()));
+        self.text_template = Some(Dim::Scalar(text_template.to_string()));
         Box::new(self)
     }
 
@@ -387,7 +415,7 @@ where
     /// order to the this trace's (x,y) coordinates. To be seen, trace `HoverInfo` must contain a
     /// "Text" flag.
     pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
+        self.hover_text = Some(Dim::Scalar(hover_text.to_string()));
         Box::new(self)
     }
 
@@ -424,7 +452,7 @@ where
     /// secondary box, for example "<extra>{fullData.name}</extra>". To hide the secondary box
     /// completely, use an empty tag `<extra></extra>`.
     pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
+        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
         Box::new(self)
     }
 
@@ -475,7 +503,7 @@ where
     /// the default value), the x coordinates refer to `Layout::x_axis`. If "x2", the x coordinates
     /// refer to `Layout::x_axis2`, and so on.
     pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_owned());
+        self.x_axis = Some(axis.to_string());
         Box::new(self)
     }
 
@@ -483,7 +511,7 @@ where
     /// (the default value), the y coordinates refer to `Layout::y_axis`. If "y2", the y coordinates
     /// refer to `Layout::y_axis2`, and so on.
     pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_owned());
+        self.y_axis = Some(axis.to_string());
         Box::new(self)
     }
 
@@ -516,7 +544,7 @@ where
     /// or some traces stacked and some not, if fill-linked traces are not already consecutive, the
     /// later ones will be pushed down in the drawing order.
     pub fn stack_group(mut self, stack_group: &str) -> Box<Self> {
-        self.stack_group = Some(stack_group.to_owned());
+        self.stack_group = Some(stack_group.to_string());
         Box::new(self)
     }
 
@@ -599,8 +627,8 @@ where
     /// Do the hover effects highlight individual points (markers or line points) or do they
     /// highlight filled regions? If the fill is "toself" or "tonext" and there are no markers or
     /// text, then the default is "fills", otherwise it is "points".
-    pub fn hover_on(mut self, hover_on: &str) -> Box<Self> {
-        self.hover_on = Some(hover_on.to_owned());
+    pub fn hover_on(mut self, hover_on: HoverOn) -> Box<Self> {
+        self.hover_on = Some(hover_on);
         Box::new(self)
     }
 
@@ -611,8 +639,8 @@ where
     /// one does not. With "infer zero" we insert a zero at these locations. With "interpolate" we
     /// linearly interpolate between existing values, and extrapolate a constant beyond the existing
     /// values.
-    pub fn stack_gaps(mut self, stack_gaps: &str) -> Box<Self> {
-        self.stack_gaps = Some(stack_gaps.to_owned());
+    pub fn stack_gaps(mut self, stack_gaps: StackGaps) -> Box<Self> {
+        self.stack_gaps = Some(stack_gaps);
         Box::new(self)
     }
 
@@ -635,6 +663,132 @@ where
     Y: Serialize + Clone + 'static,
 {
     fn to_json(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+        serde_json::to_string(self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn test_serialize_group_norm() {
+        assert_eq!(to_value(GroupNorm::Default).unwrap(), json!(""));
+        assert_eq!(to_value(GroupNorm::Fraction).unwrap(), json!("fraction"));
+        assert_eq!(to_value(GroupNorm::Percent).unwrap(), json!("percent"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_stack_gaps() {
+        assert_eq!(to_value(StackGaps::InferZero).unwrap(), json!("infer zero"));
+        assert_eq!(to_value(StackGaps::Interpolate).unwrap(), json!("interpolate"));
+    }
+
+    #[test]
+    fn test_serialize_default_scatter() {
+        let trace = Scatter::<u32, u32>::default();
+        let expected = json!({"type": "scatter"});
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_scatter() {
+        use crate::common::ErrorType;
+
+        let trace = Scatter::new(vec![0, 1], vec![2, 3])
+            .clip_on_axis(true)
+            .connect_gaps(false)
+            .custom_data(vec!["custom_data"])
+            .error_x(ErrorData::new(ErrorType::Percent))
+            .error_y(ErrorData::new(ErrorType::Data))
+            .dx(1.0)
+            .dy(4.0)
+            .fill(Fill::ToNext)
+            .fill_color("#789456")
+            .group_norm(GroupNorm::Default)
+            .hover_info(HoverInfo::Name)
+            .hover_label(Label::new())
+            .hover_on(HoverOn::Points)
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
+            .hover_template("hover_template")
+            .hover_template_array(vec!["hover_template"])
+            .ids(vec!["1"])
+            .legend_group("legend_group")
+            .line(Line::new())
+            .marker(Marker::new())
+            .meta("meta")
+            .mode(Mode::LinesMarkers)
+            .name("scatter_trace")
+            .opacity(0.6)
+            .orientation(Orientation::Horizontal)
+            .show_legend(false)
+            .stack_gaps(StackGaps::InferZero)
+            .stack_group("stack_group")
+            .text("text")
+            .text_array(vec!["text"])
+            .text_font(Font::new())
+            .text_position(Position::MiddleCenter)
+            .text_position_array(vec![Position::MiddleLeft])
+            .text_template("text_template")
+            .text_template_array(vec!["text_template"])
+            .visible(Visible::True)
+            .x_axis("x_axis")
+            .x_calendar(Calendar::Chinese)
+            .x0(0)
+            .y_axis("y_axis")
+            .y_calendar(Calendar::Coptic)
+            .y0(2)
+            .web_gl_mode(true);
+
+        let expected = json!({
+            "type": "scattergl",
+            "x": [0, 1],
+            "y": [2, 3],
+            "cliponaxis": true,
+            "connectgaps": false,
+            "customdata": ["custom_data"],
+            "error_x": {"type": "percent"},
+            "error_y": {"type": "data"},
+            "dx": 1.0,
+            "dy": 4.0,
+            "fill": "tonext",
+            "fillcolor": "#789456",
+            "groupnorm": "",
+            "hoverinfo": "name",
+            "hoverlabel": {},
+            "hoveron": "points",
+            "hovertext": ["hover_text"],
+            "hovertemplate": ["hover_template"],
+            "ids": ["1"],
+            "legendgroup": "legend_group",
+            "line": {},
+            "marker": {},
+            "meta": "meta",
+            "mode": "lines+markers",
+            "name": "scatter_trace",
+            "opacity": 0.6,
+            "orientation": "h",
+            "showlegend": false,
+            "stackgaps": "infer zero",
+            "stackgroup": "stack_group",
+            "text": ["text"],
+            "textfont": {},
+            "textposition": ["middle left"],
+            "texttemplate": ["text_template"],
+            "visible": true,
+            "xaxis": "x_axis",
+            "xcalendar": "chinese",
+            "x0": 0,
+            "yaxis": "y_axis",
+            "ycalendar": "coptic",
+            "y0": 2
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
     }
 }

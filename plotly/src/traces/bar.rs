@@ -181,6 +181,16 @@ where
         Box::new(self)
     }
 
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
+        self.hover_info = Some(hover_info);
+        Box::new(self)
+    }
+
+    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
+        self.hover_label = Some(hover_label);
+        Box::new(self)
+    }
+
     pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
         self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
         Box::new(self)
@@ -189,16 +199,6 @@ where
     pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Self> {
         let hover_template = private::owned_string_vector(hover_template);
         self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
         Box::new(self)
     }
 
@@ -378,44 +378,49 @@ mod tests {
     #[test]
     fn test_serialize_bar() {
         let bar = Bar::new(vec![1, 2], vec![3, 4])
-            .name("Bar")
-            .visible(Visible::LegendOnly)
-            .show_legend(false)
-            .legend_group("legend-group")
-            .opacity(0.5)
+            .alignment_group("alignment_group")
+            .clip_on_axis(true)
+            .constrain_text(ConstrainText::Both)
+            .error_x(ErrorData::new(ErrorType::Constant))
+            .error_y(ErrorData::new(ErrorType::Percent))
+            .hover_info(HoverInfo::All)
+            .hover_label(Label::new())
+            .hover_template("tmpl")
+            .hover_template_array(vec!["tmpl1", "tmpl2"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
             .ids(vec!["1"])
-            .width(999)
+            .inside_text_anchor(TextAnchor::End)
+            .inside_text_font(Font::new())
+            .legend_group("legend-group")
+            .marker(Marker::new())
+            .name("Bar")
             .offset(5)
             .offset_array(vec![5, 5])
+            .offset_group("offset_group")
+            .opacity(0.5)
+            .orientation(Orientation::Vertical)
+            .outside_text_font(Font::new())
+            .show_legend(false)
             .text("text")
+            .text_angle(0.05)
             .text_array(vec!["text"])
+            .text_font(Font::new())
             .text_position(TextPosition::None)
             .text_position_array(vec![TextPosition::None])
             .text_template("text_template")
             .text_template_array(vec!["text_template"])
-            .hover_text("hover_text")
-            .hover_text_array(vec!["hover_text"])
+            .visible(Visible::LegendOnly)
+            .width(999)
             .x_axis("xaxis")
-            .y_axis("yaxis")
-            .orientation(Orientation::Vertical)
-            .alignment_group("alignment_group")
-            .offset_group("offset_group")
-            .marker(Marker::new())
-            .text_angle(0.05)
-            .text_font(Font::new())
-            .error_x(ErrorData::new(ErrorType::Constant))
-            .error_y(ErrorData::new(ErrorType::Percent))
-            .clip_on_axis(true)
-            .constrain_text(ConstrainText::Both)
-            .hover_label(Label::new())
-            .inside_text_anchor(TextAnchor::End)
-            .inside_text_font(Font::new())
-            .outside_text_font(Font::new())
             .x_calendar(Calendar::Nanakshahi)
+            .y_axis("yaxis")
             .y_calendar(Calendar::Ummalqura);
 
         let expected = json!({
             "type": "bar",
+            "hoverinfo": "all",
+            "hovertemplate": ["tmpl1", "tmpl2"],
             "x": [1, 2],
             "y": [3, 4],
             "name": "Bar",
