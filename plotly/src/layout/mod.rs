@@ -4,12 +4,14 @@ use std::borrow::Cow;
 
 use serde::{Serialize, Serializer};
 
-use crate::color::{Color, ColorArray};
-use crate::common::{
-    Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font, Label,
-    Orientation, TickFormatStop, TickMode, Title,
+use crate::{
+    color::{Color, ColorArray},
+    common::{
+        Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font, Label,
+        Orientation, TickFormatStop, TickMode, Title,
+    },
+    private::{NumOrString, NumOrStringCollection},
 };
-use crate::private::{NumOrString, NumOrStringCollection};
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -3706,23 +3708,24 @@ mod tests {
     #[test]
     fn test_serialize_color_axis() {
         let color_axis = ColorAxis::new()
-            .cauto(true)
-            .cmin(0.0)
-            .cmid(0.5)
-            .cmax(1.0)
-            .color_scale(ColorScale::Palette(ColorScalePalette::Greens))
             .auto_color_scale(false)
+            .cauto(true)
+            .cmax(1.0)
+            .cmid(0.5)
+            .cmin(0.0)
+            .color_bar(ColorBar::new())
+            .color_scale(ColorScale::Palette(ColorScalePalette::Greens))
             .reverse_scale(false)
             .show_scale(true);
-        // .color_bar(); Awaiting fix from other branch
 
         let expected = json!({
+            "autocolorscale": false,
             "cauto": true,
             "cmin": 0.0,
             "cmid": 0.5,
             "cmax": 1.0,
+            "colorbar": {},
             "colorscale": "Greens",
-            "autocolorscale": false,
             "reversescale": false,
             "showscale": true,
         });
@@ -4118,48 +4121,49 @@ mod tests {
     #[test]
     fn test_serialize_annotation() {
         let annotation = Annotation::new()
-            .visible(true)
-            .text("text")
-            .text_angle(5.)
-            .font(Font::new())
-            .width(4.)
-            .height(6.)
-            .opacity(0.01)
             .align(HAlign::Center)
-            .valign(VAlign::Middle)
+            .arrow_color("#464646")
+            .arrow_head(2)
+            .arrow_size(123.4)
+            .arrow_side(ArrowSide::End)
+            .arrow_width(111.1)
+            .ax("ax")
+            .ax_ref("axref")
+            .ay("ay")
+            .ay_ref("ayref")
             .background_color("#123456")
             .border_color("#456789")
             .border_pad(500.)
             .border_width(1000.)
+            .capture_events(false)
+            .click_to_show(ClickToShow::OnOff)
+            .font(Font::new())
+            .height(6.)
+            .hover_label(Label::new())
+            .hover_text("hovertext")
+            .name("name")
+            .opacity(0.01)
             .show_arrow(false)
-            .arrow_color("#464646")
-            .arrow_head(2)
-            .start_arrow_head(0)
-            .arrow_size(123.4)
-            .start_arrow_size(456.7)
-            .arrow_width(111.1)
             .stand_off(999.9)
+            .start_arrow_head(0)
             .start_stand_off(8.8)
-            .ax("ax")
-            .ay("ay")
-            .ax_ref("axref")
-            .ay_ref("ayref")
+            .start_arrow_size(456.7)
+            .template_item_name("templateitemname")
+            .text("text")
+            .text_angle(5.)
+            .valign(VAlign::Middle)
+            .visible(true)
+            .width(4.)
             .x_ref("xref")
             .x("x")
             .x_anchor(Anchor::Auto)
+            .x_click("xclick")
             .x_shift(4.0)
             .y_ref("yref")
             .y("y")
             .y_anchor(Anchor::Bottom)
-            .y_shift(6.3)
-            .click_to_show(ClickToShow::OnOff)
-            .x_click("xclick")
             .y_click("yclick")
-            .hover_text("hovertext")
-            .hover_label(Label::new())
-            .capture_events(false)
-            .name("name")
-            .template_item_name("templateitemname");
+            .y_shift(6.3);
 
         let expected = json!({
             "visible": true,
@@ -4179,6 +4183,7 @@ mod tests {
             "arrowcolor": "#464646",
             "arrowhead": 2,
             "startarrowhead": 0,
+            "arrowside": "end",
             "arrowsize": 123.4,
             "startarrowsize": 456.7,
             "arrowwidth": 111.1,
@@ -4450,7 +4455,8 @@ mod tests {
             .pie_colorway(vec!["#789789"])
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
-            .extend_sunburst_colors(false);
+            .extend_sunburst_colors(false)
+            .z_axis(Axis::new());
 
         let expected = json!({
             "title": {"text": "Title"},
@@ -4516,6 +4522,7 @@ mod tests {
             "extendpiecolors": true,
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
+            "zaxis": {},
         });
 
         assert_eq!(to_value(layout).unwrap(), expected);

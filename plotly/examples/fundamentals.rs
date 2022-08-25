@@ -1,9 +1,12 @@
 use itertools_num::linspace;
-use plotly::common::{DashType, Fill, Font, Mode};
-use plotly::layout::{
-    Axis, GridPattern, Layout, LayoutGrid, Margin, Shape, ShapeLayer, ShapeLine, ShapeType,
+use plotly::{
+    color::NamedColor,
+    common::{DashType, Fill, Font, Mode},
+    layout::{
+        Axis, GridPattern, Layout, LayoutGrid, Margin, Shape, ShapeLayer, ShapeLine, ShapeType,
+    },
+    Bar, Plot, Scatter,
 };
-use plotly::{color::NamedColor, Bar, Plot, Scatter};
 use rand::thread_rng;
 use rand_distr::{Distribution, Normal};
 

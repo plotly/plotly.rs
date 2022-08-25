@@ -2,8 +2,10 @@ pub mod color;
 
 use serde::{Serialize, Serializer};
 
-use crate::color::{Color, ColorArray};
-use crate::private;
+use crate::{
+    color::{Color, ColorArray},
+    private,
+};
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(untagged)]
@@ -137,15 +139,6 @@ pub enum Orientation {
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
-pub enum GroupNorm {
-    #[serde(rename = "")]
-    Default,
-    Fraction,
-    Percent,
-}
-
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "lowercase")]
 pub enum Fill {
     ToZeroY,
     ToZeroX,
@@ -207,12 +200,6 @@ pub enum PlotType {
     Surface,
 }
 
-impl Default for PlotType {
-    fn default() -> Self {
-        PlotType::Scatter
-    }
-}
-
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum Mode {
@@ -227,6 +214,15 @@ pub enum Mode {
     MarkersText,
     #[serde(rename = "lines+markers+text")]
     LinesMarkersText,
+    None,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum Ticks {
+    Outside,
+    Inside,
+    #[serde(rename = "")]
     None,
 }
 
@@ -704,330 +700,297 @@ impl TickFormatStop {
     }
 
     pub fn value(mut self, value: &str) -> Self {
-        self.value = Some(value.to_owned());
+        self.value = Some(value.to_string());
         self
     }
 
     pub fn name(mut self, name: &str) -> Self {
-        self.name = Some(name.to_owned());
+        self.name = Some(name.to_string());
         self
     }
 
     pub fn template_item_name(mut self, name: &str) -> Self {
-        self.template_item_name = Some(name.to_owned());
+        self.template_item_name = Some(name.to_string());
         self
     }
 }
 
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum Show {
+    All,
+    First,
+    Last,
+    None,
+}
+
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone, Debug, Default)]
 pub struct ColorBar {
-    #[serde(rename = "thicknessmode")]
-    thickness_mode: Option<ThicknessMode>,
-    thickness: usize,
-    #[serde(rename = "lenmode")]
-    len_mode: Option<ThicknessMode>,
-    len: usize,
-    x: f64,
-    #[serde(rename = "xanchor")]
-    x_anchor: Anchor,
-    #[serde(rename = "xpad")]
-    x_pad: f64,
-    y: f64,
-    #[serde(rename = "yanchor")]
-    y_anchor: Anchor,
-    #[serde(rename = "ypad")]
-    y_pad: f64,
-    #[serde(rename = "outlinecolor")]
-    outline_color: Option<Box<dyn Color>>,
-    #[serde(rename = "outlinewidth")]
-    outline_width: usize,
+    #[serde(rename = "bgcolor")]
+    background_color: Option<Box<dyn Color>>,
     #[serde(rename = "bordercolor")]
     border_color: Option<Box<dyn Color>>,
     #[serde(rename = "borderwidth")]
-    border_width: usize,
-    #[serde(rename = "bgcolor")]
-    background_color: Option<Box<dyn Color>>,
-    #[serde(rename = "tickmode")]
-    tick_mode: Option<TickMode>,
-    #[serde(rename = "nticks")]
-    n_ticks: usize,
-    tick0: Option<f64>,
+    border_width: Option<usize>,
     dtick: Option<f64>,
-    #[serde(rename = "tickvals")]
-    tick_vals: Option<Vec<f64>>,
-    #[serde(rename = "ticktext")]
-    tick_text: Option<Vec<String>>,
-    ticks: Option<String>,
-    #[serde(rename = "ticklen")]
-    tick_len: usize,
-    #[serde(rename = "tickwidth")]
-    tick_width: usize,
-    #[serde(rename = "tickcolor")]
-    tick_color: Option<Box<dyn Color>>,
+    #[serde(rename = "exponentformat")]
+    exponent_format: Option<ExponentFormat>,
+    len: Option<usize>,
+    #[serde(rename = "lenmode")]
+    len_mode: Option<ThicknessMode>,
+    #[serde(rename = "nticks")]
+    n_ticks: Option<usize>,
+    #[serde(rename = "outlinecolor")]
+    outline_color: Option<Box<dyn Color>>,
+    #[serde(rename = "outlinewidth")]
+    outline_width: Option<usize>,
+    #[serde(rename = "separatethousands")]
+    separate_thousands: Option<bool>,
+    #[serde(rename = "showexponent")]
+    show_exponent: Option<Show>,
     #[serde(rename = "showticklabels")]
-    show_tick_labels: bool,
-    #[serde(rename = "tickfont")]
-    tick_font: Option<Font>,
+    show_tick_labels: Option<bool>,
+    #[serde(rename = "showtickprefix")]
+    show_tick_prefix: Option<Show>,
+    #[serde(rename = "showticksuffix")]
+    show_tick_suffix: Option<Show>,
+
+    thickness: Option<usize>,
+    #[serde(rename = "thicknessmode")]
+    thickness_mode: Option<ThicknessMode>,
     #[serde(rename = "tickangle")]
     tick_angle: Option<f64>,
+    #[serde(rename = "tickcolor")]
+    tick_color: Option<Box<dyn Color>>,
+    #[serde(rename = "tickfont")]
+    tick_font: Option<Font>,
     #[serde(rename = "tickformat")]
     tick_format: Option<String>,
     #[serde(rename = "tickformatstops")]
     tick_format_stops: Option<Vec<TickFormatStop>>,
+    #[serde(rename = "ticklen")]
+    tick_len: Option<usize>,
+    #[serde(rename = "tickmode")]
+    tick_mode: Option<TickMode>,
     #[serde(rename = "tickprefix")]
     tick_prefix: Option<String>,
-    #[serde(rename = "showtickprefix")]
-    show_tick_prefix: Option<String>,
     #[serde(rename = "ticksuffix")]
     tick_suffix: Option<String>,
-    #[serde(rename = "showticksuffix")]
-    show_tick_suffix: Option<String>,
-    separate_thousands: bool,
-    #[serde(rename = "exponentformat")]
-    exponent_format: Option<ExponentFormat>,
-    #[serde(rename = "showexponent")]
-    show_exponent: Option<String>,
+    #[serde(rename = "ticktext")]
+    tick_text: Option<Vec<String>>,
+    #[serde(rename = "tickvals")]
+    tick_vals: Option<Vec<f64>>,
+    #[serde(rename = "tickwidth")]
+    tick_width: Option<usize>,
+    tick0: Option<f64>,
+    ticks: Option<Ticks>,
     title: Option<Title>,
-}
-
-impl Default for ColorBar {
-    fn default() -> Self {
-        Self {
-            thickness: 30,
-            len: 1,
-            x: 1.02,
-            x_anchor: Anchor::Left,
-            x_pad: 10.0,
-            y: 0.5,
-            y_anchor: Anchor::Middle,
-            y_pad: 10.0,
-            outline_width: 1,
-            border_width: 0,
-            n_ticks: 0,
-            tick_len: 5,
-            tick_width: 1,
-            show_tick_labels: true,
-            separate_thousands: true,
-            thickness_mode: None,
-            len_mode: None,
-            outline_color: None,
-            border_color: None,
-            background_color: None,
-            tick_mode: None,
-            tick0: None,
-            dtick: None,
-            tick_vals: None,
-            tick_text: None,
-            ticks: None,
-            tick_color: None,
-            tick_font: None,
-            tick_angle: None,
-            tick_format: None,
-            tick_format_stops: None,
-            tick_prefix: None,
-            show_tick_prefix: None,
-            tick_suffix: None,
-            show_tick_suffix: None,
-            exponent_format: None,
-            show_exponent: None,
-            title: None,
-        }
-    }
+    x: Option<f64>,
+    #[serde(rename = "xanchor")]
+    x_anchor: Option<Anchor>,
+    #[serde(rename = "xpad")]
+    x_pad: Option<f64>,
+    y: Option<f64>,
+    #[serde(rename = "yanchor")]
+    y_anchor: Option<Anchor>,
+    #[serde(rename = "ypad")]
+    y_pad: Option<f64>,
 }
 
 impl ColorBar {
-    pub fn new() -> ColorBar {
+    pub fn new() -> Self {
         Default::default()
     }
 
-    pub fn thickness_mode(mut self, thickness_mode: ThicknessMode) -> ColorBar {
-        self.thickness_mode = Some(thickness_mode);
-        self
-    }
-
-    pub fn thickness(mut self, thickness: usize) -> ColorBar {
-        self.thickness = thickness;
-        self
-    }
-
-    pub fn len_mode(mut self, len_mode: ThicknessMode) -> ColorBar {
-        self.len_mode = Some(len_mode);
-        self
-    }
-
-    pub fn len(mut self, len: usize) -> ColorBar {
-        self.len = len;
-        self
-    }
-
-    pub fn x(mut self, x: f64) -> ColorBar {
-        self.x = x;
-        self
-    }
-
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> ColorBar {
-        self.x_anchor = x_anchor;
-        self
-    }
-
-    pub fn x_pad(mut self, x_pad: f64) -> ColorBar {
-        self.x_pad = x_pad;
-        self
-    }
-
-    pub fn y(mut self, y: f64) -> ColorBar {
-        self.y = y;
-        self
-    }
-
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> ColorBar {
-        self.y_anchor = y_anchor;
-        self
-    }
-
-    pub fn y_pad(mut self, y_pad: f64) -> ColorBar {
-        self.y_pad = y_pad;
-        self
-    }
-
-    pub fn outline_color<C: Color>(mut self, outline_color: C) -> ColorBar {
-        self.outline_color = Some(Box::new(outline_color));
-        self
-    }
-
-    pub fn outline_width(mut self, outline_width: usize) -> ColorBar {
-        self.outline_width = outline_width;
-        self
-    }
-
-    pub fn border_color<C: Color>(mut self, border_color: C) -> ColorBar {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
-    pub fn border_width(mut self, border_width: usize) -> ColorBar {
-        self.border_width = border_width;
-        self
-    }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> ColorBar {
+    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
         self.background_color = Some(Box::new(background_color));
         self
     }
 
-    pub fn tick_mode(mut self, tick_mode: TickMode) -> ColorBar {
-        self.tick_mode = Some(tick_mode);
+    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
+        self.border_color = Some(Box::new(border_color));
         self
     }
 
-    pub fn n_ticks(mut self, n_ticks: usize) -> ColorBar {
-        self.n_ticks = n_ticks;
+    pub fn border_width(mut self, border_width: usize) -> Self {
+        self.border_width = Some(border_width);
         self
     }
 
-    pub fn tick0(mut self, tick0: f64) -> ColorBar {
-        self.tick0 = Some(tick0);
-        self
-    }
-
-    pub fn dtick(mut self, dtick: f64) -> ColorBar {
+    pub fn dtick(mut self, dtick: f64) -> Self {
         self.dtick = Some(dtick);
         self
     }
 
-    pub fn tick_vals(mut self, tick_vals: Vec<f64>) -> ColorBar {
-        self.tick_vals = Some(tick_vals);
-        self
-    }
-
-    pub fn tick_text(mut self, tick_text: Vec<String>) -> ColorBar {
-        self.tick_text = Some(tick_text);
-        self
-    }
-
-    pub fn ticks(mut self, ticks: &str) -> ColorBar {
-        self.ticks = Some(ticks.to_owned());
-        self
-    }
-
-    pub fn tick_len(mut self, tick_len: usize) -> ColorBar {
-        self.tick_len = tick_len;
-        self
-    }
-
-    pub fn tick_width(mut self, tick_width: usize) -> ColorBar {
-        self.tick_width = tick_width;
-        self
-    }
-
-    pub fn tick_color<C: Color>(mut self, tick_color: C) -> ColorBar {
-        self.tick_color = Some(Box::new(tick_color));
-        self
-    }
-
-    pub fn show_tick_labels(mut self, show_tick_labels: bool) -> ColorBar {
-        self.show_tick_labels = show_tick_labels;
-        self
-    }
-
-    pub fn tick_font(mut self, tick_font: Font) -> ColorBar {
-        self.tick_font = Some(tick_font);
-        self
-    }
-
-    pub fn tick_angle(mut self, tick_angle: f64) -> ColorBar {
-        self.tick_angle = Some(tick_angle);
-        self
-    }
-
-    pub fn tick_format(mut self, tick_format: &str) -> ColorBar {
-        self.tick_format = Some(tick_format.to_owned());
-        self
-    }
-
-    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> ColorBar {
-        self.tick_format_stops = Some(tick_format_stops);
-        self
-    }
-
-    pub fn tick_prefix(mut self, tick_prefix: &str) -> ColorBar {
-        self.tick_prefix = Some(tick_prefix.to_owned());
-        self
-    }
-
-    pub fn show_tick_prefix(mut self, show_tick_prefix: &str) -> ColorBar {
-        self.show_tick_prefix = Some(show_tick_prefix.to_owned());
-        self
-    }
-
-    pub fn tick_suffix(mut self, tick_suffix: &str) -> ColorBar {
-        self.tick_suffix = Some(tick_suffix.to_owned());
-        self
-    }
-
-    pub fn show_tick_suffix(mut self, show_tick_suffix: &str) -> ColorBar {
-        self.show_tick_suffix = Some(show_tick_suffix.to_owned());
-        self
-    }
-
-    pub fn separate_thousands(mut self, separate_thousands: bool) -> ColorBar {
-        self.separate_thousands = separate_thousands;
-        self
-    }
-
-    pub fn exponent_format(mut self, exponent_format: ExponentFormat) -> ColorBar {
+    pub fn exponent_format(mut self, exponent_format: ExponentFormat) -> Self {
         self.exponent_format = Some(exponent_format);
         self
     }
 
-    pub fn show_exponent(mut self, show_exponent: &str) -> ColorBar {
-        self.show_exponent = Some(show_exponent.to_owned());
+    pub fn len(mut self, len: usize) -> Self {
+        self.len = Some(len);
         self
     }
 
-    pub fn title(mut self, title: Title) -> ColorBar {
+    pub fn len_mode(mut self, len_mode: ThicknessMode) -> Self {
+        self.len_mode = Some(len_mode);
+        self
+    }
+
+    pub fn n_ticks(mut self, n_ticks: usize) -> Self {
+        self.n_ticks = Some(n_ticks);
+        self
+    }
+
+    pub fn outline_color<C: Color>(mut self, outline_color: C) -> Self {
+        self.outline_color = Some(Box::new(outline_color));
+        self
+    }
+
+    pub fn outline_width(mut self, outline_width: usize) -> Self {
+        self.outline_width = Some(outline_width);
+        self
+    }
+
+    pub fn separate_thousands(mut self, separate_thousands: bool) -> Self {
+        self.separate_thousands = Some(separate_thousands);
+        self
+    }
+
+    pub fn show_exponent(mut self, show_exponent: Show) -> Self {
+        self.show_exponent = Some(show_exponent);
+        self
+    }
+
+    pub fn show_tick_labels(mut self, show_tick_labels: bool) -> Self {
+        self.show_tick_labels = Some(show_tick_labels);
+        self
+    }
+
+    pub fn show_tick_prefix(mut self, show_tick_prefix: Show) -> Self {
+        self.show_tick_prefix = Some(show_tick_prefix);
+        self
+    }
+
+    pub fn show_tick_suffix(mut self, show_tick_suffix: Show) -> Self {
+        self.show_tick_suffix = Some(show_tick_suffix);
+        self
+    }
+
+    pub fn thickness(mut self, thickness: usize) -> Self {
+        self.thickness = Some(thickness);
+        self
+    }
+
+    pub fn thickness_mode(mut self, thickness_mode: ThicknessMode) -> Self {
+        self.thickness_mode = Some(thickness_mode);
+        self
+    }
+
+    pub fn tick_angle(mut self, tick_angle: f64) -> Self {
+        self.tick_angle = Some(tick_angle);
+        self
+    }
+
+    pub fn tick_color<C: Color>(mut self, tick_color: C) -> Self {
+        self.tick_color = Some(Box::new(tick_color));
+        self
+    }
+
+    pub fn tick_font(mut self, tick_font: Font) -> Self {
+        self.tick_font = Some(tick_font);
+        self
+    }
+
+    pub fn tick_format(mut self, tick_format: &str) -> Self {
+        self.tick_format = Some(tick_format.to_string());
+        self
+    }
+
+    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> Self {
+        self.tick_format_stops = Some(tick_format_stops);
+        self
+    }
+
+    pub fn tick_len(mut self, tick_len: usize) -> Self {
+        self.tick_len = Some(tick_len);
+        self
+    }
+
+    pub fn tick_mode(mut self, tick_mode: TickMode) -> Self {
+        self.tick_mode = Some(tick_mode);
+        self
+    }
+
+    pub fn tick_prefix(mut self, tick_prefix: &str) -> Self {
+        self.tick_prefix = Some(tick_prefix.to_string());
+        self
+    }
+
+    pub fn tick_suffix(mut self, tick_suffix: &str) -> Self {
+        self.tick_suffix = Some(tick_suffix.to_string());
+        self
+    }
+
+    pub fn tick_text<S: AsRef<str>>(mut self, tick_text: Vec<S>) -> Self {
+        let tick_text = private::owned_string_vector(tick_text);
+        self.tick_text = Some(tick_text);
+        self
+    }
+
+    pub fn tick_vals(mut self, tick_vals: Vec<f64>) -> Self {
+        self.tick_vals = Some(tick_vals);
+        self
+    }
+
+    pub fn tick_width(mut self, tick_width: usize) -> Self {
+        self.tick_width = Some(tick_width);
+        self
+    }
+
+    pub fn tick0(mut self, tick0: f64) -> Self {
+        self.tick0 = Some(tick0);
+        self
+    }
+
+    pub fn ticks(mut self, ticks: Ticks) -> Self {
+        self.ticks = Some(ticks);
+        self
+    }
+
+    pub fn title(mut self, title: Title) -> Self {
         self.title = Some(title);
+        self
+    }
+
+    pub fn x(mut self, x: f64) -> Self {
+        self.x = Some(x);
+        self
+    }
+
+    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
+        self.x_anchor = Some(x_anchor);
+        self
+    }
+
+    pub fn x_pad(mut self, x_pad: f64) -> Self {
+        self.x_pad = Some(x_pad);
+        self
+    }
+
+    pub fn y(mut self, y: f64) -> Self {
+        self.y = Some(y);
+        self
+    }
+
+    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
+        self.y_anchor = Some(y_anchor);
+        self
+    }
+
+    pub fn y_pad(mut self, y_pad: f64) -> Self {
+        self.y_pad = Some(y_pad);
         self
     }
 }
@@ -1487,6 +1450,15 @@ impl ErrorData {
     }
 }
 
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum HoverOn {
+    Points,
+    Fills,
+    #[serde(rename = "points+fills")]
+    PointsAndFills,
+}
+
 #[cfg(test)]
 mod tests {
     use serde_json::{json, to_value};
@@ -1559,13 +1531,6 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_group_norm() {
-        assert_eq!(to_value(GroupNorm::Default).unwrap(), json!(""));
-        assert_eq!(to_value(GroupNorm::Fraction).unwrap(), json!("fraction"));
-        assert_eq!(to_value(GroupNorm::Percent).unwrap(), json!("percent"));
-    }
-
-    #[test]
     fn test_serialize_fill() {
         assert_eq!(to_value(Fill::ToZeroY).unwrap(), json!("tozeroy"));
         assert_eq!(to_value(Fill::ToZeroX).unwrap(), json!("tozerox"));
@@ -1623,25 +1588,15 @@ mod tests {
     }
 
     #[test]
-    fn test_default_plot_type() {
-        assert_eq!(PlotType::default(), PlotType::Scatter);
-    }
-
-    #[test]
+    #[rustfmt::skip]
     fn test_serialize_mode() {
         assert_eq!(to_value(Mode::Lines).unwrap(), json!("lines"));
         assert_eq!(to_value(Mode::Markers).unwrap(), json!("markers"));
         assert_eq!(to_value(Mode::Text).unwrap(), json!("text"));
-        assert_eq!(
-            to_value(Mode::LinesMarkers).unwrap(),
-            json!("lines+markers")
-        );
+        assert_eq!(to_value(Mode::LinesMarkers).unwrap(), json!("lines+markers"));
         assert_eq!(to_value(Mode::LinesText).unwrap(), json!("lines+text"));
         assert_eq!(to_value(Mode::MarkersText).unwrap(), json!("markers+text"));
-        assert_eq!(
-            to_value(Mode::LinesMarkersText).unwrap(),
-            json!("lines+markers+text")
-        );
+        assert_eq!(to_value(Mode::LinesMarkersText).unwrap(), json!("lines+markers+text"));
         assert_eq!(to_value(Mode::None).unwrap(), json!("none"));
     }
 
@@ -1666,6 +1621,115 @@ mod tests {
         assert_eq!(to_value(Position::BottomLeft).unwrap(), json!("bottom left"));
         assert_eq!(to_value(Position::BottomCenter).unwrap(), json!("bottom center"));
         assert_eq!(to_value(Position::BottomRight).unwrap(), json!("bottom right"));
+    }
+
+    #[test]
+    fn test_serialize_ticks() {
+        assert_eq!(to_value(Ticks::Outside).unwrap(), json!("outside"));
+        assert_eq!(to_value(Ticks::Inside).unwrap(), json!("inside"));
+        assert_eq!(to_value(Ticks::None).unwrap(), json!(""));
+    }
+
+    #[test]
+    fn test_serialize_show() {
+        assert_eq!(to_value(Show::All).unwrap(), json!("all"));
+        assert_eq!(to_value(Show::First).unwrap(), json!("first"));
+        assert_eq!(to_value(Show::Last).unwrap(), json!("last"));
+        assert_eq!(to_value(Show::None).unwrap(), json!("none"));
+    }
+
+    #[test]
+    fn test_serialize_default_color_bar() {
+        let color_bar = ColorBar::new();
+        let expected = json!({});
+
+        assert_eq!(to_value(color_bar).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_color_bar() {
+        let color_bar = ColorBar::new()
+            .background_color("#123456")
+            .border_color("#123456")
+            .border_width(19)
+            .dtick(1.0)
+            .exponent_format(ExponentFormat::CapitalE)
+            .len(99)
+            .len_mode(ThicknessMode::Pixels)
+            .n_ticks(500)
+            .outline_color("#789456")
+            .outline_width(7)
+            .separate_thousands(true)
+            .show_exponent(Show::All)
+            .show_tick_labels(true)
+            .show_tick_prefix(Show::First)
+            .show_tick_suffix(Show::Last)
+            .thickness(5)
+            .thickness_mode(ThicknessMode::Fraction)
+            .tick_angle(90.0)
+            .tick_color("#777999")
+            .tick_font(Font::new())
+            .tick_format("tick_format")
+            .tick_format_stops(vec![TickFormatStop::new()])
+            .tick_len(1)
+            .tick_mode(TickMode::Auto)
+            .tick_prefix("prefix")
+            .tick_suffix("suffix")
+            .tick_text(vec!["txt"])
+            .tick_vals(vec![1.0, 2.0])
+            .tick_width(55)
+            .tick0(0.0)
+            .ticks(Ticks::Outside)
+            .title(Title::new("title"))
+            .x(5.0)
+            .x_anchor(Anchor::Bottom)
+            .x_pad(2.2)
+            .y(1.0)
+            .y_anchor(Anchor::Auto)
+            .y_pad(8.8);
+
+        let expected = json!({
+            "bgcolor": "#123456",
+            "bordercolor": "#123456",
+            "borderwidth": 19,
+            "dtick": 1.0,
+            "exponentformat": "E",
+            "len": 99,
+            "lenmode": "pixels",
+            "nticks": 500,
+            "outlinecolor": "#789456",
+            "outlinewidth": 7,
+            "separatethousands": true,
+            "showexponent": "all",
+            "showticklabels": true,
+            "showtickprefix": "first",
+            "showticksuffix": "last",
+            "thickness": 5,
+            "thicknessmode": "fraction",
+            "tickangle": 90.0,
+            "tickcolor": "#777999",
+            "tickfont": {},
+            "tickformat": "tick_format",
+            "tickformatstops": [{"enabled": true}],
+            "ticklen": 1,
+            "tickmode": "auto",
+            "tickprefix": "prefix",
+            "ticksuffix": "suffix",
+            "ticktext": ["txt"],
+            "tickvals": [1.0, 2.0],
+            "tickwidth": 55,
+            "tick0": 0.0,
+            "ticks": "outside",
+            "title": {"text": "title"},
+            "x": 5.0,
+            "xanchor": "bottom",
+            "xpad": 2.2,
+            "y": 1.0,
+            "yanchor": "auto",
+            "ypad": 8.8
+        });
+
+        assert_eq!(to_value(color_bar).unwrap(), expected);
     }
 
     #[test]
@@ -2051,23 +2115,7 @@ mod tests {
             "line": {},
             "gradient": {"type": "radial", "color": "#FFFFFF"},
             "color": ["black", "blue"],
-            "colorbar": {
-                "borderwidth": 0,
-                "len": 1,
-                "nticks": 0,
-                "outlinewidth": 1,
-                "separate_thousands": true,
-                "showticklabels": true,
-                "thickness": 30,
-                "ticklen": 5,
-                "tickwidth": 1,
-                "x": 1.02,
-                "xanchor": "left",
-                "xpad": 10.0,
-                "y": 0.5,
-                "yanchor": "middle",
-                "ypad": 10.0,
-            },
+            "colorbar": {},
             "cauto": true,
             "cmin": 0.0,
             "cmax": 1.0,
@@ -2234,5 +2282,14 @@ mod tests {
         assert_eq!(to_value(Visible::True).unwrap(), json!(true));
         assert_eq!(to_value(Visible::False).unwrap(), json!(false));
         assert_eq!(to_value(Visible::LegendOnly).unwrap(), json!("legendonly"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_hover_on() {
+        assert_eq!(to_value(HoverOn::Points).unwrap(), json!("points"));
+        assert_eq!(to_value(HoverOn::Fills).unwrap(), json!("fills"));
+        assert_eq!(to_value(HoverOn::PointsAndFills).unwrap(), json!("points+fills"));
+
     }
 }

@@ -1,7 +1,9 @@
 use itertools_num::linspace;
-use plotly::common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title};
-use plotly::layout::{Axis, Layout};
-use plotly::{Plot, Scatter3D, Surface};
+use plotly::{
+    common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title},
+    layout::{Axis, Layout},
+    Plot, Scatter3D, Surface,
+};
 
 // 3D Scatter Plots
 fn simple_scatter3d_plot(show: bool) {
@@ -26,7 +28,7 @@ fn customized_scatter3d_plot(show: bool) {
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
     let sizelookup = z.clone();
 
-    let trace = Scatter3D::new(t.clone(), y.clone(), z.iter().map(|i| -i))
+    let trace = Scatter3D::new(t.clone(), y.clone(), z.iter().map(|i| -i).collect())
         .mode(Mode::Markers)
         .marker(
             Marker::new()
