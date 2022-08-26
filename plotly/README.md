@@ -39,7 +39,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.7.0"
+plotly = "0.8.0"
 ```
 
 For changes since the last version please consult the [change log](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
@@ -53,12 +53,15 @@ The following feature flags are available:
 * `plotly_ndarray`
     * Optional, compatible with Rust stable.
     * Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
+* `wasm`
+    * Optional, compatible with Rust stable.
+    * Adds support for building with wasm-unknown-unknown target triple, enabling use within web development.
 
 Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by enabling the `kaleido` feature: 
 
 ```toml
 [dependencies]
-plotly = { version = "0.7.0", features = ["kaleido"] }
+plotly = { version = "0.8.0", features = ["kaleido"] }
 ```
 For further details please see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
 

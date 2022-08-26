@@ -1,9 +1,12 @@
 use itertools_num::linspace;
-use plotly::common::{Fill, Font, Mode};
-use plotly::layout::{
-    Axis, GridPattern, Layout, LayoutGrid, Margin, Shape, ShapeLayer, ShapeLine, ShapeType,
+use plotly::{
+    color::NamedColor,
+    common::{DashType, Fill, Font, Mode},
+    layout::{
+        Axis, GridPattern, Layout, LayoutGrid, Margin, Shape, ShapeLayer, ShapeLine, ShapeType,
+    },
+    Bar, Plot, Scatter,
 };
-use plotly::{Bar, NamedColor, Plot, Scatter};
 use rand::thread_rng;
 use rand_distr::{Distribution, Normal};
 
@@ -56,7 +59,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
                 ShapeLine::new()
                     .color(NamedColor::LightSeaGreen)
                     .width(3.)
-                    .dash("dashdot"),
+                    .dash(DashType::DashDot),
             ),
     );
     layout.add_shape(
@@ -70,7 +73,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
                 ShapeLine::new()
                     .color(NamedColor::MediumPurple)
                     .width(3.)
-                    .dash("dot"),
+                    .dash(DashType::Dot),
             ),
     );
 

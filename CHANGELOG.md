@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2022-XX-XX
+
+## [0.8.0] - 2022-08-26
+Version 0.8.0 represents a significant release which refactors a lot of the codebase and tries to provide a cleaner API: there are several breaking changes listed below. On the whole, if migrating from v0.7.0, start by following any new compiler errors and, if you're still stuck, open an issue on the issue tracker and we can help out.
+### Added
+- impl `Clone`, `Serialize` and `PartialEq` for `Plot`
+- impl `Clone` +/- `Copy` for color types
+- Support for [configuration options](https://plotly.com/javascript/configuration-options/)
+- Support for layout templates and pre-defined themes
+- Support for WASM environments
+- A much enhanced test suite
+- Support for `Sankey` diagrams
+- Support for `Plot3D` - 3D plots for scatter, line and surface data
+### Changed
+- Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
+#47](https://github.com/igiagkiozis/plotly/issues/47))
+- Remove `private::TruthyEnum` in favour of a more robust way of serializing to `String` or `bool`
+- Refactor `Color` module
+- Refactored HTML templates with cleaner Javascript code
+- `Plot::save()` is renamed to `Plot::write_image()`
+- `Plot::show_{png | jpeg}` is now made generic via the new `Plot::show_image()` across static image formats with the `ImageFormat` enum
+- `Plot::write_html()` now takes a filepath and saves the plot to that location
+- `Plot::to_html()` now has similar behaviour to `Plot::to_inline_html()` and just returns a `String`
+### Fixed
+- Typos in `CONTRIBUTING.md`
+- Serialization of `plotly_kaleido::PlotData` ([Issue #50](https://github.com/igiagkiozis/plotly/issues/50))
+### Updated
+- `ndarray` to `0.15.4`.
+- `serde` to `1.0.132`.
+- `serde_json` to `1.0.73`.
+- `askama` to `0.11.0`.
+- `rand` to `0.8`.
+- `rand_distr` to `0.4`.
+- `plotly.js` to `2.12.1`
+
 ## [0.7.0] - 2022-01-01
 ### Added
 - `ScatterPolar` contributed by @samlich.
@@ -17,8 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2021-01-31
 ### Added
-  - tag matches for struct Axis : allow for synchronisation between subplots on x-axis
-  - fn matches in impl of Axis
+- tag matches for struct Axis : allow for synchronisation between subplots on x-axis
+- fn matches in impl of Axis
 
 ## [0.6.0] - 2020-07-25
 ### Added

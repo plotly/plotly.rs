@@ -1,10 +1,4 @@
 <div id="{{ plot_div_id }}" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("{{ plot_div_id }}")) {
-        var image_element = document.getElementById('image-export')
-
-        {{ plot_data }}
-        Plotly.newPlot('{{ plot_div_id }}', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("{{ plot_div_id }}", {{ plot|tojson|safe }});
 </script>

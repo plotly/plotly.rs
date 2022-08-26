@@ -11,20 +11,12 @@
 
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-
-#[derive(Serialize)]
-struct PlotData {
-    format: String,
-    width: usize,
-    height: usize,
-    scale: f64,
-    data: String,
-}
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
@@ -47,26 +39,32 @@ impl KaleidoResult {
     }
 }
 
-impl PlotData {
-    fn new(data: &str, format: &str, width: usize, height: usize, scale: f64) -> PlotData {
+#[derive(Serialize)]
+struct PlotData<'a> {
+    // TODO: as with `data`, it would be much better if this were a plotly::ImageFormat, but problems
+    // with cyclic dependencies.
+    format: String,
+    width: usize,
+    height: usize,
+    scale: f64,
+    // TODO: it would be great if this could be a plotly::Plot, but with the current workspace set up,
+    // that would be a cyclic dependency.
+    data: &'a Value,
+}
+
+impl<'a> PlotData<'a> {
+    fn new(data: &'a Value, format: &str, width: usize, height: usize, scale: f64) -> PlotData<'a> {
         PlotData {
-            format: String::from(format),
+            format: format.to_string(),
             width,
             height,
             scale,
-            data: String::from(data),
+            data,
         }
     }
 
     fn to_json(&self) -> String {
-        let data = format!(
-            r##"{{"format":"{}","width":{},"height":{},"scale":{},"data":{}}}"##,
-            self.format, self.width, self.height, self.scale, self.data
-        );
-        data.replace(" ", "")
-            .replace("\n", "")
-            .replace("\t", "")
-            .replace("\r", "")
+        serde_json::to_string(self).unwrap()
     }
 }
 
@@ -124,14 +122,14 @@ impl Kaleido {
     pub fn save(
         &self,
         dst: &Path,
-        plotly_data: &str,
-        image_format: &str,
+        plotly_data: &Value,
+        format: &str,
         width: usize,
         height: usize,
         scale: f64,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut dst = PathBuf::from(dst);
-        dst.set_extension(image_format);
+        dst.set_extension(format);
 
         let p = self.cmd_path.as_path();
         let p = p.to_str().unwrap();
@@ -154,8 +152,7 @@ impl Kaleido {
             .expect("failed to spawn Kaleido binary");
 
         {
-            let plot_data =
-                PlotData::new(plotly_data, image_format, width, height, scale).to_json();
+            let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
             let mut process_stdin = process.stdin.unwrap();
             process_stdin
                 .write_all(plot_data.as_bytes())
@@ -167,7 +164,7 @@ impl Kaleido {
         for line in output_lines.flatten() {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
-                let data: Vec<u8> = match image_format {
+                let data: Vec<u8> = match format {
                     "svg" | "eps" => image_data.as_bytes().to_vec(),
                     _ => base64::decode(image_data).unwrap(),
                 };
@@ -183,15 +180,39 @@ impl Kaleido {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use serde_json::{json, to_value};
     use std::path::PathBuf;
 
-    const TEST_PLOT: &str = r#"{
-    "data": [{"type":"scatter","x":[1,2,3,4],"y":[10,15,13,17],"name":"trace1","mode":"markers"},
-             {"type":"scatter","x":[2,3,4,5],"y":[16,5,11,9],"name":"trace2","mode":"lines"},
-             {"type":"scatter","x":[1,2,3,4],"y":[12,9,15,12],"name":"trace3"}],
-    "layout": {}
-    }"#;
+    use super::*;
+
+    fn create_test_plot() -> Value {
+        to_value(json!({
+            "data": [
+                {
+                    "type": "scatter",
+                    "x": [1, 2, 3, 4],
+                    "y": [10, 15, 13, 17],
+                    "name": "trace1",
+                    "mode": "markers"
+                },
+                {
+                    "type": "scatter",
+                    "x": [2, 3, 4, 5],
+                    "y": [16, 5, 11, 9],
+                    "name": "trace2",
+                    "mode": "lines"
+                },
+                {
+                    "type": "scatter",
+                    "x": [1, 2, 3, 4],
+                    "y": [12, 9, 15, 12],
+                    "name": "trace3",
+                }
+            ],
+            "layout": {}
+        }))
+        .unwrap()
+    }
 
     #[test]
     fn test_can_find_kaleido_executable() {
@@ -200,51 +221,65 @@ mod tests {
 
     #[test]
     fn test_plot_data_to_json() {
-        let d = PlotData::new(TEST_PLOT, "png", 400, 500, 1.);
-        println!("{}", d.to_json());
+        let test_plot = create_test_plot();
+        let kaleido_data = PlotData::new(&test_plot, "png", 400, 500, 1.);
+        let expected = json!({
+            "data": test_plot,
+            "format": "png",
+            "width": 400,
+            "height": 500,
+            "scale": 1.0
+        });
+
+        assert_eq!(to_value(kaleido_data).unwrap(), expected);
     }
 
     #[test]
     fn test_save_png() {
+        let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.png");
-        let r = k.save(dst.as_path(), TEST_PLOT, "png", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, "png", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
     fn test_save_jpeg() {
+        let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.jpeg");
-        let r = k.save(dst.as_path(), TEST_PLOT, "jpeg", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, "jpeg", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
     fn test_save_webp() {
+        let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.webp");
-        let r = k.save(dst.as_path(), TEST_PLOT, "webp", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, "webp", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
     fn test_save_svg() {
+        let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.svg");
-        let r = k.save(dst.as_path(), TEST_PLOT, "svg", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, "svg", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
     fn test_save_pdf() {
+        let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.pdf");
-        let r = k.save(dst.as_path(), TEST_PLOT, "pdf", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, "pdf", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
@@ -252,9 +287,10 @@ mod tests {
     #[test]
     #[ignore]
     fn test_save_eps() {
+        let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");
-        let r = k.save(dst.as_path(), TEST_PLOT, "eps", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, "eps", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }

@@ -1,6 +1,6 @@
-use plotly::common::{Font, Side, Title};
-use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder};
-use plotly::{Plot, Rgb, Scatter};
+use plotly::common::{AxisSide, Font, Title};
+use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder};
+use plotly::{color::Rgb, Plot, Scatter};
 
 // Subplots
 fn simple_subplot(show: bool) {
@@ -124,7 +124,7 @@ fn stacked_subplots_with_shared_x_axis(show: bool) {
 
     let layout = Layout::new()
         .y_axis(Axis::new().domain(&[0., 0.33]))
-        .legend(Legend::new().trace_order("reversed"))
+        .legend(Legend::new().trace_order(TraceOrder::Reversed))
         .y_axis2(Axis::new().domain(&[0.33, 0.66]))
         .y_axis3(Axis::new().domain(&[0.66, 1.]));
     plot.set_layout(layout);
@@ -197,7 +197,7 @@ fn two_y_axes(show: bool) {
                 .title(Title::new("yaxis2 title").font(Font::new().color(Rgb::new(148, 103, 189))))
                 .tick_font(Font::new().color(Rgb::new(148, 103, 189)))
                 .overlaying("y")
-                .side(Side::Right),
+                .side(AxisSide::Right),
         );
     plot.set_layout(layout);
     if show {
@@ -235,7 +235,7 @@ fn multiple_axes(show: bool) {
                 .tick_font(Font::new().color("#ff7f0e"))
                 .anchor("free")
                 .overlaying("y")
-                .side(Side::Left)
+                .side(AxisSide::Left)
                 .position(0.15),
         )
         .y_axis3(
@@ -244,7 +244,7 @@ fn multiple_axes(show: bool) {
                 .tick_font(Font::new().color("#d62728"))
                 .anchor("x")
                 .overlaying("y")
-                .side(Side::Right),
+                .side(AxisSide::Right),
         )
         .y_axis4(
             Axis::new()
@@ -252,7 +252,7 @@ fn multiple_axes(show: bool) {
                 .tick_font(Font::new().color("#9467bd"))
                 .anchor("free")
                 .overlaying("y")
-                .side(Side::Right)
+                .side(AxisSide::Right)
                 .position(0.85),
         );
     plot.set_layout(layout);
