@@ -4,17 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.0] - 2022-xx-xx
-Version 0.8.0 represents a significant release which refactors a lot of the codebase and tries to provide a cleaner API: there are several breaking changes listed below.
+## [0.8.1] - 2022-XX-XX
+
+## [0.8.0] - 2022-08-26
+Version 0.8.0 represents a significant release which refactors a lot of the codebase and tries to provide a cleaner API: there are several breaking changes listed below. On the whole, if migrating from v0.7.0, start by following any new compiler errors and, if you're still stuck, open an issue on the issue tracker and we can help out.
 ### Added
 - impl `Clone`, `Serialize` and `PartialEq` for `Plot`
 - impl `Clone` +/- `Copy` for color types
 - Support for [configuration options](https://plotly.com/javascript/configuration-options/)
 - Support for layout templates and pre-defined themes
 - Support for WASM environments
-- Lots of tests
+- A much enhanced test suite
 - Support for `Sankey` diagrams
-- `Plot3D`: Add 3D plots for scatter, line and surface data
+- Support for `Plot3D` - 3D plots for scatter, line and surface data
 ### Changed
 - Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
 #47](https://github.com/igiagkiozis/plotly/issues/47))
