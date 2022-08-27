@@ -1,15 +1,17 @@
 //! Surface trace
 
+use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
-    color::{Color, ColorArray},
+    color::Color,
     common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible},
-    private, Trace,
+    Trace,
 };
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(no_box)]
 pub struct Lighting {
     ambient: Option<f64>,
     diffuse: Option<f64>,
@@ -21,31 +23,6 @@ pub struct Lighting {
 impl Lighting {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn ambient(mut self, ambient: f64) -> Self {
-        self.ambient = Some(ambient);
-        self
-    }
-
-    pub fn diffuse(mut self, diffuse: f64) -> Self {
-        self.diffuse = Some(diffuse);
-        self
-    }
-
-    pub fn fresnel(mut self, fresnel: f64) -> Self {
-        self.fresnel = Some(fresnel);
-        self
-    }
-
-    pub fn roughness(mut self, roughness: f64) -> Self {
-        self.roughness = Some(roughness);
-        self
-    }
-
-    pub fn specular(mut self, specular: f64) -> Self {
-        self.specular = Some(specular);
-        self
     }
 }
 
@@ -63,7 +40,8 @@ impl Position {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, FieldSetter, Clone)]
+#[field_setter(no_box)]
 pub struct PlaneProject {
     x: Option<bool>,
     y: Option<bool>,
@@ -74,25 +52,11 @@ impl PlaneProject {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn x(mut self, x: bool) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn y(mut self, y: bool) -> Self {
-        self.y = Some(y);
-        self
-    }
-
-    pub fn z(mut self, z: bool) -> Self {
-        self.z = Some(z);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, FieldSetter, Clone)]
+#[field_setter(no_box)]
 pub struct PlaneContours {
     color: Option<Box<dyn Color>>,
     end: Option<f64>,
@@ -114,65 +78,11 @@ impl PlaneContours {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
-    }
-
-    pub fn highlight(mut self, highlight: bool) -> Self {
-        self.highlight = Some(highlight);
-        self
-    }
-
-    pub fn highlight_color<C: Color>(mut self, highlight_color: C) -> Self {
-        self.highlight_color = Some(Box::new(highlight_color));
-        self
-    }
-
-    pub fn highlight_width(mut self, highlight_width: usize) -> Self {
-        self.highlight_width = Some(highlight_width);
-        self
-    }
-
-    pub fn end(mut self, end: f64) -> Self {
-        self.end = Some(end);
-        self
-    }
-
-    pub fn project(mut self, project: PlaneProject) -> Self {
-        self.project = Some(project);
-        self
-    }
-
-    pub fn show(mut self, show: bool) -> Self {
-        self.show = Some(show);
-        self
-    }
-
-    pub fn size(mut self, size: usize) -> Self {
-        self.size = Some(size);
-        self
-    }
-
-    pub fn start(mut self, start: f64) -> Self {
-        self.start = Some(start);
-        self
-    }
-
-    pub fn use_colormap(mut self, use_colormap: bool) -> Self {
-        self.use_colormap = Some(use_colormap);
-        self
-    }
-
-    pub fn width(mut self, width: usize) -> Self {
-        self.width = Some(width);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, FieldSetter, Clone)]
+#[field_setter(no_box)]
 pub struct SurfaceContours {
     x: Option<PlaneContours>,
     y: Option<PlaneContours>,
@@ -182,21 +92,6 @@ pub struct SurfaceContours {
 impl SurfaceContours {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn x(mut self, x: PlaneContours) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn y(mut self, y: PlaneContours) -> Self {
-        self.y = Some(y);
-        self
-    }
-
-    pub fn z(mut self, z: PlaneContours) -> Self {
-        self.z = Some(z);
-        self
     }
 }
 
@@ -218,13 +113,14 @@ impl SurfaceContours {
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
 /// ```
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Surface<X, Y, Z>
 where
     X: Serialize + Clone,
     Y: Serialize + Clone,
     Z: Serialize + Clone,
 {
+    #[field_setter(default = "PlotType::Surface")]
     r#type: PlotType,
     x: Option<Vec<X>>,
     y: Option<Vec<Y>>,
@@ -277,50 +173,6 @@ where
     z_calendar: Option<Calendar>,
 }
 
-impl<X, Y, Z> Default for Surface<X, Y, Z>
-where
-    X: Serialize + Clone,
-    Y: Serialize + Clone,
-    Z: Serialize + Clone,
-{
-    fn default() -> Self {
-        Self {
-            r#type: PlotType::Surface,
-            x: None,
-            y: None,
-            z: None,
-            auto_color_scale: None,
-            cauto: None,
-            cmax: None,
-            cmid: None,
-            cmin: None,
-            color_bar: None,
-            color_scale: None,
-            connect_gaps: None,
-            contours: None,
-            hide_surface: None,
-            hover_info: None,
-            hover_label: None,
-            hover_template: None,
-            hover_text: None,
-            legend_group: None,
-            light_position: None,
-            lighting: None,
-            name: None,
-            opacity: None,
-            reverse_scale: None,
-            show_legend: None,
-            show_scale: None,
-            surface_color: None,
-            text: None,
-            visible: None,
-            x_calendar: None,
-            y_calendar: None,
-            z_calendar: None,
-        }
-    }
-}
-
 impl<X, Y, Z> Surface<X, Y, Z>
 where
     X: Serialize + Clone,
@@ -332,174 +184,6 @@ where
             z: Some(z),
             ..Default::default()
         })
-    }
-
-    pub fn x(mut self, x: Vec<X>) -> Box<Self> {
-        self.x = Some(x);
-        Box::new(self)
-    }
-
-    pub fn y(mut self, y: Vec<Y>) -> Box<Self> {
-        self.y = Some(y);
-        Box::new(self)
-    }
-
-    pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_string());
-        Box::new(self)
-    }
-
-    pub fn visible(mut self, visible: Visible) -> Box<Self> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Self> {
-        self.show_legend = Some(show_legend);
-        Box::new(self)
-    }
-
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_string());
-        Box::new(self)
-    }
-
-    pub fn opacity(mut self, opacity: f64) -> Box<Self> {
-        self.opacity = Some(opacity);
-        Box::new(self)
-    }
-
-    pub fn surface_color<C: Color>(mut self, surface_color: Vec<C>) -> Box<Self> {
-        self.surface_color = Some(ColorArray(surface_color).into());
-        Box::new(self)
-    }
-
-    pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_string()));
-        Box::new(self)
-    }
-
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Self> {
-        let text = private::owned_string_vector(text);
-        self.text = Some(Dim::Vector(text));
-        Box::new(self)
-    }
-
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_string()));
-        Box::new(self)
-    }
-
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Self> {
-        let hover_text = private::owned_string_vector(hover_text);
-        self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
-        Box::new(self)
-    }
-
-    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Self> {
-        let hover_template = private::owned_string_vector(hover_template);
-        self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
-    }
-
-    pub fn color_bar(mut self, color_bar: ColorBar) -> Box<Self> {
-        self.color_bar = Some(color_bar);
-        Box::new(self)
-    }
-
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Box<Self> {
-        self.auto_color_scale = Some(auto_color_scale);
-        Box::new(self)
-    }
-
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Box<Self> {
-        self.color_scale = Some(color_scale);
-        Box::new(self)
-    }
-
-    pub fn show_scale(mut self, show_scale: bool) -> Box<Self> {
-        self.show_scale = Some(show_scale);
-        Box::new(self)
-    }
-
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Box<Self> {
-        self.reverse_scale = Some(reverse_scale);
-        Box::new(self)
-    }
-
-    pub fn cauto(mut self, cauto: bool) -> Box<Self> {
-        self.cauto = Some(cauto);
-        Box::new(self)
-    }
-
-    pub fn cmin(mut self, cmin: f64) -> Box<Self> {
-        self.cmin = Some(cmin);
-        Box::new(self)
-    }
-
-    pub fn cmax(mut self, cmax: f64) -> Box<Self> {
-        self.cmax = Some(cmax);
-        Box::new(self)
-    }
-
-    pub fn cmid(mut self, cmid: f64) -> Box<Self> {
-        self.cmid = Some(cmid);
-        Box::new(self)
-    }
-
-    pub fn connect_gaps(mut self, connect_gaps: bool) -> Box<Self> {
-        self.connect_gaps = Some(connect_gaps);
-        Box::new(self)
-    }
-
-    pub fn contours(mut self, contours: SurfaceContours) -> Box<Self> {
-        self.contours = Some(contours);
-        Box::new(self)
-    }
-
-    pub fn hide_surface(mut self, hide_surface: bool) -> Box<Self> {
-        self.hide_surface = Some(hide_surface);
-        Box::new(self)
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    pub fn lighting(mut self, lighting: Lighting) -> Box<Self> {
-        self.lighting = Some(lighting);
-        Box::new(self)
-    }
-
-    pub fn light_position(mut self, light_position: Position) -> Box<Self> {
-        self.light_position = Some(light_position);
-        Box::new(self)
-    }
-
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {
-        self.x_calendar = Some(x_calendar);
-        Box::new(self)
-    }
-
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Self> {
-        self.y_calendar = Some(y_calendar);
-        Box::new(self)
-    }
-
-    pub fn z_calendar(mut self, z_calendar: Calendar) -> Box<Self> {
-        self.z_calendar = Some(z_calendar);
-        Box::new(self)
     }
 }
 

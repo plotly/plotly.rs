@@ -1,5 +1,6 @@
 //! Sankey trace
 
+use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
@@ -270,64 +271,66 @@ where
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
 /// ```
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, FieldSetter)]
 pub struct Sankey<V>
 where
     V: Serialize + Clone,
 {
     // Missing: meta, customdata, uirevision
+    #[field_setter(default = "PlotType::Sankey")]
     r#type: PlotType,
+    /// If value is `snap` (the default), the node arrangement is assisted by automatic snapping of elements
+    /// to preserve space between nodes specified via `nodepad`. If value is `perpendicular`, the nodes can
+    /// only move along a line perpendicular to the flow. If value is `freeform`, the nodes can freely move
+    /// on the plane. If value is `fixed`, the nodes are stationary.
     arrangement: Option<Arrangement>,
+    /// Sets the domain within which the Sankey diagram will be drawn.
     domain: Option<Domain>,
+    /// Assigns id labels to each datum. These ids are for object constancy of data points during animation.
     ids: Option<Vec<String>>,
+    /// Determines which trace information appear on hover. If `none` or `skip` are set, no information is displayed
+    /// upon hovering. But, if `none` is set, click and hover events are still fired. Note that this attribute
+    /// is superseded by `node.hover_info` and `link.hover_info` for nodes and links respectively.
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
+    /// Sets the hover label for this trace.
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
+    /// Set and style the title to appear for the legend group
     #[serde(rename = "legendgrouptitle")]
     legend_group_title: Option<LegendGroupTitle>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
+    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
+    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
+    /// and ranks greater than 1000 to go after all unranked items.
     #[serde(rename = "legendrank")]
     legend_rank: Option<usize>,
+    /// The links of the Sankey diagram.
     link: Option<Link<V>>,
+    /// Sets the trace name. The trace name appears as the legend item and on hover.
     name: Option<String>,
+    /// The nodes of the Sankey diagram.
     node: Option<Node>,
+    /// Sets the orientation of the Sankey diagram.
     orientation: Option<Orientation>,
+    /// Vector containing integer indices of selected points. Has an effect only for traces that support
+    /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
+    /// on for all points.
     #[serde(rename = "selectedpoints")]
     selected_points: Option<Vec<usize>>,
+    /// Sets the font for node labels.
     #[serde(rename = "textfont")]
     text_font: Option<Font>,
+    /// Sets the value formatting rule using d3 formatting mini-languages which are very similar to those in
+    /// Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
     #[serde(rename = "valueformat")]
     value_format: Option<String>,
+    /// Adds a unit to follow the value in the hover tooltip. Add a space if a separation is necessary from the value.
     #[serde(rename = "valuesuffix")]
     value_suffix: Option<String>,
+    /// Determines whether or not this trace is visible. If "legendonly", the trace
+    /// is not drawn, but can appear as a legend item (provided that the legend itself is visible).
     visible: Option<bool>,
-}
-
-impl<V> Default for Sankey<V>
-where
-    V: Serialize + Clone,
-{
-    fn default() -> Self {
-        Self {
-            r#type: PlotType::Sankey,
-            arrangement: None,
-            domain: None,
-            ids: None,
-            hover_info: None,
-            hover_label: None,
-            legend_group_title: None,
-            legend_rank: None,
-            link: None,
-            name: None,
-            node: None,
-            orientation: None,
-            selected_points: None,
-            text_font: None,
-            value_format: None,
-            value_suffix: None,
-            visible: None,
-        }
-    }
 }
 
 impl<V> Sankey<V>
@@ -337,114 +340,6 @@ where
     /// Creates a new empty Sankey diagram.
     pub fn new() -> Box<Self> {
         Box::new(Default::default())
-    }
-
-    /// Sets the trace name. The trace name appears as the legend item and on hover.
-    pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_string());
-        Box::new(self)
-    }
-
-    /// Determines whether or not this trace is visible. If "legendonly", the trace
-    /// is not drawn, but can appear as a legend item (provided that the legend itself is visible).
-    pub fn visible(mut self, visible: bool) -> Box<Self> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
-    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
-    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
-    /// and ranks greater than 1000 to go after all unranked items.
-    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
-        self.legend_rank = Some(legend_rank);
-        Box::new(self)
-    }
-
-    /// Set and style the title to appear for the legend group
-    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
-        self.legend_group_title = Some(legend_group_title);
-        Box::new(self)
-    }
-
-    /// Assigns id labels to each datum. These ids are for object constancy of data points during animation.
-    pub fn ids(mut self, ids: Vec<&str>) -> Box<Self> {
-        self.ids = Some(ids.iter().map(|&id| id.to_string()).collect());
-        Box::new(self)
-    }
-
-    /// Determines which trace information appear on hover. If `none` or `skip` are set, no information is displayed
-    /// upon hovering. But, if `none` is set, click and hover events are still fired. Note that this attribute
-    /// is superseded by `node.hover_info` and `link.hover_info` for nodes and links respectively.
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    /// Sets the hover label for this trace.
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    /// Sets the font for node labels.
-    pub fn text_font(mut self, text_font: Font) -> Box<Self> {
-        self.text_font = Some(text_font);
-        Box::new(self)
-    }
-
-    /// Sets the domain within which the Sankey diagram will be drawn.
-    pub fn domain(mut self, domain: Domain) -> Box<Self> {
-        self.domain = Some(domain);
-        Box::new(self)
-    }
-
-    /// Sets the orientation of the Sankey diagram.
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    /// The nodes of the Sankey diagram.
-    pub fn node(mut self, node: Node) -> Box<Self> {
-        self.node = Some(node);
-        Box::new(self)
-    }
-
-    /// The links of the Sankey diagram.
-    pub fn link(mut self, link: Link<V>) -> Box<Self> {
-        self.link = Some(link);
-        Box::new(self)
-    }
-
-    /// Vector containing integer indices of selected points. Has an effect only for traces that support
-    /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
-    /// on for all points.
-    pub fn selected_points(mut self, selected_points: Vec<usize>) -> Box<Self> {
-        self.selected_points = Some(selected_points);
-        Box::new(self)
-    }
-
-    /// If value is `snap` (the default), the node arrangement is assisted by automatic snapping of elements
-    /// to preserve space between nodes specified via `nodepad`. If value is `perpendicular`, the nodes can
-    /// only move along a line perpendicular to the flow. If value is `freeform`, the nodes can freely move
-    /// on the plane. If value is `fixed`, the nodes are stationary.
-    pub fn arrangement(mut self, arrangement: Arrangement) -> Box<Self> {
-        self.arrangement = Some(arrangement);
-        Box::new(self)
-    }
-
-    /// Sets the value formatting rule using d3 formatting mini-languages which are very similar to those in
-    /// Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
-    pub fn value_format(mut self, value_format: &str) -> Box<Self> {
-        self.value_format = Some(value_format.to_string());
-        Box::new(self)
-    }
-
-    /// Adds a unit to follow the value in the hover tooltip. Add a space if a separation is necessary from the value.
-    pub fn value_suffix(mut self, value_suffix: &str) -> Box<Self> {
-        self.value_suffix = Some(value_suffix.to_string());
-        Box::new(self)
     }
 }
 

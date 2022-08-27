@@ -19,6 +19,7 @@ pub mod plot;
 mod traces;
 
 pub use common::color;
+use common::Dim;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{ImageFormat, Plot, Trace};
@@ -33,6 +34,18 @@ pub use traces::{box_plot, contour, histogram, sankey, surface};
 
 #[cfg(feature = "plotly_ndarray")]
 pub use crate::ndarray::ArrayTraces;
+
+pub trait GetInner {
+    type Inner;
+}
+
+impl<T> GetInner for Option<T> {
+    type Inner = T;
+}
+
+impl<T: serde::Serialize> GetInner for Dim<T> {
+    type Inner = T;
+}
 
 // Not public API.
 #[doc(hidden)]

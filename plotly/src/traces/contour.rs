@@ -1,5 +1,6 @@
 //! Contour trace
 
+use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
@@ -45,8 +46,10 @@ pub enum Operation {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(no_box)]
 pub struct Contours {
+    #[field_setter(skip)]
     r#type: Option<ContoursType>,
     start: Option<f64>,
     end: Option<f64>,
@@ -69,58 +72,8 @@ impl Contours {
         Default::default()
     }
 
-    pub fn coloring(mut self, coloring: Coloring) -> Self {
-        self.coloring = Some(coloring);
-        self
-    }
-
-    pub fn end(mut self, end: f64) -> Self {
-        self.end = Some(end);
-        self
-    }
-
-    pub fn label_font(mut self, label_font: Font) -> Self {
-        self.label_font = Some(label_font);
-        self
-    }
-
-    pub fn label_format(mut self, label_format: &str) -> Self {
-        self.label_format = Some(label_format.to_string());
-        self
-    }
-
-    pub fn operation(mut self, operation: Operation) -> Self {
-        self.operation = Some(operation);
-        self
-    }
-
-    pub fn show_labels(mut self, show_labels: bool) -> Self {
-        self.show_labels = Some(show_labels);
-        self
-    }
-
-    pub fn show_lines(mut self, show_lines: bool) -> Self {
-        self.show_lines = Some(show_lines);
-        self
-    }
-
-    pub fn size(mut self, size: usize) -> Self {
-        self.size = Some(size);
-        self
-    }
-
-    pub fn start(mut self, start: f64) -> Self {
-        self.start = Some(start);
-        self
-    }
-
     pub fn type_(mut self, t: ContoursType) -> Self {
         self.r#type = Some(t);
-        self
-    }
-
-    pub fn value(mut self, value: f64) -> Self {
-        self.value = Some(value);
         self
     }
 }
