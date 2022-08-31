@@ -16,7 +16,7 @@ pub mod common;
 pub mod configuration;
 pub mod layout;
 pub mod plot;
-mod traces;
+pub mod traces;
 
 pub use common::color;
 use common::Dim;
@@ -34,6 +34,9 @@ pub use traces::{box_plot, contour, histogram, sankey, surface};
 
 #[cfg(feature = "plotly_ndarray")]
 pub use crate::ndarray::ArrayTraces;
+
+pub trait Restyle: serde::Serialize {}
+pub trait Relayout {}
 
 pub trait GetInner {
     type Inner;

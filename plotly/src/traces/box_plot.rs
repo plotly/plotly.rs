@@ -92,6 +92,7 @@ pub enum HoverOn {
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct BoxPlot<X, Y>
 where
     X: Serialize + Clone,

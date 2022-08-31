@@ -52,6 +52,7 @@ impl Serialize for Smoothing {
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct HeatMap<X, Y, Z>
 where
     X: Serialize + Clone,

@@ -1,6 +1,6 @@
 //! The various supported traces
 
-mod bar;
+pub mod bar;
 pub mod box_plot;
 mod candlestick;
 pub mod contour;

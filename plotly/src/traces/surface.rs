@@ -11,7 +11,6 @@ use crate::{
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
-#[field_setter(no_box)]
 pub struct Lighting {
     ambient: Option<f64>,
     diffuse: Option<f64>,
@@ -41,7 +40,6 @@ impl Position {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, FieldSetter, Clone)]
-#[field_setter(no_box)]
 pub struct PlaneProject {
     x: Option<bool>,
     y: Option<bool>,
@@ -56,7 +54,6 @@ impl PlaneProject {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, FieldSetter, Clone)]
-#[field_setter(no_box)]
 pub struct PlaneContours {
     color: Option<Box<dyn Color>>,
     end: Option<f64>,
@@ -82,7 +79,6 @@ impl PlaneContours {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, FieldSetter, Clone)]
-#[field_setter(no_box)]
 pub struct SurfaceContours {
     x: Option<PlaneContours>,
     y: Option<PlaneContours>,
@@ -114,6 +110,7 @@ impl SurfaceContours {
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Surface<X, Y, Z>
 where
     X: Serialize + Clone,

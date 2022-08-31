@@ -35,6 +35,7 @@ use crate::{
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct ScatterPolar<Theta, R>
 where
     Theta: Serialize + Clone + 'static,

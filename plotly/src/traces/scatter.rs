@@ -53,6 +53,7 @@ pub enum StackGaps {
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Scatter<X, Y>
 where
     X: Serialize + Clone + 'static,
@@ -82,7 +83,6 @@ where
     /// Assigns id labels to each datum. These ids for object constancy of data points during
     /// animation. Should be an array of strings, not numbers or any other type.
     ids: Option<Vec<String>>,
-    #[field_setter(skip)]
     x: Option<Vec<X>>,
     /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
     /// starting coordinate and `dx` the step.
@@ -90,7 +90,6 @@ where
     /// Sets the x coordinate step. See `x0` for more info.
     dx: Option<f64>,
 
-    #[field_setter(skip)]
     y: Option<Vec<Y>>,
 
     /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the

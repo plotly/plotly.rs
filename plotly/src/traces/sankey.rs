@@ -272,6 +272,7 @@ where
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Sankey<V>
 where
     V: Serialize + Clone,

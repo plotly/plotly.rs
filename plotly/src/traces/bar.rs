@@ -35,6 +35,7 @@ use crate::{
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Bar<X, Y>
 where
     X: Serialize + Clone,

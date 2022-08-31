@@ -47,7 +47,6 @@ pub enum Operation {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
-#[field_setter(no_box)]
 pub struct Contours {
     #[field_setter(skip)]
     r#type: Option<ContoursType>,

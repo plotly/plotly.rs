@@ -16,7 +16,6 @@ use crate::{
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, FieldSetter, Clone, Serialize)]
-#[field_setter(no_box)]
 pub struct ProjectionCoord {
     opacity: Option<f64>,
     scale: Option<f64>,
@@ -31,7 +30,6 @@ impl ProjectionCoord {
 
 #[serde_with::skip_serializing_none]
 #[derive(Debug, FieldSetter, Clone, Serialize)]
-#[field_setter(no_box)]
 pub struct Projection {
     x: Option<ProjectionCoord>,
     y: Option<ProjectionCoord>,
@@ -81,6 +79,7 @@ pub enum SurfaceAxis {
 /// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Scatter3D<X, Y, Z>
 where
     X: Serialize + Clone,
@@ -122,11 +121,8 @@ where
     /// animation. Should be an array of strings, not numbers or any other type.
     ids: Option<Vec<String>>,
 
-    #[field_setter(skip)]
     x: Option<Vec<X>>,
-    #[field_setter(skip)]
     y: Option<Vec<Y>>,
-    #[field_setter(skip)]
     z: Option<Vec<Z>>,
 
     /// Sets the surface fill color.

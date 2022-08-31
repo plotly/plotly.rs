@@ -1,17 +1,20 @@
 pub mod themes;
+pub mod update_menu;
 
 use std::borrow::Cow;
 
+use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 
 use crate::{
-    color::{Color, ColorArray},
+    color::Color,
     common::{
         Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font, Label,
         Orientation, TickFormatStop, TickMode, Title,
     },
     private::{NumOrString, NumOrStringCollection},
 };
+use update_menu::UpdateMenu;
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -158,7 +161,7 @@ pub enum GroupClick {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Legend {
     #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
@@ -196,96 +199,6 @@ impl Legend {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
-    pub fn border_width(mut self, border_width: usize) -> Self {
-        self.border_width = Some(border_width);
-        self
-    }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
-    pub fn orientation(mut self, orientation: Orientation) -> Self {
-        self.orientation = Some(orientation);
-        self
-    }
-
-    pub fn trace_order(mut self, trace_order: TraceOrder) -> Self {
-        self.trace_order = Some(trace_order);
-        self
-    }
-
-    pub fn trace_group_gap(mut self, trace_group_gap: usize) -> Self {
-        self.trace_group_gap = Some(trace_group_gap);
-        self
-    }
-
-    pub fn item_sizing(mut self, item_sizing: ItemSizing) -> Self {
-        self.item_sizing = Some(item_sizing);
-        self
-    }
-
-    pub fn item_click(mut self, item_click: ItemClick) -> Self {
-        self.item_click = Some(item_click);
-        self
-    }
-
-    pub fn item_double_click(mut self, item_double_click: ItemClick) -> Self {
-        self.item_double_click = Some(item_double_click);
-        self
-    }
-
-    pub fn x(mut self, x: f64) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
-        self.x_anchor = Some(x_anchor);
-        self
-    }
-
-    pub fn y(mut self, y: f64) -> Self {
-        self.y = Some(y);
-        self
-    }
-
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
-        self.y_anchor = Some(y_anchor);
-        self
-    }
-
-    pub fn valign(mut self, valign: VAlign) -> Self {
-        self.valign = Some(valign);
-        self
-    }
-
-    pub fn title(mut self, title: Title) -> Self {
-        self.title = Some(title);
-        self
-    }
-
-    pub fn group_click(mut self, group_click: GroupClick) -> Self {
-        self.group_click = Some(group_click);
-        self
-    }
-
-    pub fn item_width(mut self, item_width: usize) -> Self {
-        self.item_width = Some(item_width);
-        self
-    }
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -305,12 +218,16 @@ pub enum HAlign {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Margin {
-    l: Option<usize>,
-    r: Option<usize>,
-    t: Option<usize>,
-    b: Option<usize>,
+    #[serde(rename = "l")]
+    left: Option<usize>,
+    #[serde(rename = "r")]
+    right: Option<usize>,
+    #[serde(rename = "t")]
+    top: Option<usize>,
+    #[serde(rename = "b")]
+    bottom: Option<usize>,
     pad: Option<usize>,
     #[serde(rename = "autoexpand")]
     auto_expand: Option<bool>,
@@ -320,40 +237,10 @@ impl Margin {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn left(mut self, left: usize) -> Self {
-        self.l = Some(left);
-        self
-    }
-
-    pub fn right(mut self, right: usize) -> Self {
-        self.r = Some(right);
-        self
-    }
-
-    pub fn top(mut self, top: usize) -> Self {
-        self.t = Some(top);
-        self
-    }
-
-    pub fn bottom(mut self, bottom: usize) -> Self {
-        self.b = Some(bottom);
-        self
-    }
-
-    pub fn pad(mut self, pad: usize) -> Self {
-        self.pad = Some(pad);
-        self
-    }
-
-    pub fn auto_expand(mut self, auto_expand: bool) -> Self {
-        self.auto_expand = Some(auto_expand);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct LayoutColorScale {
     sequential: Option<ColorScale>,
     #[serde(rename = "sequentialminus")]
@@ -364,21 +251,6 @@ pub struct LayoutColorScale {
 impl LayoutColorScale {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn sequential(mut self, sequential: ColorScale) -> Self {
-        self.sequential = Some(sequential);
-        self
-    }
-
-    pub fn sequential_minus(mut self, sequential_minus: ColorScale) -> Self {
-        self.sequential_minus = Some(sequential_minus);
-        self
-    }
-
-    pub fn diverging(mut self, diverging: ColorScale) -> Self {
-        self.diverging = Some(diverging);
-        self
     }
 }
 
@@ -391,7 +263,7 @@ pub enum SliderRangeMode {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct RangeSliderYAxis {
     #[serde(rename = "rangemode")]
     range_mode: Option<SliderRangeMode>,
@@ -402,20 +274,10 @@ impl RangeSliderYAxis {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn range_mode(mut self, range_mode: SliderRangeMode) -> Self {
-        self.range_mode = Some(range_mode);
-        self
-    }
-
-    pub fn range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> Self {
-        self.range = Some(range.into());
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct RangeSlider {
     #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
@@ -435,46 +297,6 @@ pub struct RangeSlider {
 impl RangeSlider {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
-    pub fn border_width(mut self, border_width: u64) -> Self {
-        self.border_width = Some(border_width);
-        self
-    }
-
-    pub fn auto_range(mut self, auto_range: bool) -> Self {
-        self.auto_range = Some(auto_range);
-        self
-    }
-
-    pub fn range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> Self {
-        self.range = Some(range.into());
-        self
-    }
-
-    pub fn thickness(mut self, thickness: f64) -> Self {
-        self.thickness = Some(thickness);
-        self
-    }
-
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
-    pub fn y_axis(mut self, axis: RangeSliderYAxis) -> Self {
-        self.y_axis = Some(axis);
-        self
     }
 }
 
@@ -498,7 +320,7 @@ pub enum StepMode {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct SelectorButton {
     visible: Option<bool>,
     step: Option<SelectorStep>,
@@ -515,45 +337,10 @@ impl SelectorButton {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
-    pub fn step(mut self, step: SelectorStep) -> Self {
-        self.step = Some(step);
-        self
-    }
-
-    pub fn step_mode(mut self, step_mode: StepMode) -> Self {
-        self.step_mode = Some(step_mode);
-        self
-    }
-
-    pub fn count(mut self, count: usize) -> Self {
-        self.count = Some(count);
-        self
-    }
-
-    pub fn label(mut self, label: &str) -> Self {
-        self.label = Some(label.to_owned());
-        self
-    }
-
-    pub fn name(mut self, name: &str) -> Self {
-        self.name = Some(name.to_owned());
-        self
-    }
-
-    pub fn template_item_name(mut self, template_item_name: &str) -> Self {
-        self.template_item_name = Some(template_item_name.to_owned());
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct RangeSelector {
     visible: Option<bool>,
     buttons: Option<Vec<SelectorButton>>,
@@ -578,65 +365,10 @@ impl RangeSelector {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
-    pub fn buttons(mut self, buttons: Vec<SelectorButton>) -> Self {
-        self.buttons = Some(buttons);
-        self
-    }
-
-    pub fn x(mut self, x: f64) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
-        self.x_anchor = Some(x_anchor);
-        self
-    }
-
-    pub fn y(mut self, y: f64) -> Self {
-        self.y = Some(y);
-        self
-    }
-
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
-        self.y_anchor = Some(y_anchor);
-        self
-    }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
-    pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
-        self.active_color = Some(Box::new(active_color));
-        self
-    }
-
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
-    pub fn border_width(mut self, border_width: usize) -> Self {
-        self.border_width = Some(border_width);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct ColorAxis {
     cauto: Option<bool>,
     cmin: Option<f64>,
@@ -657,51 +389,6 @@ pub struct ColorAxis {
 impl ColorAxis {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn cauto(mut self, cauto: bool) -> Self {
-        self.cauto = Some(cauto);
-        self
-    }
-
-    pub fn cmin(mut self, cmin: f64) -> Self {
-        self.cmin = Some(cmin);
-        self
-    }
-
-    pub fn cmax(mut self, cmax: f64) -> Self {
-        self.cmax = Some(cmax);
-        self
-    }
-
-    pub fn cmid(mut self, cmid: f64) -> Self {
-        self.cmid = Some(cmid);
-        self
-    }
-
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
-        self.color_scale = Some(color_scale);
-        self
-    }
-
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Self {
-        self.auto_color_scale = Some(auto_color_scale);
-        self
-    }
-
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Self {
-        self.reverse_scale = Some(reverse_scale);
-        self
-    }
-
-    pub fn show_scale(mut self, show_scale: bool) -> Self {
-        self.show_scale = Some(show_scale);
-        self
-    }
-
-    pub fn color_bar(mut self, color_bar: ColorBar) -> Self {
-        self.color_bar = Some(color_bar);
-        self
     }
 }
 
@@ -731,11 +418,12 @@ pub enum SpikeSnap {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Axis {
     visible: Option<bool>,
     color: Option<Box<dyn Color>>,
     title: Option<Title>,
+    #[field_setter(skip)]
     r#type: Option<AxisType>,
     #[serde(rename = "autorange")]
     auto_range: Option<bool>,
@@ -755,6 +443,7 @@ pub struct Axis {
     tick0: Option<f64>,
     dtick: Option<f64>,
 
+    #[field_setter(skip)]
     matches: Option<String>,
 
     #[serde(rename = "tickvals")]
@@ -838,6 +527,7 @@ pub struct Axis {
     anchor: Option<String>,
     side: Option<AxisSide>,
     overlaying: Option<String>,
+    #[field_setter(skip)]
     domain: Option<Vec<f64>>,
     position: Option<f64>,
     #[serde(rename = "rangeslider")]
@@ -859,313 +549,13 @@ impl Axis {
         self
     }
 
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
-    }
-
-    pub fn title(mut self, title: Title) -> Self {
-        self.title = Some(title);
-        self
-    }
-
     pub fn type_(mut self, t: AxisType) -> Self {
         self.r#type = Some(t);
         self
     }
 
-    pub fn auto_range(mut self, auto_range: bool) -> Self {
-        self.auto_range = Some(auto_range);
-        self
-    }
-
-    pub fn range_mode(mut self, range_mode: RangeMode) -> Self {
-        self.range_mode = Some(range_mode);
-        self
-    }
-
-    pub fn range<V: Into<NumOrString> + Clone>(mut self, range: Vec<V>) -> Self {
-        self.range = Some(range.into());
-        self
-    }
-
-    pub fn fixed_range(mut self, fixed_range: bool) -> Self {
-        self.fixed_range = Some(fixed_range);
-        self
-    }
-
-    pub fn constrain(mut self, constrain: AxisConstrain) -> Self {
-        self.constrain = Some(constrain);
-        self
-    }
-
-    pub fn constrain_toward(mut self, constrain_toward: ConstrainDirection) -> Self {
-        self.constrain_toward = Some(constrain_toward);
-        self
-    }
-
-    pub fn tick_mode(mut self, tick_mode: TickMode) -> Self {
-        self.tick_mode = Some(tick_mode);
-        self
-    }
-
-    pub fn n_ticks(mut self, n_ticks: usize) -> Self {
-        self.n_ticks = Some(n_ticks);
-        self
-    }
-
-    pub fn tick0(mut self, tick0: f64) -> Self {
-        self.tick0 = Some(tick0);
-        self
-    }
-
-    pub fn dtick(mut self, dtick: f64) -> Self {
-        self.dtick = Some(dtick);
-        self
-    }
-
-    pub fn tick_values(mut self, tick_values: Vec<f64>) -> Self {
-        self.tick_values = Some(tick_values);
-        self
-    }
-
-    pub fn tick_text(mut self, tick_text: Vec<String>) -> Self {
-        self.tick_text = Some(tick_text);
-        self
-    }
-
-    pub fn ticks(mut self, ticks: TicksDirection) -> Self {
-        self.ticks = Some(ticks);
-        self
-    }
-
-    pub fn ticks_on(mut self, ticks_on: TicksPosition) -> Self {
-        self.ticks_on = Some(ticks_on);
-        self
-    }
-
-    pub fn mirror(mut self, mirror: bool) -> Self {
-        self.mirror = Some(mirror);
-        self
-    }
-
-    pub fn tick_length(mut self, tick_length: usize) -> Self {
-        self.tick_length = Some(tick_length);
-        self
-    }
-
-    pub fn tick_width(mut self, tick_width: usize) -> Self {
-        self.tick_width = Some(tick_width);
-        self
-    }
-
-    pub fn tick_color<C: Color>(mut self, tick_color: C) -> Self {
-        self.tick_color = Some(Box::new(tick_color));
-        self
-    }
-
-    pub fn show_tick_labels(mut self, show_tick_labels: bool) -> Self {
-        self.show_tick_labels = Some(show_tick_labels);
-        self
-    }
-
-    pub fn auto_margin(mut self, auto_margin: bool) -> Self {
-        self.auto_margin = Some(auto_margin);
-        self
-    }
-
-    pub fn show_spikes(mut self, show_spikes: bool) -> Self {
-        self.show_spikes = Some(show_spikes);
-        self
-    }
-
-    pub fn spike_color<C: Color>(mut self, spike_color: C) -> Self {
-        self.spike_color = Some(Box::new(spike_color));
-        self
-    }
-
-    pub fn spike_thickness(mut self, spike_thickness: usize) -> Self {
-        self.spike_thickness = Some(spike_thickness);
-        self
-    }
-
-    pub fn spike_dash(mut self, spike_dash: DashType) -> Self {
-        self.spike_dash = Some(spike_dash);
-        self
-    }
-
-    pub fn spike_mode(mut self, spike_mode: SpikeMode) -> Self {
-        self.spike_mode = Some(spike_mode);
-        self
-    }
-
-    pub fn spike_snap(mut self, spike_snap: SpikeSnap) -> Self {
-        self.spike_snap = Some(spike_snap);
-        self
-    }
-
-    pub fn tick_font(mut self, tick_font: Font) -> Self {
-        self.tick_font = Some(tick_font);
-        self
-    }
-
-    pub fn tick_angle(mut self, tick_angle: f64) -> Self {
-        self.tick_angle = Some(tick_angle);
-        self
-    }
-
-    pub fn tick_prefix(mut self, tick_prefix: &str) -> Self {
-        self.tick_prefix = Some(tick_prefix.to_owned());
-        self
-    }
-
-    pub fn show_tick_prefix(mut self, show_tick_prefix: ArrayShow) -> Self {
-        self.show_tick_prefix = Some(show_tick_prefix);
-        self
-    }
-
-    pub fn tick_suffix(mut self, tick_suffix: &str) -> Self {
-        self.tick_suffix = Some(tick_suffix.to_owned());
-        self
-    }
-
-    pub fn show_tick_suffix(mut self, show_tick_suffix: ArrayShow) -> Self {
-        self.show_tick_suffix = Some(show_tick_suffix);
-        self
-    }
-
-    pub fn show_exponent(mut self, show_exponent: ArrayShow) -> Self {
-        self.show_exponent = Some(show_exponent);
-        self
-    }
-
-    pub fn exponent_format(mut self, exponent_format: ExponentFormat) -> Self {
-        self.exponent_format = Some(exponent_format);
-        self
-    }
-
-    pub fn separate_thousands(mut self, separate_thousands: bool) -> Self {
-        self.separate_thousands = Some(separate_thousands);
-        self
-    }
-
-    pub fn tick_format(mut self, tick_format: &str) -> Self {
-        self.tick_format = Some(tick_format.to_owned());
-        self
-    }
-
-    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> Self {
-        self.tick_format_stops = Some(tick_format_stops);
-        self
-    }
-
-    pub fn hover_format(mut self, hover_format: &str) -> Self {
-        self.hover_format = Some(hover_format.to_owned());
-        self
-    }
-
-    pub fn show_line(mut self, show_line: bool) -> Self {
-        self.show_line = Some(show_line);
-        self
-    }
-
-    pub fn line_color<C: Color>(mut self, line_color: C) -> Self {
-        self.line_color = Some(Box::new(line_color));
-        self
-    }
-
-    pub fn line_width(mut self, line_width: usize) -> Self {
-        self.line_width = Some(line_width);
-        self
-    }
-
-    pub fn show_grid(mut self, show_grid: bool) -> Self {
-        self.show_grid = Some(show_grid);
-        self
-    }
-
-    pub fn grid_color<C: Color>(mut self, grid_color: C) -> Self {
-        self.grid_color = Some(Box::new(grid_color));
-        self
-    }
-
-    pub fn grid_width(mut self, grid_width: usize) -> Self {
-        self.grid_width = Some(grid_width);
-        self
-    }
-
-    pub fn zero_line(mut self, zero_line: bool) -> Self {
-        self.zero_line = Some(zero_line);
-        self
-    }
-
-    pub fn zero_line_color<C: Color>(mut self, zero_line_color: C) -> Self {
-        self.zero_line_color = Some(Box::new(zero_line_color));
-        self
-    }
-
-    pub fn zero_line_width(mut self, zero_line_width: usize) -> Self {
-        self.zero_line_width = Some(zero_line_width);
-        self
-    }
-
-    pub fn show_dividers(mut self, show_dividers: bool) -> Self {
-        self.show_dividers = Some(show_dividers);
-        self
-    }
-
-    pub fn divider_color<C: Color>(mut self, divider_color: C) -> Self {
-        self.divider_color = Some(Box::new(divider_color));
-        self
-    }
-
-    pub fn divider_width(mut self, divider_width: usize) -> Self {
-        self.divider_width = Some(divider_width);
-        self
-    }
-
-    pub fn anchor(mut self, anchor: &str) -> Self {
-        self.anchor = Some(anchor.to_owned());
-        self
-    }
-
-    pub fn side(mut self, side: AxisSide) -> Self {
-        self.side = Some(side);
-        self
-    }
-
-    pub fn overlaying(mut self, overlaying: &str) -> Self {
-        self.overlaying = Some(overlaying.to_owned());
-        self
-    }
-
     pub fn domain(mut self, domain: &[f64]) -> Self {
         self.domain = Some(domain.to_vec());
-        self
-    }
-
-    pub fn position(mut self, position: f64) -> Self {
-        self.position = Some(position);
-        self
-    }
-
-    pub fn range_slider(mut self, slider: RangeSlider) -> Self {
-        self.range_slider = Some(slider);
-        self
-    }
-
-    pub fn range_selector(mut self, range_selector: RangeSelector) -> Self {
-        self.range_selector = Some(range_selector);
-        self
-    }
-
-    pub fn calendar(mut self, calendar: Calendar) -> Self {
-        self.calendar = Some(calendar);
         self
     }
 }
@@ -1208,7 +598,7 @@ pub enum GridYSide {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct GridDomain {
     x: Option<Vec<f64>>,
     y: Option<Vec<f64>>,
@@ -1218,20 +608,10 @@ impl GridDomain {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn x(mut self, x: Vec<f64>) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn y(mut self, y: Vec<f64>) -> Self {
-        self.y = Some(y);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct LayoutGrid {
     rows: Option<usize>,
     #[serde(rename = "roworder")]
@@ -1259,65 +639,6 @@ impl LayoutGrid {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn rows(mut self, rows: usize) -> Self {
-        self.rows = Some(rows);
-        self
-    }
-
-    pub fn row_order(mut self, row_order: RowOrder) -> Self {
-        self.row_order = Some(row_order);
-        self
-    }
-
-    pub fn columns(mut self, columns: usize) -> Self {
-        self.columns = Some(columns);
-        self
-    }
-
-    pub fn sub_plots(mut self, sub_plots: Vec<String>) -> Self {
-        self.sub_plots = Some(sub_plots);
-        self
-    }
-
-    pub fn x_axes(mut self, x_axes: Vec<String>) -> Self {
-        self.x_axes = Some(x_axes);
-        self
-    }
-
-    pub fn y_axes(mut self, y_axes: Vec<String>) -> Self {
-        self.y_axes = Some(y_axes);
-        self
-    }
-
-    pub fn pattern(mut self, pattern: GridPattern) -> Self {
-        self.pattern = Some(pattern);
-        self
-    }
-
-    pub fn x_gap(mut self, x_gap: f64) -> Self {
-        self.x_gap = Some(x_gap);
-        self
-    }
-
-    pub fn y_gap(mut self, y_gap: f64) -> Self {
-        self.y_gap = Some(y_gap);
-        self
-    }
-
-    pub fn domain(mut self, domain: GridDomain) -> Self {
-        self.domain = Some(domain);
-        self
-    }
-
-    pub fn x_side(mut self, x_side: GridXSide) -> Self {
-        self.x_side = Some(x_side);
-        self
-    }
-    pub fn y_side(mut self, y_side: GridYSide) -> Self {
-        self.y_side = Some(y_side);
-        self
-    }
 }
 
 #[derive(Debug, Clone)]
@@ -1341,7 +662,7 @@ impl Serialize for UniformTextMode {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct UniformText {
     mode: Option<UniformTextMode>,
     #[serde(rename = "minsize")]
@@ -1351,16 +672,6 @@ pub struct UniformText {
 impl UniformText {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn mode(mut self, mode: UniformTextMode) -> Self {
-        self.mode = Some(mode);
-        self
-    }
-
-    pub fn min_size(mut self, min_size: usize) -> Self {
-        self.min_size = Some(min_size);
-        self
     }
 }
 
@@ -1391,7 +702,7 @@ impl Serialize for HoverMode {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct ModeBar {
     orientation: Option<Orientation>,
     #[serde(rename = "bgcolor")]
@@ -1404,26 +715,6 @@ pub struct ModeBar {
 impl ModeBar {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn orientation(mut self, orientation: Orientation) -> Self {
-        self.orientation = Some(orientation);
-        self
-    }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
-    }
-
-    pub fn active_color<C: Color>(mut self, active_color: C) -> Self {
-        self.active_color = Some(Box::new(active_color));
-        self
     }
 }
 
@@ -1458,10 +749,14 @@ pub enum FillRule {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct ShapeLine {
+    /// Sets the line color.
     color: Option<Box<dyn Color>>,
+    /// Sets the line width (in px).
     width: Option<f64>,
+    /// Sets the dash style of lines. Set to a dash type string ("solid", "dot", "dash", "longdash",
+    /// "dashdot", or "longdashdot") or a dash length list in px (eg "5px,10px,2px,2px").
     dash: Option<DashType>,
 }
 
@@ -1469,175 +764,67 @@ impl ShapeLine {
     pub fn new() -> Self {
         Default::default()
     }
-
-    /// Sets the line color.
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
-    }
-
-    /// Sets the line width (in px).
-    pub fn width(mut self, width: f64) -> Self {
-        self.width = Some(width);
-        self
-    }
-
-    /// Sets the dash style of lines. Set to a dash type string ("solid", "dot", "dash", "longdash",
-    /// "dashdot", or "longdashdot") or a dash length list in px (eg "5px,10px,2px,2px").
-    pub fn dash(mut self, dash: DashType) -> Self {
-        self.dash = Some(dash);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Shape {
-    visible: Option<bool>,
-    r#type: Option<ShapeType>,
-    layer: Option<ShapeLayer>,
-    #[serde(rename = "xref")]
-    x_ref: Option<String>,
-    #[serde(rename = "xsizemode")]
-    x_size_mode: Option<ShapeSizeMode>,
-    #[serde(rename = "xanchor")]
-    x_anchor: Option<NumOrString>,
-    x0: Option<NumOrString>,
-    x1: Option<NumOrString>,
-    #[serde(rename = "yref")]
-    y_ref: Option<String>,
-    #[serde(rename = "ysizemode")]
-    y_size_mode: Option<ShapeSizeMode>,
-    #[serde(rename = "yanchor")]
-    y_anchor: Option<NumOrString>,
-    y0: Option<NumOrString>,
-    y1: Option<NumOrString>,
-    path: Option<String>,
-    opacity: Option<f64>,
-    line: Option<ShapeLine>,
-    #[serde(rename = "fillcolor")]
-    fill_color: Option<Box<dyn Color>>,
-    #[serde(rename = "fillrule")]
-    fill_rule: Option<FillRule>,
-    editable: Option<bool>,
-    name: Option<String>,
-    #[serde(rename = "templateitemname")]
-    template_item_name: Option<String>,
-}
-
-impl Shape {
-    pub fn new() -> Self {
-        Default::default()
-    }
-
     /// Determines whether or not this shape is visible.
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
-    /// Specifies the shape type to be drawn. If "line", a line is drawn from (`x0`,`y0`) to
-    /// (`x1`,`y1`) with respect to the axes' sizing mode. If "circle", a circle is drawn from
-    /// ((`x0`+`x1`)/2, (`y0`+`y1`)/2)) with radius (|(`x0`+`x1`)/2 - `x0`|, |(`y0`+`y1`)/2 -`y0`)|)
-    /// with respect to the axes' sizing mode. If "rect", a rectangle is drawn linking
-    /// (`x0`,`y0`), (`x1`,`y0`), (`x1`,`y1`), (`x0`,`y1`), (`x0`,`y0`) with respect to the axes'
-    /// sizing mode. If "path", draw a custom SVG path using `path`. with respect to the axes'
-    /// sizing mode.
-    pub fn shape_type(mut self, shape_type: ShapeType) -> Self {
-        self.r#type = Some(shape_type);
-        self
-    }
-
+    visible: Option<bool>,
+    #[field_setter(skip)]
+    r#type: Option<ShapeType>,
     /// Specifies whether shapes are drawn below or above traces.
-    pub fn layer(mut self, layer: ShapeLayer) -> Self {
-        self.layer = Some(layer);
-        self
-    }
-
+    layer: Option<ShapeLayer>,
     /// Sets the shape's x coordinate axis. If set to an x axis id (e.g. "x" or "x2"), the `x`
     /// position refers to an x coordinate. If set to "paper", the `x` position refers to the
     /// distance from the left side of the plotting area in normalized coordinates where "0" ("1")
     /// corresponds to the left (right) side. If the axis `type` is "log", then you must take the
     /// log of your desired range. If the axis `type` is "date", then you must convert the date to
     /// unix time in milliseconds.
-    pub fn x_ref(mut self, x_ref: &str) -> Self {
-        self.x_ref = Some(x_ref.to_owned());
-        self
-    }
-
+    #[serde(rename = "xref")]
+    x_ref: Option<String>,
     /// Sets the shapes's sizing mode along the x axis. If set to "scaled", `x0`, `x1` and x
     /// coordinates within `path` refer to data values on the x axis or a fraction of the plot
     /// area's width (`xref` set to "paper"). If set to "pixel", `xanchor` specifies the x position
     /// in terms of data or plot fraction but `x0`, `x1` and x coordinates within `path` are pixels
     /// relative to `xanchor`. This way, the shape can have a fixed width while maintaining a
     /// position relative to data or plot fraction.
-    pub fn x_size_mode(mut self, x_size_mode: ShapeSizeMode) -> Self {
-        self.x_size_mode = Some(x_size_mode);
-        self
-    }
-
+    #[serde(rename = "xsizemode")]
+    x_size_mode: Option<ShapeSizeMode>,
     /// Only relevant in conjunction with `xsizemode` set to "pixel". Specifies the anchor point on
     /// the x axis to which `x0`, `x1` and x coordinates within `path` are relative to. E.g. useful
     /// to attach a pixel sized shape to a certain data value. No effect when `xsizemode` not set
     /// to "pixel".
-    pub fn x_anchor<V: Into<NumOrString>>(mut self, x_anchor: V) -> Self {
-        self.x_anchor = Some(x_anchor.into());
-        self
-    }
-
+    #[serde(rename = "xanchor")]
+    x_anchor: Option<NumOrString>,
     /// Sets the shape's starting x position. See `type` and `xsizemode` for more info.
-    pub fn x0<V: Into<NumOrString>>(mut self, x0: V) -> Self {
-        self.x0 = Some(x0.into());
-        self
-    }
-
+    x0: Option<NumOrString>,
     /// Sets the shape's end x position. See `type` and `xsizemode` for more info.
-    pub fn x1<V: Into<NumOrString>>(mut self, x1: V) -> Self {
-        self.x1 = Some(x1.into());
-        self
-    }
-
+    x1: Option<NumOrString>,
     /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g. "y" or "y2"),
     /// the `y` position refers to an y coordinate If set to "paper", the `y` position refers to
     /// the distance from the bottom of the plotting area in normalized coordinates where "0" ("1")
     /// corresponds to the bottom (top).
-    pub fn y_ref(mut self, y_ref: &str) -> Self {
-        self.y_ref = Some(y_ref.to_owned());
-        self
-    }
-
+    #[serde(rename = "yref")]
+    y_ref: Option<String>,
     /// Sets the shapes's sizing mode along the y axis. If set to "scaled", `y0`, `y1` and y
     /// coordinates within `path` refer to data values on the y axis or a fraction of the plot
     /// area's height (`yref` set to "paper"). If set to "pixel", `yanchor` specifies the y position
     /// in terms of data or plot fraction but `y0`, `y1` and y coordinates within `path` are pixels
     /// relative to `yanchor`. This way, the shape can have a fixed height while maintaining a
     /// position relative to data or plot fraction.
-    pub fn y_size_mode(mut self, y_size_mode: ShapeSizeMode) -> Self {
-        self.y_size_mode = Some(y_size_mode);
-        self
-    }
-
+    #[serde(rename = "ysizemode")]
+    y_size_mode: Option<ShapeSizeMode>,
     /// Only relevant in conjunction with `ysizemode` set to "pixel". Specifies the anchor point on
     /// the y axis to which `y0`, `y1` and y coordinates within `path` are relative to. E.g. useful
     /// to attach a pixel sized shape to a certain data value. No effect when `ysizemode` not set
     /// to "pixel".
-    pub fn y_anchor<V: Into<NumOrString>>(mut self, y_anchor: V) -> Self {
-        self.y_anchor = Some(y_anchor.into());
-        self
-    }
-
+    #[serde(rename = "yanchor")]
+    y_anchor: Option<NumOrString>,
     /// Sets the shape's starting y position. See `type` and `ysizemode` for more info.
-    pub fn y0<V: Into<NumOrString>>(mut self, y0: V) -> Self {
-        self.y0 = Some(y0.into());
-        self
-    }
-
+    y0: Option<NumOrString>,
     /// Sets the shape's end y position. See `type` and `ysizemode` for more info.
-    pub fn y1<V: Into<NumOrString>>(mut self, y1: V) -> Self {
-        self.y1 = Some(y1.into());
-        self
-    }
-
+    y1: Option<NumOrString>,
     /// For `type` "path" - a valid SVG path with the pixel values replaced by data values in
     /// `xsizemode`/`ysizemode` being "scaled" and taken unmodified as pixels relative to
     /// `xanchor` and `yanchor` in case of "pixel" size mode. There are a few restrictions / quirks
@@ -1651,60 +838,50 @@ impl Shape {
     /// there would be no way to describe fractional positions On data axes: because space and T are
     /// both normal components of path strings, we can't use either to separate date from time parts.
     /// Therefore we'll use underscore for this purpose: 2015-02-21_13:45:56.789
-    pub fn path(mut self, path: &str) -> Self {
-        self.path = Some(path.to_owned());
-        self
-    }
-
+    path: Option<String>,
     /// Sets the opacity of the shape. Number between or equal to 0 and 1.
-    pub fn opacity(mut self, opacity: f64) -> Self {
-        self.opacity = Some(opacity);
-        self
-    }
-
+    opacity: Option<f64>,
     /// Sets the shape line properties (`color`, `width`, `dash`).
-    pub fn line(mut self, line: ShapeLine) -> Self {
-        self.line = Some(line);
-        self
-    }
-
+    line: Option<ShapeLine>,
     /// Sets the color filling the shape's interior. Only applies to closed shapes.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
-        self.fill_color = Some(Box::new(fill_color));
-        self
-    }
-
+    #[serde(rename = "fillcolor")]
+    fill_color: Option<Box<dyn Color>>,
     /// Determines which regions of complex paths constitute the interior. For more info please
     /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
-    pub fn fill_rule(mut self, fill_rule: FillRule) -> Self {
-        self.fill_rule = Some(fill_rule);
-        self
-    }
-
+    #[serde(rename = "fillrule")]
+    fill_rule: Option<FillRule>,
     /// Determines whether the shape could be activated for edit or not. Has no effect when the
     /// older editable shapes mode is enabled via `config.editable` or `config.edits.shapePosition`.
-    pub fn editable(mut self, editable: bool) -> Self {
-        self.editable = Some(editable);
-        self
-    }
-
+    editable: Option<bool>,
     /// When used in a template, named items are created in the output figure in addition to any
     /// items the figure already has in this array. You can modify these items in the output figure
     /// by making your own item with `templateitemname` matching this `name` alongside your
     /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
     /// outside of a template.
-    pub fn name(mut self, name: &str) -> Self {
-        self.name = Some(name.to_owned());
-        self
-    }
-
+    name: Option<String>,
     /// Used to refer to a named item in this array in the template. Named items from the template
     /// will be created even without a matching item in the input figure, but you can modify one
     /// by making an item with `templateitemname` matching its `name`, alongside your modifications
     /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
     /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
-    pub fn template_item_name(mut self, template_item_name: &str) -> Self {
-        self.template_item_name = Some(template_item_name.to_owned());
+    #[serde(rename = "templateitemname")]
+    template_item_name: Option<String>,
+}
+
+impl Shape {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Specifies the shape type to be drawn. If "line", a line is drawn from (`x0`,`y0`) to
+    /// (`x1`,`y1`) with respect to the axes' sizing mode. If "circle", a circle is drawn from
+    /// ((`x0`+`x1`)/2, (`y0`+`y1`)/2)) with radius (|(`x0`+`x1`)/2 - `x0`|, |(`y0`+`y1`)/2 -`y0`)|)
+    /// with respect to the axes' sizing mode. If "rect", a rectangle is drawn linking
+    /// (`x0`,`y0`), (`x1`,`y0`), (`x1`,`y1`), (`x0`,`y1`), (`x0`,`y0`) with respect to the axes'
+    /// sizing mode. If "path", draw a custom SVG path using `path`. with respect to the axes'
+    /// sizing mode.
+    pub fn shape_type(mut self, shape_type: ShapeType) -> Self {
+        self.r#type = Some(shape_type);
         self
     }
 }
@@ -1719,15 +896,27 @@ pub enum DrawDirection {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct NewShape {
+    /// Sets the shape line properties (`color`, `width`, `dash`).
     line: Option<ShapeLine>,
+    /// Sets the color filling new shapes' interior. Please note that if using a fillcolor with
+    /// alpha greater than half, drag inside the active shape starts moving the shape underneath,
+    /// otherwise a new shape could be started over.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
+    /// Determines the path's interior. For more info please
+    /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
     #[serde(rename = "fillrule")]
     fill_rule: Option<FillRule>,
+    /// Sets the opacity of new shapes. Number between or equal to 0 and 1.
     opacity: Option<f64>,
+    /// Specifies whether new shapes are drawn below or above traces.
     layer: Option<ShapeLayer>,
+    /// When `dragmode` is set to "drawrect", "drawline" or "drawcircle" this limits the drag to be
+    /// horizontal, vertical or diagonal. Using "diagonal" there is no limit e.g. in drawing lines
+    /// in any direction. "ortho" limits the draw to be either horizontal or vertical. "horizontal"
+    /// allows horizontal extend. "vertical" allows vertical extend.
     #[serde(rename = "drawdirection")]
     draw_direction: Option<DrawDirection>,
 }
@@ -1736,73 +925,21 @@ impl NewShape {
     pub fn new() -> Self {
         Default::default()
     }
-
-    /// Sets the shape line properties (`color`, `width`, `dash`).
-    pub fn line(mut self, line: ShapeLine) -> Self {
-        self.line = Some(line);
-        self
-    }
-
-    /// Sets the color filling new shapes' interior. Please note that if using a fillcolor with
-    /// alpha greater than half, drag inside the active shape starts moving the shape underneath,
-    /// otherwise a new shape could be started over.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
-        self.fill_color = Some(Box::new(fill_color));
-        self
-    }
-
-    /// Determines the path's interior. For more info please
-    /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
-    pub fn fill_rule(mut self, fill_rule: FillRule) -> Self {
-        self.fill_rule = Some(fill_rule);
-        self
-    }
-
-    /// Sets the opacity of new shapes. Number between or equal to 0 and 1.
-    pub fn opacity(mut self, opacity: f64) -> Self {
-        self.opacity = Some(opacity);
-        self
-    }
-
-    /// Specifies whether new shapes are drawn below or above traces.
-    pub fn layer(mut self, layer: ShapeLayer) -> Self {
-        self.layer = Some(layer);
-        self
-    }
-
-    /// When `dragmode` is set to "drawrect", "drawline" or "drawcircle" this limits the drag to be
-    /// horizontal, vertical or diagonal. Using "diagonal" there is no limit e.g. in drawing lines
-    /// in any direction. "ortho" limits the draw to be either horizontal or vertical. "horizontal"
-    /// allows horizontal extend. "vertical" allows vertical extend.
-    pub fn draw_direction(mut self, draw_direction: DrawDirection) -> Self {
-        self.draw_direction = Some(draw_direction);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct ActiveShape {
+    /// Sets the color filling the active shape' interior.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
+    /// Sets the opacity of the active shape. Number between or equal to 0 and 1.
     opacity: Option<f64>,
 }
 
 impl ActiveShape {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    /// Sets the color filling the active shape' interior.
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Self {
-        self.fill_color = Some(Box::new(fill_color));
-        self
-    }
-
-    /// Sets the opacity of the active shape. Number between or equal to 0 and 1.
-    pub fn opacity(mut self, opacity: f64) -> Self {
-        self.opacity = Some(opacity);
-        self
     }
 }
 
@@ -1837,352 +974,155 @@ impl Serialize for ClickToShow {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Annotation {
-    visible: Option<bool>,
-    text: Option<String>,
-    #[serde(rename = "textangle")]
-    text_angle: Option<f64>,
-    font: Option<Font>,
-    width: Option<f64>,
-    height: Option<f64>,
-    opacity: Option<f64>,
-    align: Option<HAlign>,
-    valign: Option<VAlign>,
-    #[serde(rename = "bgcolor")]
-    background_color: Option<Box<dyn Color>>,
-    #[serde(rename = "bordercolor")]
-    border_color: Option<Box<dyn Color>>,
-    #[serde(rename = "borderpad")]
-    border_pad: Option<f64>,
-    #[serde(rename = "borderwidth")]
-    border_width: Option<f64>,
-    #[serde(rename = "showarrow")]
-    show_arrow: Option<bool>,
-    #[serde(rename = "arrowcolor")]
-    arrow_color: Option<Box<dyn Color>>,
-    #[serde(rename = "arrowhead")]
-    arrow_head: Option<u8>,
-    #[serde(rename = "startarrowhead")]
-    start_arrow_head: Option<u8>,
-    #[serde(rename = "arrowside")]
-    arrow_side: Option<ArrowSide>,
-    #[serde(rename = "arrowsize")]
-    arrow_size: Option<f64>,
-    #[serde(rename = "startarrowsize")]
-    start_arrow_size: Option<f64>,
-    #[serde(rename = "arrowwidth")]
-    arrow_width: Option<f64>,
-    #[serde(rename = "standoff")]
-    stand_off: Option<f64>,
-    #[serde(rename = "startstandoff")]
-    start_stand_off: Option<f64>,
-    ax: Option<NumOrString>,
-    ay: Option<NumOrString>,
-    #[serde(rename = "axref")]
-    ax_ref: Option<String>,
-    #[serde(rename = "ayref")]
-    ay_ref: Option<String>,
-    #[serde(rename = "xref")]
-    x_ref: Option<String>,
-    x: Option<NumOrString>,
-    #[serde(rename = "xanchor")]
-    x_anchor: Option<Anchor>,
-    #[serde(rename = "xshift")]
-    x_shift: Option<f64>,
-    #[serde(rename = "yref")]
-    y_ref: Option<String>,
-    y: Option<NumOrString>,
-    #[serde(rename = "yanchor")]
-    y_anchor: Option<Anchor>,
-    #[serde(rename = "yshift")]
-    y_shift: Option<f64>,
-    #[serde(rename = "clicktoshow")]
-    click_to_show: Option<ClickToShow>,
-    #[serde(rename = "xclick")]
-    x_click: Option<NumOrString>,
-    #[serde(rename = "yclick")]
-    y_click: Option<NumOrString>,
-    #[serde(rename = "hovertext")]
-    hover_text: Option<String>,
-    #[serde(rename = "hoverlabel")]
-    hover_label: Option<Label>,
-    #[serde(rename = "captureevents")]
-    capture_events: Option<bool>,
-    name: Option<String>,
-    #[serde(rename = "templateitemname")]
-    template_item_name: Option<String>,
-}
-
-impl Annotation {
-    pub fn new() -> Self {
-        Default::default()
-    }
-
     /// Determines whether or not this annotation is visible.
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
+    visible: Option<bool>,
     /// Sets the text associated with this annotation. Plotly uses a subset of HTML tags to do
     /// things like newline (<br>), bold (<b></b>), italics (<i></i>), hyperlinks
     /// (<a href='...'></a>). Tags <em>, <sup>, <sub> <span> are also supported.
-    pub fn text(mut self, text: &str) -> Self {
-        self.text = Some(text.to_owned());
-        self
-    }
-
+    text: Option<String>,
     /// Sets the angle at which the `text` is drawn with respect to the horizontal.
-    pub fn text_angle(mut self, text_angle: f64) -> Self {
-        self.text_angle = Some(text_angle);
-        self
-    }
-
+    #[serde(rename = "textangle")]
+    text_angle: Option<f64>,
     /// Sets the annotation text font.
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
+    font: Option<Font>,
     /// Sets an explicit width for the text box. null (default) lets the text set the box width.
     /// Wider text will be clipped. There is no automatic wrapping; use <br> to start a new line.
-    pub fn width(mut self, width: f64) -> Self {
-        self.width = Some(width);
-        self
-    }
-
+    width: Option<f64>,
     /// Sets an explicit height for the text box. null (default) lets the text set the box height.
     /// Taller text will be clipped.
-    pub fn height(mut self, height: f64) -> Self {
-        self.height = Some(height);
-        self
-    }
-
+    height: Option<f64>,
     /// Sets the opacity of the annotation (text + arrow).
-    pub fn opacity(mut self, opacity: f64) -> Self {
-        self.opacity = Some(opacity);
-        self
-    }
-
+    opacity: Option<f64>,
     /// Sets the horizontal alignment of the `text` within the box. Has an effect only if `text`
     /// spans two or more lines (i.e. `text` contains one or more <br> HTML tags) or if an explicit
     /// width is set to override the text width.
-    pub fn align(mut self, align: HAlign) -> Self {
-        self.align = Some(align);
-        self
-    }
-
+    align: Option<HAlign>,
     /// Sets the vertical alignment of the `text` within the box. Has an effect only if an explicit
     /// height is set to override the text height.
-    pub fn valign(mut self, valign: VAlign) -> Self {
-        self.valign = Some(valign);
-        self
-    }
-
+    valign: Option<VAlign>,
     /// Sets the background color of the annotation.
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
+    #[serde(rename = "bgcolor")]
+    background_color: Option<Box<dyn Color>>,
     /// Sets the color of the border enclosing the annotation `text`.
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
+    #[serde(rename = "bordercolor")]
+    border_color: Option<Box<dyn Color>>,
     /// Sets the padding (in px) between the `text` and the enclosing border.
-    pub fn border_pad(mut self, border_pad: f64) -> Self {
-        self.border_pad = Some(border_pad);
-        self
-    }
-
+    #[serde(rename = "borderpad")]
+    border_pad: Option<f64>,
     /// Sets the width (in px) of the border enclosing the annotation `text`.
-    pub fn border_width(mut self, border_width: f64) -> Self {
-        self.border_width = Some(border_width);
-        self
-    }
-
+    #[serde(rename = "borderwidth")]
+    border_width: Option<f64>,
     /// Determines whether or not the annotation is drawn with an arrow. If "True", `text` is
     /// placed near the arrow's tail. If "False", `text` lines up with the `x` and `y` provided.
-    pub fn show_arrow(mut self, show_arrow: bool) -> Self {
-        self.show_arrow = Some(show_arrow);
-        self
-    }
-
+    #[serde(rename = "showarrow")]
+    show_arrow: Option<bool>,
     /// Sets the color of the annotation arrow.
-    pub fn arrow_color<C: Color>(mut self, arrow_color: C) -> Self {
-        self.arrow_color = Some(Box::new(arrow_color));
-        self
-    }
-
+    #[serde(rename = "arrowcolor")]
+    arrow_color: Option<Box<dyn Color>>,
     /// Sets the end annotation arrow head style. Integer between or equal to 0 and 8.
-    pub fn arrow_head(mut self, arrow_head: u8) -> Self {
-        self.arrow_head = Some(arrow_head);
-        self
-    }
-
+    #[serde(rename = "arrowhead")]
+    arrow_head: Option<u8>,
     /// Sets the start annotation arrow head style. Integer between or equal to 0 and 8.
-    pub fn start_arrow_head(mut self, start_arrow_head: u8) -> Self {
-        self.start_arrow_head = Some(start_arrow_head);
-        self
-    }
-
+    #[serde(rename = "startarrowhead")]
+    start_arrow_head: Option<u8>,
     /// Sets the annotation arrow head position.
-    pub fn arrow_side(mut self, arrow_side: ArrowSide) -> Self {
-        self.arrow_side = Some(arrow_side);
-        self
-    }
-
+    #[serde(rename = "arrowside")]
+    arrow_side: Option<ArrowSide>,
     /// Sets the size of the end annotation arrow head, relative to `arrowwidth`. A value of 1
     /// (default) gives a head about 3x as wide as the line.
-    pub fn arrow_size(mut self, arrow_size: f64) -> Self {
-        self.arrow_size = Some(arrow_size);
-        self
-    }
-
+    #[serde(rename = "arrowsize")]
+    arrow_size: Option<f64>,
     /// Sets the size of the start annotation arrow head, relative to `arrowwidth`. A value of 1
     /// (default) gives a head about 3x as wide as the line.
-    pub fn start_arrow_size(mut self, start_arrow_size: f64) -> Self {
-        self.start_arrow_size = Some(start_arrow_size);
-        self
-    }
-
+    #[serde(rename = "startarrowsize")]
+    start_arrow_size: Option<f64>,
     /// Sets the width (in px) of annotation arrow line.
-    pub fn arrow_width(mut self, arrow_width: f64) -> Self {
-        self.arrow_width = Some(arrow_width);
-        self
-    }
-
+    #[serde(rename = "arrowwidth")]
+    arrow_width: Option<f64>,
     /// Sets a distance, in pixels, to move the end arrowhead away from the position it is pointing
     /// at, for example to point at the edge of a marker independent of zoom. Note that this
     /// shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift` which
     /// moves everything by this amount.
-    pub fn stand_off(mut self, stand_off: f64) -> Self {
-        self.stand_off = Some(stand_off);
-        self
-    }
-
+    #[serde(rename = "standoff")]
+    stand_off: Option<f64>,
     /// Sets a distance, in pixels, to move the start arrowhead away from the position it is
     /// pointing at, for example to point at the edge of a marker independent of zoom. Note that
     /// this shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift`
     /// which moves everything by this amount.
-    pub fn start_stand_off(mut self, start_stand_off: f64) -> Self {
-        self.start_stand_off = Some(start_stand_off);
-        self
-    }
-
+    #[serde(rename = "startstandoff")]
+    start_stand_off: Option<f64>,
     /// Sets the x component of the arrow tail about the arrow head. If `axref` is `pixel`, a
     /// positive (negative) component corresponds to an arrow pointing from right to left (left
     /// to right). If `axref` is an axis, this is an absolute value on that axis, like `x`, NOT a
     /// relative value.
-    pub fn ax<V: Into<NumOrString>>(mut self, ax: V) -> Self {
-        self.ax = Some(ax.into());
-        self
-    }
-
+    ax: Option<NumOrString>,
     /// Sets the y component of the arrow tail about the arrow head. If `ayref` is `pixel`, a
     /// positive (negative) component corresponds to an arrow pointing from bottom to top (top to
     /// bottom). If `ayref` is an axis, this is an absolute value on that axis, like `y`, NOT a
     /// relative value.
-    pub fn ay<V: Into<NumOrString>>(mut self, ay: V) -> Self {
-        self.ay = Some(ay.into());
-        self
-    }
-
+    ay: Option<NumOrString>,
     /// Indicates in what terms the tail of the annotation (ax,ay) is specified. If `pixel`, `ax`
     /// is a relative offset in pixels from `x`. If set to an x axis id (e.g. "x" or "x2"), `ax` is
     /// specified in the same terms as that axis. This is useful for trendline annotations which
     /// should continue to indicate the correct trend when zoomed.
-    pub fn ax_ref(mut self, ax_ref: &str) -> Self {
-        self.ax_ref = Some(ax_ref.to_owned());
-        self
-    }
-
+    #[serde(rename = "axref")]
+    ax_ref: Option<String>,
     /// Indicates in what terms the tail of the annotation (ax,ay) is specified. If `pixel`, `ay`
     /// is a relative offset in pixels from `y`. If set to a y axis id (e.g. "y" or "y2"), `ay` is
     /// specified in the same terms as that axis. This is useful for trendline annotations which
     /// should continue to indicate the correct trend when zoomed.
-    pub fn ay_ref(mut self, ay_ref: &str) -> Self {
-        self.ay_ref = Some(ay_ref.to_owned());
-        self
-    }
-
+    #[serde(rename = "ayref")]
+    ay_ref: Option<String>,
     /// Sets the annotation's x coordinate axis. If set to an x axis id (e.g. "x" or "x2"), the `x`
     /// position refers to an x coordinate If set to "paper", the `x` position refers to the
     /// distance from the left side of the plotting area in normalized coordinates where 0 (1)
     /// corresponds to the left (right) side.
-    pub fn x_ref(mut self, x_ref: &str) -> Self {
-        self.x_ref = Some(x_ref.to_owned());
-        self
-    }
-
+    #[serde(rename = "xref")]
+    x_ref: Option<String>,
     /// Sets the annotation's x position. If the axis `type` is "log", then you must take the log
     /// of your desired range. If the axis `type` is "date", it should be date strings, like date
     /// data, though Date objects and unix milliseconds will be accepted and converted to strings.
     /// If the axis `type` is "category", it should be numbers, using the scale where each category
     /// is assigned a serial number from zero in the order it appears.
-    pub fn x<V: Into<NumOrString>>(mut self, x: V) -> Self {
-        self.x = Some(x.into());
-        self
-    }
-
+    x: Option<NumOrString>,
     /// Sets the text box's horizontal position anchor This anchor binds the `x` position to the
     /// "left", "center" or "right" of the annotation. For example, if `x` is set to 1, `xref` to
     /// "paper" and `xanchor` to "right" then the right-most portion of the annotation lines up with
     /// the right-most edge of the plotting area. If "auto", the anchor is equivalent to "center"
     /// for data-referenced annotations or if there is an arrow, whereas for paper-referenced with
     /// no arrow, the anchor picked corresponds to the closest side.
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
-        self.x_anchor = Some(x_anchor);
-        self
-    }
-
+    #[serde(rename = "xanchor")]
+    x_anchor: Option<Anchor>,
     /// Shifts the position of the whole annotation and arrow to the right (positive) or left
     /// (negative) by this many pixels.
-    pub fn x_shift(mut self, x_shift: f64) -> Self {
-        self.x_shift = Some(x_shift);
-        self
-    }
-
+    #[serde(rename = "xshift")]
+    x_shift: Option<f64>,
     /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g. "y" or "y2"), the `y`
     /// position refers to an y coordinate If set to "paper", the `y` position refers to the
     /// distance from the bottom of the plotting area in normalized coordinates where 0 (1)
     /// corresponds to the bottom (top).
-    pub fn y_ref(mut self, y_ref: &str) -> Self {
-        self.y_ref = Some(y_ref.to_owned());
-        self
-    }
-
+    #[serde(rename = "yref")]
+    y_ref: Option<String>,
     /// Sets the annotation's y position. If the axis `type` is "log", then you must take the log of
     /// your desired range. If the axis `type` is "date", it should be date strings, like date data,
     /// though Date objects and unix milliseconds will be accepted and converted to strings. If the
     /// axis `type` is "category", it should be numbers, using the scale where each category is
     /// assigned a serial number from zero in the order it appears.
-    pub fn y<V: Into<NumOrString>>(mut self, y: V) -> Self {
-        self.y = Some(y.into());
-        self
-    }
-
+    y: Option<NumOrString>,
     /// Sets the text box's vertical position anchor This anchor binds the `y` position to the
     /// "top", "middle" or "bottom" of the annotation. For example, if `y` is set to 1, `yref` to
     /// "paper" and `yanchor` to "top" then the top-most portion of the annotation lines up with the
     /// top-most edge of the plotting area. If "auto", the anchor is equivalent to "middle" for
     /// data-referenced annotations or if there is an arrow, whereas for paper-referenced with no
     /// arrow, the anchor picked corresponds to the closest side.
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
-        self.y_anchor = Some(y_anchor);
-        self
-    }
-
+    #[serde(rename = "yanchor")]
+    y_anchor: Option<Anchor>,
     /// Shifts the position of the whole annotation and arrow up (positive) or down (negative) by
     /// this many pixels.
-    pub fn y_shift(mut self, y_shift: f64) -> Self {
-        self.y_shift = Some(y_shift);
-        self
-    }
-
+    #[serde(rename = "yshift")]
+    y_shift: Option<f64>,
     /// Makes this annotation respond to clicks on the plot. If you click a data point that exactly
     /// matches the `x` and `y` values of this annotation, and it is hidden (visible: false), it
     /// will appear. In "onoff" mode, you must click the same point again to make it disappear, so
@@ -2191,65 +1131,47 @@ impl Annotation {
     /// need to show/hide this annotation in response to different `x` or `y` values, you can set
     /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
     /// markers though, `standoff` is preferred over `xclick` and `yclick`.
-    pub fn click_to_show(mut self, click_to_show: ClickToShow) -> Self {
-        self.click_to_show = Some(click_to_show);
-        self
-    }
-
+    #[serde(rename = "clicktoshow")]
+    click_to_show: Option<ClickToShow>,
     /// Toggle this annotation when clicking a data point whose `x` value is `xclick` rather than
     /// the annotation's `x` value.
-    pub fn x_click<V: Into<NumOrString>>(mut self, x_click: V) -> Self {
-        self.x_click = Some(x_click.into());
-        self
-    }
-
+    #[serde(rename = "xclick")]
+    x_click: Option<NumOrString>,
     /// Toggle this annotation when clicking a data point whose `y` value is `yclick` rather than
     /// the annotation's `y` value.
-    pub fn y_click<V: Into<NumOrString>>(mut self, y_click: V) -> Self {
-        self.y_click = Some(y_click.into());
-        self
-    }
-
+    #[serde(rename = "yclick")]
+    y_click: Option<NumOrString>,
     /// Sets text to appear when hovering over this annotation. If omitted or blank, no hover label
     /// will appear.
-    pub fn hover_text(mut self, hover_text: &str) -> Self {
-        self.hover_text = Some(hover_text.to_owned());
-        self
-    }
-
+    #[serde(rename = "hovertext")]
+    hover_text: Option<String>,
     /// Label displayed on mouse hover.
-    pub fn hover_label(mut self, hover_label: Label) -> Self {
-        self.hover_label = Some(hover_label);
-        self
-    }
-
+    #[serde(rename = "hoverlabel")]
+    hover_label: Option<Label>,
     /// Determines whether the annotation text box captures mouse move and click events, or allows
     /// those events to pass through to data points in the plot that may be behind the annotation.
     /// By default `captureevents` is "false" unless `hovertext` is provided. If you use the event
     /// `plotly_clickannotation` without `hovertext` you must explicitly enable `captureevents`.
-    pub fn capture_events(mut self, capture_events: bool) -> Self {
-        self.capture_events = Some(capture_events);
-        self
-    }
-
+    #[serde(rename = "captureevents")]
+    capture_events: Option<bool>,
     /// When used in a template, named items are created in the output figure in addition to any
     /// items the figure already has in this array. You can modify these items in the output figure
     /// by making your own item with `templateitemname` matching this `name` alongside your
     /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
     /// outside of a template.
-    pub fn name(mut self, name: &str) -> Self {
-        self.name = Some(name.to_owned());
-        self
-    }
-
+    name: Option<String>,
     /// Used to refer to a named item in this array in the template. Named items from the template
     /// will be created even without a matching item in the input figure, but you can modify one by
     /// making an item with `templateitemname` matching its `name`, alongside your modifications
     /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
     /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
-    pub fn template_item_name(mut self, template_item_name: &str) -> Self {
-        self.template_item_name = Some(template_item_name.to_owned());
-        self
+    #[serde(rename = "templateitemname")]
+    template_item_name: Option<String>,
+}
+
+impl Annotation {
+    pub fn new() -> Self {
+        Default::default()
     }
 }
 
@@ -2314,7 +1236,7 @@ pub enum SelectDirection {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Template {
     layout: Option<LayoutTemplate>,
 }
@@ -2322,11 +1244,6 @@ pub struct Template {
 impl Template {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn layout(mut self, layout: LayoutTemplate) -> Self {
-        self.layout = Some(layout);
-        self
     }
 }
 
@@ -2346,7 +1263,7 @@ impl Into<Cow<'static, Template>> for &'static Template {
 
 // LayoutTemplate matches Layout except it lacks a field for template
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct LayoutTemplate {
     title: Option<Title>,
     #[serde(rename = "showlegend")]
@@ -2372,6 +1289,16 @@ pub struct LayoutTemplate {
     color_axis: Option<ColorAxis>,
     #[serde(rename = "modebar")]
     mode_bar: Option<ModeBar>,
+    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
+    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
+    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
+    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
+    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
+    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
+    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
+    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
+    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
+    /// else the default value is "closest".
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     #[serde(rename = "clickmode")]
@@ -2479,236 +1406,11 @@ impl LayoutTemplate {
         Default::default()
     }
 
-    pub fn title(mut self, title: Title) -> Self {
-        self.title = Some(title);
-        self
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Self {
-        self.show_legend = Some(show_legend);
-        self
-    }
-
-    pub fn legend(mut self, legend: Legend) -> Self {
-        self.legend = Some(legend);
-        self
-    }
-
-    pub fn margin(mut self, margin: Margin) -> Self {
-        self.margin = Some(margin);
-        self
-    }
-
-    pub fn auto_size(mut self, auto_size: bool) -> Self {
-        self.auto_size = Some(auto_size);
-        self
-    }
-
-    pub fn width(mut self, width: usize) -> Self {
-        self.width = Some(width);
-        self
-    }
-
-    pub fn height(mut self, height: usize) -> Self {
-        self.height = Some(height);
-        self
-    }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
-    pub fn uniform_text(mut self, uniform_text: UniformText) -> Self {
-        self.uniform_text = Some(uniform_text);
-        self
-    }
-
-    pub fn separators(mut self, separators: &str) -> Self {
-        self.separators = Some(separators.to_owned());
-        self
-    }
-
-    pub fn paper_background_color<C: Color>(mut self, paper_background_color: C) -> Self {
-        self.paper_background_color = Some(Box::new(paper_background_color));
-        self
-    }
-
-    pub fn plot_background_color<C: Color>(mut self, plot_background_color: C) -> Self {
-        self.plot_background_color = Some(Box::new(plot_background_color));
-        self
-    }
-
-    pub fn color_scale(mut self, color_scale: LayoutColorScale) -> Self {
-        self.color_scale = Some(color_scale);
-        self
-    }
-
-    pub fn colorway<C: Color>(mut self, colorway: Vec<C>) -> Self {
-        self.colorway = Some(ColorArray(colorway).into());
-        self
-    }
-
-    pub fn color_axis(mut self, color_axis: ColorAxis) -> Self {
-        self.color_axis = Some(color_axis);
-        self
-    }
-
-    pub fn mode_bar(mut self, mode_bar: ModeBar) -> Self {
-        self.mode_bar = Some(mode_bar);
-        self
-    }
-
-    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
-    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
-    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
-    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
-    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
-    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
-    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
-    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
-    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
-    /// else the default value is "closest".
-    pub fn hover_mode(mut self, hover_mode: HoverMode) -> Self {
-        self.hover_mode = Some(hover_mode);
-        self
-    }
-
-    pub fn click_mode(mut self, click_mode: ClickMode) -> Self {
-        self.click_mode = Some(click_mode);
-        self
-    }
-
-    pub fn drag_mode(mut self, drag_mode: DragMode) -> Self {
-        self.drag_mode = Some(drag_mode);
-        self
-    }
-
-    pub fn select_direction(mut self, select_direction: SelectDirection) -> Self {
-        self.select_direction = Some(select_direction);
-        self
-    }
-
-    pub fn hover_distance(mut self, hover_distance: i32) -> Self {
-        self.hover_distance = Some(hover_distance);
-        self
-    }
-
-    pub fn spike_distance(mut self, spike_distance: i32) -> Self {
-        self.spike_distance = Some(spike_distance);
-        self
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Self {
-        self.hover_label = Some(hover_label);
-        self
-    }
-
-    pub fn grid(mut self, grid: LayoutGrid) -> Self {
-        self.grid = Some(grid);
-        self
-    }
-
-    pub fn calendar(mut self, calendar: Calendar) -> Self {
-        self.calendar = Some(calendar);
-        self
-    }
-
-    pub fn x_axis(mut self, xaxis: Axis) -> Self {
-        self.x_axis = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis(mut self, yaxis: Axis) -> Self {
-        self.y_axis = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis2(mut self, xaxis: Axis) -> Self {
-        self.x_axis2 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis2(mut self, yaxis: Axis) -> Self {
-        self.y_axis2 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis3(mut self, xaxis: Axis) -> Self {
-        self.x_axis3 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis3(mut self, yaxis: Axis) -> Self {
-        self.y_axis3 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis4(mut self, xaxis: Axis) -> Self {
-        self.x_axis4 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis4(mut self, yaxis: Axis) -> Self {
-        self.y_axis4 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis5(mut self, xaxis: Axis) -> Self {
-        self.x_axis5 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis5(mut self, yaxis: Axis) -> Self {
-        self.y_axis5 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis6(mut self, xaxis: Axis) -> Self {
-        self.x_axis6 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis6(mut self, yaxis: Axis) -> Self {
-        self.y_axis6 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis7(mut self, xaxis: Axis) -> Self {
-        self.x_axis7 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis7(mut self, yaxis: Axis) -> Self {
-        self.y_axis7 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis8(mut self, xaxis: Axis) -> Self {
-        self.x_axis8 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis8(mut self, yaxis: Axis) -> Self {
-        self.y_axis8 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn annotations(mut self, annotations: Vec<Annotation>) -> Self {
-        self.annotations = Some(annotations);
-        self
-    }
-
     pub fn add_annotation(&mut self, annotation: Annotation) {
         if self.annotations.is_none() {
             self.annotations = Some(Vec::new());
         }
         self.annotations.as_mut().unwrap().push(annotation);
-    }
-
-    pub fn shapes(mut self, shapes: Vec<Shape>) -> Self {
-        self.shapes = Some(shapes);
-        self
     }
 
     pub fn add_shape(&mut self, shape: Shape) {
@@ -2717,105 +1419,11 @@ impl LayoutTemplate {
         }
         self.shapes.as_mut().unwrap().push(shape);
     }
-
-    pub fn new_shape(mut self, new_shape: NewShape) -> Self {
-        self.new_shape = Some(new_shape);
-        self
-    }
-
-    pub fn active_shape(mut self, active_shape: ActiveShape) -> Self {
-        self.active_shape = Some(active_shape);
-        self
-    }
-
-    pub fn box_mode(mut self, box_mode: BoxMode) -> Self {
-        self.box_mode = Some(box_mode);
-        self
-    }
-
-    pub fn box_gap(mut self, box_gap: f64) -> Self {
-        self.box_gap = Some(box_gap);
-        self
-    }
-
-    pub fn box_group_gap(mut self, box_group_gap: f64) -> Self {
-        self.box_group_gap = Some(box_group_gap);
-        self
-    }
-
-    pub fn bar_mode(mut self, bar_mode: BarMode) -> Self {
-        self.bar_mode = Some(bar_mode);
-        self
-    }
-
-    pub fn bar_norm(mut self, bar_norm: BarNorm) -> Self {
-        self.bar_norm = Some(bar_norm);
-        self
-    }
-
-    pub fn bar_gap(mut self, bar_gap: f64) -> Self {
-        self.bar_gap = Some(bar_gap);
-        self
-    }
-
-    pub fn bar_group_gap(mut self, bar_group_gap: f64) -> Self {
-        self.bar_group_gap = Some(bar_group_gap);
-        self
-    }
-
-    pub fn violin_mode(mut self, violin_mode: ViolinMode) -> Self {
-        self.violin_mode = Some(violin_mode);
-        self
-    }
-
-    pub fn violin_gap(mut self, violin_gap: f64) -> Self {
-        self.violin_gap = Some(violin_gap);
-        self
-    }
-
-    pub fn violin_group_gap(mut self, violin_group_gap: f64) -> Self {
-        self.violin_group_gap = Some(violin_group_gap);
-        self
-    }
-
-    pub fn waterfall_mode(mut self, waterfall_mode: WaterfallMode) -> Self {
-        self.waterfall_mode = Some(waterfall_mode);
-        self
-    }
-
-    pub fn waterfall_gap(mut self, waterfall_gap: f64) -> Self {
-        self.waterfall_gap = Some(waterfall_gap);
-        self
-    }
-
-    pub fn waterfall_group_gap(mut self, waterfall_group_gap: f64) -> Self {
-        self.waterfall_group_gap = Some(waterfall_group_gap);
-        self
-    }
-
-    pub fn pie_colorway<C: Color>(mut self, pie_colorway: Vec<C>) -> Self {
-        self.pie_colorway = Some(ColorArray(pie_colorway).into());
-        self
-    }
-
-    pub fn extend_pie_colors(mut self, extend_pie_colors: bool) -> Self {
-        self.extend_pie_colors = Some(extend_pie_colors);
-        self
-    }
-
-    pub fn sunburst_colorway<C: Color>(mut self, sunburst_colorway: Vec<C>) -> Self {
-        self.sunburst_colorway = Some(ColorArray(sunburst_colorway).into());
-        self
-    }
-
-    pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> Self {
-        self.extend_sunburst_colors = Some(extend_sunburst_colors);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(kind = "layout")]
 pub struct Layout {
     title: Option<Title>,
     #[serde(rename = "showlegend")]
@@ -2841,6 +1449,16 @@ pub struct Layout {
     color_axis: Option<ColorAxis>,
     #[serde(rename = "modebar")]
     mode_bar: Option<ModeBar>,
+    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
+    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
+    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
+    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
+    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
+    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
+    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
+    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
+    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
+    /// else the default value is "closest".
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     #[serde(rename = "clickmode")]
@@ -2855,7 +1473,7 @@ pub struct Layout {
     spike_distance: Option<i32>,
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-
+    #[field_setter(skip)]
     template: Option<Box<Cow<'static, Template>>>,
 
     grid: Option<LayoutGrid>,
@@ -2960,6 +1578,9 @@ pub struct Layout {
     sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendsunburstcolors")]
     extend_sunburst_colors: Option<bool>,
+
+    #[serde(rename = "updatemenus")]
+    update_menus: Option<Vec<UpdateMenu>>,
 }
 
 impl Layout {
@@ -2971,241 +1592,11 @@ impl Layout {
         serde_json::to_string(self).unwrap()
     }
 
-    pub fn title(mut self, title: Title) -> Self {
-        self.title = Some(title);
-        self
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Self {
-        self.show_legend = Some(show_legend);
-        self
-    }
-
-    pub fn legend(mut self, legend: Legend) -> Self {
-        self.legend = Some(legend);
-        self
-    }
-
-    pub fn margin(mut self, margin: Margin) -> Self {
-        self.margin = Some(margin);
-        self
-    }
-
-    pub fn auto_size(mut self, auto_size: bool) -> Self {
-        self.auto_size = Some(auto_size);
-        self
-    }
-
-    pub fn width(mut self, width: usize) -> Self {
-        self.width = Some(width);
-        self
-    }
-
-    pub fn height(mut self, height: usize) -> Self {
-        self.height = Some(height);
-        self
-    }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
-    pub fn uniform_text(mut self, uniform_text: UniformText) -> Self {
-        self.uniform_text = Some(uniform_text);
-        self
-    }
-
-    pub fn separators(mut self, separators: &str) -> Self {
-        self.separators = Some(separators.to_owned());
-        self
-    }
-
-    pub fn paper_background_color<C: Color>(mut self, paper_background_color: C) -> Self {
-        self.paper_background_color = Some(Box::new(paper_background_color));
-        self
-    }
-
-    pub fn plot_background_color<C: Color>(mut self, plot_background_color: C) -> Self {
-        self.plot_background_color = Some(Box::new(plot_background_color));
-        self
-    }
-
-    pub fn color_scale(mut self, color_scale: LayoutColorScale) -> Self {
-        self.color_scale = Some(color_scale);
-        self
-    }
-
-    pub fn colorway<C: Color>(mut self, colorway: Vec<C>) -> Self {
-        self.colorway = Some(ColorArray(colorway).into());
-        self
-    }
-
-    pub fn color_axis(mut self, color_axis: ColorAxis) -> Self {
-        self.color_axis = Some(color_axis);
-        self
-    }
-
-    pub fn mode_bar(mut self, mode_bar: ModeBar) -> Self {
-        self.mode_bar = Some(mode_bar);
-        self
-    }
-
-    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
-    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
-    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
-    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
-    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
-    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
-    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
-    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
-    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
-    /// else the default value is "closest".
-    pub fn hover_mode(mut self, hover_mode: HoverMode) -> Self {
-        self.hover_mode = Some(hover_mode);
-        self
-    }
-
-    pub fn click_mode(mut self, click_mode: ClickMode) -> Self {
-        self.click_mode = Some(click_mode);
-        self
-    }
-
-    pub fn drag_mode(mut self, drag_mode: DragMode) -> Self {
-        self.drag_mode = Some(drag_mode);
-        self
-    }
-
-    pub fn select_direction(mut self, select_direction: SelectDirection) -> Self {
-        self.select_direction = Some(select_direction);
-        self
-    }
-
-    pub fn hover_distance(mut self, hover_distance: i32) -> Self {
-        self.hover_distance = Some(hover_distance);
-        self
-    }
-
-    pub fn spike_distance(mut self, spike_distance: i32) -> Self {
-        self.spike_distance = Some(spike_distance);
-        self
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Self {
-        self.hover_label = Some(hover_label);
-        self
-    }
-
-    pub fn grid(mut self, grid: LayoutGrid) -> Self {
-        self.grid = Some(grid);
-        self
-    }
-
-    pub fn calendar(mut self, calendar: Calendar) -> Self {
-        self.calendar = Some(calendar);
-        self
-    }
-
-    pub fn x_axis(mut self, xaxis: Axis) -> Self {
-        self.x_axis = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis(mut self, yaxis: Axis) -> Self {
-        self.y_axis = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn z_axis(mut self, zaxis: Axis) -> Layout {
-        self.z_axis = Some(Box::new(zaxis));
-        self
-    }
-
-    pub fn x_axis2(mut self, xaxis: Axis) -> Layout {
-        self.x_axis2 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis2(mut self, yaxis: Axis) -> Self {
-        self.y_axis2 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis3(mut self, xaxis: Axis) -> Self {
-        self.x_axis3 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis3(mut self, yaxis: Axis) -> Self {
-        self.y_axis3 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis4(mut self, xaxis: Axis) -> Self {
-        self.x_axis4 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis4(mut self, yaxis: Axis) -> Self {
-        self.y_axis4 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis5(mut self, xaxis: Axis) -> Self {
-        self.x_axis5 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis5(mut self, yaxis: Axis) -> Self {
-        self.y_axis5 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis6(mut self, xaxis: Axis) -> Self {
-        self.x_axis6 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis6(mut self, yaxis: Axis) -> Self {
-        self.y_axis6 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis7(mut self, xaxis: Axis) -> Self {
-        self.x_axis7 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis7(mut self, yaxis: Axis) -> Self {
-        self.y_axis7 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn x_axis8(mut self, xaxis: Axis) -> Self {
-        self.x_axis8 = Some(Box::new(xaxis));
-        self
-    }
-
-    pub fn y_axis8(mut self, yaxis: Axis) -> Self {
-        self.y_axis8 = Some(Box::new(yaxis));
-        self
-    }
-
-    pub fn annotations(mut self, annotations: Vec<Annotation>) -> Self {
-        self.annotations = Some(annotations);
-        self
-    }
-
     pub fn add_annotation(&mut self, annotation: Annotation) {
         if self.annotations.is_none() {
             self.annotations = Some(Vec::new());
         }
         self.annotations.as_mut().unwrap().push(annotation);
-    }
-
-    pub fn shapes(mut self, shapes: Vec<Shape>) -> Self {
-        self.shapes = Some(shapes);
-        self
     }
 
     pub fn add_shape(&mut self, shape: Shape) {
@@ -3215,106 +1606,11 @@ impl Layout {
         self.shapes.as_mut().unwrap().push(shape);
     }
 
-    pub fn new_shape(mut self, new_shape: NewShape) -> Self {
-        self.new_shape = Some(new_shape);
-        self
-    }
-
-    pub fn active_shape(mut self, active_shape: ActiveShape) -> Self {
-        self.active_shape = Some(active_shape);
-        self
-    }
-
     pub fn template<T>(mut self, template: T) -> Layout
     where
         T: Into<Cow<'static, Template>>,
     {
         self.template = Some(Box::new(template.into()));
-        self
-    }
-
-    pub fn box_mode(mut self, box_mode: BoxMode) -> Self {
-        self.box_mode = Some(box_mode);
-        self
-    }
-
-    pub fn box_gap(mut self, box_gap: f64) -> Self {
-        self.box_gap = Some(box_gap);
-        self
-    }
-
-    pub fn box_group_gap(mut self, box_group_gap: f64) -> Self {
-        self.box_group_gap = Some(box_group_gap);
-        self
-    }
-
-    pub fn bar_mode(mut self, bar_mode: BarMode) -> Self {
-        self.bar_mode = Some(bar_mode);
-        self
-    }
-
-    pub fn bar_norm(mut self, bar_norm: BarNorm) -> Self {
-        self.bar_norm = Some(bar_norm);
-        self
-    }
-
-    pub fn bar_gap(mut self, bar_gap: f64) -> Self {
-        self.bar_gap = Some(bar_gap);
-        self
-    }
-
-    pub fn bar_group_gap(mut self, bar_group_gap: f64) -> Self {
-        self.bar_group_gap = Some(bar_group_gap);
-        self
-    }
-
-    pub fn violin_mode(mut self, violin_mode: ViolinMode) -> Self {
-        self.violin_mode = Some(violin_mode);
-        self
-    }
-
-    pub fn violin_gap(mut self, violin_gap: f64) -> Self {
-        self.violin_gap = Some(violin_gap);
-        self
-    }
-
-    pub fn violin_group_gap(mut self, violin_group_gap: f64) -> Self {
-        self.violin_group_gap = Some(violin_group_gap);
-        self
-    }
-
-    pub fn waterfall_mode(mut self, waterfall_mode: WaterfallMode) -> Self {
-        self.waterfall_mode = Some(waterfall_mode);
-        self
-    }
-
-    pub fn waterfall_gap(mut self, waterfall_gap: f64) -> Self {
-        self.waterfall_gap = Some(waterfall_gap);
-        self
-    }
-
-    pub fn waterfall_group_gap(mut self, waterfall_group_gap: f64) -> Self {
-        self.waterfall_group_gap = Some(waterfall_group_gap);
-        self
-    }
-
-    pub fn pie_colorway<C: Color>(mut self, pie_colorway: Vec<C>) -> Self {
-        self.pie_colorway = Some(ColorArray(pie_colorway).into());
-        self
-    }
-
-    pub fn extend_pie_colors(mut self, extend_pie_colors: bool) -> Self {
-        self.extend_pie_colors = Some(extend_pie_colors);
-        self
-    }
-
-    pub fn sunburst_colorway<C: Color>(mut self, sunburst_colorway: Vec<C>) -> Self {
-        self.sunburst_colorway = Some(ColorArray(sunburst_colorway).into());
-        self
-    }
-
-    pub fn extend_sunburst_colors(mut self, extend_sunburst_colors: bool) -> Self {
-        self.extend_sunburst_colors = Some(extend_sunburst_colors);
         self
     }
 }
