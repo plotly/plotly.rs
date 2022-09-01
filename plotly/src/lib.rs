@@ -38,18 +38,6 @@ pub use crate::ndarray::ArrayTraces;
 pub trait Restyle: serde::Serialize {}
 pub trait Relayout {}
 
-pub trait GetInner {
-    type Inner;
-}
-
-impl<T> GetInner for Option<T> {
-    type Inner = T;
-}
-
-impl<T: serde::Serialize> GetInner for Dim<T> {
-    type Inner = T;
-}
-
 // Not public API.
 #[doc(hidden)]
 mod private;
