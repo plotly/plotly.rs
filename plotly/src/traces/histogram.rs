@@ -248,7 +248,7 @@ where
         array_traces: ArrayTraces,
     ) -> Vec<Box<dyn Trace>> {
         let mut traces: Vec<Box<dyn Trace>> = Vec::new();
-        let mut trace_vectors = private::trace_vectors_from(traces_matrix, array_traces);
+        let mut trace_vectors = crate::private::trace_vectors_from(traces_matrix, array_traces);
         trace_vectors.reverse();
         while !trace_vectors.is_empty() {
             let mut sc = Box::new(self.clone());

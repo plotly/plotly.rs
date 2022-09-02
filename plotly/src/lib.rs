@@ -19,7 +19,6 @@ pub mod plot;
 pub mod traces;
 
 pub use common::color;
-use common::Dim;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{ImageFormat, Plot, Trace};
