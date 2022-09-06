@@ -1,11 +1,12 @@
 //! Candlestick trace
 
+use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
     color::NamedColor,
     common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible},
-    private, Trace,
+    Trace,
 };
 
 /// Construct a candlestick trace.
@@ -41,12 +42,13 @@ use crate::{
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
 /// ```
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Candlestick<T, O>
 where
     T: Serialize + Clone,
     O: Serialize + Clone,
 {
+    #[field_setter(default = "PlotType::Candlestick")]
     r#type: PlotType,
     x: Option<Vec<T>>,
     open: Option<Vec<O>>,
@@ -80,39 +82,6 @@ where
     x_calendar: Option<Calendar>,
 }
 
-impl<T, O> Default for Candlestick<T, O>
-where
-    T: Serialize + Clone,
-    O: Serialize + Clone,
-{
-    fn default() -> Self {
-        Self {
-            r#type: PlotType::Candlestick,
-            x: None,
-            open: None,
-            high: None,
-            low: None,
-            close: None,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            x_axis: None,
-            y_axis: None,
-            line: None,
-            whisker_width: None,
-            increasing: None,
-            decreasing: None,
-            hover_label: None,
-            x_calendar: None,
-        }
-    }
-}
-
 impl<T, O> Candlestick<T, O>
 where
     T: Serialize + Clone,
@@ -131,97 +100,6 @@ where
             decreasing: Some(Direction::Decreasing { line: dline }),
             ..Default::default()
         })
-    }
-
-    pub fn decreasing(mut self, decreasing: Direction) -> Box<Self> {
-        self.decreasing = Some(decreasing);
-        Box::new(self)
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_string()));
-        Box::new(self)
-    }
-
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Self> {
-        let hover_text = private::owned_string_vector(hover_text);
-        self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
-    }
-
-    pub fn increasing(mut self, increasing: Direction) -> Box<Self> {
-        self.increasing = Some(increasing);
-        Box::new(self)
-    }
-
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_string());
-        Box::new(self)
-    }
-
-    pub fn line(mut self, line: Line) -> Box<Self> {
-        self.line = Some(line);
-        Box::new(self)
-    }
-
-    pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_string());
-        Box::new(self)
-    }
-
-    pub fn opacity(mut self, opacity: f64) -> Box<Self> {
-        self.opacity = Some(opacity);
-        Box::new(self)
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Self> {
-        self.show_legend = Some(show_legend);
-        Box::new(self)
-    }
-
-    pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_string()));
-        Box::new(self)
-    }
-
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Self> {
-        let text = private::owned_string_vector(text);
-        self.text = Some(Dim::Vector(text));
-        Box::new(self)
-    }
-
-    pub fn visible(mut self, visible: Visible) -> Box<Self> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    pub fn whisker_width(mut self, whisker_width: f64) -> Box<Self> {
-        self.whisker_width = Some(whisker_width);
-        Box::new(self)
-    }
-    pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_string());
-        Box::new(self)
-    }
-
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {
-        self.x_calendar = Some(x_calendar);
-        Box::new(self)
-    }
-
-    pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_string());
-        Box::new(self)
     }
 }
 

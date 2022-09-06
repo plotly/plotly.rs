@@ -1,11 +1,12 @@
 //! Box trace
 
+use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 
 use crate::{
     color::Color,
     common::{Calendar, Dim, HoverInfo, Label, Line, Marker, Orientation, PlotType, Visible},
-    private, Trace,
+    Trace,
 };
 
 #[derive(Debug, Clone)]
@@ -90,12 +91,14 @@ pub enum HoverOn {
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
 /// ```
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct BoxPlot<X, Y>
 where
     X: Serialize + Clone,
     Y: Serialize + Clone,
 {
+    #[field_setter(default = "PlotType::Box")]
     r#type: PlotType,
     x: Option<Vec<X>>,
     y: Option<Vec<Y>>,
@@ -164,59 +167,6 @@ where
     y_calendar: Option<Calendar>,
 }
 
-impl<X, Y> Default for BoxPlot<X, Y>
-where
-    X: Serialize + Clone,
-    Y: Serialize + Clone,
-{
-    fn default() -> Self {
-        Self {
-            r#type: PlotType::Box,
-            x: None,
-            y: None,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            ids: None,
-            width: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            alignment_group: None,
-            offset_group: None,
-            marker: None,
-            line: None,
-            box_mean: None,
-            box_points: None,
-            notched: None,
-            notch_width: None,
-            whisker_width: None,
-            q1: None,
-            median: None,
-            q3: None,
-            upper_fence: None,
-            lower_fence: None,
-            notch_span: None,
-            mean: None,
-            standard_deviation: None,
-            quartile_method: None,
-            fill_color: None,
-            hover_label: None,
-            hover_on: None,
-            point_pos: None,
-            jitter: None,
-            x_calendar: None,
-            y_calendar: None,
-        }
-    }
-}
-
 impl<Y> BoxPlot<f64, Y>
 where
     Y: Serialize + Clone,
@@ -240,219 +190,6 @@ where
             y: Some(y),
             ..Default::default()
         })
-    }
-
-    pub fn alignment_group(mut self, alignment_group: &str) -> Box<Self> {
-        self.alignment_group = Some(alignment_group.to_string());
-        Box::new(self)
-    }
-
-    pub fn box_mean(mut self, box_mean: BoxMean) -> Box<Self> {
-        self.box_mean = Some(box_mean);
-        Box::new(self)
-    }
-
-    pub fn box_points(mut self, box_points: BoxPoints) -> Box<Self> {
-        self.box_points = Some(box_points);
-        Box::new(self)
-    }
-
-    pub fn fill_color<C: Color>(mut self, fill_color: C) -> Box<Self> {
-        self.fill_color = Some(Box::new(fill_color));
-        Box::new(self)
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    pub fn hover_on(mut self, hover_on: HoverOn) -> Box<Self> {
-        self.hover_on = Some(hover_on);
-        Box::new(self)
-    }
-
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_string()));
-        Box::new(self)
-    }
-
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Self> {
-        let hover_text = private::owned_string_vector(hover_text);
-        self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
-    }
-
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
-        Box::new(self)
-    }
-
-    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Self> {
-        let hover_template = private::owned_string_vector(hover_template);
-        self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
-    }
-
-    pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Box<Self> {
-        let ids = private::owned_string_vector(ids);
-        self.ids = Some(ids);
-        Box::new(self)
-    }
-
-    pub fn jitter(mut self, jitter: f64) -> Box<Self> {
-        self.jitter = Some(jitter);
-        Box::new(self)
-    }
-
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_string());
-        Box::new(self)
-    }
-    pub fn line(mut self, line: Line) -> Box<Self> {
-        self.line = Some(line);
-        Box::new(self)
-    }
-
-    pub fn lower_fence(mut self, lower_fence: Vec<f64>) -> Box<Self> {
-        self.lower_fence = Some(lower_fence);
-        Box::new(self)
-    }
-
-    pub fn marker(mut self, marker: Marker) -> Box<Self> {
-        self.marker = Some(marker);
-        Box::new(self)
-    }
-
-    pub fn mean(mut self, mean: Vec<f64>) -> Box<Self> {
-        self.mean = Some(mean);
-        Box::new(self)
-    }
-
-    pub fn median(mut self, median: Vec<f64>) -> Box<Self> {
-        self.median = Some(median);
-        Box::new(self)
-    }
-
-    pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_string());
-        Box::new(self)
-    }
-
-    pub fn notch_span(mut self, notch_span: Vec<f64>) -> Box<Self> {
-        self.notch_span = Some(notch_span);
-        Box::new(self)
-    }
-
-    pub fn notch_width(mut self, notch_width: f64) -> Box<Self> {
-        self.notch_width = Some(notch_width);
-        Box::new(self)
-    }
-
-    pub fn notched(mut self, notched: bool) -> Box<Self> {
-        self.notched = Some(notched);
-        Box::new(self)
-    }
-
-    pub fn offset_group(mut self, offset_group: &str) -> Box<Self> {
-        self.offset_group = Some(offset_group.to_string());
-        Box::new(self)
-    }
-
-    pub fn opacity(mut self, opacity: f64) -> Box<Self> {
-        self.opacity = Some(opacity);
-        Box::new(self)
-    }
-
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    pub fn point_pos(mut self, point_pos: f64) -> Box<Self> {
-        self.point_pos = Some(point_pos);
-        Box::new(self)
-    }
-
-    pub fn q1(mut self, q1: Vec<f64>) -> Box<Self> {
-        self.q1 = Some(q1);
-        Box::new(self)
-    }
-
-    pub fn q3(mut self, q3: Vec<f64>) -> Box<Self> {
-        self.q3 = Some(q3);
-        Box::new(self)
-    }
-
-    pub fn quartile_method(mut self, quartile_method: QuartileMethod) -> Box<Self> {
-        self.quartile_method = Some(quartile_method);
-        Box::new(self)
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Self> {
-        self.show_legend = Some(show_legend);
-        Box::new(self)
-    }
-
-    pub fn standard_deviation(mut self, standard_deviation: Vec<f64>) -> Box<Self> {
-        self.standard_deviation = Some(standard_deviation);
-        Box::new(self)
-    }
-
-    pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_string()));
-        Box::new(self)
-    }
-
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Self> {
-        let text = private::owned_string_vector(text);
-        self.text = Some(Dim::Vector(text));
-        Box::new(self)
-    }
-
-    pub fn upper_fence(mut self, upper_fence: Vec<f64>) -> Box<Self> {
-        self.upper_fence = Some(upper_fence);
-        Box::new(self)
-    }
-
-    pub fn visible(mut self, visible: Visible) -> Box<Self> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    pub fn whisker_width(mut self, whisker_width: f64) -> Box<Self> {
-        self.whisker_width = Some(whisker_width);
-        Box::new(self)
-    }
-
-    pub fn width(mut self, width: usize) -> Box<Self> {
-        self.width = Some(width);
-        Box::new(self)
-    }
-
-    pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_string());
-        Box::new(self)
-    }
-
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {
-        self.x_calendar = Some(x_calendar);
-        Box::new(self)
-    }
-
-    pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_string());
-        Box::new(self)
-    }
-
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Self> {
-        self.y_calendar = Some(y_calendar);
-        Box::new(self)
     }
 }
 

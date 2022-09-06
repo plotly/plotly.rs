@@ -472,6 +472,12 @@ pub enum ColorScale {
     Vector(Vec<ColorScaleElement>),
 }
 
+impl From<ColorScalePalette> for ColorScale {
+    fn from(src: ColorScalePalette) -> Self {
+        ColorScale::Palette(src)
+    }
+}
+
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
 pub enum LineShape {
