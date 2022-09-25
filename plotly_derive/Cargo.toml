@@ -1,9 +1,14 @@
 [package]
 name = "plotly_derive"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
+version = "0.8.0"
+description = "Internal proc macro crate for Plotly-rs."
+authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/igiagkiozis/plotly"
+documentation = "https://docs.rs/plotly"
+repository = "https://github.com/igiagkiozis/plotly"
+edition = "2018"
+keywords = ["plot", "chart", "plotly"]
 
 [dependencies]
 quote = "1.0"

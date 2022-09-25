@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.1] - 2022-XX-XX
+## [0.8.1] - 2022-09-25
+### Added
+- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/igiagkiozis/plotly/pull/99).
+- Internally, there is now a `plotly-derive` crate which defines a `FieldSetter` procedural macro. This massively cuts down the amount of code duplication by generating the setter methods based on the struct fields. Again thanks to @sreenathkrishnan for this effort.
 
 ## [0.8.0] - 2022-08-26
 Version 0.8.0 represents a significant release which refactors a lot of the codebase and tries to provide a cleaner API: there are several breaking changes listed below. On the whole, if migrating from v0.7.0, start by following any new compiler errors and, if you're still stuck, open an issue on the issue tracker and we can help out.

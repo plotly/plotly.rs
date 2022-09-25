@@ -1,6 +1,4 @@
-//!
-//! Buttons and Dropdowns
-//!
+//! Buttons and Dropdowns.
 
 use plotly_derive::FieldSetter;
 use serde::Serialize;
