@@ -16,7 +16,7 @@ pub mod common;
 pub mod configuration;
 pub mod layout;
 pub mod plot;
-mod traces;
+pub mod traces;
 
 pub use common::color;
 pub use configuration::Configuration;
@@ -33,6 +33,9 @@ pub use traces::{box_plot, contour, histogram, sankey, surface};
 
 #[cfg(feature = "plotly_ndarray")]
 pub use crate::ndarray::ArrayTraces;
+
+pub trait Restyle: serde::Serialize {}
+pub trait Relayout {}
 
 // Not public API.
 #[doc(hidden)]
