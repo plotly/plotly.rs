@@ -27,7 +27,7 @@ erased-serde = "0.3"
 getrandom = { version = "0.2", features = ["js"], optional = true }
 js-sys = { version = "0.3", optional = true }
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = true }
-plotly_derive = { path = "../plotly_derive" }
+plotly_derive = { version = "0.8.0", path = "../plotly_derive" }
 ndarray = { version = "0.15.4", optional = true }
 once_cell = "1"
 serde = { version = "1.0.132", features = ["derive"] }
