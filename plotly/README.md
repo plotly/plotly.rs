@@ -39,7 +39,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.8.0"
+plotly = "0.8.1"
 ```
 
 For changes since the last version please consult the [change log](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
@@ -61,7 +61,7 @@ Saving to png, jpeg, webp, svg, pdf and eps formats can be made available by ena
 
 ```toml
 [dependencies]
-plotly = { version = "0.8.0", features = ["kaleido"] }
+plotly = { version = "0.8.1", features = ["kaleido"] }
 ```
 For further details please see [plotly_kaleido](https://github.com/igiagkiozis/plotly/tree/master/plotly_kaleido).
 
