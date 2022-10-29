@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2022-XX-XX
+### Added
+- LegendGroupTitle to existing traces.
+
 ## [0.8.1] - 2022-09-25
 ### Added
 - Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/igiagkiozis/plotly/pull/99).

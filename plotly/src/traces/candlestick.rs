@@ -5,7 +5,9 @@ use serde::Serialize;
 
 use crate::{
     color::NamedColor,
-    common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible},
+    common::{
+        Calendar, Dim, Direction, HoverInfo, Label, LegendGroupTitle, Line, PlotType, Visible,
+    },
     Trace,
 };
 
@@ -61,6 +63,8 @@ where
     show_legend: Option<bool>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     text: Option<Dim<String>>,
     #[serde(rename = "hovertext")]
@@ -140,6 +144,7 @@ mod tests {
         .visible(Visible::True)
         .show_legend(false)
         .legend_group("group_1")
+        .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
         .opacity(0.3)
         .text_array(vec!["text", "here"])
         .text("text here")
@@ -166,6 +171,7 @@ mod tests {
             "visible": true,
             "showlegend": false,
             "legendgroup": "group_1",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "opacity": 0.3,
             "text": "text here",
             "hovertext": "hover text",

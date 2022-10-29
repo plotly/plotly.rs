@@ -10,7 +10,8 @@ use crate::ndarray::ArrayTraces;
 use crate::{
     color::Color,
     common::{
-        Dim, Fill, Font, HoverInfo, HoverOn, Label, Line, Marker, Mode, PlotType, Position, Visible,
+        Dim, Fill, Font, HoverInfo, HoverOn, Label, LegendGroupTitle, Line, Marker, Mode, PlotType,
+        Position, Visible,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -55,6 +56,8 @@ where
     /// same time when toggling legend items.
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     /// Sets the opacity of the trace.
     opacity: Option<f64>,
     /// Determines the drawing mode for this scatter trace. If the provided `Mode` includes
@@ -333,6 +336,7 @@ mod tests {
             .hover_text_array(vec!["hover_text"])
             .ids(vec!["1"])
             .legend_group("legend_group")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .line(Line::new())
             .marker(Marker::new())
             .meta("meta")
@@ -370,6 +374,7 @@ mod tests {
             "hovertemplate": ["hover_template"],
             "ids": ["1"],
             "legendgroup": "legend_group",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "line": {},
             "marker": {},
             "meta": "meta",

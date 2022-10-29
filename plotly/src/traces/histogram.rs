@@ -8,7 +8,10 @@ use serde::Serialize;
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
 use crate::{
-    common::{Calendar, Dim, ErrorData, HoverInfo, Label, Marker, Orientation, PlotType, Visible},
+    common::{
+        Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Marker, Orientation,
+        PlotType, Visible,
+    },
     Trace,
 };
 
@@ -134,6 +137,8 @@ where
     hover_text: Option<Dim<String>>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     marker: Option<Marker>,
     #[serde(rename = "nbinsx")]
     n_bins_x: Option<usize>,
@@ -397,6 +402,7 @@ mod tests {
             .hover_text("hover_text")
             .hover_text_array(vec!["hover_text_1", "hover_text_2"])
             .legend_group("legendgroup")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .marker(Marker::new())
             .n_bins_x(5)
             .n_bins_y(10)
@@ -430,6 +436,7 @@ mod tests {
             "hovertemplate": ["hover_template_1", "hover_template_2"],
             "hovertext": ["hover_text_1", "hover_text_2"],
             "legendgroup": "legendgroup",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "marker": {},
             "nbinsx": 5,
             "nbinsy": 10,
