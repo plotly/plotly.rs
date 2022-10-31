@@ -1,11 +1,11 @@
 # Plotly Kaleido
 
 Plotly Kaleido implements the `kaleido` feature for [Plotly.rs](https://github.com/igiagkiozis/plotly)
- 
-The `kaleido` feature enables `Plot` conversion to the following output formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. 
 
-## Examples 
- 
+The `kaleido` feature enables `Plot` conversion to the following output formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
+
+## Examples
+
 ```rust
 extern crate plotly;
 use plotly::common::Mode;
@@ -26,7 +26,7 @@ fn line_and_scatter_plot() {
     plot.add_trace(trace3);
 
     // The following will save the plot in all available formats and show the plot.
-    plot.save("scatter", ImageFormat::PNG,  1024, 680, 1.0);
+    plot.write_image("scatter", ImageFormat::PNG,  1024, 680, 1.0);
     plot.show();
 }
 
