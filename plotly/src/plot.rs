@@ -1,6 +1,5 @@
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
+#[cfg(not(feature = "wasm"))]
+use std::{fs::File, io::Write, path::Path};
 
 use askama::Template;
 use dyn_clone::DynClone;
@@ -399,6 +398,7 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
+    #[cfg(not(feature = "wasm"))]
     fn render_static(&self, format: ImageFormat, width: usize, height: usize) -> String {
         let tmpl = StaticPlotTemplate {
             plot: self,
@@ -471,6 +471,7 @@ impl PartialEq for Plot {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "kaleido")]
     use std::path::PathBuf;
 
     use serde_json::{json, to_value};
@@ -622,12 +623,14 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(feature = "wasm"))]
     fn test_show_image() {
         let plot = create_test_plot();
         plot.show_image(ImageFormat::PNG, 1024, 680);
     }
 
     #[test]
+    #[cfg(not(feature = "wasm"))]
     fn test_save_html() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.html");

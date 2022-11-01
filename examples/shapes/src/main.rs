@@ -1,4 +1,4 @@
-use itertools_num::linspace;
+use ndarray::Array;
 use plotly::{
     color::NamedColor,
     common::{DashType, Fill, Font, Mode},
@@ -8,23 +8,22 @@ use plotly::{
     Bar, Plot, Scatter,
 };
 use rand::thread_rng;
-use rand_distr::{Distribution, Normal};
+use rand_distr::{num_traits::Float, Distribution, Normal};
 
-// Shapes
-fn filled_area_chart(show: bool) {
+fn filled_area_chart() {
     let trace1 = Scatter::new(vec![0, 1, 2, 0], vec![0, 2, 0, 0]).fill(Fill::ToSelf);
     let trace2 =
         Scatter::new(vec![3, 3, 5, 5, 3], vec![0.5, 1.5, 1.5, 0.5, 0.5]).fill(Fill::ToSelf);
+
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("filled_area_chart")));
+    println!("{}", plot.to_json());
+
+    plot.show();
 }
 
-fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
+fn vertical_and_horizontal_lines_positioned_relative_to_axes() {
     let trace = Scatter::new(vec![2.0, 3.5, 6.0], vec![1.0, 1.5, 1.0])
         .text_array(vec![
             "Vertical Line",
@@ -32,6 +31,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
             "Diagonal dotted Line",
         ])
         .mode(Mode::Text);
+
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
@@ -48,6 +48,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
             .y1(2)
             .line(ShapeLine::new().color(NamedColor::RoyalBlue).width(3.)),
     );
+
     layout.add_shape(
         Shape::new()
             .shape_type(ShapeType::Line)
@@ -62,6 +63,7 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
                     .dash(DashType::DashDot),
             ),
     );
+
     layout.add_shape(
         Shape::new()
             .shape_type(ShapeType::Line)
@@ -78,24 +80,18 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some(
-            "vertical_and_horizontal_lines_positioned_relative_to_axes"
-        ))
-    );
+
+    plot.show();
 }
 
-fn lines_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
+fn lines_positioned_relative_to_the_plot_and_to_the_axes() {
     let trace = Scatter::new(vec![2.0, 6.0], vec![1.0, 1.0])
         .text_array(vec![
             "Line positioned relative to the plot",
             "Line positioned relative to the axes",
         ])
         .mode(Mode::Text);
+
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
@@ -127,20 +123,13 @@ fn lines_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some(
-            "lines_positioned_relative_to_the_plot_and_to_the_axes"
-        ))
-    );
+
+    plot.show();
 }
 
-fn creating_tangent_lines_with_shapes(show: bool) {
-    let x0: Vec<f64> = linspace(1.0, 3.0, 200).collect();
-    let y0: Vec<f64> = x0.iter().map(|v| *v * (v.powf(2.)).sin() + 1.).collect();
+fn creating_tangent_lines_with_shapes() {
+    let x0 = Array::linspace(1.0, 3.0, 200).into_raw_vec();
+    let y0 = x0.iter().map(|v| *v * (v.powf(2.)).sin() + 1.).collect();
 
     let trace = Scatter::new(x0, y0);
     let mut plot = Plot::new();
@@ -161,6 +150,7 @@ fn creating_tangent_lines_with_shapes(show: bool) {
             .y1(2.30756)
             .line(ShapeLine::new().color(NamedColor::Crimson).width(2.5)),
     );
+
     layout.add_shape(
         Shape::new()
             .x_ref("x")
@@ -173,6 +163,7 @@ fn creating_tangent_lines_with_shapes(show: bool) {
             .y1(3.80796)
             .line(ShapeLine::new().color(NamedColor::Crimson).width(2.5)),
     );
+
     layout.add_shape(
         Shape::new()
             .x_ref("x")
@@ -187,16 +178,11 @@ fn creating_tangent_lines_with_shapes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("creating_tangent_lines_with_shapes"))
-    );
+
+    plot.show();
 }
 
-fn rectangles_positioned_relative_to_the_axes(show: bool) {
+fn rectangles_positioned_relative_to_the_axes() {
     let trace = Scatter::new(vec![1.5, 4.5], vec![0.75, 0.75])
         .text_array(vec!["Unfilled Rectangle", "Filled Rectangle"])
         .mode(Mode::Text);
@@ -218,6 +204,7 @@ fn rectangles_positioned_relative_to_the_axes(show: bool) {
             .y1(3.)
             .line(ShapeLine::new().color(NamedColor::RoyalBlue)),
     );
+
     layout.add_shape(
         Shape::new()
             .x_ref("x")
@@ -232,22 +219,18 @@ fn rectangles_positioned_relative_to_the_axes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("rectangles_positioned_relative_to_the_axes"))
-    );
+
+    plot.show();
 }
 
-fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
+fn rectangle_positioned_relative_to_the_plot_and_to_the_axes() {
     let trace = Scatter::new(vec![1.5, 3.], vec![2.5, 2.5])
         .text_array(vec![
             "Rectangle reference to the plot",
             "Rectangle reference to the axes",
         ])
         .mode(Mode::Text);
+
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
@@ -267,6 +250,7 @@ fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
             .line(ShapeLine::new().color(NamedColor::RoyalBlue).width(3.))
             .fill_color(NamedColor::LightSkyBlue),
     );
+
     layout.add_shape(
         Shape::new()
             .x_ref("paper")
@@ -281,18 +265,11 @@ fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some(
-            "rectangle_positioned_relative_to_the_plot_and_to_the_axes"
-        ))
-    );
+
+    plot.show();
 }
 
-fn highlighting_time_series_regions_with_rectangle_shapes(show: bool) {
+fn highlighting_time_series_regions_with_rectangle_shapes() {
     let x = vec![
         "2015-02-01",
         "2015-02-02",
@@ -327,6 +304,7 @@ fn highlighting_time_series_regions_with_rectangle_shapes(show: bool) {
         -14, -17, -8, -4, -7, -10, -12, -14, -12, -7, -11, -7, -18, -14, -14, -16, -13, -7, -8,
         -14, -8, -3, -9, -9, -4, -13, -9, -6,
     ];
+
     let trace = Scatter::new(x, y).mode(Mode::Lines).name("temperature");
     let mut plot = Plot::new();
     plot.add_trace(trace);
@@ -347,6 +325,7 @@ fn highlighting_time_series_regions_with_rectangle_shapes(show: bool) {
             .layer(ShapeLayer::Below)
             .line(ShapeLine::new().width(0.)),
     );
+
     layout.add_shape(
         Shape::new()
             .x_ref("x")
@@ -363,21 +342,15 @@ fn highlighting_time_series_regions_with_rectangle_shapes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some(
-            "highlighting_time_series_regions_with_rectangle_shapes"
-        ))
-    );
+
+    plot.show();
 }
 
-fn circles_positioned_relative_to_the_axes(show: bool) {
+fn circles_positioned_relative_to_the_axes() {
     let trace = Scatter::new(vec![1.5, 3.5], vec![0.75, 2.5])
         .text_array(vec!["Unfilled Circle", "Filled Circle"])
         .mode(Mode::Text);
+
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
@@ -398,6 +371,7 @@ fn circles_positioned_relative_to_the_axes(show: bool) {
             .y1(3)
             .line(ShapeLine::new().color(NamedColor::LightSeaGreen)),
     );
+
     layout.add_shape(
         Shape::new()
             .x_ref("x")
@@ -412,16 +386,11 @@ fn circles_positioned_relative_to_the_axes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("circles_positioned_relative_to_the_axes"))
-    );
+
+    plot.show();
 }
 
-fn highlighting_clusters_of_scatter_points_with_circle_shapes(show: bool) {
+fn highlighting_clusters_of_scatter_points_with_circle_shapes() {
     let mut rng = thread_rng();
     let x0 = Normal::new(2., 0.45)
         .unwrap()
@@ -529,18 +498,11 @@ fn highlighting_clusters_of_scatter_points_with_circle_shapes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some(
-            "highlighting_clusters_of_scatter_points_with_circle_shapes"
-        ))
-    );
+
+    plot.show();
 }
 
-fn venn_diagram_with_circle_shapes(show: bool) {
+fn venn_diagram_with_circle_shapes() {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![1., 1.75, 2.5], vec![1., 1., 1.])
@@ -602,16 +564,11 @@ fn venn_diagram_with_circle_shapes(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("venn_diagram_with_circle_shapes"))
-    );
+
+    plot.show();
 }
 
-fn adding_shapes_to_subplots(show: bool) {
+fn adding_shapes_to_subplots() {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![2, 6], vec![1, 1])
@@ -693,13 +650,11 @@ fn adding_shapes_to_subplots(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("adding_shapes_to_subplots")));
+
+    plot.show();
 }
 
-fn svg_paths(show: bool) {
+fn svg_paths() {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![2, 1, 8, 8], vec![0.25, 9., 2., 6.])
@@ -753,26 +708,23 @@ fn svg_paths(show: bool) {
     );
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("svg_paths")));
+
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
-    // Shapes
-    filled_area_chart(true);
-    vertical_and_horizontal_lines_positioned_relative_to_axes(true);
-    lines_positioned_relative_to_the_plot_and_to_the_axes(true);
-    creating_tangent_lines_with_shapes(true);
-    rectangles_positioned_relative_to_the_axes(true);
-    rectangle_positioned_relative_to_the_plot_and_to_the_axes(true);
-    highlighting_time_series_regions_with_rectangle_shapes(true);
-    circles_positioned_relative_to_the_axes(true);
-    highlighting_clusters_of_scatter_points_with_circle_shapes(true);
-    venn_diagram_with_circle_shapes(true);
-    adding_shapes_to_subplots(true);
-    svg_paths(true);
+fn main() {
+    // Uncomment any of these lines to display the example.
 
-    Ok(())
+    filled_area_chart();
+    // vertical_and_horizontal_lines_positioned_relative_to_axes();
+    // lines_positioned_relative_to_the_plot_and_to_the_axes();
+    // creating_tangent_lines_with_shapes();
+    // rectangles_positioned_relative_to_the_axes();
+    // rectangle_positioned_relative_to_the_plot_and_to_the_axes();
+    // highlighting_time_series_regions_with_rectangle_shapes();
+    // circles_positioned_relative_to_the_axes();
+    // highlighting_clusters_of_scatter_points_with_circle_shapes();
+    // venn_diagram_with_circle_shapes();
+    // adding_shapes_to_subplots();
+    // svg_paths();
 }

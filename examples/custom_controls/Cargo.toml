@@ -1,0 +1,9 @@
+[package]
+name = "custom-controls"
+version = "0.1.0"
+authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+itertools = "0.10.3"
+plotly = { path = "../../plotly" }

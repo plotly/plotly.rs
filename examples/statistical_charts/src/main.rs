@@ -1,4 +1,6 @@
-use itertools_num::linspace;
+#![allow(dead_code)]
+
+use ndarray::Array;
 use plotly::{
     box_plot::{BoxMean, BoxPoints},
     color::{NamedColor, Rgb, Rgba},
@@ -10,23 +12,18 @@ use plotly::{
 use rand_distr::{Distribution, Normal, Uniform};
 
 // Error Bars
-fn basic_symmetric_error_bars(show: bool) {
+fn basic_symmetric_error_bars() {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
         .name("trace1")
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 2.0, 3.0]));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("basic_symmetric_error_bars"))
-    );
+
+    plot.show();
 }
 
-fn asymmetric_error_bars(show: bool) {
+fn asymmetric_error_bars() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
         .name("trace1")
         .error_y(
@@ -37,29 +34,22 @@ fn asymmetric_error_bars(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("asymmetric_error_bars")));
+
+    plot.show();
 }
 
-fn error_bars_as_a_percentage_of_the_y_value(show: bool) {
+fn error_bars_as_a_percentage_of_the_y_value() {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
         .name("trace1")
         .error_y(ErrorData::new(ErrorType::Percent).value(50.).visible(true));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("error_bars_as_a_percentage_of_the_y_value"))
-    );
+
+    plot.show();
 }
 
-fn asymmetric_error_bars_with_a_constant_offset(show: bool) {
+fn asymmetric_error_bars_with_a_constant_offset() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
         .name("trace1")
         .error_y(
@@ -71,29 +61,22 @@ fn asymmetric_error_bars_with_a_constant_offset(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("asymmetric_error_bars_with_a_constant_offset"))
-    );
+
+    plot.show();
 }
 
-fn horizontal_error_bars(show: bool) {
+fn horizontal_error_bars() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
         .name("trace1")
         .error_x(ErrorData::new(ErrorType::Percent).value(10.));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("horizontal_error_bars")));
+
+    plot.show();
 }
 
-fn bar_chart_with_error_bars(show: bool) {
+fn bar_chart_with_error_bars() {
     let trace_c = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![3, 6, 4])
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1., 0.5, 1.5]));
     let trace_e = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![4, 7, 3])
@@ -106,14 +89,11 @@ fn bar_chart_with_error_bars(show: bool) {
     let layout = Layout::new().bar_mode(BarMode::Group);
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("bar_chart_with_error_bars")));
+    plot.show();
 }
 
-fn colored_and_styled_error_bars(show: bool) {
-    let x_theo: Vec<f64> = linspace(-4., 4., 100).collect();
+fn colored_and_styled_error_bars() {
+    let x_theo: Vec<f64> = Array::linspace(-4., 4., 100).into_raw_vec();
     let sincx: Vec<f64> = x_theo
         .iter()
         .map(|x| (x * std::f64::consts::PI).sin() / (*x * std::f64::consts::PI))
@@ -149,17 +129,11 @@ fn colored_and_styled_error_bars(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("colored_and_styled_error_bars"))
-    );
+    plot.show();
 }
 
 // Box Plots
-fn basic_box_plot(show: bool) {
+fn basic_box_plot() {
     let mut rng = rand::thread_rng();
     let uniform1 = Uniform::new(0.0, 1.0);
     let uniform2 = Uniform::new(1.0, 2.0);
@@ -178,42 +152,33 @@ fn basic_box_plot(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("basic_box_plot")));
+
+    plot.show();
 }
 
-fn box_plot_that_displays_the_underlying_data(show: bool) {
+fn box_plot_that_displays_the_underlying_data() {
     let trace1 = BoxPlot::new(vec![0, 1, 1, 2, 3, 5, 8, 13, 21])
         .box_points(BoxPoints::All)
         .jitter(0.3)
         .point_pos(-1.8);
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("box_plot_that_displays_the_underlying_data"))
-    );
+
+    plot.show();
 }
 
-fn horizontal_box_plot(show: bool) {
+fn horizontal_box_plot() {
     let trace1 = BoxPlot::new(vec![1, 2, 3, 4, 4, 4, 8, 9, 10]).name("Set 1");
     let trace2 = BoxPlot::new(vec![2, 3, 3, 3, 3, 5, 6, 6, 7]).name("Set 2");
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("horizontal_box_plot")));
+
+    plot.show();
 }
 
-fn grouped_box_plot(show: bool) {
+fn grouped_box_plot() {
     let x = vec![
         "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
         "day 2", "day 2",
@@ -246,13 +211,11 @@ fn grouped_box_plot(show: bool) {
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("grouped_box_plot")));
+
+    plot.show();
 }
 
-fn box_plot_styling_outliers(show: bool) {
+fn box_plot_styling_outliers() {
     let y = vec![
         0.75, 5.25, 5.5, 6.0, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93,
         9.2, 9.5, 10.0, 10.25, 11.5, 12.0, 16.0, 20.90, 22.3, 23.25,
@@ -293,13 +256,11 @@ fn box_plot_styling_outliers(show: bool) {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     plot.add_trace(trace4);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("box_plot_styling_outliers")));
+
+    plot.show();
 }
 
-fn box_plot_styling_mean_and_standard_deviation(show: bool) {
+fn box_plot_styling_mean_and_standard_deviation() {
     let y = vec![
         2.37, 2.16, 4.82, 1.73, 1.04, 0.23, 1.32, 2.91, 0.11, 4.51, 0.51, 3.75, 1.35, 2.98, 4.50,
         0.18, 4.66, 1.30, 2.06, 1.19,
@@ -319,16 +280,11 @@ fn box_plot_styling_mean_and_standard_deviation(show: bool) {
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("box_plot_styling_mean_and_standard_deviation"))
-    );
+
+    plot.show();
 }
 
-fn grouped_horizontal_box_plot(show: bool) {
+fn grouped_horizontal_box_plot() {
     let x = vec![
         "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
         "day 2", "day 2",
@@ -374,16 +330,11 @@ fn grouped_horizontal_box_plot(show: bool) {
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("grouped_horizontal_box_plot"))
-    );
+
+    plot.show();
 }
 
-fn fully_styled_box_plot(show: bool) {
+fn fully_styled_box_plot() {
     let rnd_sample = |num, mul| -> Vec<f64> {
         let mut v: Vec<f64> = Vec::with_capacity(num);
         let mut rng = rand::thread_rng();
@@ -449,10 +400,8 @@ fn fully_styled_box_plot(show: bool) {
             .line(Line::new().width(2.0));
         plot.add_trace(trace);
     }
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("fully_styled_box_plot")));
+
+    plot.show();
 }
 
 // Histograms
@@ -476,18 +425,16 @@ fn sample_uniform_distribution(n: usize, lb: f64, ub: f64) -> Vec<f64> {
     v
 }
 
-fn basic_histogram(show: bool) {
+fn basic_histogram() {
     let samples = sample_normal_distribution(10_000, 0.0, 1.0);
     let trace = Histogram::new(samples).name("h");
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("basic_histogram")));
+
+    plot.show();
 }
 
-fn horizontal_histogram(show: bool) {
+fn horizontal_histogram() {
     let samples = sample_normal_distribution(10_000, 0.0, 1.0);
     let trace = Histogram::new_vertical(samples)
         .name("h")
@@ -495,13 +442,11 @@ fn horizontal_histogram(show: bool) {
     let mut plot = Plot::new();
 
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("horizontal_histogram")));
+
+    plot.show();
 }
 
-fn overlaid_histogram(show: bool) {
+fn overlaid_histogram() {
     let samples1 = sample_normal_distribution(500, 0.0, 1.0);
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
@@ -520,13 +465,11 @@ fn overlaid_histogram(show: bool) {
 
     let layout = Layout::new().bar_mode(BarMode::Overlay);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("overlaid_histogram")));
+
+    plot.show();
 }
 
-fn stacked_histograms(show: bool) {
+fn stacked_histograms() {
     let samples1 = sample_normal_distribution(500, 0.0, 1.0);
     let trace1 = Histogram::new(samples1)
         .name("trace 1")
@@ -545,13 +488,11 @@ fn stacked_histograms(show: bool) {
 
     let layout = Layout::new().bar_mode(BarMode::Stack);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("stacked_histograms")));
+
+    plot.show();
 }
 
-fn colored_and_styled_histograms(show: bool) {
+fn colored_and_styled_histograms() {
     let n = 500;
     let x1 = sample_uniform_distribution(n, 0.0, 5.0);
     let x2 = sample_uniform_distribution(n, 0.0, 10.0);
@@ -592,16 +533,11 @@ fn colored_and_styled_histograms(show: bool) {
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("colored_and_styled_histograms"))
-    );
+
+    plot.show();
 }
 
-fn cumulative_histogram(show: bool) {
+fn cumulative_histogram() {
     let n = 500;
     let x = sample_uniform_distribution(n, 0.0, 1.0);
     let trace = Histogram::new(x)
@@ -609,13 +545,11 @@ fn cumulative_histogram(show: bool) {
         .marker(Marker::new().color(NamedColor::BurlyWood));
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("cumulative_histogram")));
+
+    plot.show();
 }
 
-fn normalized_histogram(show: bool) {
+fn normalized_histogram() {
     let n = 500;
     let x = sample_uniform_distribution(n, 0.0, 1.0);
     let trace = Histogram::new(x)
@@ -623,14 +557,12 @@ fn normalized_histogram(show: bool) {
         .marker(Marker::new().color(NamedColor::SeaGreen));
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("normalized_histogram")));
+
+    plot.show();
 }
 
-fn specify_binning_function(show: bool) {
-    let x = vec!["Apples", "Apples", "Apples", "Organges", "Bananas"];
+fn specify_binning_function() {
+    let x = vec!["Apples", "Apples", "Apples", "Oranges", "Bananas"];
     let y = vec!["5", "10", "3", "10", "5"];
 
     let trace1 = Histogram::new_xy(x.clone(), y.clone())
@@ -643,41 +575,39 @@ fn specify_binning_function(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("specify_binning_function")));
+
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
+    // Uncomment any of these lines to display the example.
+
     // Error Bars
-    basic_symmetric_error_bars(true);
-    asymmetric_error_bars(true);
-    error_bars_as_a_percentage_of_the_y_value(true);
-    asymmetric_error_bars_with_a_constant_offset(true);
-    horizontal_error_bars(true);
-    bar_chart_with_error_bars(true);
-    colored_and_styled_error_bars(true);
+    // basic_symmetric_error_bars();
+    // asymmetric_error_bars();
+    // error_bars_as_a_percentage_of_the_y_value();
+    // asymmetric_error_bars_with_a_constant_offset();
+    // horizontal_error_bars();
+    // bar_chart_with_error_bars();
+    // colored_and_styled_error_bars();
 
     // Box Plots
-    basic_box_plot(true);
-    box_plot_that_displays_the_underlying_data(true);
-    horizontal_box_plot(true);
-    grouped_box_plot(true);
-    box_plot_styling_outliers(true);
-    box_plot_styling_mean_and_standard_deviation(true);
-    grouped_horizontal_box_plot(true);
-    fully_styled_box_plot(true);
+    // basic_box_plot();
+    // box_plot_that_displays_the_underlying_data();
+    // horizontal_box_plot();
+    // grouped_box_plot();
+    // box_plot_styling_outliers();
+    // box_plot_styling_mean_and_standard_deviation();
+    // grouped_horizontal_box_plot();
+    // fully_styled_box_plot();
 
     // Histograms
-    basic_histogram(true);
-    horizontal_histogram(true);
-    overlaid_histogram(true);
-    stacked_histograms(true);
-    colored_and_styled_histograms(true);
-    cumulative_histogram(true);
-    normalized_histogram(true);
-    specify_binning_function(true);
-
-    Ok(())
+    // basic_histogram();
+    // horizontal_histogram();
+    // overlaid_histogram();
+    // stacked_histograms();
+    // colored_and_styled_histograms();
+    // cumulative_histogram();
+    // normalized_histogram();
+    // specify_binning_function();
 }

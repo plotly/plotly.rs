@@ -67,7 +67,7 @@ Any figure can be saved as an HTML file using the `Plot.write_html()` method. Th
 ```rust
 use plotly::{Plot, Scatter};
 
-let mut plot = Plot::new()
+let mut plot = Plot::new();
 let trace = Scatter::new(vec![0, 1, 2], vec![2, 1, 0]);
 plot.add_trace(trace);
 
@@ -111,7 +111,7 @@ Exporting a simple plot looks like this:
 ```rust
 use plotly::{ImageFormat, Plot};
 
-let mut plot = Plot::new()
+let mut plot = Plot::new();
 let trace = Scatter::new(vec![0, 1, 2], vec![2, 1, 0]);
 plot.add_trace(trace);
 
@@ -155,7 +155,7 @@ use yew::prelude::*;
 pub fn plot_component() -> Html {
     let p = yew_hooks::use_async::<_, _, ()>({
         let id = "plot-div";
-        let mut plot = Plot::new()
+        let mut plot = Plot::new();
         let trace = Scatter::new(vec![0, 1, 2], vec![2, 1, 0]);
         plot.add_trace(trace);
 
@@ -165,12 +165,13 @@ pub fn plot_component() -> Html {
         }
     });
 
-    {
-        use_effect(move || {
+    
+        use_effect_with_deps(move |_| {
             p.run();
             || ()
-        });
-    }
+        }, (),
+    );
+    
 
     html! {
         <div id="plot-div"></div>
