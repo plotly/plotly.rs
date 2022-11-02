@@ -4,4 +4,4 @@ This is an internal crate which implements the `kaleido` feature for [Plotly.rs]
  
 The `kaleido` feature enables `Plot` conversion to the following output formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. 
 
-See [examples/](https://github.com/igiagkiozis/plotly/tree/master/plotly/examples) for usage demonstrations.
+See [examples/](https://github.com/igiagkiozis/plotly/tree/master/examples/kaleido) for usage demonstrations.
