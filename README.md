@@ -46,7 +46,7 @@
 
 A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
-Documentation and numerous interactive examples are available in the [Plotly.rs Book](https://igiagkiozis.github.io/plotly/content/getting_started.html), the [examples/](https://github.com/igiagkiozis/plotly/tree/master/plotly/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
+Documentation and numerous interactive examples are available in the [Plotly.rs Book](https://igiagkiozis.github.io/plotly/content/getting_started.html), the [examples/](https://github.com/igiagkiozis/plotly/tree/master/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
 
 
 For changes since the last version, please consult the [changelog](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
@@ -179,7 +179,7 @@ pub fn plot_component() -> Html {
 }
 ```
 
-More detailed standalone examples can be found in the [examples/](https://github.com/igiagkiozis/plotly/tree/master/plotly/examples) directory.
+More detailed standalone examples can be found in the [examples/](https://github.com/igiagkiozis/plotly/tree/master/examples) directory.
 
 # Crate Feature Flags
 
@@ -195,7 +195,7 @@ Adds support for creating plots directly using [ndarray](https://github.com/rust
 
 ### `wasm`
 
-Disables OS-specific functions, therefore allowing compilation in WASM environments.
+Enables compilation for the `wasm32-unknown-unknown` target and provides access to a `bindings` module containing wrappers around functions exported by the plotly.js library.
 
 # Contributing
 
