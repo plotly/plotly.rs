@@ -92,7 +92,8 @@ impl std::fmt::Display for ImageFormat {
     }
 }
 
-/// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
+/// A struct that implements `Trace` can be serialized to json format that is
+/// understood by Plotly.js.
 pub trait Trace: DynClone + ErasedSerialize {
     fn to_json(&self) -> String;
 }
@@ -134,9 +135,9 @@ impl Traces {
     }
 }
 
-/// Plot is a container for structs that implement the `Trace` trait. Optionally a `Layout` can
-/// also be specified. Its function is to serialize `Trace`s and the `Layout` in html format and
-/// display and/or persist the resulting plot.
+/// Plot is a container for structs that implement the `Trace` trait. Optionally
+/// a `Layout` can also be specified. Its function is to serialize `Trace`s and
+/// the `Layout` in html format and display and/or persist the resulting plot.
 ///
 /// # Examples
 ///
@@ -193,11 +194,14 @@ impl Plot {
         }
     }
 
-    /// This option results in the plotly.js library being written directly in the html output. The benefit is that the
-    /// plot will load faster in the browser and the downside is that the resulting html will be much larger.
+    /// This option results in the plotly.js library being written directly in
+    /// the html output. The benefit is that the plot will load faster in
+    /// the browser and the downside is that the resulting html will be much
+    /// larger.
     ///
-    /// Note that when using `Plot::to_inline_html()`, it is assumed that the `plotly.js` library is already in scope,
-    /// so setting this attribute will have no effect.
+    /// Note that when using `Plot::to_inline_html()`, it is assumed that the
+    /// `plotly.js` library is already in scope, so setting this attribute
+    /// will have no effect.
     pub fn use_local_plotly(&mut self) {
         self.remote_plotly_js = false;
     }
@@ -241,7 +245,8 @@ impl Plot {
 
     /// Display the fully rendered HTML `Plot` in the default system browser.
     ///
-    /// The HTML file is saved in a temp file, from which it is read and displayed by the browser.
+    /// The HTML file is saved in a temp file, from which it is read and
+    /// displayed by the browser.
     pub fn show(&self) {
         use std::env;
 
@@ -265,7 +270,8 @@ impl Plot {
         Plot::show_with_default_app(temp_path);
     }
 
-    /// Display the fully rendered `Plot` as a static image of the given format in the default system browser.
+    /// Display the fully rendered `Plot` as a static image of the given format
+    /// in the default system browser.
     #[cfg(not(target_family = "wasm"))]
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
@@ -292,8 +298,8 @@ impl Plot {
 
     /// Save the rendered `Plot` to a file at the given location.
     ///
-    /// This method will render the plot to a full, standalone HTML document, before saving it to
-    /// the given location.
+    /// This method will render the plot to a full, standalone HTML document,
+    /// before saving it to the given location.
     pub fn write_html<P: AsRef<Path>>(&self, filename: P) {
         let rendered = self.to_html();
 
@@ -305,24 +311,26 @@ impl Plot {
 
     /// Convert a `Plot` to an HTML string representation.
     ///
-    /// This method will generate a full, standalone HTML document. To generate a minimal HTML string
-    /// which can be embedded within an existing HTML page, use `Plot::to_inline_html()`.
+    /// This method will generate a full, standalone HTML document. To generate
+    /// a minimal HTML string which can be embedded within an existing HTML
+    /// page, use `Plot::to_inline_html()`.
     pub fn to_html(&self) -> String {
         self.render()
     }
 
-    /// Renders the contents of the `Plot` and returns it as a String suitable for embedding within
-    /// web pages or Jupyter notebooks.
+    /// Renders the contents of the `Plot` and returns it as a String suitable
+    /// for embedding within web pages or Jupyter notebooks.
     ///
-    /// A `div` is generated with the supplied id followed by the `script` block that generates the plot.
-    /// The assumption is that `plotly.js` is available within the HTML page that this element is embedded. If
+    /// A `div` is generated with the supplied id followed by the `script` block
+    /// that generates the plot. The assumption is that `plotly.js` is
+    /// available within the HTML page that this element is embedded. If
     /// that assumption is violated then the plot will not be displayed.
     ///
-    /// If `plot_div_id` is `None` the plot div id will be randomly generated, otherwise the user-supplied
-    /// `plot_div_id` is used.
+    /// If `plot_div_id` is `None` the plot div id will be randomly generated,
+    /// otherwise the user-supplied `plot_div_id` is used.
     ///
-    /// To generate a full, standalone HTML string or file, use `Plot::to_html()` and `Plot::write_html()`,
-    /// respectively.
+    /// To generate a full, standalone HTML string or file, use
+    /// `Plot::to_html()` and `Plot::write_html()`, respectively.
     pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
         let plot_div_id = match plot_div_id {
             Some(id) => id.to_string(),
@@ -359,13 +367,14 @@ impl Plot {
         );
     }
 
-    /// Displays the plot in Jupyter Lab; if running a Jupyter Notebook then use the
-    /// `notebook_display()` method instead.
+    /// Displays the plot in Jupyter Lab; if running a Jupyter Notebook then use
+    /// the `notebook_display()` method instead.
     pub fn evcxr_display(&self) {
         self.lab_display();
     }
 
-    /// Convert the `Plot` to a static image of the given image format and save at the given location.
+    /// Convert the `Plot` to a static image of the given image format and save
+    /// at the given location.
     #[cfg(feature = "kaleido")]
     pub fn write_image<P: AsRef<Path>>(
         &self,
@@ -423,8 +432,9 @@ impl Plot {
     /// Convert a `Plot` to a native Javasript `js_sys::Object`.
     pub fn to_js_object(&self) -> js_sys::Object {
         use wasm_bindgen::JsCast;
-        // The only reason this could fail is if to_json() produces structurally incorrect JSON. That
-        // would be a bug, and would require fixing in the to_json()/serialization methods, rather than here
+        // The only reason this could fail is if to_json() produces structurally
+        // incorrect JSON. That would be a bug, and would require fixing in the
+        // to_json()/serialization methods, rather than here
         js_sys::JSON::parse(&self.to_json())
             .expect("Invalid JSON")
             .dyn_into::<js_sys::Object>()

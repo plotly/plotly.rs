@@ -62,6 +62,28 @@ impl Serialize for ZSmooth {
     }
 }
 
+/// Construct an image trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::Image;
+///
+/// let x = vec![0, 1, 2, 3, 4, 5];
+/// let y = vec![0, 2, 4, 6, 8, 10];
+///
+/// let trace = Bar::new(x, y).show_legend(true).opacity(0.5);
+///
+/// let expected = serde_json::json!({
+///     "type": "bar",
+///     "x": [0, 1, 2, 3, 4, 5],
+///     "y": [0, 2, 4, 6, 8, 10],
+///     "showlegend": true,
+///     "opacity": 0.5
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 #[field_setter(box_self, kind = "trace")]

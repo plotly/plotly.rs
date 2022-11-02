@@ -51,8 +51,8 @@ impl ToImageButtonOptions {
         self
     }
 
-    /// Set the scale of the downloaded plot image. Title, legend, axis and canvas sizes
-    /// will all be multiplied by `scale`.
+    /// Set the scale of the downloaded plot image. Title, legend, axis and
+    /// canvas sizes will all be multiplied by `scale`.
     pub fn scale(mut self, scale: usize) -> Self {
         self.scale = Some(scale);
         self
@@ -189,91 +189,99 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    /// Create a new default `Configuration` object. Options can be configured using the
-    /// provided setter methods.
+    /// Create a new default `Configuration` object. Options can be configured
+    /// using the provided setter methods.
     pub fn new() -> Self {
         Default::default()
     }
 
-    /// Determines whether the graphs are interactive or not. If `false`, no interactivity,
-    /// for export or image generation.
+    /// Determines whether the graphs are interactive or not. If `false`, no
+    /// interactivity, for export or image generation.
     pub fn static_plot(mut self, static_plot: bool) -> Self {
         self.static_plot = Some(static_plot);
         self
     }
 
-    /// Determines whether math should be typeset or not, when MathJax (either v2 or v3) is present on the page.
+    /// Determines whether math should be typeset or not, when MathJax (either
+    /// v2 or v3) is present on the page.
     pub fn typeset_math(mut self, typeset_math: bool) -> Self {
         self.typeset_math = Some(typeset_math);
         self
     }
 
-    /// When set it determines base URL for the "Edit in Chart Studio" `show_edit_in_chart_studio`/`show_send_to_cloud`
-    /// mode bar button and the show_link/send_data on-graph link. To enable sending your data to Chart Studio
-    /// Cloud, you need to set both `plotly_server_url` to "https://chart-studio.plotly.com" and
+    /// When set it determines base URL for the "Edit in Chart Studio"
+    /// `show_edit_in_chart_studio`/`show_send_to_cloud` mode bar button and
+    /// the show_link/send_data on-graph link. To enable sending your data to
+    /// Chart Studio Cloud, you need to set both `plotly_server_url` to "https://chart-studio.plotly.com" and
     /// also set `showSendToCloud` to `true`.
     pub fn plotly_server_url(mut self, plotly_server_url: &str) -> Self {
         self.plotly_server_url = Some(plotly_server_url.to_string());
         self
     }
 
-    /// Determines whether the graph is editable or not. Sets all pieces of `edits` unless a separate
-    /// `edits` config item overrides individual parts.
+    /// Determines whether the graph is editable or not. Sets all pieces of
+    /// `edits` unless a separate `edits` config item overrides individual
+    /// parts.
     pub fn editable(mut self, editable: bool) -> Self {
         self.editable = Some(editable);
         self
     }
 
-    /// Determines whether the graphs are plotted with respect to layout.auto_size: true and infer
-    /// its container size.
+    /// Determines whether the graphs are plotted with respect to
+    /// layout.auto_size: true and infer its container size.
     pub fn autosizable(mut self, autosizable: bool) -> Self {
         self.autosizable = Some(autosizable);
         self
     }
 
-    /// Determines whether to change the layout size when window is resized. In v3, this option will be
-    /// removed and will always be true.
+    /// Determines whether to change the layout size when window is resized. In
+    /// v3, this option will be removed and will always be true.
     pub fn responsive(mut self, responsive: bool) -> Self {
         self.responsive = Some(responsive);
         self
     }
 
-    /// When `layout.auto_size` is turned on, determines whether the graph fills the container
-    /// (the default) or the screen (if set to `true`).
+    /// When `layout.auto_size` is turned on, determines whether the graph fills
+    /// the container (the default) or the screen (if set to `true`).
     pub fn fill_frame(mut self, fill_frame: bool) -> Self {
         self.fill_frame = Some(fill_frame);
         self
     }
 
-    /// When `layout.auto_size` is turned on, set the frame margins in fraction of the graph size.
+    /// When `layout.auto_size` is turned on, set the frame margins in fraction
+    /// of the graph size.
     pub fn frame_margins(mut self, frame_margins: f64) -> Self {
         // TODO: plotly supports a minimum value of 0 and a maximum value of 0.5
         self.frame_margins = Some(frame_margins);
         self
     }
 
-    /// Determines whether mouse wheel or two-finger scroll zooms is enable. Turned on by default for
-    /// gl3d, geo and mapbox subplots (as these subplot types do not have zoombox via pan), but
-    /// turned off by default for cartesian subplots. Set `scroll_zoom` to `false` to disable scrolling for
-    /// all subplots.
+    /// Determines whether mouse wheel or two-finger scroll zooms is enable.
+    /// Turned on by default for gl3d, geo and mapbox subplots (as these
+    /// subplot types do not have zoombox via pan), but turned off by
+    /// default for cartesian subplots. Set `scroll_zoom` to `false` to disable
+    /// scrolling for all subplots.
     pub fn scroll_zoom(mut self, scroll_zoom: bool) -> Self {
         self.scroll_zoom = Some(scroll_zoom);
         self
     }
 
-    /// Sets the double click interaction mode. Has an effect only in cartesian plots. If `false`,
-    /// double click is disable. If `reset`, double click resets the axis ranges to their initial values.
-    /// If `autosize`, double click set the axis ranges to their autorange values. If `reset+autosize`,
-    /// the odd double clicks resets the axis ranges to their initial values and even double clicks set
-    /// the axis ranges to their autorange values.
+    /// Sets the double click interaction mode. Has an effect only in cartesian
+    /// plots. If `false`, double click is disable. If `reset`, double click
+    /// resets the axis ranges to their initial values. If `autosize`,
+    /// double click set the axis ranges to their autorange values. If
+    /// `reset+autosize`, the odd double clicks resets the axis ranges to
+    /// their initial values and even double clicks set the axis ranges to
+    /// their autorange values.
     pub fn double_click(mut self, double_click: DoubleClick) -> Self {
         self.double_click = Some(double_click);
         self
     }
 
-    /// Sets the delay for registering a double-click in ms. This is the time interval (in ms) between
-    /// first mousedown and 2nd mouseup to constitute a double-click. This setting propagates to all
-    /// on-subplot double clicks (except for geo and mapbox) and on-legend double clicks.
+    /// Sets the delay for registering a double-click in ms. This is the time
+    /// interval (in ms) between first mousedown and 2nd mouseup to
+    /// constitute a double-click. This setting propagates to all on-subplot
+    /// double clicks (except for geo and mapbox) and on-legend double clicks.
     pub fn double_click_delay(mut self, double_click_delay: usize) -> Self {
         self.double_click_delay = Some(double_click_delay);
         self
@@ -285,21 +293,24 @@ impl Configuration {
         self
     }
 
-    /// Set to `false` to omit direct range entry at the pan/zoom drag points, note that `show_axis_drag_handles`
-    /// must be enabled to have an effect.
+    /// Set to `false` to omit direct range entry at the pan/zoom drag points,
+    /// note that `show_axis_drag_handles` must be enabled to have an
+    /// effect.
     pub fn show_axis_range_entry_boxes(mut self, show_axis_range_entry_boxes: bool) -> Self {
         self.show_axis_range_entry_boxes = Some(show_axis_range_entry_boxes);
         self
     }
 
-    /// Determines whether or not tips are shown while interacting with the resulting graphs.
+    /// Determines whether or not tips are shown while interacting with the
+    /// resulting graphs.
     pub fn show_tips(mut self, show_tips: bool) -> Self {
         self.show_tips = Some(show_tips);
         self
     }
 
-    /// Determines whether a link to Chart Studio Cloud is displayed at the bottom right corner of resulting
-    /// graphs. Use with `send_data` and `link_text`.
+    /// Determines whether a link to Chart Studio Cloud is displayed at the
+    /// bottom right corner of resulting graphs. Use with `send_data` and
+    /// `link_text`.
     pub fn show_link(mut self, show_link: bool) -> Self {
         self.show_link = Some(show_link);
         self
@@ -311,34 +322,40 @@ impl Configuration {
         self
     }
 
-    /// If `show_link` is true, does it contain data just link to a Chart Studio Cloud file?
+    /// If `show_link` is true, does it contain data just link to a Chart Studio
+    /// Cloud file?
     pub fn send_data(mut self, send_data: bool) -> Self {
         self.send_data = Some(send_data);
         self
     }
 
-    /// Determines the mode bar display mode. If `true`, the mode bar is always visible. If `false`,
-    /// the mode bar is always hidden. If `hover`, the mode bar is visible while the mouse cursor
-    /// is on the graph container.
+    /// Determines the mode bar display mode. If `true`, the mode bar is always
+    /// visible. If `false`, the mode bar is always hidden. If `hover`, the
+    /// mode bar is visible while the mouse cursor is on the graph
+    /// container.
     pub fn display_mode_bar(mut self, display_mode_bar: DisplayModeBar) -> Self {
         self.display_mode_bar = Some(display_mode_bar);
         self
     }
 
-    /// Should we include a ModeBar button, labeled "Edit in Chart Studio" that sends this chart to
-    /// chart-studio.plotly.com (formerly plot.ly) or another plotly server as specified by `plotly_server_url`
-    /// for editing, export, etc? Prior to version 1.43.0 this button was included by default, now it is
-    /// opt-in using this flag. Note that this button can (depending on `plotly_server_url` being set) send your
-    /// data to an external server. However that server does not persist your data until you arrive at the Chart
-    /// Studio and explicitly click "Save".
+    /// Should we include a ModeBar button, labeled "Edit in Chart Studio" that
+    /// sends this chart to chart-studio.plotly.com (formerly plot.ly) or
+    /// another plotly server as specified by `plotly_server_url`
+    /// for editing, export, etc? Prior to version 1.43.0 this button was
+    /// included by default, now it is opt-in using this flag. Note that
+    /// this button can (depending on `plotly_server_url` being set) send your
+    /// data to an external server. However that server does not persist your
+    /// data until you arrive at the Chart Studio and explicitly click
+    /// "Save".
     pub fn show_send_to_cloud(mut self, show_send_to_cloud: bool) -> Self {
         self.show_send_to_cloud = Some(show_send_to_cloud);
         self
     }
 
-    /// Same as `show_send_to_cloud`, but use a pencil icon instead of a floppy-disk. Note that if both
-    /// `show_send_to_cloud` and `show_edit_in_chart_studio` are turned on, only `show_edit_in_chart_studio` will
-    /// be honored.
+    /// Same as `show_send_to_cloud`, but use a pencil icon instead of a
+    /// floppy-disk. Note that if both `show_send_to_cloud` and
+    /// `show_edit_in_chart_studio` are turned on, only
+    /// `show_edit_in_chart_studio` will be honored.
     pub fn show_edit_in_chart_studio(mut self, show_edit_in_chart_studio: bool) -> Self {
         self.show_edit_in_chart_studio = Some(show_edit_in_chart_studio);
         self
@@ -362,7 +379,8 @@ impl Configuration {
         self
     }
 
-    /// Determines whether or not the plotly logo is displayed on the end of the mode bar.
+    /// Determines whether or not the plotly logo is displayed on the end of the
+    /// mode bar.
     pub fn display_logo(mut self, display_logo: bool) -> Self {
         self.display_logo = Some(display_logo);
         self
@@ -380,16 +398,18 @@ impl Configuration {
         self
     }
 
-    /// Set the URL to topojson used in geo charts. By default, the topojson files are fetched from
-    /// cdn.plot.ly. For example, set this option to: "<path-to-plotly.js>/dist/topojson/" to render
-    /// geographical feature using the topojson files that ship with the plotly.js module.
+    /// Set the URL to topojson used in geo charts. By default, the topojson
+    /// files are fetched from cdn.plot.ly. For example, set this option to:
+    /// "<path-to-plotly.js>/dist/topojson/" to render geographical feature
+    /// using the topojson files that ship with the plotly.js module.
     pub fn topojson_url(mut self, topojson_url: &str) -> Self {
         self.topojson_url = Some(topojson_url.to_string());
         self
     }
 
-    /// Mapbox access token (required to plot mapbox trace types). If using an Mapbox Atlas server, set
-    /// this option to "" so that plotly.js won't attempt to authenticate to the public Mapbox server.
+    /// Mapbox access token (required to plot mapbox trace types). If using an
+    /// Mapbox Atlas server, set this option to "" so that plotly.js won't
+    /// attempt to authenticate to the public Mapbox server.
     pub fn mapbox_access_token(mut self, mapbox_access_token: &str) -> Self {
         self.mapbox_access_token = Some(mapbox_access_token.to_string());
         self
@@ -401,9 +421,9 @@ impl Configuration {
         self
     }
 
-    /// Sets which localization to use. When using this setting, make sure that the appropriate locale is
-    /// present in the HTML file. For example, to use the "fr" locale,
-    /// <script src="https://cdn.plot.ly/plotly-locale-fr-latest.js"></script> must be present.
+    /// Sets which localization to use. When using this setting, make sure that
+    /// the appropriate locale is present in the HTML file. For example, to
+    /// use the "fr" locale, <script src="https://cdn.plot.ly/plotly-locale-fr-latest.js"></script> must be present.
     pub fn locale(mut self, locale: &str) -> Self {
         self.locale = Some(locale.to_string());
         self
