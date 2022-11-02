@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.2] - 2022-11-xx
 ### Changed
-- Refactored the structure of the examples to make them more accessible, whilst adding more examples e.g. for `wasm`.
+- [[#113](https://github.com/igiagkiozis/plotly/pull/113)] Refactored the structure of the examples to make them more accessible, whilst adding more examples e.g. for `wasm`.
+- [[#115](https://github.com/igiagkiozis/plotly/pull/115)] Simplify the function signature of Plot.to_inline_html() so that it just takes `Option<&str>` as an argument.
 
 ## [0.8.1] - 2022-09-25
 ### Added
