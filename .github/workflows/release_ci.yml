@@ -67,5 +67,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      - run: cd ${{ github.workspace }}/${{ matrix.example }} && cargo build
+      - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build
 
