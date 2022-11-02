@@ -25,6 +25,7 @@ jobs:
         with:
           components: rustfmt
       - run: cargo fmt --all -- --check
+      - run: cd ${{ github.workspace }}/examples && cargo fmt --all -- --check
     
   clippy:
     name: Clippy
@@ -35,6 +36,7 @@ jobs:
         with:
           components: clippy
       - run: cargo clippy -- -D warnings
+      - run: cd ${{ github.workspace }}/examples && cargo clippy -- -D warnings
 
   test:
     name: Tests
@@ -49,6 +51,7 @@ jobs:
       - run: cargo test --features=plotly_ndarray,kaleido
       
   build_examples:
+    name: Build Examples
     strategy:
       fail-fast: false
       matrix:

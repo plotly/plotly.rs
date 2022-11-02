@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use ndarray::Array;
 use plotly::{
     color::NamedColor,
