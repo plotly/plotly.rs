@@ -1315,6 +1315,7 @@ impl Center {
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "kebab-case")]
 pub enum MapboxStyle {
+    #[serde(rename = "carto-darkmatter")]
     CartoDarkMatter,
     CartoPositron,
     OpenStreetMap,

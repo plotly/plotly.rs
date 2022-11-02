@@ -515,7 +515,6 @@ mod tests {
         .color_axis("coloraxis2")
         .color("#cccccc")
         .color_bar(ColorBar::new())
-        .orientation(Orientation::Horizontal)
         .auto_color_scale(false)
         .color_scale(ColorScale::Palette(ColorScalePalette::Rainbow))
         .show_scale(true)
@@ -569,23 +568,7 @@ mod tests {
             "coloraxis": "coloraxis2",
             "color": "#cccccc",
             "colorbar": {
-                "borderwidth": 0,
-                "len": 1,
-                "nticks": 0,
-                "outlinewidth": 1,
-                "separate_thousands": true,
-                "showticklabels": true,
-                "thickness": 30,
-                "ticklen": 5,
-                "tickwidth": 1,
-                "x": 1.02,
-                "xanchor": "left",
-                "xpad": 10.0,
-                "y": 0.5,
-                "yanchor": "middle",
-                "ypad": 10.0,
             },
-            "colorbar_orientation": "h",
             "autocolorscale": false,
             "colorscale": "Rainbow",
             "showscale": true,

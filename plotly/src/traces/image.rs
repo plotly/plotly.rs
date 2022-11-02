@@ -56,7 +56,7 @@ impl Serialize for ZSmooth {
         S: serde::Serializer,
     {
         match self {
-            Self::Fast => serializer.serialize_str("false"),
+            Self::Fast => serializer.serialize_str("fast"),
             Self::False => serializer.serialize_bool(false),
         }
     }

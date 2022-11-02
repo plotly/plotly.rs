@@ -264,7 +264,7 @@ where
     Lat: Serialize + Clone + std::default::Default, // TODO why is "+ Default" necessary?
     Lon: Serialize + Clone + std::default::Default,
 {
-    pub fn new<Lat1, Lon1>(lat: Vec<Lat>, lon: Vec<Lon>) -> Box<Self> {
+    pub fn new(lat: Vec<Lat>, lon: Vec<Lon>) -> Box<Self> {
         Box::new(Self {
             lat: Some(lat),
             lon: Some(lon),
