@@ -46,7 +46,7 @@
 
 A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
-Documentation and numerous examples are available in the [Plotly.rs Book](https://igiagkiozis.github.io/plotly/content/getting_started.html), the [examples/](https://github.com/igiagkiozis/plotly/tree/master/plotly/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
+Documentation and numerous interactive examples are available in the [Plotly.rs Book](https://igiagkiozis.github.io/plotly/content/getting_started.html), the [examples/](https://github.com/igiagkiozis/plotly/tree/master/plotly/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
 
 
 For changes since the last version, please consult the [changelog](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
@@ -74,7 +74,7 @@ plot.add_trace(trace);
 plot.write_html("out.html");
 ```
 
-By default, the Plotly JavaScript library will be included by CDN, which results in a smaller filesize, but slightly slower first load as the JS library has to be downloaded first. To instead embed the JavaScript library (several megabytes in size) directly into the HTML file, the following can be done:
+By default, the Plotly JavaScript library will be included via CDN, which results in a smaller filesize, but slightly slower first load as the JavaScript library has to be downloaded first. To instead embed the JavaScript library (several megabytes in size) directly into the HTML file, the following can be done:
 
 ```rust
 // <-- Create a `Plot` -->
@@ -83,7 +83,7 @@ plot.use_local_plotly();
 plot.write_html("out.html");
 ```
 
-If you only want to view the plot in the browser quickly, use the `Plotly.show()` method.
+If you only want to view the plot in the browser quickly, use the `Plot.show()` method.
 
 ```rust
 // <-- Create a `Plot` -->
@@ -96,7 +96,7 @@ plot.show(); // The default web browser will open, displaying an interactive plo
 To save a plot as a static image, the `kaleido` feature is required:
 
 ```toml
-// Cargo.toml
+# Cargo.toml
 
 [dependencies]
 plotly = { version = "0.8.1", features = ["kaleido"] }
