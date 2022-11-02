@@ -4,7 +4,9 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
-    common::{Calendar, Dim, Direction, HoverInfo, Label, Line, PlotType, Visible},
+    common::{
+        Calendar, Dim, Direction, HoverInfo, Label, LegendGroupTitle, Line, PlotType, Visible,
+    },
     Trace,
 };
 
@@ -58,6 +60,8 @@ where
     increasing: Option<Direction>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     line: Option<Line>,
     name: Option<String>,
     opacity: Option<f64>,
@@ -129,6 +133,7 @@ mod test {
         .hover_text("1")
         .increasing(Direction::Increasing { line: Line::new() })
         .legend_group("legendgroup")
+        .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
         .line(Line::new())
         .name("ohlc_trace")
         .opacity(0.4)
@@ -152,6 +157,7 @@ mod test {
             "hovertext": "1",
             "increasing": {"line": {}},
             "legendgroup": "legendgroup",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "line": {},
             "name": "ohlc_trace",
             "opacity": 0.4,

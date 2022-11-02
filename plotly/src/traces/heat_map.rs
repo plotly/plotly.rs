@@ -4,7 +4,9 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
-    common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible},
+    common::{
+        Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
+    },
     Trace,
 };
 
@@ -81,6 +83,8 @@ where
     hover_text: Option<Vec<String>>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     name: Option<String>,
     opacity: Option<f64>,
     #[serde(rename = "reversescale")]
@@ -198,6 +202,7 @@ mod tests {
             .hover_template_array(vec!["tmpl1", "tmpl2"])
             .hover_text(vec!["hov", "er"])
             .legend_group("1")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .name("name")
             .opacity(0.99)
             .reverse_scale(false)
@@ -229,6 +234,7 @@ mod tests {
             "hovertemplate": ["tmpl1", "tmpl2"],
             "hovertext": ["hov", "er"],
             "legendgroup": "1",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "name": "name",
             "opacity": 0.99,
             "reversescale": false,

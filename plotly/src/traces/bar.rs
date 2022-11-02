@@ -5,8 +5,8 @@ use serde::Serialize;
 
 use crate::{
     common::{
-        Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, Marker, Orientation,
-        PlotType, TextAnchor, TextPosition, Visible,
+        Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, LegendGroupTitle, Marker,
+        Orientation, PlotType, TextAnchor, TextPosition, Visible,
     },
     Trace,
 };
@@ -51,6 +51,8 @@ where
     show_legend: Option<bool>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     ids: Option<Vec<String>>,
     width: Option<usize>,
@@ -157,6 +159,7 @@ mod tests {
             .inside_text_anchor(TextAnchor::End)
             .inside_text_font(Font::new())
             .legend_group("legend-group")
+            .legend_group_title(LegendGroupTitle::new("legend-group-title"))
             .marker(Marker::new())
             .name("Bar")
             .offset(5)
@@ -191,6 +194,7 @@ mod tests {
             "visible": "legendonly",
             "showlegend": false,
             "legendgroup": "legend-group",
+            "legendgrouptitle": {"text": "legend-group-title"},
             "opacity": 0.5,
             "ids": ["1"],
             "width": 999,

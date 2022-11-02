@@ -6,7 +6,8 @@ use serde::Serialize;
 use crate::{
     color::Color,
     common::{
-        Calendar, ColorBar, ColorScale, Dim, Font, HoverInfo, Label, Line, PlotType, Visible,
+        Calendar, ColorBar, ColorScale, Dim, Font, HoverInfo, Label, LegendGroupTitle, Line,
+        PlotType, Visible,
     },
     private, Trace,
 };
@@ -118,6 +119,8 @@ where
     show_legend: Option<bool>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     x: Option<Vec<X>>,
     x0: Option<X>,
@@ -187,6 +190,7 @@ where
             visible: None,
             show_legend: None,
             legend_group: None,
+            legend_group_title: None,
             opacity: None,
             x: None,
             x0: None,
@@ -332,6 +336,11 @@ where
 
     pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
         self.legend_group = Some(legend_group.to_string());
+        Box::new(self)
+    }
+
+    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
+        self.legend_group_title = Some(legend_group_title);
         Box::new(self)
     }
 
@@ -574,6 +583,7 @@ mod tests {
             .hover_template_array(vec!["ok {1}", "ok {2}"])
             .hover_text(vec!["p3", "p4"])
             .legend_group("group_1")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .line(Line::new())
             .n_contours(5)
             .name("contour trace")
@@ -611,6 +621,7 @@ mod tests {
             "visible": true,
             "showlegend": false,
             "legendgroup": "group_1",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "opacity": 0.6,
             "text": ["p1", "p2"],
             "hovertext": ["p3", "p4"],

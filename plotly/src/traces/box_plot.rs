@@ -5,7 +5,10 @@ use serde::{Serialize, Serializer};
 
 use crate::{
     color::Color,
-    common::{Calendar, Dim, HoverInfo, Label, Line, Marker, Orientation, PlotType, Visible},
+    common::{
+        Calendar, Dim, HoverInfo, Label, LegendGroupTitle, Line, Marker, Orientation, PlotType,
+        Visible,
+    },
     Trace,
 };
 
@@ -108,6 +111,8 @@ where
     show_legend: Option<bool>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     ids: Option<Vec<String>>,
     width: Option<usize>,
@@ -278,6 +283,7 @@ mod tests {
             .jitter(0.5)
             .line(Line::new())
             .legend_group("one")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .lower_fence(vec![0., 1.])
             .marker(Marker::new())
             .mean(vec![12., 13.])
@@ -320,6 +326,7 @@ mod tests {
             "hovertext": ["okey", "dokey"],
             "jitter": 0.5,
             "legendgroup": "one",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "line": {},
             "lowerfence": [0.0, 1.0],
             "marker": {},
