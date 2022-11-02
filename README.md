@@ -123,7 +123,7 @@ plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 Using `Plotly.rs` in a Wasm-based frontend framework is possible by enabling the `wasm` feature:
 
 ```toml
-// Cargo.toml
+# Cargo.toml
 
 [dependencies]
 plotly = { version = "0.8.1", features = ["wasm"] }
@@ -132,7 +132,7 @@ plotly = { version = "0.8.1", features = ["wasm"] }
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
 
 ```html
-// index.html
+ <!-- index.html -->
 
 <!doctype html>
 <html lang="en">
