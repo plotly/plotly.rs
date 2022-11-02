@@ -52,7 +52,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: [  // missing jupyter and wasm-yew-minimal
+        example: [  # missing jupyter and wasm-yew-minimal
           3d_charts,
           basic_charts,
           custom_controls,
