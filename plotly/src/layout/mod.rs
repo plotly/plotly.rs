@@ -5,6 +5,7 @@ use std::borrow::Cow;
 
 use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
+use update_menu::UpdateMenu;
 
 use crate::{
     color::Color,
@@ -14,7 +15,6 @@ use crate::{
     },
     private::{NumOrString, NumOrStringCollection},
 };
-use update_menu::UpdateMenu;
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]

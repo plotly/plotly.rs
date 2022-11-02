@@ -1,14 +1,11 @@
-#[cfg(feature = "plotly_ndarray")]
+#![allow(dead_code)]
+
 use ndarray::{Array, Ix1, Ix2};
-#[cfg(feature = "plotly_ndarray")]
 use plotly::common::Mode;
-#[cfg(feature = "plotly_ndarray")]
 use plotly::ndarray::ArrayTraces;
-#[cfg(feature = "plotly_ndarray")]
 use plotly::{Plot, Scatter};
 
-#[cfg(feature = "plotly_ndarray")]
-fn single_ndarray_trace(show: bool) {
+fn single_ndarray_trace() {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let ys: Array<f64, Ix1> = t.iter().map(|v| (*v).powf(2.)).collect();
@@ -17,14 +14,11 @@ fn single_ndarray_trace(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("single_ndarray_trace")));
+
+    plot.show();
 }
 
-#[cfg(feature = "plotly_ndarray")]
-fn multiple_ndarray_traces_over_columns(show: bool) {
+fn multiple_ndarray_traces_over_columns() {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
@@ -43,17 +37,11 @@ fn multiple_ndarray_traces_over_columns(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_traces(traces);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("multiple_ndarray_traces_over_columns"))
-    );
+
+    plot.show();
 }
 
-#[cfg(feature = "plotly_ndarray")]
-fn multiple_ndarray_traces_over_rows(show: bool) {
+fn multiple_ndarray_traces_over_rows() {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
@@ -72,23 +60,14 @@ fn multiple_ndarray_traces_over_rows(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_traces(traces);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("multiple_ndarray_traces_over_rows"))
-    );
+
+    plot.show();
 }
 
-#[cfg(feature = "plotly_ndarray")]
-fn main() -> std::io::Result<()> {
-    single_ndarray_trace(true);
-    multiple_ndarray_traces_over_columns(true);
-    multiple_ndarray_traces_over_rows(true);
+fn main() {
+    // Uncomment any of these lines to display the example.
 
-    Ok(())
+    // single_ndarray_trace();
+    // multiple_ndarray_traces_over_columns();
+    // multiple_ndarray_traces_over_rows();
 }
-
-#[cfg(not(feature = "plotly_ndarray"))]
-fn main() {}

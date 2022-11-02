@@ -1,4 +1,6 @@
-use itertools_num::linspace;
+#![allow(dead_code)]
+
+use ndarray::Array;
 use plotly::{
     color::{NamedColor, Rgb, Rgba},
     common::{
@@ -12,24 +14,22 @@ use plotly::{
 use rand_distr::{Distribution, Normal, Uniform};
 
 // Scatter Plots
-fn simple_scatter_plot(show: bool) {
+fn simple_scatter_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = linspace(0., 10., n).collect();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
 
     let trace = Scatter::new(t, y).mode(Mode::Markers);
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("simple_scatter_plot")));
+
+    plot.show();
 }
 
-fn line_and_scatter_plots(show: bool) {
+fn line_and_scatter_plots() {
     let n: usize = 100;
     let mut rng = rand::thread_rng();
-    let random_x: Vec<f64> = linspace(0., 1., n).collect();
+    let random_x: Vec<f64> = Array::linspace(0., 1., n).into_raw_vec();
     let random_y0: Vec<f64> = Normal::new(5., 1.)
         .unwrap()
         .sample_iter(&mut rng)
@@ -60,13 +60,11 @@ fn line_and_scatter_plots(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.add_trace(trace3);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("line_and_scatter_plots")));
+
+    plot.show();
 }
 
-fn bubble_scatter_plots(show: bool) {
+fn bubble_scatter_plots() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 11, 12, 13])
         .mode(Mode::Markers)
         .marker(
@@ -81,15 +79,13 @@ fn bubble_scatter_plots(show: bool) {
         );
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("bubble_scatter_plots")));
+
+    plot.show();
 }
 
-fn polar_scatter_plot(show: bool) {
+fn polar_scatter_plot() {
     let n: usize = 400;
-    let theta: Vec<f64> = linspace(0., 360., n).collect();
+    let theta: Vec<f64> = Array::linspace(0., 360., n).into_raw_vec();
     let r: Vec<f64> = theta
         .iter()
         .map(|x| {
@@ -102,13 +98,11 @@ fn polar_scatter_plot(show: bool) {
     let trace = ScatterPolar::new(theta, r).mode(Mode::Lines);
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("polar_scatter_plot")));
+
+    plot.show();
 }
 
-fn data_labels_hover(show: bool) {
+fn data_labels_hover() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 6, 3, 6, 1])
         .mode(Mode::Markers)
         .name("Team A")
@@ -127,13 +121,11 @@ fn data_labels_hover(show: bool) {
         .x_axis(Axis::new().title("x".into()).range(vec![0.75, 5.25]))
         .y_axis(Axis::new().title("y".into()).range(vec![0., 8.]));
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("data_labels_hover")));
+
+    plot.show();
 }
 
-fn data_labels_on_the_plot(show: bool) {
+fn data_labels_on_the_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 6, 3, 6, 1])
         .mode(Mode::Markers)
         .name("Team A")
@@ -154,13 +146,11 @@ fn data_labels_on_the_plot(show: bool) {
         .x_axis(Axis::new().range(vec![0.75, 5.25]))
         .y_axis(Axis::new().range(vec![0., 8.]));
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("data_labels_on_the_plot")));
+
+    plot.show();
 }
 
-fn colored_and_styled_scatter_plot(show: bool) {
+fn colored_and_styled_scatter_plot() {
     let trace1 = Scatter::new(vec![52698, 43117], vec![53, 31])
         .mode(Mode::Markers)
         .name("North America")
@@ -239,16 +229,11 @@ fn colored_and_styled_scatter_plot(show: bool) {
     plot.add_trace(trace3);
     plot.add_trace(trace4);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("colored_and_styled_scatter_plot"))
-    );
+
+    plot.show();
 }
 
-fn large_data_sets(show: bool) {
+fn large_data_sets() {
     let n: usize = 100_000;
     let mut rng = rand::thread_rng();
     let r: Vec<f64> = Uniform::new(0., 1.).sample_iter(&mut rng).take(n).collect();
@@ -279,14 +264,11 @@ fn large_data_sets(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("large_data_sets")));
+    plot.show();
 }
 
 // Line Charts
-fn adding_names_to_line_and_scatter_plot(show: bool) {
+fn adding_names_to_line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Scatter");
@@ -303,16 +285,11 @@ fn adding_names_to_line_and_scatter_plot(show: bool) {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("adding_names_to_line_and_scatter_plot"))
-    );
+
+    plot.show();
 }
 
-fn line_and_scatter_styling(show: bool) {
+fn line_and_scatter_styling() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("trace1")
@@ -333,13 +310,11 @@ fn line_and_scatter_styling(show: bool) {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("line_and_scatter_styling")));
+
+    plot.show();
 }
 
-fn styling_line_plot(show: bool) {
+fn styling_line_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Red")
@@ -357,13 +332,11 @@ fn styling_line_plot(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("styling_line_plot")));
+
+    plot.show();
 }
 
-fn line_shape_options_for_interpolation(show: bool) {
+fn line_shape_options_for_interpolation() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("linear")
@@ -403,16 +376,11 @@ fn line_shape_options_for_interpolation(show: bool) {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("line_shape_options_for_interpolation"))
-    );
+
+    plot.show();
 }
 
-fn line_dash(show: bool) {
+fn line_dash() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("solid")
@@ -455,13 +423,11 @@ fn line_dash(show: bool) {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("line_dash")));
+
+    plot.show();
 }
 
-fn filled_lines(show: bool) {
+fn filled_lines() {
     let x1 = vec![
         1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0,
         2.0, 1.0,
@@ -552,25 +518,21 @@ fn filled_lines(show: bool) {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
     plot.add_trace(trace6);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("filled_lines")));
+
+    plot.show();
 }
 
 // Bar Charts
-fn basic_bar_chart(show: bool) {
+fn basic_bar_chart() {
     let animals = vec!["giraffes", "orangutans", "monkeys"];
     let t = Bar::new(animals, vec![20, 14, 23]);
     let mut plot = Plot::new();
     plot.add_trace(t);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("basic_bar_chart")));
+
+    plot.show();
 }
 
-fn grouped_bar_chart(show: bool) {
+fn grouped_bar_chart() {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
 
@@ -583,13 +545,11 @@ fn grouped_bar_chart(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("grouped_bar_chart")));
+
+    plot.show();
 }
 
-fn stacked_bar_chart(show: bool) {
+fn stacked_bar_chart() {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
 
@@ -602,14 +562,12 @@ fn stacked_bar_chart(show: bool) {
     plot.add_trace(trace1);
     plot.add_trace(trace2);
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("stacked_bar_chart")));
+
+    plot.show();
 }
 
 // Sankey Diagrams
-fn basic_sankey_diagram(show: bool) {
+fn basic_sankey_diagram() {
     // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
     let trace = Sankey::new()
         .orientation(Orientation::Horizontal)
@@ -643,38 +601,35 @@ fn basic_sankey_diagram(show: bool) {
     plot.add_trace(trace);
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
-
-    println!("{}", plot.to_inline_html(Some("basic_sankey_diagram")));
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
+    // Uncomment any of these lines to display the example.
+
     // Scatter Plots
-    simple_scatter_plot(true);
-    line_and_scatter_plots(true);
-    bubble_scatter_plots(true);
-    polar_scatter_plot(true);
-    data_labels_hover(true);
-    data_labels_on_the_plot(true);
-    colored_and_styled_scatter_plot(true);
-    large_data_sets(true);
+    // simple_scatter_plot();
+    // line_and_scatter_plots();
+    // bubble_scatter_plots();
+    // polar_scatter_plot();
+    // data_labels_hover();
+    // data_labels_on_the_plot();
+    // colored_and_styled_scatter_plot();
+    // large_data_sets();
 
     // Line Charts
-    adding_names_to_line_and_scatter_plot(true);
-    line_and_scatter_styling(true);
-    styling_line_plot(true);
-    line_shape_options_for_interpolation(true);
-    line_dash(true);
-    filled_lines(true);
+    // adding_names_to_line_and_scatter_plot();
+    // line_and_scatter_styling();
+    // styling_line_plot();
+    // line_shape_options_for_interpolation();
+    // line_dash();
+    // filled_lines();
 
     // Bar Charts
-    basic_bar_chart(true);
-    grouped_bar_chart(true);
-    stacked_bar_chart(true);
+    // basic_bar_chart();
+    // grouped_bar_chart();
+    // stacked_bar_chart();
 
     // Sankey Diagrams
-    basic_sankey_diagram(true);
-    Ok(())
+    // basic_sankey_diagram();
 }

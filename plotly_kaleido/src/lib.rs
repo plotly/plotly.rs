@@ -9,14 +9,15 @@
 //! Note that [plotly/Kaleido](https://github.com/plotly/Kaleido) is still in pre-release and as such the `kaleido`
 //! feature should be considered in pre-release mode as well.
 
-use directories::ProjectDirs;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+
+use directories::ProjectDirs;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
@@ -180,8 +181,9 @@ impl Kaleido {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
     use std::path::PathBuf;
+
+    use serde_json::{json, to_value};
 
     use super::*;
 

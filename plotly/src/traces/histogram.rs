@@ -239,7 +239,10 @@ where
     ///     let mut plot = Plot::new();
     ///     plot.set_layout(layout);
     ///     plot.add_traces(traces);
+    ///
+    ///     # if false {  // Prevent this line from running in the doctest.
     ///     plot.show();
+    ///     # }
     /// }
     /// fn main() -> std::io::Result<()> {
     ///     ndarray_to_traces();

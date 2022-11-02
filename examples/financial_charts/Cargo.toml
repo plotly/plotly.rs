@@ -1,0 +1,10 @@
+[package]
+name = "financial-charts"
+version = "0.1.0"
+authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+csv = "1.1.6"
+plotly = { path = "../../plotly" }
+serde = "1.0.147"

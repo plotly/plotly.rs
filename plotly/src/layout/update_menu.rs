@@ -232,13 +232,13 @@ impl UpdateMenu {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
     use crate::{
         common::{Title, Visible},
         Layout,
     };
-
-    use super::*;
-    use serde_json::{json, to_value};
 
     #[test]
     fn test_serialize_button_method() {

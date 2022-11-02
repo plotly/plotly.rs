@@ -1,6 +1,4 @@
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
+use std::{fs::File, io::Write, path::Path};
 
 use askama::Template;
 use dyn_clone::DynClone;
@@ -44,7 +42,7 @@ struct JupyterNotebookPlotTemplate<'a> {
     plot_div_id: &'a str,
 }
 
-#[cfg(not(feature = "wasm"))]
+#[cfg(not(target_family = "wasm"))]
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
 Consider using the `to_html` method obtain a string representation instead. If using the `kaleido` feature the
 `write_image` method can be used to produce a static image in one of the following formats:
@@ -142,7 +140,7 @@ impl Traces {
 ///
 /// # Examples
 ///
-/// ```
+/// ```rust
 /// use plotly::common::Mode;
 /// use plotly::{Layout, Plot, Scatter};
 ///
@@ -163,8 +161,10 @@ impl Traces {
 ///
 ///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
 ///     plot.set_layout(layout);
-///
+///     
+///     # if false {  // We don't actually want to try and display the plot in a browser when running a doctest.
 ///     plot.show();
+///     # }
 /// }
 ///
 /// fn main() -> std::io::Result<()> {
@@ -242,7 +242,6 @@ impl Plot {
     /// Display the fully rendered HTML `Plot` in the default system browser.
     ///
     /// The HTML file is saved in a temp file, from which it is read and displayed by the browser.
-    #[cfg(not(feature = "wasm"))]
     pub fn show(&self) {
         use std::env;
 
@@ -267,7 +266,7 @@ impl Plot {
     }
 
     /// Display the fully rendered `Plot` as a static image of the given format in the default system browser.
-    #[cfg(not(feature = "wasm"))]
+    #[cfg(not(target_family = "wasm"))]
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
@@ -295,7 +294,6 @@ impl Plot {
     ///
     /// This method will render the plot to a full, standalone HTML document, before saving it to
     /// the given location.
-    #[cfg(not(feature = "wasm"))]
     pub fn write_html<P: AsRef<Path>>(&self, filename: P) {
         let rendered = self.to_html();
 
@@ -325,8 +323,7 @@ impl Plot {
     ///
     /// To generate a full, standalone HTML string or file, use `Plot::to_html()` and `Plot::write_html()`,
     /// respectively.
-    pub fn to_inline_html<T: Into<Option<&'static str>>>(&self, plot_div_id: T) -> String {
-        let plot_div_id = plot_div_id.into();
+    pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
         let plot_div_id = match plot_div_id {
             Some(id) => id.to_string(),
             None => Alphanumeric.sample_string(&mut thread_rng(), 20),
@@ -339,7 +336,7 @@ impl Plot {
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot: self,
-            plot_div_id: plot_div_id.as_str(),
+            plot_div_id: &plot_div_id,
         };
         tmpl.render().unwrap()
     }
@@ -434,7 +431,7 @@ impl Plot {
             .expect("Invalid JSON structure - expected a top-level Object")
     }
 
-    #[cfg(all(target_os = "linux", not(feature = "wasm")))]
+    #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("xdg-open")
@@ -443,7 +440,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    #[cfg(all(target_os = "macos", not(feature = "wasm")))]
+    #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("open")
@@ -452,7 +449,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    #[cfg(all(target_os = "windows", not(feature = "wasm")))]
+    #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("cmd")
@@ -488,18 +485,15 @@ mod tests {
     #[test]
     fn test_inline_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id");
+        let inline_plot_data = plot.to_inline_html(Some("replace_this_with_the_div_id"));
         assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
-        println!("{}", inline_plot_data);
-        let random_div_id = plot.to_inline_html(None);
-        println!("{}", random_div_id);
+        plot.to_inline_html(None);
     }
 
     #[test]
     fn test_jupyter_notebook_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_jupyter_notebook_html();
-        println!("{}", inline_plot_data);
+        plot.to_jupyter_notebook_html();
     }
 
     #[test]
@@ -622,6 +616,8 @@ mod tests {
     }
 
     #[test]
+    #[ignore] // Don't really want it to try and open a browsert window every time we run a test.
+    #[cfg(not(feature = "wasm"))]
     fn test_show_image() {
         let plot = create_test_plot();
         plot.show_image(ImageFormat::PNG, 1024, 680);
@@ -671,7 +667,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    #[ignore] // This seems to fail unpredictably on MacOs.
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();

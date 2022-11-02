@@ -1,0 +1,8 @@
+[package]
+name = "subplots"
+version = "0.1.0"
+authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+plotly = { path = "../../plotly" }
