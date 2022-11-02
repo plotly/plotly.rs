@@ -1,10 +1,10 @@
-name: Release
+name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ dev ]
   pull_request:
-    branches: [ master ]
+    branches: [ dev ]
 
 # Cancel any in-flight jobs for the same PR/branch so there's only one active
 # at a time

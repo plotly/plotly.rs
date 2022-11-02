@@ -1,9 +1,12 @@
+#![allow(dead_code)]
+
+use std::env;
+use std::path::PathBuf;
+
 use plotly::common::{TickFormatStop, Title};
 use plotly::layout::{Axis, RangeSelector, RangeSlider, SelectorButton, SelectorStep, StepMode};
 use plotly::{Candlestick, Layout, Ohlc, Plot, Scatter};
 use serde::Deserialize;
-use std::env;
-use std::path::PathBuf;
 
 #[derive(Deserialize)]
 #[allow(dead_code)]
@@ -23,8 +26,7 @@ struct FinData {
 
 fn load_apple_data() -> Vec<FinData> {
     let mut p = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    println!("{:?}", p);
-    p = p.join("examples").join("finance_charts_apple.csv");
+    p = p.join("assets").join("finance_charts_apple.csv");
     let mut rdr = csv::Reader::from_path(p).unwrap();
     let mut out = Vec::new();
     for result in rdr.deserialize() {
@@ -36,7 +38,7 @@ fn load_apple_data() -> Vec<FinData> {
 }
 
 // Time Series and Date Axes
-fn time_series_plot_with_custom_date_range(show: bool) {
+fn time_series_plot_with_custom_date_range() {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -51,16 +53,10 @@ fn time_series_plot_with_custom_date_range(show: bool) {
         .title(Title::new("Manually Set Date Range"));
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("time_series_plot_with_custom_date_range"))
-    );
+    plot.show();
 }
 
-fn time_series_with_range_slider(show: bool) {
+fn time_series_with_range_slider() {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -75,16 +71,10 @@ fn time_series_with_range_slider(show: bool) {
         .title(Title::new("Manually Set Date Range"));
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("time_series_with_range_slider"))
-    );
+    plot.show();
 }
 
-fn time_series_with_range_selector_buttons(show: bool) {
+fn time_series_with_range_selector_buttons() {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -123,16 +113,10 @@ fn time_series_with_range_selector_buttons(show: bool) {
     );
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("time_series_with_range_selector_buttons"))
-    );
+    plot.show();
 }
 
-fn customizing_tick_label_formatting_by_zoom_level(show: bool) {
+fn customizing_tick_label_formatting_by_zoom_level() {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -168,17 +152,11 @@ fn customizing_tick_label_formatting_by_zoom_level(show: bool) {
     );
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("customizing_tick_label_formatting_by_zoom_level"))
-    );
+    plot.show();
 }
 
 // Candlestick Charts
-fn simple_candlestick_chart(show: bool) {
+fn simple_candlestick_chart() {
     let x = vec![
         "2017-01-04",
         "2017-01-05",
@@ -240,14 +218,12 @@ fn simple_candlestick_chart(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("simple_candlestick_chart")));
+
+    plot.show();
 }
 
 // OHLC Charts
-fn simple_ohlc_chart(show: bool) {
+fn simple_ohlc_chart() {
     let x = vec![
         "2017-01-04",
         "2017-01-05",
@@ -309,24 +285,22 @@ fn simple_ohlc_chart(show: bool) {
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("simple_ohlc_chart")));
+
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
+    // Uncomment any of these lines to display the example.
+
     // Time Series and Date Axes
-    time_series_plot_with_custom_date_range(true);
-    time_series_with_range_slider(true);
-    time_series_with_range_selector_buttons(true);
-    customizing_tick_label_formatting_by_zoom_level(true);
+    // time_series_plot_with_custom_date_range();
+    // time_series_with_range_slider();
+    // time_series_with_range_selector_buttons();
+    // customizing_tick_label_formatting_by_zoom_level();
 
     // Candlestick Charts
-    simple_candlestick_chart(true);
+    // simple_candlestick_chart();
 
     // OHLC Charts
-    simple_ohlc_chart(true);
-
-    Ok(())
+    // simple_ohlc_chart();
 }

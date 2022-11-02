@@ -1,9 +1,11 @@
+#![allow(dead_code)]
+
 use plotly::common::{AxisSide, Font, Title};
 use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder};
 use plotly::{color::Rgb, Plot, Scatter};
 
 // Subplots
-fn simple_subplot(show: bool) {
+fn simple_subplot() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -21,13 +23,11 @@ fn simple_subplot(show: bool) {
             .pattern(GridPattern::Independent),
     );
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("simple_subplot")));
+
+    plot.show();
 }
 
-fn custom_sized_subplot(show: bool) {
+fn custom_sized_subplot() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -43,13 +43,11 @@ fn custom_sized_subplot(show: bool) {
         .y_axis2(Axis::new().anchor("x2"))
         .x_axis2(Axis::new().domain(&[0.8, 1.]));
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("custom_sized_subplot")));
+
+    plot.show();
 }
 
-fn multiple_subplots(show: bool) {
+fn multiple_subplots() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -75,13 +73,11 @@ fn multiple_subplots(show: bool) {
             .pattern(GridPattern::Independent),
     );
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("multiple_subplots")));
+
+    plot.show();
 }
 
-fn stacked_subplots(show: bool) {
+fn stacked_subplots() {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -104,13 +100,11 @@ fn stacked_subplots(show: bool) {
             .row_order(RowOrder::BottomToTop),
     );
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("stacked_subplots")));
+
+    plot.show();
 }
 
-fn stacked_subplots_with_shared_x_axis(show: bool) {
+fn stacked_subplots_with_shared_x_axis() {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -128,16 +122,11 @@ fn stacked_subplots_with_shared_x_axis(show: bool) {
         .y_axis2(Axis::new().domain(&[0.33, 0.66]))
         .y_axis3(Axis::new().domain(&[0.66, 1.]));
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("stacked_subplots_with_shared_x_axis"))
-    );
+
+    plot.show();
 }
 
-fn multiple_custom_sized_subplots(show: bool) {
+fn multiple_custom_sized_subplots() {
     let trace1 = Scatter::new(vec![1, 2], vec![1, 2]).name("(1,1)");
     let trace2 = Scatter::new(vec![1, 2], vec![1, 2])
         .name("(1,2,1)")
@@ -169,17 +158,12 @@ fn multiple_custom_sized_subplots(show: bool) {
         .x_axis4(Axis::new().domain(&[0., 1.]).anchor("y4"))
         .y_axis4(Axis::new().domain(&[0., 0.45]).anchor("x4"));
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("multiple_custom_sized_subplots"))
-    );
+
+    plot.show();
 }
 
 // Multiple Axes
-fn two_y_axes(show: bool) {
+fn two_y_axes() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![40, 50, 60]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![4, 5, 6])
         .name("trace2")
@@ -200,13 +184,11 @@ fn two_y_axes(show: bool) {
                 .side(AxisSide::Right),
         );
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("two_y_axes")));
+
+    plot.show();
 }
 
-fn multiple_axes(show: bool) {
+fn multiple_axes() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![40, 50, 60])
         .name("trace2")
@@ -256,24 +238,22 @@ fn multiple_axes(show: bool) {
                 .position(0.85),
         );
     plot.set_layout(layout);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("multiple_axes")));
+
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
+    // Uncomment any of these lines to display the example.
+
     // Subplots
-    simple_subplot(true);
-    custom_sized_subplot(true);
-    multiple_subplots(true);
-    stacked_subplots(true);
-    stacked_subplots_with_shared_x_axis(true);
-    multiple_custom_sized_subplots(true);
+    // simple_subplot();
+    // custom_sized_subplot();
+    // multiple_subplots();
+    // stacked_subplots();
+    // stacked_subplots_with_shared_x_axis();
+    // multiple_custom_sized_subplots();
 
     // Multiple Axes
-    two_y_axes(true);
-    multiple_axes(true);
-
-    Ok(())
+    // two_y_axes();
+    // multiple_axes();
 }
