@@ -1,18 +1,19 @@
 //! Histogram plot
 
-use crate::common::{
-    Calendar, Dim, ErrorData, HoverInfo, Label, Marker, Orientation, PlotType, Visible,
-};
-use crate::Trace;
+#[cfg(feature = "plotly_ndarray")]
+use ndarray::{Array, Ix1, Ix2};
+use plotly_derive::FieldSetter;
 use serde::Serialize;
-
-use crate::private;
-use crate::private::copy_iterable_to_vec;
 
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
-#[cfg(feature = "plotly_ndarray")]
-use ndarray::{Array, Ix1, Ix2};
+use crate::{
+    common::{
+        Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Marker, Orientation,
+        PlotType, Visible,
+    },
+    Trace,
+};
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Bins {
@@ -22,16 +23,45 @@ pub struct Bins {
 }
 
 impl Bins {
-    pub fn new(start: f64, end: f64, size: f64) -> Bins {
-        Bins { start, end, size }
+    pub fn new(start: f64, end: f64, size: f64) -> Self {
+        Self { start, end, size }
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Cumulative {
+    enabled: Option<bool>,
+    direction: Option<HistDirection>,
+    #[serde(rename = "currentbin")]
+    current_bin: Option<CurrentBin>,
+}
+
+impl Cumulative {
+    pub fn new() -> Self {
+        Default::default()
     }
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum CurrentBin {
+    Include,
+    Exclude,
+    Half,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum HistDirection {
+    Increasing,
+    Decreasing,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum HistFunc {
-    #[serde(rename = "count")]
     Count,
-    #[serde(rename = "sum")]
     Sum,
     #[serde(rename = "avg")]
     Average,
@@ -42,223 +72,124 @@ pub enum HistFunc {
 }
 
 #[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
 pub enum HistNorm {
     #[serde(rename = "")]
     Default,
-    #[serde(rename = "percent")]
     Percent,
-    #[serde(rename = "probability")]
     Probability,
-    #[serde(rename = "density")]
     Density,
     #[serde(rename = "probability density")]
     ProbabilityDensity,
 }
 
-#[derive(Serialize, Clone, Debug)]
-pub enum HistDirection {
-    #[serde(rename = "increasing")]
-    Increasing,
-    #[serde(rename = "decreasing")]
-    Decreasing,
-}
-
-#[derive(Serialize, Clone, Debug)]
-pub enum CurrentBin {
-    #[serde(rename = "include")]
-    Include,
-    #[serde(rename = "exclude")]
-    Exclude,
-    #[serde(rename = "half")]
-    Half,
-}
-
-#[derive(Serialize, Clone, Debug, Default)]
-pub struct Cumulative {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    enabled: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    direction: Option<HistDirection>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "currentbin")]
-    current_bin: Option<CurrentBin>,
-}
-
-impl Cumulative {
-    pub fn new() -> Cumulative {
-        Cumulative {
-            enabled: None,
-            direction: None,
-            current_bin: None,
-        }
-    }
-
-    pub fn enabled(mut self, enabled: bool) -> Cumulative {
-        self.enabled = Some(enabled);
-        self
-    }
-
-    pub fn direction(mut self, direction: HistDirection) -> Cumulative {
-        self.direction = Some(direction);
-        self
-    }
-
-    pub fn current_bin(mut self, current_bin: CurrentBin) -> Cumulative {
-        self.current_bin = Some(current_bin);
-        self
-    }
-}
-
-#[derive(Serialize, Clone, Debug)]
+/// Construct a histogram trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::Histogram;
+///
+/// let trace = Histogram::new_xy(
+///     vec![0, 1, 2, 3],
+///     vec![5, 8, 2, 3]
+/// );
+///
+/// let expected = serde_json::json!({
+///     "type": "histogram",
+///     "x": [0, 1, 2, 3],
+///     "y": [5, 8, 2, 3],
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Histogram<H>
 where
-    H: Serialize + Clone + Default + 'static,
+    H: Serialize + Clone,
 {
+    #[field_setter(default = "PlotType::Histogram")]
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
-    show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
-    legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    x: Option<Vec<H>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    y: Option<Vec<H>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
-    hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
-    hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
-    x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
-    y_axis: Option<String>,
-    orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "histfunc")]
-    hist_func: Option<HistFunc>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "histnorm")]
-    hist_norm: Option<HistNorm>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "alignmentgroup")]
+    #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "offsetgroup")]
-    offset_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "nbinsx")]
-    n_bins_x: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "nbinsy")]
-    n_bins_y: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autobinx")]
+    #[serde(rename = "autobinx")]
     auto_bin_x: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "autobiny")]
+    #[serde(rename = "autobiny")]
     auto_bin_y: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "bingroup")]
-    bin_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xbins")]
-    x_bins: Option<Bins>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ybins")]
-    y_bins: Option<Bins>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    error_x: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    error_y: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     cumulative: Option<Cumulative>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "bingroup")]
+    bin_group: Option<String>,
+    error_x: Option<ErrorData>,
+    error_y: Option<ErrorData>,
+    #[serde(rename = "histfunc")]
+    hist_func: Option<HistFunc>,
+    #[serde(rename = "histnorm")]
+    hist_norm: Option<HistNorm>,
+    #[serde(rename = "hoverinfo")]
+    hover_info: Option<HoverInfo>,
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "hovertemplate")]
+    hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertext")]
+    hover_text: Option<Dim<String>>,
+    #[serde(rename = "legendgroup")]
+    legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
+    marker: Option<Marker>,
+    #[serde(rename = "nbinsx")]
+    n_bins_x: Option<usize>,
+    #[serde(rename = "nbinsy")]
+    n_bins_y: Option<usize>,
+    name: Option<String>,
+    #[serde(rename = "offsetgroup")]
+    offset_group: Option<String>,
+    opacity: Option<f64>,
+    orientation: Option<Orientation>,
+    #[serde(rename = "showlegend")]
+    show_legend: Option<bool>,
+    text: Option<Dim<String>>,
+    visible: Option<Visible>,
+    x: Option<Vec<H>>,
+    #[serde(rename = "xaxis")]
+    x_axis: Option<String>,
+    #[serde(rename = "xbins")]
+    x_bins: Option<Bins>,
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    y: Option<Vec<H>>,
+    #[serde(rename = "yaxis")]
+    y_axis: Option<String>,
+    #[serde(rename = "ybins")]
+    y_bins: Option<Bins>,
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
-}
-
-impl<H> Default for Histogram<H>
-where
-    H: Serialize + Clone + Default + 'static,
-{
-    fn default() -> Self {
-        Histogram {
-            r#type: PlotType::Histogram,
-            name: None,
-            visible: None,
-            show_legend: None,
-            legend_group: None,
-            opacity: None,
-            x: None,
-            y: None,
-            text: None,
-            hover_text: None,
-            hover_info: None,
-            hover_template: None,
-            x_axis: None,
-            y_axis: None,
-            orientation: None,
-            hist_func: None,
-            hist_norm: None,
-            alignment_group: None,
-            offset_group: None,
-            n_bins_x: None,
-            n_bins_y: None,
-            auto_bin_x: None,
-            auto_bin_y: None,
-            bin_group: None,
-            x_bins: None,
-            y_bins: None,
-            marker: None,
-            error_x: None,
-            error_y: None,
-            cumulative: None,
-            hover_label: None,
-            x_calendar: None,
-            y_calendar: None,
-        }
-    }
 }
 
 impl<H> Histogram<H>
 where
-    H: Serialize + Clone + Default + 'static,
+    H: Serialize + Clone + 'static,
 {
-    pub fn new<I>(x: I) -> Box<Self>
-    where
-        I: IntoIterator<Item = H>,
-    {
-        let x = copy_iterable_to_vec(x);
-        Box::new(Histogram {
-            r#type: PlotType::Histogram,
+    pub fn new(x: Vec<H>) -> Box<Self> {
+        Box::new(Self {
             x: Some(x),
             ..Default::default()
         })
     }
 
-    pub fn new_xy<I>(x: I, y: I) -> Box<Self>
-    where
-        I: IntoIterator<Item = H>,
-    {
-        let x = copy_iterable_to_vec(x);
-        let y = copy_iterable_to_vec(y);
-        Box::new(Histogram {
-            r#type: PlotType::Histogram,
+    pub fn new_xy(x: Vec<H>, y: Vec<H>) -> Box<Self> {
+        Box::new(Self {
             x: Some(x),
             y: Some(y),
             ..Default::default()
         })
     }
 
-    pub fn new_vertical<I>(y: I) -> Box<Self>
-    where
-        I: IntoIterator<Item = H>,
-    {
-        let y = copy_iterable_to_vec(y);
-        Box::new(Histogram {
-            r#type: PlotType::Histogram,
+    pub fn new_vertical(y: Vec<H>) -> Box<Self> {
+        Box::new(Self {
             y: Some(y),
             ..Default::default()
         })
@@ -308,7 +239,10 @@ where
     ///     let mut plot = Plot::new();
     ///     plot.set_layout(layout);
     ///     plot.add_traces(traces);
+    ///
+    ///     # if false {  // Prevent this line from running in the doctest.
     ///     plot.show();
+    ///     # }
     /// }
     /// fn main() -> std::io::Result<()> {
     ///     ndarray_to_traces();
@@ -322,7 +256,7 @@ where
         array_traces: ArrayTraces,
     ) -> Vec<Box<dyn Trace>> {
         let mut traces: Vec<Box<dyn Trace>> = Vec::new();
-        let mut trace_vectors = private::trace_vectors_from(traces_matrix, array_traces);
+        let mut trace_vectors = crate::private::trace_vectors_from(traces_matrix, array_traces);
         trace_vectors.reverse();
         while !trace_vectors.is_empty() {
             let mut sc = Box::new(self.clone());
@@ -339,186 +273,191 @@ where
     #[cfg(feature = "plotly_ndarray")]
     pub fn from_array(x: Array<H, Ix1>) -> Box<Self> {
         Box::new(Histogram {
-            r#type: PlotType::Histogram,
             x: Some(x.to_vec()),
             ..Default::default()
         })
-    }
-
-    pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_owned());
-        Box::new(self)
-    }
-
-    pub fn visible(mut self, visible: Visible) -> Box<Self> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Self> {
-        self.show_legend = Some(show_legend);
-        Box::new(self)
-    }
-
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
-        self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn opacity(mut self, opacity: f64) -> Box<Self> {
-        self.opacity = Some(opacity);
-        Box::new(self)
-    }
-
-    pub fn text(mut self, text: &str) -> Box<Self> {
-        self.text = Some(Dim::Scalar(text.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Self> {
-        let text = private::owned_string_vector(text);
-        self.text = Some(Dim::Vector(text));
-        Box::new(self)
-    }
-
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Self> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Self> {
-        let hover_text = private::owned_string_vector(hover_text);
-        self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Self> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Self> {
-        let hover_template = private::owned_string_vector(hover_template);
-        self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
-    }
-
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    pub fn hist_func(mut self, hist_func: HistFunc) -> Box<Self> {
-        self.hist_func = Some(hist_func);
-        Box::new(self)
-    }
-
-    pub fn hist_norm(mut self, hist_norm: HistNorm) -> Box<Self> {
-        self.hist_norm = Some(hist_norm);
-        Box::new(self)
-    }
-
-    pub fn alignment_group(mut self, alignment_group: &str) -> Box<Self> {
-        self.alignment_group = Some(alignment_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn offset_group(mut self, offset_group: &str) -> Box<Self> {
-        self.offset_group = Some(offset_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn n_bins_x(mut self, n_bins_x: usize) -> Box<Self> {
-        self.n_bins_x = Some(n_bins_x);
-        Box::new(self)
-    }
-
-    pub fn n_bins_y(mut self, n_bins_y: usize) -> Box<Self> {
-        self.n_bins_y = Some(n_bins_y);
-        Box::new(self)
-    }
-
-    pub fn auto_bin_x(mut self, auto_bin_x: bool) -> Box<Self> {
-        self.auto_bin_x = Some(auto_bin_x);
-        Box::new(self)
-    }
-
-    pub fn auto_bin_y(mut self, auto_bin_y: bool) -> Box<Self> {
-        self.auto_bin_y = Some(auto_bin_y);
-        Box::new(self)
-    }
-
-    pub fn bin_group(mut self, bin_group: &str) -> Box<Self> {
-        self.bin_group = Some(bin_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn x_bins(mut self, x_bins: Bins) -> Box<Self> {
-        self.x_bins = Some(x_bins);
-        Box::new(self)
-    }
-
-    pub fn y_bins(mut self, y_bins: Bins) -> Box<Self> {
-        self.y_bins = Some(y_bins);
-        Box::new(self)
-    }
-
-    pub fn marker(mut self, marker: Marker) -> Box<Self> {
-        self.marker = Some(marker);
-        Box::new(self)
-    }
-
-    pub fn error_x(mut self, error_x: ErrorData) -> Box<Self> {
-        self.error_x = Some(error_x);
-        Box::new(self)
-    }
-
-    pub fn error_y(mut self, error_y: ErrorData) -> Box<Self> {
-        self.error_y = Some(error_y);
-        Box::new(self)
-    }
-
-    pub fn cumulative(mut self, cumulative: Cumulative) -> Box<Self> {
-        self.cumulative = Some(cumulative);
-        Box::new(self)
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Self> {
-        self.x_calendar = Some(x_calendar);
-        Box::new(self)
-    }
-
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Self> {
-        self.y_calendar = Some(y_calendar);
-        Box::new(self)
     }
 }
 
 impl<H> Trace for Histogram<H>
 where
-    H: Serialize + Clone + Default + 'static,
+    H: Serialize + Clone,
 {
     fn to_json(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+        serde_json::to_string(self).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+    use crate::common::ErrorType;
+
+    #[test]
+    fn test_serialize_bins() {
+        let bins = Bins::new(0.0, 10.0, 5.0);
+        let expected = json!({
+            "start": 0.0,
+            "end": 10.0,
+            "size": 5.0
+        });
+
+        assert_eq!(to_value(bins).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_cumulative() {
+        let cumulative = Cumulative::new()
+            .enabled(true)
+            .direction(HistDirection::Decreasing)
+            .current_bin(CurrentBin::Exclude);
+
+        let expected = json!({
+            "enabled": true,
+            "direction": "decreasing",
+            "currentbin": "exclude"
+        });
+
+        assert_eq!(to_value(cumulative).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_current_bin() {
+        assert_eq!(to_value(CurrentBin::Include).unwrap(), json!("include"));
+        assert_eq!(to_value(CurrentBin::Exclude).unwrap(), json!("exclude"));
+        assert_eq!(to_value(CurrentBin::Half).unwrap(), json!("half"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_hist_direction() {
+        assert_eq!(to_value(HistDirection::Increasing).unwrap(), json!("increasing"));
+        assert_eq!(to_value(HistDirection::Decreasing).unwrap(), json!("decreasing"));
+    }
+
+    #[test]
+    fn test_serialize_hist_func() {
+        assert_eq!(to_value(HistFunc::Count).unwrap(), json!("count"));
+        assert_eq!(to_value(HistFunc::Sum).unwrap(), json!("sum"));
+        assert_eq!(to_value(HistFunc::Average).unwrap(), json!("avg"));
+        assert_eq!(to_value(HistFunc::Minimum).unwrap(), json!("min"));
+        assert_eq!(to_value(HistFunc::Maximum).unwrap(), json!("max"));
+    }
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_hist_norm() {
+        assert_eq!(to_value(HistNorm::Default).unwrap(), json!(""));
+        assert_eq!(to_value(HistNorm::Percent).unwrap(), json!("percent"));
+        assert_eq!(to_value(HistNorm::Probability).unwrap(), json!("probability"));
+        assert_eq!(to_value(HistNorm::Density).unwrap(), json!("density"));
+        assert_eq!(to_value(HistNorm::ProbabilityDensity).unwrap(), json!("probability density"));
+    }
+
+    #[test]
+    fn test_serialize_default_histogram() {
+        let trace = Histogram::<i32>::default();
+        let expected = json!({"type": "histogram"});
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_new_xy_histogram() {
+        let trace = Histogram::new_xy(vec![0, 1, 2, 3], vec![4, 5, 6, 7]);
+        let expected = json!({
+            "type": "histogram",
+            "x": [0, 1, 2, 3],
+            "y": [4, 5, 6, 7],
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_new_vertical_histogram() {
+        let trace = Histogram::new_vertical(vec![0, 1, 2, 3]);
+        let expected = json!({
+            "type": "histogram",
+            "y": [0, 1, 2, 3]
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_histogram() {
+        let trace = Histogram::new(vec![0, 1, 2])
+            .alignment_group("alignmentgroup")
+            .auto_bin_x(true)
+            .auto_bin_y(false)
+            .bin_group("bingroup")
+            .cumulative(Cumulative::new())
+            .error_x(ErrorData::new(ErrorType::SquareRoot))
+            .error_y(ErrorData::new(ErrorType::Constant))
+            .hist_func(HistFunc::Average)
+            .hist_norm(HistNorm::Default)
+            .hover_info(HoverInfo::Skip)
+            .hover_label(Label::new())
+            .hover_template("hovertemplate")
+            .hover_template_array(vec!["hover_template_1", "hover_template_2"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text_1", "hover_text_2"])
+            .legend_group("legendgroup")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .marker(Marker::new())
+            .n_bins_x(5)
+            .n_bins_y(10)
+            .name("histogram_trace")
+            .offset_group("offsetgroup")
+            .opacity(0.1)
+            .show_legend(true)
+            .text("text")
+            .text_array(vec!["text_1", "text_2"])
+            .visible(Visible::True)
+            .x_axis("xaxis")
+            .x_bins(Bins::new(1.0, 2.0, 1.0))
+            .x_calendar(Calendar::Julian)
+            .y_axis("yaxis")
+            .y_bins(Bins::new(2.0, 3.0, 4.0))
+            .y_calendar(Calendar::Mayan);
+
+        let expected = json!({
+            "type": "histogram",
+            "alignmentgroup": "alignmentgroup",
+            "autobinx": true,
+            "autobiny": false,
+            "bingroup": "bingroup",
+            "cumulative": {},
+            "error_x": {"type": "sqrt"},
+            "error_y": {"type": "constant"},
+            "histfunc": "avg",
+            "histnorm": "",
+            "hoverinfo": "skip",
+            "hoverlabel": {},
+            "hovertemplate": ["hover_template_1", "hover_template_2"],
+            "hovertext": ["hover_text_1", "hover_text_2"],
+            "legendgroup": "legendgroup",
+            "legendgrouptitle": {"text": "Legend Group Title"},
+            "marker": {},
+            "nbinsx": 5,
+            "nbinsy": 10,
+            "name": "histogram_trace",
+            "offsetgroup": "offsetgroup",
+            "opacity": 0.1,
+            "showlegend": true,
+            "text": ["text_1", "text_2"],
+            "visible": true,
+            "x": [0, 1, 2],
+            "xaxis": "xaxis",
+            "xbins": {"start": 1.0, "end": 2.0, "size": 1.0},
+            "xcalendar": "julian",
+            "yaxis": "yaxis",
+            "ybins": {"start": 2.0, "end": 3.0, "size": 4.0},
+            "ycalendar": "mayan"
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
     }
 }

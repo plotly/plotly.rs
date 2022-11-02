@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -7,51 +7,18 @@
 
 <body>
     <div>
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-        <script
-            type="text/javascript">if (window.MathJax) { MathJax.Hub.Config({ SVG: { font: "STIX-Web" } }); }</script>
-        <script type="text/javascript">window.PlotlyConfig = { MathJaxConfig: 'local' };</script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
         {% if remote_plotly_js -%}
         <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
         {% else -%}
-        <script type="text/javascript">{{ plotly_javascript }}</script>
+        <script type="text/javascript">{% include "plotly.min.js" %}</script>
         {% endif -%}
-        {% if export_image -%}
-        <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;" hidden></div>
-        <div><img id="image-export" class="plotly-graph-div"></img></div>
-        {% else -%}
+
         <div id="plotly-html-element" class="plotly-graph-div" style="height:100%; width:100%;"></div>
-        <div><img id="image-export" class="plotly-graph-div" hidden></img></div>
-        {% endif -%}
 
-        <script type="text/javascript">
-            window.PLOTLYENV = window.PLOTLYENV || {};
-            if (document.getElementById("plotly-html-element")) {
-
-                var image_element = document.getElementById('image-export');
-
-                Plotly.newPlot('plotly-html-element', {{ plot|tojson|safe }})
-                    .then(
-                        function (gd) {
-                            Plotly.toImage(gd, {height: {{ image_height }}, width: {{ image_width }}})
-                                .then(
-                                    function (url) {
-                                        if ({{ export_image }}) {
-                                            image_element.attr("src", url);
-                                            return Plotly.toImage(
-                                                gd,
-                                                {
-                                                    format: '{{ image_type }}',
-                                                    height: {{ image_height }},
-                                                    width: {{ image_width }}
-                                                }
-                                            );
-                                        }
-                                    }
-                                )
-                        }
-                    );
-            };
+        <script type="module">
+            const graph_div = document.getElementById("plotly-html-element");
+            await Plotly.newPlot(graph_div, {{ plot| tojson | safe }});
         </script>
     </div>
 </body>

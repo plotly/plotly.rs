@@ -1,32 +1,31 @@
-#[cfg(feature = "kaleido")]
-extern crate plotly_kaleido;
+use std::{fs::File, io::Write, path::Path};
 
 use askama::Template;
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
-use rand::{thread_rng, Rng};
+use rand::{
+    distributions::{Alphanumeric, DistString},
+    thread_rng,
+};
 use serde::Serialize;
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
 
 use crate::{Configuration, Layout};
-use rand_distr::Alphanumeric;
-
-#[derive(Template)]
-#[template(path = "plotly.min.js", escape = "none")]
-struct PlotlyJs;
 
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
     plot: &'a Plot,
-    plotly_javascript: &'a str,
     remote_plotly_js: bool,
-    export_image: bool,
-    image_type: &'a str,
-    image_width: usize,
-    image_height: usize,
+}
+
+#[derive(Template)]
+#[template(path = "static_plot.html", escape = "none")]
+struct StaticPlotTemplate<'a> {
+    plot: &'a Plot,
+    format: ImageFormat,
+    remote_plotly_js: bool,
+    width: usize,
+    height: usize,
 }
 
 #[derive(Template)]
@@ -43,7 +42,30 @@ struct JupyterNotebookPlotTemplate<'a> {
     plot_div_id: &'a str,
 }
 
+#[cfg(not(target_family = "wasm"))]
+const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
+Consider using the `to_html` method obtain a string representation instead. If using the `kaleido` feature the
+`write_image` method can be used to produce a static image in one of the following formats:
+- ImageFormat::PNG
+- ImageFormat::JPEG
+- ImageFormat::WEBP
+- ImageFormat::SVG
+- ImageFormat::PDF
+- ImageFormat::EPS
+
+Used as follows:
+let plot = Plot::new();
+...
+let width = 1024;
+let height = 680;
+let scale = 1.0;
+plot.write_image("filename", ImageFormat::PNG, width, height, scale);
+
+See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
+"#;
+
 /// Image format for static image export.
+#[derive(Debug)]
 pub enum ImageFormat {
     PNG,
     JPEG,
@@ -51,6 +73,23 @@ pub enum ImageFormat {
     SVG,
     PDF,
     EPS,
+}
+
+impl std::fmt::Display for ImageFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::PNG => "png",
+                Self::JPEG => "jpeg",
+                Self::WEBP => "webp",
+                Self::SVG => "svg",
+                Self::PDF => "pdf",
+                Self::EPS => "eps",
+            }
+        )
+    }
 }
 
 /// A struct that implements `Trace` can be serialized to json format that is understood by Plotly.js.
@@ -82,6 +121,10 @@ impl Traces {
         self.traces.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.traces.is_empty()
+    }
+
     pub fn iter(&self) -> std::slice::Iter<'_, Box<dyn Trace>> {
         self.traces.iter()
     }
@@ -97,8 +140,7 @@ impl Traces {
 ///
 /// # Examples
 ///
-/// ```
-/// extern crate plotly;
+/// ```rust
 /// use plotly::common::Mode;
 /// use plotly::{Layout, Plot, Scatter};
 ///
@@ -109,7 +151,8 @@ impl Traces {
 ///     let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
 ///         .name("trace2")
 ///         .mode(Mode::Lines);
-///     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
+///     let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12])
+///         .name("trace3");
 ///
 ///     let mut plot = Plot::new();
 ///     plot.add_trace(trace1);
@@ -118,8 +161,10 @@ impl Traces {
 ///
 ///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
 ///     plot.set_layout(layout);
-///
+///     
+///     # if false {  // We don't actually want to try and display the plot in a browser when running a doctest.
 ///     plot.show();
+///     # }
 /// }
 ///
 /// fn main() -> std::io::Result<()> {
@@ -138,28 +183,6 @@ pub struct Plot {
     remote_plotly_js: bool,
 }
 
-#[cfg(not(feature = "wasm"))]
-const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
-Consider using the `to_html` method to save the plot instead. If using the `kaleido` feature the
-`save` method can be used to produce a static image in one of the following formats:
-- ImageFormat::PNG
-- ImageFormat::JPEG
-- ImageFormat::WEBP
-- ImageFormat::SVG
-- ImageFormat::PDF
-- ImageFormat::EPS
-
-used as follows:
-let plot = Plot::new();
-...
-let width = 1024;
-let height = 680;
-let scale = 1.0;
-plot.save("filename", ImageFormat::PNG, width, height, scale);
-
-See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
-"#;
-
 impl Plot {
     /// Create a new `Plot`.
     pub fn new() -> Plot {
@@ -172,6 +195,9 @@ impl Plot {
 
     /// This option results in the plotly.js library being written directly in the html output. The benefit is that the
     /// plot will load faster in the browser and the downside is that the resulting html will be much larger.
+    ///
+    /// Note that when using `Plot::to_inline_html()`, it is assumed that the `plotly.js` library is already in scope,
+    /// so setting this attribute will have no effect.
     pub fn use_local_plotly(&mut self) {
         self.remote_plotly_js = false;
     }
@@ -213,168 +239,104 @@ impl Plot {
         &self.configuration
     }
 
-    /// Renders the contents of the `Plot` and displays them in the system default browser.
+    /// Display the fully rendered HTML `Plot` in the default system browser.
     ///
-    /// This will serialize the `Trace`s and `Layout` in an html page which is saved in the temp
-    /// directory. For example on Linux it will generate a file `plotly_<22 random characters>.html`
-    /// in the /tmp directory.
-    #[cfg(not(feature = "wasm"))]
+    /// The HTML file is saved in a temp file, from which it is read and displayed by the browser.
     pub fn show(&self) {
         use std::env;
 
-        let rendered = self.render(false, "", 0, 0);
-        let rendered = rendered.as_bytes();
-        let mut temp = env::temp_dir();
+        let rendered = self.render();
 
-        let mut plot_name = String::from_utf8(
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(22)
-                .collect::<Vec<u8>>(),
-        )
-        .unwrap();
+        // Set up the temp file with a unique filename.
+        let mut temp = env::temp_dir();
+        let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{}", plot_name);
-
         temp.push(plot_name);
+
+        // Save the rendered plot to the temp file.
         let temp_path = temp.to_str().unwrap();
-        {
-            let mut file = File::create(temp_path).unwrap();
-            file.write_all(rendered)
-                .expect("failed to write html output");
-            file.flush().unwrap();
-        }
-
-        Plot::show_with_default_app(temp_path);
-    }
-
-    /// Renders the contents of the `Plot`, creates a png raster and displays it in the system default browser.
-    ///
-    /// To save the resulting png right-click on the resulting image and select `Save As...`.
-    #[cfg(not(feature = "wasm"))]
-    pub fn show_png(&self, width: usize, height: usize) {
-        use std::env;
-
-        let rendered = self.render(true, "png", width, height);
-        let rendered = rendered.as_bytes();
-        let mut temp = env::temp_dir();
-
-        let mut plot_name = String::from_utf8(
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(22)
-                .collect::<Vec<u8>>(),
-        )
-        .unwrap();
-        plot_name.push_str(".html");
-
-        temp.push(plot_name);
-        let temp_path = temp.to_str().unwrap();
-        {
-            let mut file = File::create(temp_path).unwrap();
-            file.write_all(rendered)
-                .expect("failed to write html output");
-            file.flush().unwrap();
-        }
-
-        Plot::show_with_default_app(temp_path);
-    }
-
-    /// Renders the contents of the `Plot`, creates a jpeg raster and displays it in the system default browser.
-    ///
-    /// To save the resulting png right-click on the resulting image and select `Save As...`.
-    #[cfg(not(feature = "wasm"))]
-    pub fn show_jpeg(&self, width: usize, height: usize) {
-        use std::env;
-
-        let rendered = self.render(true, "jpg", width, height);
-        let rendered = rendered.as_bytes();
-        let mut temp = env::temp_dir();
-
-        let mut plot_name: String = String::from_utf8(
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(22)
-                .collect::<Vec<u8>>(),
-        )
-        .unwrap();
-        plot_name.push_str(".html");
-
-        temp.push(plot_name);
-        let temp_path = temp.to_str().unwrap();
-        {
-            let mut file = File::create(temp_path).unwrap();
-            file.write_all(rendered)
-                .expect("failed to write html output");
-            file.flush().unwrap();
-        }
-
-        Plot::show_with_default_app(temp_path);
-    }
-
-    /// Renders the contents of the `Plot` and displays it in the system default browser.
-    ///
-    /// In contrast to `Plot::show()` this will save the resulting html in a user specified location
-    /// instead of the system temp directory.
-    ///
-    /// In contrast to `Plot::write_html`, this will save the resulting html to a file located at a
-    /// user specified location, instead of a writing it to anything that implements `std::io::Write`.
-    pub fn to_html<P: AsRef<Path>>(&self, filename: P) {
-        let mut file = File::create(filename.as_ref()).unwrap();
-
-        self.write_html(&mut file);
-    }
-
-    /// Renders the contents of the `Plot` to HTML and outputs them to a writable buffer.
-    ///
-    /// In contrast to `Plot::to_html`, this will save the resulting html to a byte buffer using the
-    /// `std::io::Write` trait, instead of to a user specified file.
-    pub fn write_html<W: Write>(&self, buffer: &mut W) {
-        let rendered = self.render(false, "", 0, 0);
-        let rendered = rendered.as_bytes();
-
-        buffer
-            .write_all(rendered)
+        let mut file = File::create(temp_path).unwrap();
+        file.write_all(rendered.as_bytes())
             .expect("failed to write html output");
+        file.flush().unwrap();
+
+        // Hand off the job of opening the browser to an OS-specific implementation.
+        Plot::show_with_default_app(temp_path);
     }
 
-    /// Renders the contents of the `Plot` and returns it as a String, for embedding in
-    /// web-pages or Jupyter notebooks. A `div` is generated with the supplied id followed by the
-    /// script that generates the plot. The assumption is that plotly.js is available within the
-    /// html page that this element is embedded. If that assumption is violated then the plot will
-    /// not be displayed.
+    /// Display the fully rendered `Plot` as a static image of the given format in the default system browser.
+    #[cfg(not(target_family = "wasm"))]
+    pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
+        use std::env;
+
+        let rendered = self.render_static(format, width, height);
+
+        // Set up the temp file with a unique filename.
+        let mut temp = env::temp_dir();
+        let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
+        plot_name.push_str(".html");
+        plot_name = format!("plotly_{}", plot_name);
+        temp.push(plot_name);
+
+        // Save the rendered plot to the temp file.
+        let temp_path = temp.to_str().unwrap();
+        let mut file = File::create(temp_path).unwrap();
+        file.write_all(rendered.as_bytes())
+            .expect("failed to write html output");
+        file.flush().unwrap();
+
+        // Hand off the job of opening the browser to an OS-specific implementation.
+        Plot::show_with_default_app(temp_path);
+    }
+
+    /// Save the rendered `Plot` to a file at the given location.
     ///
-    /// If `plot_div_id` is `None` the plot div id will be randomly generated, otherwise the user
-    /// supplied div id is used.
-    pub fn to_inline_html<T: Into<Option<&'static str>>>(&self, plot_div_id: T) -> String {
-        let plot_div_id = plot_div_id.into();
-        match plot_div_id {
-            Some(id) => self.render_inline(id.as_ref()),
-            None => {
-                let rand_id = String::from_utf8(
-                    thread_rng()
-                        .sample_iter(&Alphanumeric)
-                        .take(20)
-                        .collect::<Vec<u8>>(),
-                )
-                .unwrap();
-                self.render_inline(rand_id.as_str())
-            }
-        }
+    /// This method will render the plot to a full, standalone HTML document, before saving it to
+    /// the given location.
+    pub fn write_html<P: AsRef<Path>>(&self, filename: P) {
+        let rendered = self.to_html();
+
+        let mut file = File::create(filename).unwrap();
+        file.write_all(rendered.as_bytes())
+            .expect("failed to write html output");
+        file.flush().unwrap();
+    }
+
+    /// Convert a `Plot` to an HTML string representation.
+    ///
+    /// This method will generate a full, standalone HTML document. To generate a minimal HTML string
+    /// which can be embedded within an existing HTML page, use `Plot::to_inline_html()`.
+    pub fn to_html(&self) -> String {
+        self.render()
+    }
+
+    /// Renders the contents of the `Plot` and returns it as a String suitable for embedding within
+    /// web pages or Jupyter notebooks.
+    ///
+    /// A `div` is generated with the supplied id followed by the `script` block that generates the plot.
+    /// The assumption is that `plotly.js` is available within the HTML page that this element is embedded. If
+    /// that assumption is violated then the plot will not be displayed.
+    ///
+    /// If `plot_div_id` is `None` the plot div id will be randomly generated, otherwise the user-supplied
+    /// `plot_div_id` is used.
+    ///
+    /// To generate a full, standalone HTML string or file, use `Plot::to_html()` and `Plot::write_html()`,
+    /// respectively.
+    pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
+        let plot_div_id = match plot_div_id {
+            Some(id) => id.to_string(),
+            None => Alphanumeric.sample_string(&mut thread_rng(), 20),
+        };
+        self.render_inline(&plot_div_id)
     }
 
     fn to_jupyter_notebook_html(&self) -> String {
-        let plot_div_id = String::from_utf8(
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(20)
-                .collect::<Vec<u8>>(),
-        )
-        .unwrap();
+        let plot_div_id = Alphanumeric.sample_string(&mut thread_rng(), 20);
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot: self,
-            plot_div_id: plot_div_id.as_str(),
+            plot_div_id: &plot_div_id,
         };
         tmpl.render().unwrap()
     }
@@ -403,9 +365,9 @@ impl Plot {
         self.lab_display();
     }
 
-    /// Saves the `Plot` to the selected image format.
+    /// Convert the `Plot` to a static image of the given image format and save at the given location.
     #[cfg(feature = "kaleido")]
-    pub fn save<P: AsRef<Path>>(
+    pub fn write_image<P: AsRef<Path>>(
         &self,
         filename: P,
         format: ImageFormat,
@@ -414,19 +376,11 @@ impl Plot {
         scale: f64,
     ) {
         let kaleido = plotly_kaleido::Kaleido::new();
-        let image_format = match format {
-            ImageFormat::PNG => "png",
-            ImageFormat::JPEG => "jpeg",
-            ImageFormat::SVG => "svg",
-            ImageFormat::PDF => "pdf",
-            ImageFormat::EPS => "eps",
-            ImageFormat::WEBP => "webp",
-        };
         kaleido
             .save(
                 filename.as_ref(),
                 &serde_json::to_value(self).unwrap(),
-                image_format,
+                &format.to_string(),
                 width,
                 height,
                 scale,
@@ -434,22 +388,21 @@ impl Plot {
             .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
     }
 
-    fn render(
-        &self,
-        export_image: bool,
-        image_type: &str,
-        image_width: usize,
-        image_height: usize,
-    ) -> String {
-        let plotly_js = PlotlyJs {}.render().unwrap();
+    fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
-            plotly_javascript: plotly_js.as_str(),
             remote_plotly_js: self.remote_plotly_js,
-            export_image,
-            image_type,
-            image_width,
-            image_height,
+        };
+        tmpl.render().unwrap()
+    }
+
+    fn render_static(&self, format: ImageFormat, width: usize, height: usize) -> String {
+        let tmpl = StaticPlotTemplate {
+            plot: self,
+            format,
+            remote_plotly_js: self.remote_plotly_js,
+            width,
+            height,
         };
         tmpl.render().unwrap()
     }
@@ -478,7 +431,7 @@ impl Plot {
             .expect("Invalid JSON structure - expected a top-level Object")
     }
 
-    #[cfg(all(target_os = "linux", not(feature = "wasm")))]
+    #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("xdg-open")
@@ -487,7 +440,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    #[cfg(all(target_os = "macos", not(feature = "wasm")))]
+    #[cfg(target_os = "macos")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("open")
@@ -496,7 +449,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    #[cfg(all(target_os = "windows", not(feature = "wasm")))]
+    #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("cmd")
@@ -515,9 +468,9 @@ impl PartialEq for Plot {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
-    #[cfg(feature = "kaleido")]
     use std::path::PathBuf;
+
+    use serde_json::{json, to_value};
 
     use super::*;
     use crate::Scatter;
@@ -532,18 +485,15 @@ mod tests {
     #[test]
     fn test_inline_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id");
+        let inline_plot_data = plot.to_inline_html(Some("replace_this_with_the_div_id"));
         assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
-        println!("{}", inline_plot_data);
-        let random_div_id = plot.to_inline_html(None);
-        println!("{}", random_div_id);
+        plot.to_inline_html(None);
     }
 
     #[test]
     fn test_jupyter_notebook_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_jupyter_notebook_html();
-        println!("{}", inline_plot_data);
+        plot.to_jupyter_notebook_html();
     }
 
     #[test]
@@ -666,11 +616,29 @@ mod tests {
     }
 
     #[test]
+    #[ignore] // Don't really want it to try and open a browsert window every time we run a test.
+    #[cfg(not(feature = "wasm"))]
+    fn test_show_image() {
+        let plot = create_test_plot();
+        plot.show_image(ImageFormat::PNG, 1024, 680);
+    }
+
+    #[test]
+    fn test_save_html() {
+        let plot = create_test_plot();
+        let dst = PathBuf::from("example.html");
+        plot.write_html(&dst);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+    }
+
+    #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.png");
-        plot.save(&dst, ImageFormat::PNG, 1024, 680, 1.0);
+        plot.write_image(&dst, ImageFormat::PNG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -681,7 +649,7 @@ mod tests {
     fn test_save_to_jpeg() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.jpeg");
-        plot.save(&dst, ImageFormat::JPEG, 1024, 680, 1.0);
+        plot.write_image(&dst, ImageFormat::JPEG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -692,19 +660,19 @@ mod tests {
     fn test_save_to_svg() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.svg");
-        plot.save(&dst, ImageFormat::SVG, 1024, 680, 1.0);
+        plot.write_image(&dst, ImageFormat::SVG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
     }
 
     #[test]
-    #[ignore]
+    #[ignore] // This seems to fail unpredictably on MacOs.
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.eps");
-        plot.save(&dst, ImageFormat::EPS, 1024, 680, 1.0);
+        plot.write_image(&dst, ImageFormat::EPS, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -715,7 +683,7 @@ mod tests {
     fn test_save_to_pdf() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.pdf");
-        plot.save(&dst, ImageFormat::PDF, 1024, 680, 1.0);
+        plot.write_image(&dst, ImageFormat::PDF, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
@@ -726,7 +694,7 @@ mod tests {
     fn test_save_to_webp() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.webp");
-        plot.save(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
+        plot.write_image(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());

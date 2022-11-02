@@ -1,306 +1,128 @@
-//! Bar plot
+//! Bar trace
 
-use crate::common::{
-    Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, Marker, Orientation, PlotType,
-    TextAnchor, TextPosition, Visible,
-};
-use crate::Trace;
+use plotly_derive::FieldSetter;
 use serde::Serialize;
 
-use crate::private;
+use crate::{
+    common::{
+        Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, LegendGroupTitle, Marker,
+        Orientation, PlotType, TextAnchor, TextPosition, Visible,
+    },
+    Trace,
+};
 
-#[derive(Serialize, Debug, Default, Clone)]
+/// Construct a bar trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::Bar;
+///
+/// let x = vec![0, 1, 2, 3, 4, 5];
+/// let y = vec![0, 2, 4, 6, 8, 10];
+///
+/// let trace = Bar::new(x, y).show_legend(true).opacity(0.5);
+///
+/// let expected = serde_json::json!({
+///     "type": "bar",
+///     "x": [0, 1, 2, 3, 4, 5],
+///     "y": [0, 2, 4, 6, 8, 10],
+///     "showlegend": true,
+///     "opacity": 0.5
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Bar<X, Y>
 where
-    X: Serialize + Default + Clone,
-    Y: Serialize + Default + Clone,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
 {
-    x: Vec<X>,
-    y: Vec<Y>,
+    #[field_setter(default = "PlotType::Bar")]
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    x: Option<Vec<X>>,
+    y: Option<Vec<Y>>,
     name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     visible: Option<Visible>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "showlegend")]
+    #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgroup")]
+    #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     ids: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     offset: Option<Dim<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textposition")]
+    #[serde(rename = "textposition")]
     text_position: Option<Dim<TextPosition>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "texttemplate")]
+    #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertext")]
+    #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xaxis")]
+    #[serde(rename = "xaxis")]
     x_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "yaxis")]
+    #[serde(rename = "yaxis")]
     y_axis: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "alignmentgroup")]
+    #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "offsetgroup")]
+    #[serde(rename = "offsetgroup")]
     offset_group: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     marker: Option<Marker>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textangle")]
+    #[serde(rename = "textangle")]
     text_angle: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
+    #[serde(rename = "textfont")]
     text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_x: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     error_y: Option<ErrorData>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "cliponaxis")]
+    #[serde(rename = "cliponaxis")]
     clip_on_axis: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "constraintext")]
+    #[serde(rename = "constraintext")]
     constrain_text: Option<ConstrainText>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "insidetextanchor")]
+    #[serde(rename = "insidetextanchor")]
     inside_text_anchor: Option<TextAnchor>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "insidetextfont")]
+    #[serde(rename = "insidetextfont")]
     inside_text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "outsidetextfont")]
+    #[serde(rename = "outsidetextfont")]
     outside_text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "xcalendar")]
+    #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "ycalendar")]
+    #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
 }
 
 impl<X, Y> Bar<X, Y>
 where
-    X: Serialize + Default + Clone,
-    Y: Serialize + Default + Clone,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
 {
-    pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Bar<X, Y>> {
+    pub fn new(x: Vec<X>, y: Vec<Y>) -> Box<Self> {
         Box::new(Bar {
-            x,
-            y,
-            r#type: PlotType::Bar,
+            x: Some(x),
+            y: Some(y),
             ..Default::default()
         })
-    }
-
-    pub fn name(mut self, name: &str) -> Box<Bar<X, Y>> {
-        self.name = Some(name.to_owned());
-        Box::new(self)
-    }
-
-    pub fn visible(mut self, visible: Visible) -> Box<Bar<X, Y>> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Bar<X, Y>> {
-        self.show_legend = Some(show_legend);
-        Box::new(self)
-    }
-
-    pub fn legend_group(mut self, legend_group: &str) -> Box<Bar<X, Y>> {
-        self.legend_group = Some(legend_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn opacity(mut self, opacity: f64) -> Box<Bar<X, Y>> {
-        self.opacity = Some(opacity);
-        Box::new(self)
-    }
-
-    pub fn ids<S: AsRef<str>>(mut self, ids: Vec<S>) -> Box<Bar<X, Y>> {
-        let ids = private::owned_string_vector(ids);
-        self.ids = Some(ids);
-        Box::new(self)
-    }
-
-    pub fn width(mut self, width: usize) -> Box<Bar<X, Y>> {
-        self.width = Some(width);
-        Box::new(self)
-    }
-
-    pub fn offset(mut self, offset: usize) -> Box<Bar<X, Y>> {
-        self.offset = Some(Dim::Scalar(offset));
-        Box::new(self)
-    }
-
-    pub fn offset_array(mut self, offset: Vec<usize>) -> Box<Bar<X, Y>> {
-        self.offset = Some(Dim::Vector(offset));
-        Box::new(self)
-    }
-
-    pub fn text(mut self, text: &str) -> Box<Bar<X, Y>> {
-        self.text = Some(Dim::Scalar(text.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn text_array<S: AsRef<str>>(mut self, text: Vec<S>) -> Box<Bar<X, Y>> {
-        let text = private::owned_string_vector(text);
-        self.text = Some(Dim::Vector(text));
-        Box::new(self)
-    }
-
-    pub fn text_position(mut self, text_position: TextPosition) -> Box<Bar<X, Y>> {
-        self.text_position = Some(Dim::Scalar(text_position));
-        Box::new(self)
-    }
-
-    pub fn text_position_array(mut self, text_position: Vec<TextPosition>) -> Box<Bar<X, Y>> {
-        self.text_position = Some(Dim::Vector(text_position));
-        Box::new(self)
-    }
-
-    pub fn text_template(mut self, text_template: &str) -> Box<Bar<X, Y>> {
-        self.text_template = Some(Dim::Scalar(text_template.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn text_template_array<S: AsRef<str>>(mut self, text_template: Vec<S>) -> Box<Bar<X, Y>> {
-        let text_template = private::owned_string_vector(text_template);
-        self.text_template = Some(Dim::Vector(text_template));
-        Box::new(self)
-    }
-
-    pub fn hover_text(mut self, hover_text: &str) -> Box<Bar<X, Y>> {
-        self.hover_text = Some(Dim::Scalar(hover_text.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn hover_text_array<S: AsRef<str>>(mut self, hover_text: Vec<S>) -> Box<Bar<X, Y>> {
-        let hover_text = private::owned_string_vector(hover_text);
-        self.hover_text = Some(Dim::Vector(hover_text));
-        Box::new(self)
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Bar<X, Y>> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    pub fn hover_template(mut self, hover_template: &str) -> Box<Bar<X, Y>> {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_owned()));
-        Box::new(self)
-    }
-
-    pub fn x_axis(mut self, axis: &str) -> Box<Bar<X, Y>> {
-        self.x_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    pub fn y_axis(mut self, axis: &str) -> Box<Bar<X, Y>> {
-        self.y_axis = Some(axis.to_owned());
-        Box::new(self)
-    }
-
-    pub fn hover_template_array<S: AsRef<str>>(mut self, hover_template: Vec<S>) -> Box<Bar<X, Y>> {
-        let hover_template = private::owned_string_vector(hover_template);
-        self.hover_template = Some(Dim::Vector(hover_template));
-        Box::new(self)
-    }
-
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Bar<X, Y>> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    pub fn alignment_group(mut self, alignment_group: &str) -> Box<Bar<X, Y>> {
-        self.alignment_group = Some(alignment_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn offset_group(mut self, offset_group: &str) -> Box<Bar<X, Y>> {
-        self.offset_group = Some(offset_group.to_owned());
-        Box::new(self)
-    }
-
-    pub fn marker(mut self, marker: Marker) -> Box<Bar<X, Y>> {
-        self.marker = Some(marker);
-        Box::new(self)
-    }
-
-    pub fn text_angle(mut self, text_angle: f64) -> Box<Bar<X, Y>> {
-        self.text_angle = Some(text_angle);
-        Box::new(self)
-    }
-
-    pub fn text_font(mut self, text_font: Font) -> Box<Bar<X, Y>> {
-        self.text_font = Some(text_font);
-        Box::new(self)
-    }
-
-    pub fn error_x(mut self, error_x: ErrorData) -> Box<Bar<X, Y>> {
-        self.error_x = Some(error_x);
-        Box::new(self)
-    }
-
-    pub fn error_y(mut self, error_y: ErrorData) -> Box<Bar<X, Y>> {
-        self.error_y = Some(error_y);
-        Box::new(self)
-    }
-
-    pub fn clip_on_axis(mut self, clip_on_axis: bool) -> Box<Bar<X, Y>> {
-        self.clip_on_axis = Some(clip_on_axis);
-        Box::new(self)
-    }
-
-    pub fn constrain_text(mut self, constrain_text: ConstrainText) -> Box<Bar<X, Y>> {
-        self.constrain_text = Some(constrain_text);
-        Box::new(self)
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Bar<X, Y>> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    pub fn inside_text_anchor(mut self, inside_text_anchor: TextAnchor) -> Box<Bar<X, Y>> {
-        self.inside_text_anchor = Some(inside_text_anchor);
-        Box::new(self)
-    }
-
-    pub fn inside_text_font(mut self, inside_text_font: Font) -> Box<Bar<X, Y>> {
-        self.inside_text_font = Some(inside_text_font);
-        Box::new(self)
-    }
-
-    pub fn outside_text_font(mut self, outside_text_font: Font) -> Box<Bar<X, Y>> {
-        self.outside_text_font = Some(outside_text_font);
-        Box::new(self)
-    }
-
-    pub fn x_calendar(mut self, x_calendar: Calendar) -> Box<Bar<X, Y>> {
-        self.x_calendar = Some(x_calendar);
-        Box::new(self)
-    }
-
-    pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Bar<X, Y>> {
-        self.y_calendar = Some(y_calendar);
-        Box::new(self)
     }
 }
 
 impl<X, Y> Trace for Bar<X, Y>
 where
-    X: Serialize + Default + Clone,
-    Y: Serialize + Default + Clone,
+    X: Serialize + Clone,
+    Y: Serialize + Clone,
 {
     fn to_json(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+        serde_json::to_string(self).unwrap()
     }
 }
 
@@ -308,57 +130,71 @@ where
 mod tests {
     use serde_json::{json, to_value};
 
+    use super::*;
     use crate::common::ErrorType;
 
-    use super::*;
+    #[test]
+    fn test_default_bar() {
+        let trace: Bar<i32, i32> = Bar::default();
+        let expected = json!({"type": "bar"}).to_string();
+
+        assert_eq!(trace.to_json(), expected);
+    }
 
     #[test]
     fn test_serialize_bar() {
         let bar = Bar::new(vec![1, 2], vec![3, 4])
-            .name("Bar")
-            .visible(Visible::LegendOnly)
-            .show_legend(false)
-            .legend_group("legend-group")
-            .opacity(0.5)
+            .alignment_group("alignment_group")
+            .clip_on_axis(true)
+            .constrain_text(ConstrainText::Both)
+            .error_x(ErrorData::new(ErrorType::Constant))
+            .error_y(ErrorData::new(ErrorType::Percent))
+            .hover_info(HoverInfo::All)
+            .hover_label(Label::new())
+            .hover_template("tmpl")
+            .hover_template_array(vec!["tmpl1", "tmpl2"])
+            .hover_text("hover_text")
+            .hover_text_array(vec!["hover_text"])
             .ids(vec!["1"])
-            .width(999)
+            .inside_text_anchor(TextAnchor::End)
+            .inside_text_font(Font::new())
+            .legend_group("legend-group")
+            .legend_group_title(LegendGroupTitle::new("legend-group-title"))
+            .marker(Marker::new())
+            .name("Bar")
             .offset(5)
             .offset_array(vec![5, 5])
+            .offset_group("offset_group")
+            .opacity(0.5)
+            .orientation(Orientation::Vertical)
+            .outside_text_font(Font::new())
+            .show_legend(false)
             .text("text")
+            .text_angle(0.05)
             .text_array(vec!["text"])
+            .text_font(Font::new())
             .text_position(TextPosition::None)
             .text_position_array(vec![TextPosition::None])
             .text_template("text_template")
             .text_template_array(vec!["text_template"])
-            .hover_text("hover_text")
-            .hover_text_array(vec!["hover_text"])
+            .visible(Visible::LegendOnly)
+            .width(999)
             .x_axis("xaxis")
-            .y_axis("yaxis")
-            .orientation(Orientation::Vertical)
-            .alignment_group("alignment_group")
-            .offset_group("offset_group")
-            .marker(Marker::new())
-            .text_angle(0.05)
-            .text_font(Font::new())
-            .error_x(ErrorData::new(ErrorType::Constant))
-            .error_y(ErrorData::new(ErrorType::Percent))
-            .clip_on_axis(true)
-            .constrain_text(ConstrainText::Both)
-            .hover_label(Label::new())
-            .inside_text_anchor(TextAnchor::End)
-            .inside_text_font(Font::new())
-            .outside_text_font(Font::new())
             .x_calendar(Calendar::Nanakshahi)
+            .y_axis("yaxis")
             .y_calendar(Calendar::Ummalqura);
 
         let expected = json!({
             "type": "bar",
+            "hoverinfo": "all",
+            "hovertemplate": ["tmpl1", "tmpl2"],
             "x": [1, 2],
             "y": [3, 4],
             "name": "Bar",
             "visible": "legendonly",
             "showlegend": false,
             "legendgroup": "legend-group",
+            "legendgrouptitle": {"text": "legend-group-title"},
             "opacity": 0.5,
             "ids": ["1"],
             "width": 999,

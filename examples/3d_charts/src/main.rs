@@ -1,12 +1,16 @@
-use itertools_num::linspace;
-use plotly::common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title};
-use plotly::layout::{Axis, Layout};
-use plotly::{Plot, Scatter3D, Surface};
+#![allow(dead_code)]
+
+use ndarray::Array;
+use plotly::{
+    common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title},
+    layout::{Axis, Layout},
+    Plot, Scatter3D, Surface,
+};
 
 // 3D Scatter Plots
-fn simple_scatter3d_plot(show: bool) {
+fn simple_scatter3d_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = linspace(0., 10., n).collect();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
 
@@ -14,19 +18,17 @@ fn simple_scatter3d_plot(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    if show {
-        plot.show();
-    }
+    plot.show();
 }
 
-fn customized_scatter3d_plot(show: bool) {
+fn customized_scatter3d_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = linspace::<f64>(0., 10., n).collect();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
     let sizelookup = z.clone();
 
-    let trace = Scatter3D::new(t.clone(), y.clone(), z.iter().map(|i| -i))
+    let trace = Scatter3D::new(t.clone(), y.clone(), z.iter().map(|i| -i).collect())
         .mode(Mode::Markers)
         .marker(
             Marker::new()
@@ -61,15 +63,13 @@ fn customized_scatter3d_plot(show: bool) {
         .z_axis(Axis::new().title("z Axis".into()));
     plot.set_layout(layout);
 
-    if show {
-        plot.show();
-    }
+    plot.show();
 }
 
 // 3D Line Plots
-fn simple_line3d_plot(show: bool) {
+fn simple_line3d_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = linspace(0., 10., n).collect();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
 
@@ -77,16 +77,14 @@ fn simple_line3d_plot(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    if show {
-        plot.show();
-    }
+    plot.show();
 }
 
 // 3D Surface Plot
-fn surface_plot(show: bool) {
+fn surface_plot() {
     let n: usize = 100;
-    let x: Vec<f64> = linspace(-10., 10., n).collect();
-    let y: Vec<f64> = linspace(-10., 10., n).collect();
+    let x: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec();
+    let y: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec();
     let z: Vec<Vec<f64>> = x
         .iter()
         .map(|i| {
@@ -100,16 +98,15 @@ fn surface_plot(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    if show {
-        plot.show();
-    }
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
+    // Uncomment any of these lines to display the example.
+
     // Scatter3D Plots
-    simple_scatter3d_plot(true);
-    simple_line3d_plot(true);
-    customized_scatter3d_plot(true);
-    surface_plot(true);
-    Ok(())
+    simple_scatter3d_plot();
+    simple_line3d_plot();
+    customized_scatter3d_plot();
+    surface_plot();
 }

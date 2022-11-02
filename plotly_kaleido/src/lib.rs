@@ -9,14 +9,15 @@
 //! Note that [plotly/Kaleido](https://github.com/plotly/Kaleido) is still in pre-release and as such the `kaleido`
 //! feature should be considered in pre-release mode as well.
 
-use directories::ProjectDirs;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+
+use directories::ProjectDirs;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
@@ -123,13 +124,13 @@ impl Kaleido {
         &self,
         dst: &Path,
         plotly_data: &Value,
-        image_format: &str,
+        format: &str,
         width: usize,
         height: usize,
         scale: f64,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut dst = PathBuf::from(dst);
-        dst.set_extension(image_format);
+        dst.set_extension(format);
 
         let p = self.cmd_path.as_path();
         let p = p.to_str().unwrap();
@@ -152,8 +153,7 @@ impl Kaleido {
             .expect("failed to spawn Kaleido binary");
 
         {
-            let plot_data =
-                PlotData::new(plotly_data, image_format, width, height, scale).to_json();
+            let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
             let mut process_stdin = process.stdin.unwrap();
             process_stdin
                 .write_all(plot_data.as_bytes())
@@ -165,7 +165,7 @@ impl Kaleido {
         for line in output_lines.flatten() {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
-                let data: Vec<u8> = match image_format {
+                let data: Vec<u8> = match format {
                     "svg" | "eps" => image_data.as_bytes().to_vec(),
                     _ => base64::decode(image_data).unwrap(),
                 };
@@ -181,8 +181,9 @@ impl Kaleido {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
     use std::path::PathBuf;
+
+    use serde_json::{json, to_value};
 
     use super::*;
 

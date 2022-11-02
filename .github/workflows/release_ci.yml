@@ -1,4 +1,4 @@
-name: build_master
+name: Release
 
 on:
   push:
@@ -6,84 +6,69 @@ on:
   pull_request:
     branches: [ master ]
 
+# Cancel any in-flight jobs for the same PR/branch so there's only one active
+# at a time
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
-  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: full
 
 jobs:
-  build_linux:
+  rustfmt:
+    name: Rustfmt
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - name: build_linux
-        run: cargo build --all-features --verbose --release
-      - name: Run tests
-        run: cargo test --features plotly_ndarray,kaleido --release --verbose
-      - name: Run basic charts
-        run: cargo run --example basic_charts --release
-      - name: Run financial charts
-        run: cargo run --example financial_charts --release
-      - name: Run fundamentals
-        run: cargo run --example fundamentals --release
-      - name: Run ndarray support
-        run: cargo run --example ndarray_support --features plotly_ndarray --release
-      - name: Run scientific charts
-        run: cargo run --example scientific_charts --release
-      - name: Run statistical charts
-        run: cargo run --example statistical_charts --release
-      - name: Run subplots
-        run: cargo run --example subplots --release
-      - name: Run 3D plots
-        run: cargo run --example plot3d --release
-
-  build_windows:
-    runs-on: windows-latest
-
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+      - run: cd ${{ github.workspace }}/examples && cargo fmt --all -- --check
+    
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: build_windows
-        run: cargo build --all-features --verbose --release
-      - name: Run tests
-        run: cargo test --features plotly_ndarray,kaleido --release --verbose
-      - name: Run basic charts
-        run: cargo run --example basic_charts --release
-      - name: Run financial charts
-        run: cargo run --example financial_charts --release
-      - name: Run fundamentals
-        run: cargo run --example fundamentals --release
-      - name: Run ndarray support
-        run: cargo run --example ndarray_support --features plotly_ndarray --release
-      - name: Run scientific charts
-        run: cargo run --example scientific_charts --release
-      - name: Run statistical charts
-        run: cargo run --example statistical_charts --release
-      - name: Run subplots
-        run: cargo run --example subplots --release
-      - name: Run 3D plots
-        run: cargo run --example plot3d --release
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - run: cargo clippy -- -D warnings
+      - run: cd ${{ github.workspace }}/examples && cargo clippy -- -D warnings
 
-  build_macos:
-    runs-on: macos-latest
-
+  test:
+    name: Tests
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-      - name: build_macos
-        run: cargo build --all-features --verbose --release
-      - name: Run tests
-        run: cargo test --features plotly_ndarray,kaleido --release --verbose
-      - name: Run basic charts
-        run: cargo run --example basic_charts --release
-      - name: Run financial charts
-        run: cargo run --example financial_charts --release
-      - name: Run fundamentals
-        run: cargo run --example fundamentals --release
-      - name: Run ndarray support
-        run: cargo run --example ndarray_support --features plotly_ndarray --release
-      - name: Run scientific charts
-        run: cargo run --example scientific_charts --release
-      - name: Run statistical charts
-        run: cargo run --example statistical_charts --release
-      - name: Run subplots
-        run: cargo run --example subplots --release
-      - name: Run 3D plots
-        run: cargo run --example plot3d --release
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --features=plotly_ndarray,kaleido
+      
+  build_examples:
+    name: Build Examples
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [  # missing jupyter and wasm-yew-minimal
+          3d_charts,
+          basic_charts,
+          custom_controls,
+          financial_charts,
+          kaleido,
+          ndarray,
+          scientific_charts,
+          shapes,
+          subplots
+        ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build
+

@@ -1,10 +1,13 @@
+#![allow(dead_code)]
+
+use std::f64::consts::PI;
+
 use plotly::common::{ColorScale, ColorScalePalette, Title};
 use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
-use std::f64::consts::PI;
 
 // Contour Plots
-fn simple_contour_plot(show: bool) {
+fn simple_contour_plot() {
     let n = 200;
     let mut x = Vec::<f64>::new();
     let mut y = Vec::<f64>::new();
@@ -16,28 +19,25 @@ fn simple_contour_plot(show: bool) {
         y.push(value);
     }
 
-    for xi in 0..n {
+    x.iter().take(n).for_each(|x| {
         let mut row = Vec::<f64>::new();
-        for yi in 0..n {
-            let radius_squared = x[xi].powf(2.0) + y[yi].powf(2.0);
-            let zv =
-                x[xi].sin() * y[yi].cos() * radius_squared.sin() / (radius_squared + 1.0).log10();
+        y.iter().take(n).for_each(|y| {
+            let radius_squared = x.powf(2.0) + y.powf(2.0);
+            let zv = x.sin() * y.cos() * radius_squared.sin() / (radius_squared + 1.0).log10();
             row.push(zv);
-        }
+        });
         z.push(row);
-    }
+    });
 
     let trace = Contour::new(x, y, z);
     let mut plot = Plot::new();
 
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("simple_contour_plot")));
+
+    plot.show();
 }
 
-fn colorscale_for_contour_plot(show: bool) {
+fn colorscale_for_contour_plot() {
     let z = vec![
         vec![10.0, 10.625, 12.5, 15.625, 20.0],
         vec![5.625, 6.25, 8.125, 11.25, 15.625],
@@ -51,16 +51,11 @@ fn colorscale_for_contour_plot(show: bool) {
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("colorscale_for_contour_plot"))
-    );
+
+    plot.show();
 }
 
-fn customizing_size_and_range_of_a_contour_plots_contours(show: bool) {
+fn customizing_size_and_range_of_a_contour_plots_contours() {
     let z = vec![
         vec![10.0, 10.625, 12.5, 15.625, 20.0],
         vec![5.625, 6.25, 8.125, 11.25, 15.625],
@@ -77,18 +72,11 @@ fn customizing_size_and_range_of_a_contour_plots_contours(show: bool) {
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some(
-            "customizing_size_and_range_of_a_contour_plots_contours"
-        ))
-    );
+
+    plot.show();
 }
 
-fn customizing_spacing_between_x_and_y_ticks(show: bool) {
+fn customizing_spacing_between_x_and_y_ticks() {
     let z = vec![
         vec![10.0, 10.625, 12.5, 15.625, 20.0],
         vec![5.625, 6.25, 8.125, 11.25, 15.625],
@@ -107,35 +95,29 @@ fn customizing_spacing_between_x_and_y_ticks(show: bool) {
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("customizing_spacing_between_x_and_y_ticks"))
-    );
+
+    plot.show();
 }
 
 // Heatmaps
-fn basic_heat_map(show: bool) {
+fn basic_heat_map() {
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
     let trace = HeatMap::new_z(z);
     let mut plot = Plot::new();
     plot.add_trace(trace);
-    if show {
-        plot.show();
-    }
-    println!("{}", plot.to_inline_html(Some("basic_heat_map")));
+
+    plot.show();
 }
 
-fn main() -> std::io::Result<()> {
+fn main() {
+    // Uncomment any of these lines to display the example.
+
     // Contour Plots
-    simple_contour_plot(true);
-    colorscale_for_contour_plot(true);
-    customizing_size_and_range_of_a_contour_plots_contours(true);
-    customizing_spacing_between_x_and_y_ticks(true);
+    simple_contour_plot();
+    colorscale_for_contour_plot();
+    customizing_size_and_range_of_a_contour_plots_contours();
+    customizing_spacing_between_x_and_y_ticks();
 
     // Heatmaps
-    basic_heat_map(true);
-    Ok(())
+    basic_heat_map();
 }

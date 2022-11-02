@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "plotly",
-    "plotly_kaleido"
+    "plotly_derive",
+    "plotly_kaleido",
 ]

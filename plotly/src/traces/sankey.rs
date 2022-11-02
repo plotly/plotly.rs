@@ -1,10 +1,13 @@
-//! Sankey plot
+//! Sankey trace
 
+use plotly_derive::FieldSetter;
 use serde::Serialize;
 
-use crate::color::{Color, ColorArray};
-use crate::common::{Dim, Domain, Font, HoverInfo, Label, LegendGroupTitle, Orientation, PlotType};
-use crate::Trace;
+use crate::{
+    color::{Color, ColorArray},
+    common::{Dim, Domain, Font, HoverInfo, Label, LegendGroupTitle, Orientation, PlotType},
+    Trace,
+};
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -15,11 +18,10 @@ pub enum Arrangement {
     Fixed,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Default)]
 pub struct Line {
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     width: Option<f64>,
 }
 
@@ -44,28 +46,22 @@ impl Line {
     }
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Default, Clone)]
 pub struct Node {
     // Missing: customdata, groups
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    label: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    label: Option<Vec<String>>,
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pad: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     thickness: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     x: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     y: Option<f64>,
 }
 
@@ -84,8 +80,8 @@ impl Node {
         self
     }
 
-    pub fn label(mut self, label: Vec<&str>) -> Self {
-        self.label = Some(label.iter().map(|&el| el.to_string()).collect());
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Self {
+        self.hover_info = Some(hover_info);
         self
     }
 
@@ -94,13 +90,13 @@ impl Node {
         self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Self {
-        self.hover_info = Some(hover_info);
+    pub fn hover_template(mut self, hover_template: &str) -> Self {
+        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
         self
     }
 
-    pub fn hover_template(mut self, hover_template: &str) -> Self {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
+    pub fn label(mut self, label: Vec<&str>) -> Self {
+        self.label = Some(label.iter().map(|&el| el.to_string()).collect());
         self
     }
 
@@ -130,33 +126,47 @@ impl Node {
     }
 }
 
-#[derive(Serialize, Default, Clone)]
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone)]
 pub struct Link<V>
 where
-    V: Serialize + Default + Clone,
+    V: Serialize + Clone,
 {
     // Missing: colorscales, customdata
-    #[serde(skip_serializing_if = "Option::is_none")]
     color: Option<Dim<Box<dyn Color>>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
+    #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
+    #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hovertemplate")]
+    #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     line: Option<Line>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     source: Option<Vec<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     target: Option<Vec<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     value: Option<Vec<V>>,
+}
+
+impl<V> Default for Link<V>
+where
+    V: Serialize + Clone,
+{
+    fn default() -> Self {
+        Self {
+            color: None,
+            hover_info: None,
+            hover_label: None,
+            hover_template: None,
+            line: None,
+            source: None,
+            target: None,
+            value: None,
+        }
+    }
 }
 
 impl<V> Link<V>
 where
-    V: Serialize + Default + Clone,
+    V: Serialize + Clone,
 {
     pub fn new() -> Self {
         Default::default()
@@ -172,13 +182,13 @@ where
         self
     }
 
-    pub fn hover_label(mut self, hover_label: Label) -> Self {
-        self.hover_label = Some(hover_label);
+    pub fn hover_info(mut self, hover_info: HoverInfo) -> Self {
+        self.hover_info = Some(hover_info);
         self
     }
 
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Self {
-        self.hover_info = Some(hover_info);
+    pub fn hover_label(mut self, hover_label: Label) -> Self {
+        self.hover_label = Some(hover_label);
         self
     }
 
@@ -208,171 +218,135 @@ where
     }
 }
 
-#[derive(Serialize, Default, Clone)]
+/// Construct a Sankey trace.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::{
+///     Sankey,
+///     common::Orientation,
+///     sankey::{Line, Link, Node}
+/// };
+///
+/// let line = Line::new().color("#00FF00").width(0.5);
+///
+/// let node = Node::new()
+///     .line(line)
+///     .pad(15)
+///     .thickness(30)
+///     .label(vec!["A1", "A2", "B1", "B2", "C1", "C2"])
+///     .color("#0000FF");
+///
+/// let link = Link::new()
+///     .value(vec![8, 4, 2, 8, 4, 2])
+///     .source(vec![0, 1, 0, 2, 3, 3])
+///     .target(vec![2, 3, 3, 4, 4, 5]);
+///
+/// let trace = Sankey::new()
+///     .node(node)
+///     .link(link)
+///     .orientation(Orientation::Horizontal);
+///
+/// let expected = serde_json::json!({
+///     "type": "sankey",
+///     "orientation": "h",
+///     "node": {
+///         "color": "#0000FF",
+///         "label": ["A1", "A2", "B1", "B2", "C1", "C2"],
+///         "thickness": 30,
+///         "pad": 15,
+///         "line": {
+///             "color": "#00FF00",
+///             "width": 0.5,
+///         }
+///     },
+///     "link": {
+///         "source": [0, 1, 0, 2, 3, 3],
+///         "target": [2, 3, 3, 4, 4, 5],
+///         "value": [8, 4, 2, 8, 4, 2]
+///     }
+/// });
+///
+/// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
+/// ```
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, FieldSetter)]
+#[field_setter(box_self, kind = "trace")]
 pub struct Sankey<V>
 where
-    V: Serialize + Default + Clone,
+    V: Serialize + Clone,
 {
     // Missing: meta, customdata, uirevision
+    #[field_setter(default = "PlotType::Sankey")]
     r#type: PlotType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    visible: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendrank")]
-    legend_rank: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "legendgrouptitle")]
-    legend_group_title: Option<LegendGroupTitle>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    ids: Option<Vec<String>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverinfo")]
-    hover_info: Option<HoverInfo>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "hoverlabel")]
-    hover_label: Option<Label>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    domain: Option<Domain>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    orientation: Option<Orientation>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    node: Option<Node>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    link: Option<Link<V>>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "textfont")]
-    text_font: Option<Font>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "selectedpoints")]
-    selected_points: Option<Vec<usize>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    arrangement: Option<Arrangement>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "valueformat")]
-    value_format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "valuesuffix")]
-    value_suffix: Option<String>,
-}
-
-impl<V> Sankey<V>
-where
-    V: Serialize + Default + Clone,
-{
-    /// Creates a new empty Sankey diagram.
-    pub fn new() -> Box<Self> {
-        Box::new(Self {
-            r#type: PlotType::Sankey,
-            ..Default::default()
-        })
-    }
-
-    /// Sets the trace name. The trace name appears as the legend item and on hover.
-    pub fn name(mut self, name: &str) -> Box<Self> {
-        self.name = Some(name.to_string());
-        Box::new(self)
-    }
-
-    /// Determines whether or not this trace is visible. If "legendonly", the trace
-    /// is not drawn, but can appear as a legend item (provided that the legend itself is visible).
-    pub fn visible(mut self, visible: bool) -> Box<Self> {
-        self.visible = Some(visible);
-        Box::new(self)
-    }
-
-    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
-    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
-    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
-    /// and ranks greater than 1000 to go after all unranked items.
-    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
-        self.legend_rank = Some(legend_rank);
-        Box::new(self)
-    }
-
-    /// Set and style the title to appear for the legend group
-    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
-        self.legend_group_title = Some(legend_group_title);
-        Box::new(self)
-    }
-
-    /// Assigns id labels to each datum. These ids are for object constancy of data points during animation.
-    pub fn ids(mut self, ids: Vec<&str>) -> Box<Self> {
-        self.ids = Some(ids.iter().map(|&id| id.to_string()).collect());
-        Box::new(self)
-    }
-
-    /// Determines which trace information appear on hover. If `none` or `skip` are set, no information is displayed
-    /// upon hovering. But, if `none` is set, click and hover events are still fired. Note that this attribute
-    /// is superseded by `node.hover_info` and `link.hover_info` for nodes and links respectively.
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Box<Self> {
-        self.hover_info = Some(hover_info);
-        Box::new(self)
-    }
-
-    /// Sets the hover label for this trace.
-    pub fn hover_label(mut self, hover_label: Label) -> Box<Self> {
-        self.hover_label = Some(hover_label);
-        Box::new(self)
-    }
-
-    /// Sets the font for node labels.
-    pub fn text_font(mut self, text_font: Font) -> Box<Self> {
-        self.text_font = Some(text_font);
-        Box::new(self)
-    }
-
-    /// Sets the domain within which the Sankey diagram will be drawn.
-    pub fn domain(mut self, domain: Domain) -> Box<Self> {
-        self.domain = Some(domain);
-        Box::new(self)
-    }
-
-    /// Sets the orientation of the Sankey diagram.
-    pub fn orientation(mut self, orientation: Orientation) -> Box<Self> {
-        self.orientation = Some(orientation);
-        Box::new(self)
-    }
-
-    /// The nodes of the Sankey diagram.
-    pub fn node(mut self, node: Node) -> Box<Self> {
-        self.node = Some(node);
-        Box::new(self)
-    }
-
-    /// The links of the Sankey diagram.
-    pub fn link(mut self, link: Link<V>) -> Box<Self> {
-        self.link = Some(link);
-        Box::new(self)
-    }
-
-    /// Vector containing integer indices of selected points. Has an effect only for traces that support
-    /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
-    /// on for all points.
-    pub fn selected_points(mut self, selected_points: Vec<usize>) -> Box<Self> {
-        self.selected_points = Some(selected_points);
-        Box::new(self)
-    }
-
     /// If value is `snap` (the default), the node arrangement is assisted by automatic snapping of elements
     /// to preserve space between nodes specified via `nodepad`. If value is `perpendicular`, the nodes can
     /// only move along a line perpendicular to the flow. If value is `freeform`, the nodes can freely move
     /// on the plane. If value is `fixed`, the nodes are stationary.
-    pub fn arrangement(mut self, arrangement: Arrangement) -> Box<Self> {
-        self.arrangement = Some(arrangement);
-        Box::new(self)
-    }
-
+    arrangement: Option<Arrangement>,
+    /// Sets the domain within which the Sankey diagram will be drawn.
+    domain: Option<Domain>,
+    /// Assigns id labels to each datum. These ids are for object constancy of data points during animation.
+    ids: Option<Vec<String>>,
+    /// Determines which trace information appear on hover. If `none` or `skip` are set, no information is displayed
+    /// upon hovering. But, if `none` is set, click and hover events are still fired. Note that this attribute
+    /// is superseded by `node.hover_info` and `link.hover_info` for nodes and links respectively.
+    #[serde(rename = "hoverinfo")]
+    hover_info: Option<HoverInfo>,
+    /// Sets the hover label for this trace.
+    #[serde(rename = "hoverlabel")]
+    hover_label: Option<Label>,
+    /// Set and style the title to appear for the legend group
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
+    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
+    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
+    /// and ranks greater than 1000 to go after all unranked items.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// The links of the Sankey diagram.
+    link: Option<Link<V>>,
+    /// Sets the trace name. The trace name appears as the legend item and on hover.
+    name: Option<String>,
+    /// The nodes of the Sankey diagram.
+    node: Option<Node>,
+    /// Sets the orientation of the Sankey diagram.
+    orientation: Option<Orientation>,
+    /// Vector containing integer indices of selected points. Has an effect only for traces that support
+    /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
+    /// on for all points.
+    #[serde(rename = "selectedpoints")]
+    selected_points: Option<Vec<usize>>,
+    /// Sets the font for node labels.
+    #[serde(rename = "textfont")]
+    text_font: Option<Font>,
     /// Sets the value formatting rule using d3 formatting mini-languages which are very similar to those in
     /// Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
-    pub fn value_format(mut self, value_format: &str) -> Box<Self> {
-        self.value_format = Some(value_format.to_string());
-        Box::new(self)
-    }
-
+    #[serde(rename = "valueformat")]
+    value_format: Option<String>,
     /// Adds a unit to follow the value in the hover tooltip. Add a space if a separation is necessary from the value.
-    pub fn value_suffix(mut self, value_suffix: &str) -> Box<Self> {
-        self.value_suffix = Some(value_suffix.to_string());
-        Box::new(self)
+    #[serde(rename = "valuesuffix")]
+    value_suffix: Option<String>,
+    /// Determines whether or not this trace is visible. If "legendonly", the trace
+    /// is not drawn, but can appear as a legend item (provided that the legend itself is visible).
+    visible: Option<bool>,
+}
+
+impl<V> Sankey<V>
+where
+    V: Serialize + Clone,
+{
+    /// Creates a new empty Sankey diagram.
+    pub fn new() -> Box<Self> {
+        Box::new(Default::default())
     }
 }
 
 impl<V> Trace for Sankey<V>
 where
-    V: Serialize + Default + Clone,
+    V: Serialize + Clone,
 {
     fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap()
@@ -385,6 +359,14 @@ mod tests {
 
     use super::*;
     use crate::color::NamedColor;
+
+    #[test]
+    fn test_serialize_default_sankey() {
+        let trace = Sankey::<i32>::default();
+        let expected = json!({"type": "sankey"});
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
 
     #[test]
     fn test_serialize_basic_sankey_trace() {

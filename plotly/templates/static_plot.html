@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <div>
+            <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+            {% if remote_plotly_js -%}
+            <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+            {% else -%}
+            <script type="text/javascript">{% include "plotly.min.js" %}</script>
+            {% endif -%}
+
+            <div id="plotly-html-element" hidden></div>
+            <img id="plotly-img-element"></img>
+
+            <script type="module">
+                const graph_div = document.getElementById("plotly-html-element");
+                await Plotly.newPlot(graph_div, {{ plot|tojson|safe }});
+                
+                const img_element = document.getElementById("plotly-img-element");
+                const data_url = await Plotly.toImage(
+                    graph_div,
+                    {
+                        format: "{{ format }}",
+                        width: {{ width }},
+                        height: {{ height }},
+                    }
+                );
+
+                img_element.setAttribute("src", data_url);
+            </script>
+        </div>
+    </body>
+</html>
