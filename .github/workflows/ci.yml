@@ -38,7 +38,7 @@ jobs:
 
   test:
     name: Tests
-    stategy:
+    strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
