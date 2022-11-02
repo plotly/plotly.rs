@@ -323,8 +323,7 @@ impl Plot {
     ///
     /// To generate a full, standalone HTML string or file, use `Plot::to_html()` and `Plot::write_html()`,
     /// respectively.
-    pub fn to_inline_html<T: Into<Option<&'static str>>>(&self, plot_div_id: T) -> String {
-        let plot_div_id = plot_div_id.into();
+    pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
         let plot_div_id = match plot_div_id {
             Some(id) => id.to_string(),
             None => Alphanumeric.sample_string(&mut thread_rng(), 20),
@@ -337,7 +336,7 @@ impl Plot {
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot: self,
-            plot_div_id: plot_div_id.as_str(),
+            plot_div_id: &plot_div_id,
         };
         tmpl.render().unwrap()
     }
@@ -486,18 +485,15 @@ mod tests {
     #[test]
     fn test_inline_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_inline_html("replace_this_with_the_div_id");
+        let inline_plot_data = plot.to_inline_html(Some("replace_this_with_the_div_id"));
         assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
-        println!("{}", inline_plot_data);
-        let random_div_id = plot.to_inline_html(None);
-        println!("{}", random_div_id);
+        plot.to_inline_html(None);
     }
 
     #[test]
     fn test_jupyter_notebook_plot() {
         let plot = create_test_plot();
-        let inline_plot_data = plot.to_jupyter_notebook_html();
-        println!("{}", inline_plot_data);
+        plot.to_jupyter_notebook_html();
     }
 
     #[test]
