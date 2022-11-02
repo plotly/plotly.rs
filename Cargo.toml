@@ -1,20 +1,6 @@
 [workspace]
 members = [
-    # Crates
     "plotly",
     "plotly_derive",
     "plotly_kaleido",
-
-    # Examples
-    "examples/3d_charts",
-    "examples/custom_controls",
-    "examples/basic_charts",
-    "examples/financial_charts",
-    "examples/kaleido",
-    "examples/ndarray",
-    "examples/scientific_charts",
-    "examples/shapes",
-    "examples/statistical_charts",
-    "examples/subplots",
-    "examples/wasm-yew-minimal",
 ]
