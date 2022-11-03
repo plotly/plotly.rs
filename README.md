@@ -189,6 +189,10 @@ The following feature flags are available:
 
 Adds plot save functionality to the following formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
 
+### `plotly_image`
+
+Adds trait implementations so that `image::RgbImage` and `image::RgbaImage` can be used more directly with the `plotly::Image` trace.
+
 ### `plotly_ndarray`
 
 Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
