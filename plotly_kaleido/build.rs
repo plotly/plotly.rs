@@ -36,7 +36,7 @@ const KALEIDO_BIN: &str = "kaleido.exe";
 const KALEIDO_BIN: &str = "kaleido";
 
 fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
-    let file = fs::File::open(&zip_file).unwrap();
+    let file = fs::File::open(zip_file).unwrap();
     let mut archive = zip::ZipArchive::new(file).unwrap();
 
     for i in 0..archive.len() {
@@ -68,7 +68,7 @@ fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
             );
             if let Some(p) = outpath.parent() {
                 if !p.exists() {
-                    fs::create_dir_all(&p).unwrap();
+                    fs::create_dir_all(p).unwrap();
                 }
             }
             let mut outfile = fs::File::create(&outpath).unwrap();
@@ -104,13 +104,13 @@ fn main() -> Result<()> {
     let kaleido_zip_file = p.join("kaleido.zip");
 
     let mut cmd = Command::new("cargo")
-        .args(&["install", "ruget"])
+        .args(["install", "ruget"])
         .spawn()
         .unwrap();
     cmd.wait()?;
 
     let mut cmd = Command::new("ruget")
-        .args(&[
+        .args([
             KALEIDO_URL,
             "-o",
             kaleido_zip_file.as_path().to_str().unwrap(),
