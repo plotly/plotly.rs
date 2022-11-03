@@ -10,7 +10,8 @@ use plotly::{
     Bar, HeatMap, Layout, Plot,
 };
 
-/// Display a bar chart with an associated dropdown selector to show different data.
+/// Display a bar chart with an associated dropdown selector to show different
+/// data.
 fn bar_plot_with_dropdown_for_different_data() {
     type BarType = Bar<&'static str, i32>;
     let mut plot = Plot::new();
@@ -40,7 +41,8 @@ fn bar_plot_with_dropdown_for_different_data() {
     plot.show();
 }
 
-/// Display a heat map, with buttons to allow for toggling of different colorscales.
+/// Display a heat map, with buttons to allow for toggling of different
+/// colorscales.
 fn heat_map_with_modifiable_colorscale() {
     type HeatMapType = HeatMap<f64, f64, Vec<f64>>;
     let gauss = |v: i32| (-v as f64 * v as f64 / 200.0).exp();
@@ -72,7 +74,8 @@ fn heat_map_with_modifiable_colorscale() {
     plot.show();
 }
 
-/// Display a bar chart, with buttons to toggle between stacked or grouped display maodes.
+/// Display a bar chart, with buttons to toggle between stacked or grouped
+/// display maodes.
 fn bar_chart_with_modifiable_bar_mode() {
     type BarType = Bar<&'static str, i32>;
     let mut plot = Plot::new();
