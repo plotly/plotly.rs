@@ -1,38 +1,120 @@
 //! Image plot
 
+#[cfg(feature = "plotly_image")]
+use image::{Pixel, RgbImage, RgbaImage};
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix2};
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
+use crate::color::{Rgb, Rgba};
 use crate::common::{Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible};
 use crate::private::{NumOrString, NumOrStringCollection};
 use crate::Trace;
 
 #[derive(Serialize, Clone, Copy, Debug)]
 #[serde(untagged)]
-pub enum PixelColor<U> {
-    Color3([U; 3]),
-    Color4([U; 4]),
+pub enum PixelColor {
+    Color3(u8, u8, u8),
+    Color4(u8, u8, u8, f64),
 }
 
-/// A (marker?) trait allowing several ways to describe an image.
-pub trait ImageData {}
-// DynClone + ErasedSerialize + Send + Sync + std::fmt::Debug + 'static ?
+/// A marker trait allowing several ways to describe the pixel data for an
+/// `Image` trace.
+pub trait ImageData {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>>;
+}
 
-//dyn_clone::clone_trait_object!(ImageData);
-//erased_serde::serialize_trait_object!(ImageData);
+impl ImageData for Vec<Vec<Rgb>> {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>> {
+        let mut out = Vec::with_capacity(self.len());
+        for row in self {
+            let mut new_row = Vec::with_capacity(row.len());
+            for pixel in row {
+                new_row.push(PixelColor::Color3(pixel.r, pixel.g, pixel.b))
+            }
+            out.push(new_row);
+        }
+        out
+    }
+}
 
-impl<U> ImageData for Vec<Vec<[U; 3]>> {}
-impl<U> ImageData for Vec<Vec<[U; 4]>> {}
-#[cfg(feature = "plotly_imageio")]
-impl ImageData for RgbImage {}
-#[cfg(feature = "plotly_imageio")]
-impl ImageData for RgbaImage {}
+impl ImageData for Vec<Vec<Rgba>> {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>> {
+        let mut out = Vec::with_capacity(self.len());
+        for row in self {
+            let mut new_row = Vec::with_capacity(row.len());
+            for pixel in row {
+                new_row.push(PixelColor::Color4(pixel.r, pixel.g, pixel.b, pixel.a))
+            }
+            out.push(new_row);
+        }
+        out
+    }
+}
+
+#[cfg(feature = "plotly_image")]
+impl ImageData for RgbImage {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>> {
+        let mut out = Vec::with_capacity(self.height() as usize);
+        for row in self.rows() {
+            let mut new_row = Vec::with_capacity(row.len());
+            for pixel in row {
+                let ch = pixel.channels();
+                new_row.push(PixelColor::Color3(ch[0], ch[1], ch[2]))
+            }
+            out.push(new_row);
+        }
+        out
+    }
+}
+
+#[cfg(feature = "plotly_image")]
+impl ImageData for RgbaImage {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>> {
+        let mut out = Vec::with_capacity(self.height() as usize);
+        for row in self.rows() {
+            let mut new_row = Vec::with_capacity(row.len());
+            for pixel in row {
+                let ch = pixel.channels();
+                new_row.push(PixelColor::Color4(
+                    ch[0],
+                    ch[1],
+                    ch[2],
+                    ch[3] as f64 / 255.0,
+                ))
+            }
+            out.push(new_row);
+        }
+        out
+    }
+}
+
 #[cfg(feature = "plotly_ndarray")]
-impl<U> ImageData for Array<[U; 3], Ix2> {}
+impl ImageData for Array<(u8, u8, u8), Ix2> {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>> {
+        let height = self.shape()[0];
+        let mut out = Vec::with_capacity(height);
+        let pixels = self.map(|p| PixelColor::Color3(p.0, p.1, p.2));
+        for row in pixels.rows() {
+            out.push(row.to_vec());
+        }
+        out
+    }
+}
+
 #[cfg(feature = "plotly_ndarray")]
-impl<U> ImageData for Array<[U; 4], Ix2> {}
+impl ImageData for Array<(u8, u8, u8, f64), Ix2> {
+    fn to_image_data(&self) -> Vec<Vec<PixelColor>> {
+        let height = self.shape()[0];
+        let mut out = Vec::with_capacity(height);
+        let pixels = self.map(|p| PixelColor::Color4(p.0, p.1, p.2, p.3));
+        for row in pixels.rows() {
+            out.push(row.to_vec());
+        }
+        out
+    }
+}
 
 #[derive(Serialize, Clone, Debug)]
 #[serde(rename_all = "lowercase")]
@@ -67,19 +149,22 @@ impl Serialize for ZSmooth {
 /// # Examples
 ///
 /// ```
-/// use plotly::Image;
+/// use plotly::{color::Rgb, image::ColorModel, Image};
 ///
-/// let x = vec![0, 1, 2, 3, 4, 5];
-/// let y = vec![0, 2, 4, 6, 8, 10];
+/// let b = Rgb::new(0, 0, 0);
+/// let w = Rgb::new(255, 255, 255);
 ///
-/// let trace = Bar::new(x, y).show_legend(true).opacity(0.5);
+/// let z = vec![
+///     vec![b, w],
+///     vec![w, b],
+/// ];
+///
+/// let trace = Image::new(z).color_model(ColorModel::RGB);
 ///
 /// let expected = serde_json::json!({
-///     "type": "bar",
-///     "x": [0, 1, 2, 3, 4, 5],
-///     "y": [0, 2, 4, 6, 8, 10],
-///     "showlegend": true,
-///     "opacity": 0.5
+///     "type": "image",
+///     "z": [[[0, 0, 0], [255, 255, 255]], [[255, 255, 255], [0, 0, 0]]],
+///     "colormodel": "rgb"
 /// });
 ///
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
@@ -87,12 +172,13 @@ impl Serialize for ZSmooth {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 #[field_setter(box_self, kind = "trace")]
-pub struct Image<U>
-where
-    U: Serialize + Clone,
-{
+pub struct Image {
     #[field_setter(default = "PlotType::Image")]
     r#type: PlotType,
+
+    #[field_setter(skip)]
+    z: Option<Vec<Vec<PixelColor>>>,
+
     /// Sets the trace name. The trace name appear as the legend item and on
     /// hover.
     name: Option<String>,
@@ -130,7 +216,6 @@ where
     /// Set the pixel's vertical size.
     dy: Option<f64>,
 
-    z: Option<Vec<Vec<PixelColor<U>>>>, // Option<Box<dyn ImageData>>,
     /// Specifies the data URI of the image to be visualized. The URI consists
     /// of "data:image/[<media subtype>][;base64],<data>".
     source: Option<String>,
@@ -209,22 +294,13 @@ where
     #[serde(rename = "colormodel")]
     color_model: Option<ColorModel>,
 
-    /// Array defining the higher bound for each color component. Note that the
-    /// default value will depend on the colormodel. For the `rgb`
-    /// colormodel, it is [255, 255, 255]. For the `rgba` colormodel, it is
-    /// [255, 255, 255, 1]. For the `rgba256` colormodel, it is [255, 255, 255,
-    /// 255]. For the `hsl` colormodel, it is [360, 100, 100]. For the
-    /// `hsla` colormodel, it is [360, 100, 100, 1].
+    #[field_setter(skip)]
     #[serde(rename = "zmax")]
-    z_max: Option<Vec<Vec<PixelColor<U>>>>,
-    /// Array defining the lower bound for each color component. Note that the
-    /// default value will depend on the colormodel. For the `rgb`
-    /// colormodel, it is [0, 0, 0]. For the `rgba` colormodel, it is [0, 0, 0,
-    /// 0]. For the `rgba256` colormodel, it is [0, 0, 0, 0]. For the `hsl`
-    /// colormodel, it is [0, 0, 0]. For the `hsla` colormodel, it is [0, 0,
-    /// 0, 0].
+    z_max: Option<Vec<Vec<PixelColor>>>,
+
+    #[field_setter(skip)]
     #[serde(rename = "zmin")]
-    z_min: Option<Vec<Vec<PixelColor<U>>>>,
+    z_min: Option<Vec<Vec<PixelColor>>>,
 
     /// Picks a smoothing algorithm used to smooth `z` data. This only applies
     /// for image traces that use the `source` attribute.
@@ -252,24 +328,40 @@ where
     ui_revision: Option<NumOrString>,
 }
 
-impl<U> Image<U>
-where
-    U: Serialize + Default + Clone,
-{
+impl Image {
     /// A 2-dimensional array in which each element is an array of 3 or 4
     /// numbers representing a color.
-    pub fn new(z: Vec<Vec<PixelColor<U>>>) -> Box<Self> {
+    pub fn new(z: impl ImageData) -> Box<Self> {
         Box::new(Self {
-            z: Some(z),
+            z: Some(z.to_image_data()),
             ..Default::default()
         })
     }
+
+    /// Array defining the higher bound for each color component. Note that the
+    /// default value will depend on the colormodel. For the `rgb`
+    /// colormodel, it is [255, 255, 255]. For the `rgba` colormodel, it is
+    /// [255, 255, 255, 1]. For the `rgba256` colormodel, it is [255, 255, 255,
+    /// 255]. For the `hsl` colormodel, it is [360, 100, 100]. For the
+    /// `hsla` colormodel, it is [360, 100, 100, 1].
+    pub fn z_max(mut self, z_max: impl ImageData) -> Box<Self> {
+        self.z_max = Some(z_max.to_image_data());
+        Box::new(self)
+    }
+
+    /// Array defining the lower bound for each color component. Note that the
+    /// default value will depend on the colormodel. For the `rgb`
+    /// colormodel, it is [0, 0, 0]. For the `rgba` colormodel, it is [0, 0, 0,
+    /// 0]. For the `rgba256` colormodel, it is [0, 0, 0, 0]. For the `hsl`
+    /// colormodel, it is [0, 0, 0]. For the `hsla` colormodel, it is [0, 0,
+    /// 0, 0].
+    pub fn z_min(mut self, z_min: impl ImageData) -> Box<Self> {
+        self.z_min = Some(z_min.to_image_data());
+        Box::new(self)
+    }
 }
 
-impl<U> Trace for Image<U>
-where
-    U: Serialize + Clone,
-{
+impl Trace for Image {
     fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
@@ -284,12 +376,12 @@ mod tests {
     #[test]
     fn test_serialize_pixel_color() {
         assert_eq!(
-            to_value(PixelColor::Color3([255, 100, 150])).unwrap(),
+            to_value(PixelColor::Color3(255, 100, 150)).unwrap(),
             json!([255, 100, 150])
         );
         assert_eq!(
-            to_value(PixelColor::Color4([150, 140, 190, 50])).unwrap(),
-            json!([150, 140, 190, 50])
+            to_value(PixelColor::Color4(150, 140, 190, 0.5)).unwrap(),
+            json!([150, 140, 190, 0.5])
         );
     }
 
@@ -310,8 +402,8 @@ mod tests {
 
     #[test]
     fn test_serialize_image() {
-        let b = PixelColor::Color4([0, 0, 0, 255]);
-        let w = PixelColor::Color4([255, 255, 255, 255]);
+        let b = Rgba::new(0, 0, 0, 0.5);
+        let w = Rgba::new(255, 255, 255, 1.0);
         let image = Image::new(vec![vec![b, w, b, w, b], vec![w, b, w, b, w]])
             .name("image name")
             .visible(Visible::True)
@@ -342,8 +434,8 @@ mod tests {
             .hover_label(Label::new())
             .ui_revision(6);
 
-        let b = [0, 0, 0, 255];
-        let w = [255, 255, 255, 255];
+        let b = (0, 0, 0, 0.5);
+        let w = (255, 255, 255, 1.0);
         let expected = json!({
             "type": "image",
             "z": [[b, w, b, w, b], [w, b, w, b, w]],

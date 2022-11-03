@@ -53,9 +53,9 @@ impl<C: Color> Into<Vec<Box<dyn Color>>> for ColorArray<C> {
 /// B channels.
 #[derive(Debug, Clone, Copy)]
 pub struct Rgb {
-    r: u8,
-    g: u8,
-    b: u8,
+    pub(crate) r: u8,
+    pub(crate) g: u8,
+    pub(crate) b: u8,
 }
 
 impl Rgb {
@@ -78,10 +78,10 @@ impl Serialize for Rgb {
 /// and A channels.
 #[derive(Debug, Clone, Copy)]
 pub struct Rgba {
-    r: u8,
-    g: u8,
-    b: u8,
-    a: f64,
+    pub(crate) r: u8,
+    pub(crate) g: u8,
+    pub(crate) b: u8,
+    pub(crate) a: f64,
 }
 
 impl Rgba {
