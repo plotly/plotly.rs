@@ -60,7 +60,7 @@ jobs:
         with:
           components: llvm-tools-preview
       - uses: taiki-e/install-action@cargo-llvm-cov
-      - run: cargo llvm-cov --workspace --lcov --output-path lcov.info
+      - run: cargo llvm-cov --workspace --features=plotly_ndarray,plotly_image,kaleido --lcov --output-path lcov.info
       - uses: codecov/codecov-action@v3
       
   build_examples:
