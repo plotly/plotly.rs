@@ -4,7 +4,7 @@ use ndarray::Array;
 use plotly::{
     common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title},
     layout::{Axis, Layout},
-    Plot, Scatter3D, Surface,
+    Mesh3D, Plot, Scatter3D, Surface,
 };
 
 // 3D Scatter Plots
@@ -101,12 +101,35 @@ fn surface_plot() {
     plot.show();
 }
 
+fn mesh_3d_plot() {
+    let trace = Mesh3D::new(
+        vec![0, 1, 2, 0],
+        vec![0, 0, 1, 2],
+        vec![0, 2, 0, 1],
+        vec![0, 0, 0, 1],
+        vec![1, 2, 3, 2],
+        vec![2, 3, 1, 3],
+    )
+    .intensity(vec![0.0, 0.33, 0.66, 1.0])
+    .color_scale(ColorScale::Palette(ColorScalePalette::Rainbow));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    plot.show();
+}
+
 fn main() {
     // Uncomment any of these lines to display the example.
 
     // Scatter3D Plots
-    simple_scatter3d_plot();
-    simple_line3d_plot();
-    customized_scatter3d_plot();
-    surface_plot();
+    // simple_scatter3d_plot();
+    // simple_line3d_plot();
+    // customized_scatter3d_plot();
+
+    // Surface Plots
+    // surface_plot();
+
+    // Mesh Plots
+    // mesh_3d_plot();
 }

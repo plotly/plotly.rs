@@ -85,8 +85,8 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
 });
 
 pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
-    // the following are unimplemented: layout.autotypenumbers, layout.polar, layout.ternary,
-    // layout.scene, layout.geo, layout.mapbox, layout.*defaults
+    // the following are unimplemented: layout.autotypenumbers, layout.polar,
+    // layout.ternary, layout.scene, layout.geo, layout.mapbox, layout.*defaults
     let layout_template = LayoutTemplate::new()
         .color_axis(ColorAxis::new().color_bar(ColorBar::new().outline_width(0)))
         .color_scale(

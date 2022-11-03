@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.8.2] - 2022-11-xx
 ### Added
 - [[#110](https://github.com/igiagkiozis/plotly/pull/110)] `LegendGroupTitle` to existing traces.
+- [[#88](https://github.com/igiagkiozis/plotly/pull/88)] `Mesh3D`, `Image`, `ScatterMapbox` traces.
 
 ### Changed
 - [[#113](https://github.com/igiagkiozis/plotly/pull/113)] Refactored the structure of the examples to make them more accessible, whilst adding more examples e.g. for `wasm`.

@@ -1,15 +1,19 @@
-//! This module provides several user interfaces for describing a color to be used throughout the rest of the library.
-//! The easiest way of describing a colour is to use a `&str` or `String`, which is simply serialized as-is and
-//! passed on to the underlying `plotly.js` library. `plotly.js` supports [`CSS color formats`], and will fallback
-//! to some default color if the color string is malformed.
+//! This module provides several user interfaces for describing a color to be
+//! used throughout the rest of the library. The easiest way of describing a
+//! colour is to use a `&str` or `String`, which is simply serialized as-is and
+//! passed on to the underlying `plotly.js` library. `plotly.js` supports [`CSS
+//! color formats`], and will fallback to some default color if the color string
+//! is malformed.
 //!
-//! For a more type-safe approach, the `RGB` or `RGBA` structs can be used to construct a valid color, which will then
-//! get serialized to an appropriate string representation. Cross-browser compatible [`predefined colors`] are
+//! For a more type-safe approach, the `RGB` or `RGBA` structs can be used to
+//! construct a valid color, which will then get serialized to an appropriate
+//! string representation. Cross-browser compatible [`predefined colors`] are
 //! supported via the `NamedColor` enum.
 //!
-//! The `Color` trait is public, and so can be implemented for custom colour types. The user can then implement
-//! a valid serialization function according to their own requirements. On the whole, that should be largely
-//! unnecessary given the functionality already provided within this module.
+//! The `Color` trait is public, and so can be implemented for custom colour
+//! types. The user can then implement a valid serialization function according
+//! to their own requirements. On the whole, that should be largely unnecessary
+//! given the functionality already provided within this module.
 //!
 //! [`CSS color formats`]: https://www.w3schools.com/cssref/css_colors_legal.asp
 //! [`predefined colors`]: https://www.w3schools.com/cssref/css_colors.asp
@@ -30,8 +34,9 @@ impl Color for String {}
 impl Color for Rgb {}
 impl Color for Rgba {}
 
-/// ColorArray is only used internally to provide a helper method for converting Vec<impl Color> to
-/// Vec<Box<dyn Color>>, as we would otherwise fall foul of the orphan rules.
+/// ColorArray is only used internally to provide a helper method for converting
+/// Vec<impl Color> to Vec<Box<dyn Color>>, as we would otherwise fall foul of
+/// the orphan rules.
 pub(crate) struct ColorArray<C: Color>(pub(crate) Vec<C>);
 
 #[allow(clippy::from_over_into)]
@@ -44,12 +49,13 @@ impl<C: Color> Into<Vec<Box<dyn Color>>> for ColorArray<C> {
     }
 }
 
-/// A type-safe way of constructing a valid RGB color from constituent R, G and B channels.
+/// A type-safe way of constructing a valid RGB color from constituent R, G and
+/// B channels.
 #[derive(Debug, Clone, Copy)]
 pub struct Rgb {
-    r: u8,
-    g: u8,
-    b: u8,
+    pub(crate) r: u8,
+    pub(crate) g: u8,
+    pub(crate) b: u8,
 }
 
 impl Rgb {
@@ -68,13 +74,14 @@ impl Serialize for Rgb {
     }
 }
 
-/// A type-safe way of constructing a valid RGBA color from constituent R, G, B and A channels.
+/// A type-safe way of constructing a valid RGBA color from constituent R, G, B
+/// and A channels.
 #[derive(Debug, Clone, Copy)]
 pub struct Rgba {
-    r: u8,
-    g: u8,
-    b: u8,
-    a: f64,
+    pub(crate) r: u8,
+    pub(crate) g: u8,
+    pub(crate) b: u8,
+    pub(crate) a: f64,
 }
 
 impl Rgba {

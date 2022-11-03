@@ -280,18 +280,23 @@ where
     // Missing: meta, customdata, uirevision
     #[field_setter(default = "PlotType::Sankey")]
     r#type: PlotType,
-    /// If value is `snap` (the default), the node arrangement is assisted by automatic snapping of elements
-    /// to preserve space between nodes specified via `nodepad`. If value is `perpendicular`, the nodes can
-    /// only move along a line perpendicular to the flow. If value is `freeform`, the nodes can freely move
-    /// on the plane. If value is `fixed`, the nodes are stationary.
+    /// If value is `snap` (the default), the node arrangement is assisted by
+    /// automatic snapping of elements to preserve space between nodes
+    /// specified via `nodepad`. If value is `perpendicular`, the nodes can
+    /// only move along a line perpendicular to the flow. If value is
+    /// `freeform`, the nodes can freely move on the plane. If value is
+    /// `fixed`, the nodes are stationary.
     arrangement: Option<Arrangement>,
     /// Sets the domain within which the Sankey diagram will be drawn.
     domain: Option<Domain>,
-    /// Assigns id labels to each datum. These ids are for object constancy of data points during animation.
+    /// Assigns id labels to each datum. These ids are for object constancy of
+    /// data points during animation.
     ids: Option<Vec<String>>,
-    /// Determines which trace information appear on hover. If `none` or `skip` are set, no information is displayed
-    /// upon hovering. But, if `none` is set, click and hover events are still fired. Note that this attribute
-    /// is superseded by `node.hover_info` and `link.hover_info` for nodes and links respectively.
+    /// Determines which trace information appear on hover. If `none` or `skip`
+    /// are set, no information is displayed upon hovering. But, if `none`
+    /// is set, click and hover events are still fired. Note that this attribute
+    /// is superseded by `node.hover_info` and `link.hover_info` for nodes and
+    /// links respectively.
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
     /// Sets the hover label for this trace.
@@ -300,37 +305,43 @@ where
     /// Set and style the title to appear for the legend group
     #[serde(rename = "legendgrouptitle")]
     legend_group_title: Option<LegendGroupTitle>,
-    /// Sets the legend rank for this trace. Items and groups with smaller ranks are presented on top/left
-    /// side while with `"reversed" `legend.trace_order` they are on bottom/right side. The default legendrank
-    /// is 1000, so that you can use ranks less than 1000 to place certain items before all unranked items,
-    /// and ranks greater than 1000 to go after all unranked items.
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000, so that you can use ranks less than 1000 to
+    /// place certain items before all unranked items, and ranks greater
+    /// than 1000 to go after all unranked items.
     #[serde(rename = "legendrank")]
     legend_rank: Option<usize>,
     /// The links of the Sankey diagram.
     link: Option<Link<V>>,
-    /// Sets the trace name. The trace name appears as the legend item and on hover.
+    /// Sets the trace name. The trace name appears as the legend item and on
+    /// hover.
     name: Option<String>,
     /// The nodes of the Sankey diagram.
     node: Option<Node>,
     /// Sets the orientation of the Sankey diagram.
     orientation: Option<Orientation>,
-    /// Vector containing integer indices of selected points. Has an effect only for traces that support
-    /// selections. Note that an empty vector means an empty selection where the `unselected` are turned
-    /// on for all points.
+    /// Vector containing integer indices of selected points. Has an effect only
+    /// for traces that support selections. Note that an empty vector means
+    /// an empty selection where the `unselected` are turned on for all
+    /// points.
     #[serde(rename = "selectedpoints")]
     selected_points: Option<Vec<usize>>,
     /// Sets the font for node labels.
     #[serde(rename = "textfont")]
     text_font: Option<Font>,
-    /// Sets the value formatting rule using d3 formatting mini-languages which are very similar to those in
-    /// Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
+    /// Sets the value formatting rule using d3 formatting mini-languages which
+    /// are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
     #[serde(rename = "valueformat")]
     value_format: Option<String>,
-    /// Adds a unit to follow the value in the hover tooltip. Add a space if a separation is necessary from the value.
+    /// Adds a unit to follow the value in the hover tooltip. Add a space if a
+    /// separation is necessary from the value.
     #[serde(rename = "valuesuffix")]
     value_suffix: Option<String>,
-    /// Determines whether or not this trace is visible. If "legendonly", the trace
-    /// is not drawn, but can appear as a legend item (provided that the legend itself is visible).
+    /// Determines whether or not this trace is visible. If "legendonly", the
+    /// trace is not drawn, but can appear as a legend item (provided that
+    /// the legend itself is visible).
     visible: Option<bool>,
 }
 
