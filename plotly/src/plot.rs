@@ -626,7 +626,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // Don't really want it to try and open a browsert window every time we run a test.
+    #[ignore] // Don't really want it to try and open a browser window every time we run a test.
     #[cfg(not(feature = "wasm"))]
     fn test_show_image() {
         let plot = create_test_plot();
