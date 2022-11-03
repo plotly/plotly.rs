@@ -1348,10 +1348,10 @@ pub struct Mapbox {
     /// Sets the pitch angle of the map in degrees, where `0` means
     /// perpendicular to the surface of the map.
     pitch: Option<f64>,
-    ///
+    /// Sets the style of the map.
     style: Option<MapboxStyle>,
     /// Sets the zoom level of the map.
-    zoom: Option<f64>,
+    zoom: Option<u8>,
 }
 
 impl Mapbox {
