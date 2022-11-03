@@ -8,7 +8,10 @@ use serde::Serialize;
 #[cfg(feature = "plotly_ndarray")]
 use crate::ndarray::ArrayTraces;
 use crate::{
-    common::{Calendar, Dim, ErrorData, HoverInfo, Label, Marker, Orientation, PlotType, Visible},
+    common::{
+        Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Marker, Orientation,
+        PlotType, Visible,
+    },
     Trace,
 };
 
@@ -134,6 +137,8 @@ where
     hover_text: Option<Dim<String>>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     marker: Option<Marker>,
     #[serde(rename = "nbinsx")]
     n_bins_x: Option<usize>,
@@ -190,15 +195,20 @@ where
         })
     }
 
-    /// Produces `Histogram` traces from a 2 dimensional tensor (`traces_matrix`) indexed by `x`. This
-    /// function requires the `ndarray` feature.
+    /// Produces `Histogram` traces from a 2 dimensional tensor
+    /// (`traces_matrix`) indexed by `x`. This function requires the
+    /// `ndarray` feature.
     ///
     /// # Arguments
-    /// * `x`             - One dimensional array (or view) that represents the `x` axis coordinates.
-    /// * `traces_matrix` - Two dimensional array (or view) containing the `y` axis coordinates of
+    /// * `x`             - One dimensional array (or view) that represents the
+    ///   `x` axis coordinates.
+    /// * `traces_matrix` - Two dimensional array (or view) containing the `y`
+    ///   axis coordinates of
     /// the traces.
-    /// * `array_traces`  - Determines whether the traces are arranged in the matrix over the
-    /// columns (`ArrayTraces::OverColumns`) or over the rows (`ArrayTraces::OverRows`).
+    /// * `array_traces`  - Determines whether the traces are arranged in the
+    ///   matrix over the
+    /// columns (`ArrayTraces::OverColumns`) or over the rows
+    /// (`ArrayTraces::OverRows`).
     ///
     /// # Examples
     ///
@@ -234,7 +244,10 @@ where
     ///     let mut plot = Plot::new();
     ///     plot.set_layout(layout);
     ///     plot.add_traces(traces);
+    ///
+    ///     # if false {  // Prevent this line from running in the doctest.
     ///     plot.show();
+    ///     # }
     /// }
     /// fn main() -> std::io::Result<()> {
     ///     ndarray_to_traces();
@@ -397,6 +410,7 @@ mod tests {
             .hover_text("hover_text")
             .hover_text_array(vec!["hover_text_1", "hover_text_2"])
             .legend_group("legendgroup")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .marker(Marker::new())
             .n_bins_x(5)
             .n_bins_y(10)
@@ -430,6 +444,7 @@ mod tests {
             "hovertemplate": ["hover_template_1", "hover_template_2"],
             "hovertext": ["hover_text_1", "hover_text_2"],
             "legendgroup": "legendgroup",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "marker": {},
             "nbinsx": 5,
             "nbinsy": 10,

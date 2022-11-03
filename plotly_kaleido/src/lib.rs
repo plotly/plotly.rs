@@ -1,22 +1,24 @@
 //! # Plotly Kaleido
 //! Plotly Kaleido implements the `kaleido` feature for [Plotly.rs](https://github.com/igiagkiozis/plotly)
 //!
-//! The `kaleido` feature enables `Plot` conversion to the following output formats: png, jpeg, webp, svg, pdf and eps.
-//! It has the added benefit over the `orca` feature in that there is no need for an additional installation for the
-//! feature to function properly. The Kaleido precompiled binaries are packaged redistributed from the original
-//! repository [plotly/Kaleido](https://github.com/plotly/Kaleido).
+//! The `kaleido` feature enables `Plot` conversion to the following output
+//! formats: png, jpeg, webp, svg, pdf and eps. It has the added benefit over
+//! the `orca` feature in that there is no need for an additional installation
+//! for the feature to function properly. The Kaleido precompiled binaries are
+//! packaged redistributed from the original repository [plotly/Kaleido](https://github.com/plotly/Kaleido).
 //!
 //! Note that [plotly/Kaleido](https://github.com/plotly/Kaleido) is still in pre-release and as such the `kaleido`
 //! feature should be considered in pre-release mode as well.
 
-use directories::ProjectDirs;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+
+use directories::ProjectDirs;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
@@ -41,14 +43,14 @@ impl KaleidoResult {
 
 #[derive(Serialize)]
 struct PlotData<'a> {
-    // TODO: as with `data`, it would be much better if this were a plotly::ImageFormat, but problems
-    // with cyclic dependencies.
+    // TODO: as with `data`, it would be much better if this were a plotly::ImageFormat, but
+    // problems with cyclic dependencies.
     format: String,
     width: usize,
     height: usize,
     scale: f64,
-    // TODO: it would be great if this could be a plotly::Plot, but with the current workspace set up,
-    // that would be a cyclic dependency.
+    // TODO: it would be great if this could be a plotly::Plot, but with the current workspace set
+    // up, that would be a cyclic dependency.
     data: &'a Value,
 }
 
@@ -180,8 +182,9 @@ impl Kaleido {
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, to_value};
     use std::path::PathBuf;
+
+    use serde_json::{json, to_value};
 
     use super::*;
 

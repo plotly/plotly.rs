@@ -5,7 +5,9 @@ use serde::Serialize;
 
 use crate::{
     color::Color,
-    common::{Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, PlotType, Visible},
+    common::{
+        Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
+    },
     Trace,
 };
 
@@ -147,6 +149,8 @@ where
     hover_text: Option<Dim<String>>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
+    #[serde(rename = "legendgrouptitle")]
+    legend_group_title: Option<LegendGroupTitle>,
     #[serde(rename = "lightposition")]
     light_position: Option<Position>,
     lighting: Option<Lighting>,
@@ -324,6 +328,7 @@ mod tests {
             .hover_text("hover_text")
             .hover_text_array(vec!["hover_text_1"])
             .legend_group("legend_group")
+            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
             .lighting(Lighting::new())
             .light_position(Position::new(0, 0, 0))
             .name("surface_trace")
@@ -359,6 +364,7 @@ mod tests {
             "hovertemplate": ["hover_template_1"],
             "hovertext": ["hover_text_1"],
             "legendgroup": "legend_group",
+            "legendgrouptitle": {"text": "Legend Group Title"},
             "lighting": {},
             "lightposition": {"x": 0, "y": 0, "z": 0},
             "name": "surface_trace",

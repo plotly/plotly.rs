@@ -5,6 +5,7 @@ use std::borrow::Cow;
 
 use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
+use update_menu::UpdateMenu;
 
 use crate::{
     color::Color,
@@ -14,7 +15,6 @@ use crate::{
     },
     private::{NumOrString, NumOrStringCollection},
 };
-use update_menu::UpdateMenu;
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -755,8 +755,9 @@ pub struct ShapeLine {
     color: Option<Box<dyn Color>>,
     /// Sets the line width (in px).
     width: Option<f64>,
-    /// Sets the dash style of lines. Set to a dash type string ("solid", "dot", "dash", "longdash",
-    /// "dashdot", or "longdashdot") or a dash length list in px (eg "5px,10px,2px,2px").
+    /// Sets the dash style of lines. Set to a dash type string ("solid", "dot",
+    /// "dash", "longdash", "dashdot", or "longdashdot") or a dash length
+    /// list in px (eg "5px,10px,2px,2px").
     dash: Option<DashType>,
 }
 
@@ -775,95 +776,116 @@ pub struct Shape {
     r#type: Option<ShapeType>,
     /// Specifies whether shapes are drawn below or above traces.
     layer: Option<ShapeLayer>,
-    /// Sets the shape's x coordinate axis. If set to an x axis id (e.g. "x" or "x2"), the `x`
-    /// position refers to an x coordinate. If set to "paper", the `x` position refers to the
-    /// distance from the left side of the plotting area in normalized coordinates where "0" ("1")
-    /// corresponds to the left (right) side. If the axis `type` is "log", then you must take the
-    /// log of your desired range. If the axis `type` is "date", then you must convert the date to
-    /// unix time in milliseconds.
+    /// Sets the shape's x coordinate axis. If set to an x axis id (e.g. "x" or
+    /// "x2"), the `x` position refers to an x coordinate. If set to
+    /// "paper", the `x` position refers to the distance from the left side
+    /// of the plotting area in normalized coordinates where "0" ("1")
+    /// corresponds to the left (right) side. If the axis `type` is "log", then
+    /// you must take the log of your desired range. If the axis `type` is
+    /// "date", then you must convert the date to unix time in milliseconds.
     #[serde(rename = "xref")]
     x_ref: Option<String>,
-    /// Sets the shapes's sizing mode along the x axis. If set to "scaled", `x0`, `x1` and x
-    /// coordinates within `path` refer to data values on the x axis or a fraction of the plot
-    /// area's width (`xref` set to "paper"). If set to "pixel", `xanchor` specifies the x position
-    /// in terms of data or plot fraction but `x0`, `x1` and x coordinates within `path` are pixels
-    /// relative to `xanchor`. This way, the shape can have a fixed width while maintaining a
-    /// position relative to data or plot fraction.
+    /// Sets the shapes's sizing mode along the x axis. If set to "scaled",
+    /// `x0`, `x1` and x coordinates within `path` refer to data values on
+    /// the x axis or a fraction of the plot area's width (`xref` set to
+    /// "paper"). If set to "pixel", `xanchor` specifies the x position
+    /// in terms of data or plot fraction but `x0`, `x1` and x coordinates
+    /// within `path` are pixels relative to `xanchor`. This way, the shape
+    /// can have a fixed width while maintaining a position relative to data
+    /// or plot fraction.
     #[serde(rename = "xsizemode")]
     x_size_mode: Option<ShapeSizeMode>,
-    /// Only relevant in conjunction with `xsizemode` set to "pixel". Specifies the anchor point on
-    /// the x axis to which `x0`, `x1` and x coordinates within `path` are relative to. E.g. useful
-    /// to attach a pixel sized shape to a certain data value. No effect when `xsizemode` not set
-    /// to "pixel".
+    /// Only relevant in conjunction with `xsizemode` set to "pixel". Specifies
+    /// the anchor point on the x axis to which `x0`, `x1` and x coordinates
+    /// within `path` are relative to. E.g. useful to attach a pixel sized
+    /// shape to a certain data value. No effect when `xsizemode` not set to
+    /// "pixel".
     #[serde(rename = "xanchor")]
     x_anchor: Option<NumOrString>,
-    /// Sets the shape's starting x position. See `type` and `xsizemode` for more info.
+    /// Sets the shape's starting x position. See `type` and `xsizemode` for
+    /// more info.
     x0: Option<NumOrString>,
-    /// Sets the shape's end x position. See `type` and `xsizemode` for more info.
+    /// Sets the shape's end x position. See `type` and `xsizemode` for more
+    /// info.
     x1: Option<NumOrString>,
-    /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g. "y" or "y2"),
-    /// the `y` position refers to an y coordinate If set to "paper", the `y` position refers to
-    /// the distance from the bottom of the plotting area in normalized coordinates where "0" ("1")
+    /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g.
+    /// "y" or "y2"), the `y` position refers to an y coordinate If set to
+    /// "paper", the `y` position refers to the distance from the bottom of
+    /// the plotting area in normalized coordinates where "0" ("1")
     /// corresponds to the bottom (top).
     #[serde(rename = "yref")]
     y_ref: Option<String>,
-    /// Sets the shapes's sizing mode along the y axis. If set to "scaled", `y0`, `y1` and y
-    /// coordinates within `path` refer to data values on the y axis or a fraction of the plot
-    /// area's height (`yref` set to "paper"). If set to "pixel", `yanchor` specifies the y position
-    /// in terms of data or plot fraction but `y0`, `y1` and y coordinates within `path` are pixels
-    /// relative to `yanchor`. This way, the shape can have a fixed height while maintaining a
-    /// position relative to data or plot fraction.
+    /// Sets the shapes's sizing mode along the y axis. If set to "scaled",
+    /// `y0`, `y1` and y coordinates within `path` refer to data values on
+    /// the y axis or a fraction of the plot area's height (`yref` set to
+    /// "paper"). If set to "pixel", `yanchor` specifies the y position
+    /// in terms of data or plot fraction but `y0`, `y1` and y coordinates
+    /// within `path` are pixels relative to `yanchor`. This way, the shape
+    /// can have a fixed height while maintaining a position relative to
+    /// data or plot fraction.
     #[serde(rename = "ysizemode")]
     y_size_mode: Option<ShapeSizeMode>,
-    /// Only relevant in conjunction with `ysizemode` set to "pixel". Specifies the anchor point on
-    /// the y axis to which `y0`, `y1` and y coordinates within `path` are relative to. E.g. useful
-    /// to attach a pixel sized shape to a certain data value. No effect when `ysizemode` not set
-    /// to "pixel".
+    /// Only relevant in conjunction with `ysizemode` set to "pixel". Specifies
+    /// the anchor point on the y axis to which `y0`, `y1` and y coordinates
+    /// within `path` are relative to. E.g. useful to attach a pixel sized
+    /// shape to a certain data value. No effect when `ysizemode` not set to
+    /// "pixel".
     #[serde(rename = "yanchor")]
     y_anchor: Option<NumOrString>,
-    /// Sets the shape's starting y position. See `type` and `ysizemode` for more info.
+    /// Sets the shape's starting y position. See `type` and `ysizemode` for
+    /// more info.
     y0: Option<NumOrString>,
-    /// Sets the shape's end y position. See `type` and `ysizemode` for more info.
+    /// Sets the shape's end y position. See `type` and `ysizemode` for more
+    /// info.
     y1: Option<NumOrString>,
-    /// For `type` "path" - a valid SVG path with the pixel values replaced by data values in
-    /// `xsizemode`/`ysizemode` being "scaled" and taken unmodified as pixels relative to
-    /// `xanchor` and `yanchor` in case of "pixel" size mode. There are a few restrictions / quirks
+    /// For `type` "path" - a valid SVG path with the pixel values replaced by
+    /// data values in `xsizemode`/`ysizemode` being "scaled" and taken
+    /// unmodified as pixels relative to `xanchor` and `yanchor` in case of
+    /// "pixel" size mode. There are a few restrictions / quirks
     /// only absolute instructions, not relative. So the allowed segments
-    /// are: M, L, H, V, Q, C, T, S, and Z arcs (A) are not allowed because radius rx and ry are
-    /// relative. In the future we could consider supporting relative commands, but we would have
-    /// to decide on how to handle date and log axes. Note that even as is, Q and C Bezier paths
-    /// that are smooth on linear axes may not be smooth on log, and vice versa. no chained
-    /// "polybezier" commands - specify the segment type for each one. On category axes, values are
-    /// numbers scaled to the serial numbers of categories because using the categories themselves
-    /// there would be no way to describe fractional positions On data axes: because space and T are
-    /// both normal components of path strings, we can't use either to separate date from time parts.
-    /// Therefore we'll use underscore for this purpose: 2015-02-21_13:45:56.789
+    /// are: M, L, H, V, Q, C, T, S, and Z arcs (A) are not allowed because
+    /// radius rx and ry are relative. In the future we could consider
+    /// supporting relative commands, but we would have to decide on how to
+    /// handle date and log axes. Note that even as is, Q and C Bezier paths
+    /// that are smooth on linear axes may not be smooth on log, and vice versa.
+    /// no chained "polybezier" commands - specify the segment type for each
+    /// one. On category axes, values are numbers scaled to the serial
+    /// numbers of categories because using the categories themselves
+    /// there would be no way to describe fractional positions On data axes:
+    /// because space and T are both normal components of path strings, we
+    /// can't use either to separate date from time parts. Therefore we'll
+    /// use underscore for this purpose: 2015-02-21_13:45:56.789
     path: Option<String>,
     /// Sets the opacity of the shape. Number between or equal to 0 and 1.
     opacity: Option<f64>,
     /// Sets the shape line properties (`color`, `width`, `dash`).
     line: Option<ShapeLine>,
-    /// Sets the color filling the shape's interior. Only applies to closed shapes.
+    /// Sets the color filling the shape's interior. Only applies to closed
+    /// shapes.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
-    /// Determines which regions of complex paths constitute the interior. For more info please
-    /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    /// Determines which regions of complex paths constitute the interior. For
+    /// more info please visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
     #[serde(rename = "fillrule")]
     fill_rule: Option<FillRule>,
-    /// Determines whether the shape could be activated for edit or not. Has no effect when the
-    /// older editable shapes mode is enabled via `config.editable` or `config.edits.shapePosition`.
+    /// Determines whether the shape could be activated for edit or not. Has no
+    /// effect when the older editable shapes mode is enabled via
+    /// `config.editable` or `config.edits.shapePosition`.
     editable: Option<bool>,
-    /// When used in a template, named items are created in the output figure in addition to any
-    /// items the figure already has in this array. You can modify these items in the output figure
-    /// by making your own item with `templateitemname` matching this `name` alongside your
-    /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
-    /// outside of a template.
+    /// When used in a template, named items are created in the output figure in
+    /// addition to any items the figure already has in this array. You can
+    /// modify these items in the output figure by making your own item with
+    /// `templateitemname` matching this `name` alongside your modifications
+    /// (including `visible: false` or `enabled: false` to hide it). Has no
+    /// effect outside of a template.
     name: Option<String>,
-    /// Used to refer to a named item in this array in the template. Named items from the template
-    /// will be created even without a matching item in the input figure, but you can modify one
-    /// by making an item with `templateitemname` matching its `name`, alongside your modifications
-    /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
-    /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
+    /// Used to refer to a named item in this array in the template. Named items
+    /// from the template will be created even without a matching item in
+    /// the input figure, but you can modify one by making an item with
+    /// `templateitemname` matching its `name`, alongside your modifications
+    /// (including `visible: false` or `enabled: false` to hide it). If there is
+    /// no template or no matching item, this item will be hidden unless you
+    /// explicitly show it with `visible: true`.
     #[serde(rename = "templateitemname")]
     template_item_name: Option<String>,
 }
@@ -873,13 +895,14 @@ impl Shape {
         Default::default()
     }
 
-    /// Specifies the shape type to be drawn. If "line", a line is drawn from (`x0`,`y0`) to
-    /// (`x1`,`y1`) with respect to the axes' sizing mode. If "circle", a circle is drawn from
-    /// ((`x0`+`x1`)/2, (`y0`+`y1`)/2)) with radius (|(`x0`+`x1`)/2 - `x0`|, |(`y0`+`y1`)/2 -`y0`)|)
-    /// with respect to the axes' sizing mode. If "rect", a rectangle is drawn linking
-    /// (`x0`,`y0`), (`x1`,`y0`), (`x1`,`y1`), (`x0`,`y1`), (`x0`,`y0`) with respect to the axes'
-    /// sizing mode. If "path", draw a custom SVG path using `path`. with respect to the axes'
-    /// sizing mode.
+    /// Specifies the shape type to be drawn. If "line", a line is drawn from
+    /// (`x0`,`y0`) to (`x1`,`y1`) with respect to the axes' sizing mode. If
+    /// "circle", a circle is drawn from ((`x0`+`x1`)/2, (`y0`+`y1`)/2))
+    /// with radius (|(`x0`+`x1`)/2 - `x0`|, |(`y0`+`y1`)/2 -`y0`)|)
+    /// with respect to the axes' sizing mode. If "rect", a rectangle is drawn
+    /// linking (`x0`,`y0`), (`x1`,`y0`), (`x1`,`y1`), (`x0`,`y1`),
+    /// (`x0`,`y0`) with respect to the axes' sizing mode. If "path", draw a
+    /// custom SVG path using `path`. with respect to the axes' sizing mode.
     pub fn shape_type(mut self, shape_type: ShapeType) -> Self {
         self.r#type = Some(shape_type);
         self
@@ -900,9 +923,10 @@ pub enum DrawDirection {
 pub struct NewShape {
     /// Sets the shape line properties (`color`, `width`, `dash`).
     line: Option<ShapeLine>,
-    /// Sets the color filling new shapes' interior. Please note that if using a fillcolor with
-    /// alpha greater than half, drag inside the active shape starts moving the shape underneath,
-    /// otherwise a new shape could be started over.
+    /// Sets the color filling new shapes' interior. Please note that if using a
+    /// fillcolor with alpha greater than half, drag inside the active shape
+    /// starts moving the shape underneath, otherwise a new shape could be
+    /// started over.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
     /// Determines the path's interior. For more info please
@@ -913,10 +937,12 @@ pub struct NewShape {
     opacity: Option<f64>,
     /// Specifies whether new shapes are drawn below or above traces.
     layer: Option<ShapeLayer>,
-    /// When `dragmode` is set to "drawrect", "drawline" or "drawcircle" this limits the drag to be
-    /// horizontal, vertical or diagonal. Using "diagonal" there is no limit e.g. in drawing lines
-    /// in any direction. "ortho" limits the draw to be either horizontal or vertical. "horizontal"
-    /// allows horizontal extend. "vertical" allows vertical extend.
+    /// When `dragmode` is set to "drawrect", "drawline" or "drawcircle" this
+    /// limits the drag to be horizontal, vertical or diagonal. Using
+    /// "diagonal" there is no limit e.g. in drawing lines in any direction.
+    /// "ortho" limits the draw to be either horizontal or vertical.
+    /// "horizontal" allows horizontal extend. "vertical" allows vertical
+    /// extend.
     #[serde(rename = "drawdirection")]
     draw_direction: Option<DrawDirection>,
 }
@@ -933,7 +959,8 @@ pub struct ActiveShape {
     /// Sets the color filling the active shape' interior.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
-    /// Sets the opacity of the active shape. Number between or equal to 0 and 1.
+    /// Sets the opacity of the active shape. Number between or equal to 0 and
+    /// 1.
     opacity: Option<f64>,
 }
 
@@ -978,29 +1005,33 @@ impl Serialize for ClickToShow {
 pub struct Annotation {
     /// Determines whether or not this annotation is visible.
     visible: Option<bool>,
-    /// Sets the text associated with this annotation. Plotly uses a subset of HTML tags to do
-    /// things like newline (<br>), bold (<b></b>), italics (<i></i>), hyperlinks
-    /// (<a href='...'></a>). Tags <em>, <sup>, <sub> <span> are also supported.
+    /// Sets the text associated with this annotation. Plotly uses a subset of
+    /// HTML tags to do things like newline (<br>), bold (<b></b>), italics
+    /// (<i></i>), hyperlinks (<a href='...'></a>). Tags <em>, <sup>, <sub>
+    /// <span> are also supported.
     text: Option<String>,
-    /// Sets the angle at which the `text` is drawn with respect to the horizontal.
+    /// Sets the angle at which the `text` is drawn with respect to the
+    /// horizontal.
     #[serde(rename = "textangle")]
     text_angle: Option<f64>,
     /// Sets the annotation text font.
     font: Option<Font>,
-    /// Sets an explicit width for the text box. null (default) lets the text set the box width.
-    /// Wider text will be clipped. There is no automatic wrapping; use <br> to start a new line.
+    /// Sets an explicit width for the text box. null (default) lets the text
+    /// set the box width. Wider text will be clipped. There is no automatic
+    /// wrapping; use <br> to start a new line.
     width: Option<f64>,
-    /// Sets an explicit height for the text box. null (default) lets the text set the box height.
-    /// Taller text will be clipped.
+    /// Sets an explicit height for the text box. null (default) lets the text
+    /// set the box height. Taller text will be clipped.
     height: Option<f64>,
     /// Sets the opacity of the annotation (text + arrow).
     opacity: Option<f64>,
-    /// Sets the horizontal alignment of the `text` within the box. Has an effect only if `text`
-    /// spans two or more lines (i.e. `text` contains one or more <br> HTML tags) or if an explicit
-    /// width is set to override the text width.
+    /// Sets the horizontal alignment of the `text` within the box. Has an
+    /// effect only if `text` spans two or more lines (i.e. `text` contains
+    /// one or more <br> HTML tags) or if an explicit width is set to
+    /// override the text width.
     align: Option<HAlign>,
-    /// Sets the vertical alignment of the `text` within the box. Has an effect only if an explicit
-    /// height is set to override the text height.
+    /// Sets the vertical alignment of the `text` within the box. Has an effect
+    /// only if an explicit height is set to override the text height.
     valign: Option<VAlign>,
     /// Sets the background color of the annotation.
     #[serde(rename = "bgcolor")]
@@ -1014,157 +1045,186 @@ pub struct Annotation {
     /// Sets the width (in px) of the border enclosing the annotation `text`.
     #[serde(rename = "borderwidth")]
     border_width: Option<f64>,
-    /// Determines whether or not the annotation is drawn with an arrow. If "True", `text` is
-    /// placed near the arrow's tail. If "False", `text` lines up with the `x` and `y` provided.
+    /// Determines whether or not the annotation is drawn with an arrow. If
+    /// "True", `text` is placed near the arrow's tail. If "False", `text`
+    /// lines up with the `x` and `y` provided.
     #[serde(rename = "showarrow")]
     show_arrow: Option<bool>,
     /// Sets the color of the annotation arrow.
     #[serde(rename = "arrowcolor")]
     arrow_color: Option<Box<dyn Color>>,
-    /// Sets the end annotation arrow head style. Integer between or equal to 0 and 8.
+    /// Sets the end annotation arrow head style. Integer between or equal to 0
+    /// and 8.
     #[serde(rename = "arrowhead")]
     arrow_head: Option<u8>,
-    /// Sets the start annotation arrow head style. Integer between or equal to 0 and 8.
+    /// Sets the start annotation arrow head style. Integer between or equal to
+    /// 0 and 8.
     #[serde(rename = "startarrowhead")]
     start_arrow_head: Option<u8>,
     /// Sets the annotation arrow head position.
     #[serde(rename = "arrowside")]
     arrow_side: Option<ArrowSide>,
-    /// Sets the size of the end annotation arrow head, relative to `arrowwidth`. A value of 1
-    /// (default) gives a head about 3x as wide as the line.
+    /// Sets the size of the end annotation arrow head, relative to
+    /// `arrowwidth`. A value of 1 (default) gives a head about 3x as wide
+    /// as the line.
     #[serde(rename = "arrowsize")]
     arrow_size: Option<f64>,
-    /// Sets the size of the start annotation arrow head, relative to `arrowwidth`. A value of 1
-    /// (default) gives a head about 3x as wide as the line.
+    /// Sets the size of the start annotation arrow head, relative to
+    /// `arrowwidth`. A value of 1 (default) gives a head about 3x as wide
+    /// as the line.
     #[serde(rename = "startarrowsize")]
     start_arrow_size: Option<f64>,
     /// Sets the width (in px) of annotation arrow line.
     #[serde(rename = "arrowwidth")]
     arrow_width: Option<f64>,
-    /// Sets a distance, in pixels, to move the end arrowhead away from the position it is pointing
-    /// at, for example to point at the edge of a marker independent of zoom. Note that this
-    /// shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift` which
+    /// Sets a distance, in pixels, to move the end arrowhead away from the
+    /// position it is pointing at, for example to point at the edge of a
+    /// marker independent of zoom. Note that this shortens the arrow from
+    /// the `ax` / `ay` vector, in contrast to `xshift` / `yshift` which
     /// moves everything by this amount.
     #[serde(rename = "standoff")]
     stand_off: Option<f64>,
-    /// Sets a distance, in pixels, to move the start arrowhead away from the position it is
-    /// pointing at, for example to point at the edge of a marker independent of zoom. Note that
-    /// this shortens the arrow from the `ax` / `ay` vector, in contrast to `xshift` / `yshift`
+    /// Sets a distance, in pixels, to move the start arrowhead away from the
+    /// position it is pointing at, for example to point at the edge of a
+    /// marker independent of zoom. Note that this shortens the arrow from
+    /// the `ax` / `ay` vector, in contrast to `xshift` / `yshift`
     /// which moves everything by this amount.
     #[serde(rename = "startstandoff")]
     start_stand_off: Option<f64>,
-    /// Sets the x component of the arrow tail about the arrow head. If `axref` is `pixel`, a
-    /// positive (negative) component corresponds to an arrow pointing from right to left (left
-    /// to right). If `axref` is an axis, this is an absolute value on that axis, like `x`, NOT a
+    /// Sets the x component of the arrow tail about the arrow head. If `axref`
+    /// is `pixel`, a positive (negative) component corresponds to an arrow
+    /// pointing from right to left (left to right). If `axref` is an axis,
+    /// this is an absolute value on that axis, like `x`, NOT a
     /// relative value.
     ax: Option<NumOrString>,
-    /// Sets the y component of the arrow tail about the arrow head. If `ayref` is `pixel`, a
-    /// positive (negative) component corresponds to an arrow pointing from bottom to top (top to
-    /// bottom). If `ayref` is an axis, this is an absolute value on that axis, like `y`, NOT a
+    /// Sets the y component of the arrow tail about the arrow head. If `ayref`
+    /// is `pixel`, a positive (negative) component corresponds to an arrow
+    /// pointing from bottom to top (top to bottom). If `ayref` is an axis,
+    /// this is an absolute value on that axis, like `y`, NOT a
     /// relative value.
     ay: Option<NumOrString>,
-    /// Indicates in what terms the tail of the annotation (ax,ay) is specified. If `pixel`, `ax`
-    /// is a relative offset in pixels from `x`. If set to an x axis id (e.g. "x" or "x2"), `ax` is
-    /// specified in the same terms as that axis. This is useful for trendline annotations which
+    /// Indicates in what terms the tail of the annotation (ax,ay) is specified.
+    /// If `pixel`, `ax` is a relative offset in pixels from `x`. If set to
+    /// an x axis id (e.g. "x" or "x2"), `ax` is specified in the same terms
+    /// as that axis. This is useful for trendline annotations which
     /// should continue to indicate the correct trend when zoomed.
     #[serde(rename = "axref")]
     ax_ref: Option<String>,
-    /// Indicates in what terms the tail of the annotation (ax,ay) is specified. If `pixel`, `ay`
-    /// is a relative offset in pixels from `y`. If set to a y axis id (e.g. "y" or "y2"), `ay` is
-    /// specified in the same terms as that axis. This is useful for trendline annotations which
+    /// Indicates in what terms the tail of the annotation (ax,ay) is specified.
+    /// If `pixel`, `ay` is a relative offset in pixels from `y`. If set to
+    /// a y axis id (e.g. "y" or "y2"), `ay` is specified in the same terms
+    /// as that axis. This is useful for trendline annotations which
     /// should continue to indicate the correct trend when zoomed.
     #[serde(rename = "ayref")]
     ay_ref: Option<String>,
-    /// Sets the annotation's x coordinate axis. If set to an x axis id (e.g. "x" or "x2"), the `x`
-    /// position refers to an x coordinate If set to "paper", the `x` position refers to the
-    /// distance from the left side of the plotting area in normalized coordinates where 0 (1)
+    /// Sets the annotation's x coordinate axis. If set to an x axis id (e.g.
+    /// "x" or "x2"), the `x` position refers to an x coordinate If set to
+    /// "paper", the `x` position refers to the distance from the left side
+    /// of the plotting area in normalized coordinates where 0 (1)
     /// corresponds to the left (right) side.
     #[serde(rename = "xref")]
     x_ref: Option<String>,
-    /// Sets the annotation's x position. If the axis `type` is "log", then you must take the log
-    /// of your desired range. If the axis `type` is "date", it should be date strings, like date
-    /// data, though Date objects and unix milliseconds will be accepted and converted to strings.
-    /// If the axis `type` is "category", it should be numbers, using the scale where each category
-    /// is assigned a serial number from zero in the order it appears.
+    /// Sets the annotation's x position. If the axis `type` is "log", then you
+    /// must take the log of your desired range. If the axis `type` is
+    /// "date", it should be date strings, like date data, though Date
+    /// objects and unix milliseconds will be accepted and converted to strings.
+    /// If the axis `type` is "category", it should be numbers, using the scale
+    /// where each category is assigned a serial number from zero in the
+    /// order it appears.
     x: Option<NumOrString>,
-    /// Sets the text box's horizontal position anchor This anchor binds the `x` position to the
-    /// "left", "center" or "right" of the annotation. For example, if `x` is set to 1, `xref` to
-    /// "paper" and `xanchor` to "right" then the right-most portion of the annotation lines up with
-    /// the right-most edge of the plotting area. If "auto", the anchor is equivalent to "center"
-    /// for data-referenced annotations or if there is an arrow, whereas for paper-referenced with
-    /// no arrow, the anchor picked corresponds to the closest side.
+    /// Sets the text box's horizontal position anchor This anchor binds the `x`
+    /// position to the "left", "center" or "right" of the annotation. For
+    /// example, if `x` is set to 1, `xref` to "paper" and `xanchor` to
+    /// "right" then the right-most portion of the annotation lines up with
+    /// the right-most edge of the plotting area. If "auto", the anchor is
+    /// equivalent to "center" for data-referenced annotations or if there
+    /// is an arrow, whereas for paper-referenced with no arrow, the anchor
+    /// picked corresponds to the closest side.
     #[serde(rename = "xanchor")]
     x_anchor: Option<Anchor>,
-    /// Shifts the position of the whole annotation and arrow to the right (positive) or left
-    /// (negative) by this many pixels.
+    /// Shifts the position of the whole annotation and arrow to the right
+    /// (positive) or left (negative) by this many pixels.
     #[serde(rename = "xshift")]
     x_shift: Option<f64>,
-    /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g. "y" or "y2"), the `y`
-    /// position refers to an y coordinate If set to "paper", the `y` position refers to the
-    /// distance from the bottom of the plotting area in normalized coordinates where 0 (1)
-    /// corresponds to the bottom (top).
+    /// Sets the annotation's y coordinate axis. If set to an y axis id (e.g.
+    /// "y" or "y2"), the `y` position refers to an y coordinate If set to
+    /// "paper", the `y` position refers to the distance from the bottom of
+    /// the plotting area in normalized coordinates where 0 (1) corresponds
+    /// to the bottom (top).
     #[serde(rename = "yref")]
     y_ref: Option<String>,
-    /// Sets the annotation's y position. If the axis `type` is "log", then you must take the log of
-    /// your desired range. If the axis `type` is "date", it should be date strings, like date data,
-    /// though Date objects and unix milliseconds will be accepted and converted to strings. If the
-    /// axis `type` is "category", it should be numbers, using the scale where each category is
-    /// assigned a serial number from zero in the order it appears.
+    /// Sets the annotation's y position. If the axis `type` is "log", then you
+    /// must take the log of your desired range. If the axis `type` is
+    /// "date", it should be date strings, like date data, though Date
+    /// objects and unix milliseconds will be accepted and converted to strings.
+    /// If the axis `type` is "category", it should be numbers, using the
+    /// scale where each category is assigned a serial number from zero in
+    /// the order it appears.
     y: Option<NumOrString>,
-    /// Sets the text box's vertical position anchor This anchor binds the `y` position to the
-    /// "top", "middle" or "bottom" of the annotation. For example, if `y` is set to 1, `yref` to
-    /// "paper" and `yanchor` to "top" then the top-most portion of the annotation lines up with the
-    /// top-most edge of the plotting area. If "auto", the anchor is equivalent to "middle" for
-    /// data-referenced annotations or if there is an arrow, whereas for paper-referenced with no
-    /// arrow, the anchor picked corresponds to the closest side.
+    /// Sets the text box's vertical position anchor This anchor binds the `y`
+    /// position to the "top", "middle" or "bottom" of the annotation. For
+    /// example, if `y` is set to 1, `yref` to "paper" and `yanchor` to
+    /// "top" then the top-most portion of the annotation lines up with the
+    /// top-most edge of the plotting area. If "auto", the anchor is equivalent
+    /// to "middle" for data-referenced annotations or if there is an arrow,
+    /// whereas for paper-referenced with no arrow, the anchor picked
+    /// corresponds to the closest side.
     #[serde(rename = "yanchor")]
     y_anchor: Option<Anchor>,
-    /// Shifts the position of the whole annotation and arrow up (positive) or down (negative) by
-    /// this many pixels.
+    /// Shifts the position of the whole annotation and arrow up (positive) or
+    /// down (negative) by this many pixels.
     #[serde(rename = "yshift")]
     y_shift: Option<f64>,
-    /// Makes this annotation respond to clicks on the plot. If you click a data point that exactly
-    /// matches the `x` and `y` values of this annotation, and it is hidden (visible: false), it
-    /// will appear. In "onoff" mode, you must click the same point again to make it disappear, so
-    /// if you click multiple points, you can show multiple annotations. In "onout" mode, a click
-    /// anywhere else in the plot (on another data point or not) will hide this annotation. If you
-    /// need to show/hide this annotation in response to different `x` or `y` values, you can set
-    /// `xclick` and/or `yclick`. This is useful for example to label the side of a bar. To label
-    /// markers though, `standoff` is preferred over `xclick` and `yclick`.
+    /// Makes this annotation respond to clicks on the plot. If you click a data
+    /// point that exactly matches the `x` and `y` values of this
+    /// annotation, and it is hidden (visible: false), it will appear. In
+    /// "onoff" mode, you must click the same point again to make it disappear,
+    /// so if you click multiple points, you can show multiple annotations.
+    /// In "onout" mode, a click anywhere else in the plot (on another data
+    /// point or not) will hide this annotation. If you need to show/hide
+    /// this annotation in response to different `x` or `y` values, you can set
+    /// `xclick` and/or `yclick`. This is useful for example to label the side
+    /// of a bar. To label markers though, `standoff` is preferred over
+    /// `xclick` and `yclick`.
     #[serde(rename = "clicktoshow")]
     click_to_show: Option<ClickToShow>,
-    /// Toggle this annotation when clicking a data point whose `x` value is `xclick` rather than
-    /// the annotation's `x` value.
+    /// Toggle this annotation when clicking a data point whose `x` value is
+    /// `xclick` rather than the annotation's `x` value.
     #[serde(rename = "xclick")]
     x_click: Option<NumOrString>,
-    /// Toggle this annotation when clicking a data point whose `y` value is `yclick` rather than
-    /// the annotation's `y` value.
+    /// Toggle this annotation when clicking a data point whose `y` value is
+    /// `yclick` rather than the annotation's `y` value.
     #[serde(rename = "yclick")]
     y_click: Option<NumOrString>,
-    /// Sets text to appear when hovering over this annotation. If omitted or blank, no hover label
-    /// will appear.
+    /// Sets text to appear when hovering over this annotation. If omitted or
+    /// blank, no hover label will appear.
     #[serde(rename = "hovertext")]
     hover_text: Option<String>,
     /// Label displayed on mouse hover.
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-    /// Determines whether the annotation text box captures mouse move and click events, or allows
-    /// those events to pass through to data points in the plot that may be behind the annotation.
-    /// By default `captureevents` is "false" unless `hovertext` is provided. If you use the event
-    /// `plotly_clickannotation` without `hovertext` you must explicitly enable `captureevents`.
+    /// Determines whether the annotation text box captures mouse move and click
+    /// events, or allows those events to pass through to data points in the
+    /// plot that may be behind the annotation. By default `captureevents`
+    /// is "false" unless `hovertext` is provided. If you use the event
+    /// `plotly_clickannotation` without `hovertext` you must explicitly enable
+    /// `captureevents`.
     #[serde(rename = "captureevents")]
     capture_events: Option<bool>,
-    /// When used in a template, named items are created in the output figure in addition to any
-    /// items the figure already has in this array. You can modify these items in the output figure
-    /// by making your own item with `templateitemname` matching this `name` alongside your
-    /// modifications (including `visible: false` or `enabled: false` to hide it). Has no effect
-    /// outside of a template.
+    /// When used in a template, named items are created in the output figure in
+    /// addition to any items the figure already has in this array. You can
+    /// modify these items in the output figure by making your own item with
+    /// `templateitemname` matching this `name` alongside your modifications
+    /// (including `visible: false` or `enabled: false` to hide it). Has no
+    /// effect outside of a template.
     name: Option<String>,
-    /// Used to refer to a named item in this array in the template. Named items from the template
-    /// will be created even without a matching item in the input figure, but you can modify one by
-    /// making an item with `templateitemname` matching its `name`, alongside your modifications
-    /// (including `visible: false` or `enabled: false` to hide it). If there is no template or no
-    /// matching item, this item will be hidden unless you explicitly show it with `visible: true`.
+    /// Used to refer to a named item in this array in the template. Named items
+    /// from the template will be created even without a matching item in
+    /// the input figure, but you can modify one by making an item with
+    /// `templateitemname` matching its `name`, alongside your modifications
+    /// (including `visible: false` or `enabled: false` to hide it). If there is
+    /// no template or no matching item, this item will be hidden unless you
+    /// explicitly show it with `visible: true`.
     #[serde(rename = "templateitemname")]
     template_item_name: Option<String>,
 }
@@ -1235,6 +1295,71 @@ pub enum SelectDirection {
     Any,
 }
 
+/// Defines the latitude and longitude at which a map will be centered.
+#[derive(Serialize, Clone, Debug)]
+pub struct Center {
+    lat: f64,
+    lon: f64,
+}
+
+impl Center {
+    /// Create a new instance of `Center`.
+    ///
+    /// `lat` is the number of degrees north, `lon` is the number of degrees
+    /// east.
+    pub fn new(lat: f64, lon: f64) -> Self {
+        Center { lat, lon }
+    }
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "kebab-case")]
+pub enum MapboxStyle {
+    #[serde(rename = "carto-darkmatter")]
+    CartoDarkMatter,
+    CartoPositron,
+    OpenStreetMap,
+    StamenTerrain,
+    StamenToner,
+    StamenWatercolor,
+    WhiteBg,
+    Basic,
+    Streets,
+    Outdoors,
+    Light,
+    Dark,
+    Satellite,
+    SatelliteStreets,
+}
+
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Mapbox {
+    /// Sets the mapbox access token to be used for this mapbox map. Note that
+    /// `access_token`s are only required when `style` (e.g with values: basic,
+    /// streets, outdoors, light, dark, satellite, satellite-streets)
+    /// and/or a layout layer references the Mapbox server.
+    #[serde(rename = "accesstoken")]
+    access_token: Option<String>,
+    /// Sets the bearing angle of the map in degrees counter-clockwise from
+    /// North.
+    bearing: Option<f64>,
+    /// Sets the latitude and longitude of the center of the map.
+    center: Option<Center>,
+    /// Sets the pitch angle of the map in degrees, where `0` means
+    /// perpendicular to the surface of the map.
+    pitch: Option<f64>,
+    /// Sets the style of the map.
+    style: Option<MapboxStyle>,
+    /// Sets the zoom level of the map.
+    zoom: Option<u8>,
+}
+
+impl Mapbox {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Template {
@@ -1289,16 +1414,21 @@ pub struct LayoutTemplate {
     color_axis: Option<ColorAxis>,
     #[serde(rename = "modebar")]
     mode_bar: Option<ModeBar>,
-    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
-    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
-    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
-    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
-    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
-    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
-    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
-    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
-    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
-    /// else the default value is "closest".
+    /// Determines the mode of hover interactions. If "closest", a single
+    /// hoverlabel will appear for the "closest" point within the
+    /// `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for
+    /// multiple points at the "closest" x- (or y-) coordinate within the
+    /// `hoverdistance`, with the caveat that no more than one hoverlabel
+    /// will appear per trace. If "x unified" (or "y unified"), a single
+    /// hoverlabel will appear multiple points at the closest x- (or y-)
+    /// coordinate within the `hoverdistance` with the caveat that no more than
+    /// one hoverlabel will appear per trace. In this mode, spikelines are
+    /// enabled by default perpendicular to the specified axis.
+    /// If false, hover interactions are disabled. If `clickmode` includes the
+    /// "select" flag, `hovermode` defaults to "closest". If `clickmode`
+    /// lacks the "select" flag, it defaults to "x" or "y" (depending on the
+    /// trace's `orientation` value) for plots based on cartesian coordinates.
+    /// For anything else the default value is "closest".
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     #[serde(rename = "clickmode")]
@@ -1449,16 +1579,21 @@ pub struct Layout {
     color_axis: Option<ColorAxis>,
     #[serde(rename = "modebar")]
     mode_bar: Option<ModeBar>,
-    /// Determines the mode of hover interactions. If "closest", a single hoverlabel will appear for the "closest"
-    /// point within the `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for multiple points at
-    /// the "closest" x- (or y-) coordinate within the `hoverdistance`, with the caveat that no more than one hoverlabel
-    /// will appear per trace. If "x unified" (or "y unified"), a single hoverlabel will appear multiple points at
-    /// the closest x- (or y-) coordinate within the `hoverdistance` with the caveat that no more than one hoverlabel
-    /// will appear per trace. In this mode, spikelines are enabled by default perpendicular to the specified axis.
-    /// If false, hover interactions are disabled. If `clickmode` includes the "select" flag, `hovermode` defaults to
-    /// "closest". If `clickmode` lacks the "select" flag, it defaults to "x" or "y"
-    /// (depending on the trace's `orientation` value) for plots based on cartesian coordinates. For anything
-    /// else the default value is "closest".
+    /// Determines the mode of hover interactions. If "closest", a single
+    /// hoverlabel will appear for the "closest" point within the
+    /// `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for
+    /// multiple points at the "closest" x- (or y-) coordinate within the
+    /// `hoverdistance`, with the caveat that no more than one hoverlabel
+    /// will appear per trace. If "x unified" (or "y unified"), a single
+    /// hoverlabel will appear multiple points at the closest x- (or y-)
+    /// coordinate within the `hoverdistance` with the caveat that no more than
+    /// one hoverlabel will appear per trace. In this mode, spikelines are
+    /// enabled by default perpendicular to the specified axis.
+    /// If false, hover interactions are disabled. If `clickmode` includes the
+    /// "select" flag, `hovermode` defaults to "closest". If `clickmode`
+    /// lacks the "select" flag, it defaults to "x" or "y" (depending on the
+    /// trace's `orientation` value) for plots based on cartesian coordinates.
+    /// For anything else the default value is "closest".
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     #[serde(rename = "clickmode")]
@@ -1578,6 +1713,8 @@ pub struct Layout {
     sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendsunburstcolors")]
     extend_sunburst_colors: Option<bool>,
+
+    mapbox: Option<Mapbox>,
 
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
@@ -2534,6 +2671,25 @@ mod tests {
         assert_eq!(to_value(DragMode::Orbit).unwrap(), json!("orbit"));
         assert_eq!(to_value(DragMode::Turntable).unwrap(), json!("turntable"));
         assert_eq!(to_value(DragMode::False).unwrap(), json!(false));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_serialize_mapbox_style() {
+        assert_eq!(to_value(MapboxStyle::CartoDarkMatter).unwrap(), json!("carto-darkmatter"));
+        assert_eq!(to_value(MapboxStyle::CartoPositron).unwrap(), json!("carto-positron"));
+        assert_eq!(to_value(MapboxStyle::OpenStreetMap).unwrap(), json!("open-street-map"));
+        assert_eq!(to_value(MapboxStyle::StamenTerrain).unwrap(), json!("stamen-terrain"));
+        assert_eq!(to_value(MapboxStyle::StamenToner).unwrap(), json!("stamen-toner"));
+        assert_eq!(to_value(MapboxStyle::StamenWatercolor).unwrap(), json!("stamen-watercolor"));
+        assert_eq!(to_value(MapboxStyle::WhiteBg).unwrap(), json!("white-bg"));
+        assert_eq!(to_value(MapboxStyle::Basic).unwrap(), json!("basic"));
+        assert_eq!(to_value(MapboxStyle::Streets).unwrap(), json!("streets"));
+        assert_eq!(to_value(MapboxStyle::Outdoors).unwrap(), json!("outdoors"));
+        assert_eq!(to_value(MapboxStyle::Light).unwrap(), json!("light"));
+        assert_eq!(to_value(MapboxStyle::Dark).unwrap(), json!("dark"));
+        assert_eq!(to_value(MapboxStyle::Satellite).unwrap(), json!("satellite"));
+        assert_eq!(to_value(MapboxStyle::SatelliteStreets).unwrap(), json!("satellite-streets"));
     }
 
     #[test]

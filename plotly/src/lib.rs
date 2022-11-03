@@ -8,6 +8,8 @@ extern crate serde;
 
 #[cfg(feature = "plotly_ndarray")]
 pub mod ndarray;
+#[cfg(feature = "plotly_ndarray")]
+pub use crate::ndarray::ArrayTraces;
 
 #[cfg(feature = "wasm")]
 pub mod bindings;
@@ -22,17 +24,13 @@ pub use common::color;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{ImageFormat, Plot, Trace};
-
+// Also provide easy access to modules which contain additional trace-specific types
+pub use traces::{box_plot, contour, histogram, image, mesh3d, sankey, scatter_mapbox, surface};
 // Bring the different trace types into the top-level scope
 pub use traces::{
-    Bar, BoxPlot, Candlestick, Contour, HeatMap, Histogram, Ohlc, Sankey, Scatter, Scatter3D,
-    ScatterPolar, Surface,
+    Bar, BoxPlot, Candlestick, Contour, HeatMap, Histogram, Image, Mesh3D, Ohlc, Sankey, Scatter,
+    Scatter3D, ScatterMapbox, ScatterPolar, Surface,
 };
-// Also provide easy access to modules which contain additional trace-specific types
-pub use traces::{box_plot, contour, histogram, sankey, surface};
-
-#[cfg(feature = "plotly_ndarray")]
-pub use crate::ndarray::ArrayTraces;
 
 pub trait Restyle: serde::Serialize {}
 pub trait Relayout {}

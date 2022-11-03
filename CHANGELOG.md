@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.2] - 2022-11-03
+### Added
+- [[#110](https://github.com/igiagkiozis/plotly/pull/110)] `LegendGroupTitle` to existing traces.
+- [[#88](https://github.com/igiagkiozis/plotly/pull/88)] `Mesh3D`, `Image`, `ScatterMapbox` traces.
+
+### Changed
+- [[#113](https://github.com/igiagkiozis/plotly/pull/113)] Refactored the structure of the examples to make them more accessible, whilst adding more examples e.g. for `wasm`.
+- [[#115](https://github.com/igiagkiozis/plotly/pull/115)] Simplify the function signature of Plot.to_inline_html() so that it just takes `Option<&str>` as an argument.
+
 ## [0.8.1] - 2022-09-25
 ### Added
 - Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/igiagkiozis/plotly/pull/99).
