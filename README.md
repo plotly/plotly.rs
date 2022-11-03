@@ -1,35 +1,33 @@
-<h1 align="center">Plotly.rs</h1>
-
-<div align="center">Plotly for Rust</div>
-
 <div align="center">
-	<a href="https://igiagkiozis.github.io/plotly/content/getting_started.html">Getting Started</a>
-    |
-    <a href="https://igiagkiozis.github.io/plotly/content/recipes.html">Recipes</a>
-    |
-    <a href="https://docs.rs/crate/plotly/">API Docs</a>
-    |
-    <a href="https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md">Changelog</a>
-</div>
-<br>
-<div align="center">
-    <a href="https://github.com/igiagkiozis/plotly/actions" style="text-decoration: none !important;">
-        <img src="https://github.com/igiagkiozis/plotly/workflows/build_master/badge.svg" alt="build status">
+  <h1>Plotly.rs</h1>
+  <p><strong>Plotly for Rust</strong></p>
+  <p>
+    <a href="https://github.com/igiagkiozis/plotly/actions?query=branch%3Amaster" style="text-decoration: none!important;">
+        <img src="https://img.shields.io/github/workflow/status/igiagkiozis/plotly/CI/master" alt="Build status">
     </a>
-    <a href="https://crates.io/crates/plotly" style="text-decoration: none !important;">
+    <a href="https://crates.io/crates/plotly" style="text-decoration: none!important;">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
     </a>
-    <a href="https://crates.io/crates/plotly" style="text-decoration: none !important;">
+    <a href="https://crates.io/crates/plotly" style="text-decoration: none!important;">
         <img src="https://img.shields.io/crates/d/plotly" alt="Downloads">
     </a>
-	<a href="https://docs.rs/plotly" style="text-decoration: none !important;">
-        <img src="https://docs.rs/plotly/badge.svg" alt="Documentation">
+	<a href="https://docs.rs/plotly" style="text-decoration: none!important;">
+        <img src="https://img.shields.io/badge/docs.rs-plotly-green" alt="Documentation">
     </a>
-    <a href="" style="text-decoration: none !important;">
-        <img src="https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg" alt="Minimum Version">
+	<a href="https://app.codecov.io/github/igiagkiozis/plotly" style="text-decoration: none!important;">
+        <img src="https://img.shields.io/codecov/c/github/igiagkiozis/plotly" alt="Code coverage">
     </a>
+  </p>
+  <h4>
+    <a href="https://igiagkiozis.github.io/plotly/content/getting_started.html">Getting Started</a>
+    <span> | </span>
+    <a href="https://igiagkiozis.github.io/plotly/content/recipes.html">Recipes</a>
+    <span> | </span>
+    <a href="https://docs.rs/crate/plotly/">API Docs</a>
+    <span> | </span>
+    <a href="https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md">Changelog</a>
+  </h4>
 </div>
-<br>
 
 # Table of Contents
 
