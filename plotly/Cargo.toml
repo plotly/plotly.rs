@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.8.1"
+version = "0.8.2"
 description = "A plotting library powered by Plotly.js"
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"
@@ -26,7 +26,7 @@ erased-serde = "0.3"
 getrandom = { version = "0.2", features = ["js"], optional = true }
 image = { version = "0.24.2", optional = true }
 js-sys = { version = "0.3", optional = true }
-plotly_derive = { version = "0.8.1", path = "../plotly_derive" }
+plotly_derive = { version = "0.8.2", path = "../plotly_derive" }
 plotly_kaleido = { version = "0.3.0", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.15.4", optional = true }
 once_cell = "1"
