@@ -4,7 +4,6 @@ use ndarray::Array;
 use plotly::{
     common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title},
     layout::{Axis, Layout},
-    mesh3d::IntensityMode,
     Mesh3D, Plot, Scatter3D, Surface,
 };
 
