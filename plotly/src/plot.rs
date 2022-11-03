@@ -445,7 +445,7 @@ impl Plot {
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("xdg-open")
-            .args(&[temp_path])
+            .args([temp_path])
             .output()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }

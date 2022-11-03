@@ -155,7 +155,7 @@ fn _type_str_parts(field_ty: &syn::Type) -> (Vec<String>, Vec<syn::Type>) {
     types.push(ty.clone());
     loop {
         match ty {
-            syn::Type::Path(ref type_path) if type_path.qself == None => {
+            syn::Type::Path(ref type_path) if type_path.qself.is_none() => {
                 if let Some(segment) = type_path.path.segments.last() {
                     parts.push(segment.ident.to_string());
                     match &segment.arguments {

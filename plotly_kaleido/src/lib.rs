@@ -139,7 +139,7 @@ impl Kaleido {
 
         let process = Command::new(p.as_str())
             .current_dir(self.cmd_path.parent().unwrap())
-            .args(&[
+            .args([
                 "plotly",
                 "--disable-gpu",
                 "--allow-file-access-from-files",
