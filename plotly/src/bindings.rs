@@ -28,9 +28,7 @@ pub async fn new_plot(id: &str, plot: &Plot) {
     // This will only fail if the Rust Plotly library has produced
     // plotly-incompatible JSON. An error here should have been handled by the
     // library, rather than down here.
-    new_plot_(id, &plot_obj)
-        .await
-        .expect("Error plotting chart");
+    new_plot_(id, plot_obj).await.expect("Error plotting chart");
 }
 
 /// A wrapper around the plotly.js [react](https://plotly.com/javascript/plotlyjs-function-reference/#react)
@@ -45,5 +43,5 @@ pub async fn react(id: &str, plot: &Plot) {
     // This will only fail if the Rust Plotly library has produced
     // plotly-incompatible JSON. An error here should have been handled by the
     // library, rather than down here.
-    react_(id, &plot_obj).await.expect("Error plotting chart");
+    react_(id, plot_obj).await.expect("Error plotting chart");
 }

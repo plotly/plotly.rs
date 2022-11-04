@@ -37,10 +37,10 @@ jobs:
         with:
           components: clippy
           targets: wasm32-unknown-unknown
-      # lint the main library workspace  excluding the wasm feature
+      # lint the main library workspace excluding the wasm feature
       - run: cargo clippy --features plotly_ndarray,plotly_image,kaleido -- -D warnings
-      # lint the main library workspace with wasm enabled
-      - run: cargo clippy --features wasm -- -D warnings
+      # lint the plotly library with wasm enabled
+      - run: cargo clippy --package plotly --features wasm --target wasm32-unknown-unknown -- -D warnings
       # lint the non-wasm examples
       - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" -- -D warnings
       # lint the wasm examples
