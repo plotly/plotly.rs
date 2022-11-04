@@ -247,6 +247,7 @@ impl Plot {
     ///
     /// The HTML file is saved in a temp file, from which it is read and
     /// displayed by the browser.
+    #[cfg(not(target_family = "wasm"))]
     pub fn show(&self) {
         use std::env;
 
