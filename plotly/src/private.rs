@@ -108,11 +108,7 @@ where
     T: Clone,
 {
     let mut traces: Vec<Vec<T>> = Vec::new();
-    let dim_index = if array_traces == ArrayTraces::OverColumns {
-        1
-    } else {
-        0
-    } as usize;
+    let dim_index = usize::from(array_traces == ArrayTraces::OverColumns);
     let traces_count = traces_matrix.shape()[dim_index];
     let get_trace = |index| {
         if array_traces == ArrayTraces::OverColumns {
