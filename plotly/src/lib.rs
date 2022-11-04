@@ -6,6 +6,11 @@ extern crate askama;
 extern crate rand;
 extern crate serde;
 
+#[cfg(all(feature = "kaleido", feature = "wasm"))]
+compile_error!(
+    r#"The "kaleido" and "wasm" features are mutually exclusive and cannot be activated at the same time. Please disable one or the other."#
+);
+
 #[cfg(feature = "plotly_ndarray")]
 pub mod ndarray;
 #[cfg(feature = "plotly_ndarray")]
