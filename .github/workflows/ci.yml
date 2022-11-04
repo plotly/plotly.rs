@@ -93,11 +93,11 @@ jobs:
       fail-fast: false
       matrix:
         example: [wasm-yew-minimal]
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - uses: dtolnay/rust-toolchain@stable
-          with:
-            targets: wasm32-unknown-unknown
-        - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build --target wasm32-unknown-unknown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build --target wasm32-unknown-unknown
 
