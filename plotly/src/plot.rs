@@ -406,6 +406,7 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
+    #[cfg(not(target_family = "wasm"))]
     fn render_static(&self, format: ImageFormat, width: usize, height: usize) -> String {
         let tmpl = StaticPlotTemplate {
             plot: self,
