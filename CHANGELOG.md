@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [0.8.3] - 2022-11-04
 ### Fixed
 - [[#122](https://github.com/igiagkiozis/plotly/pull/122)] Compilation error for the `wasm` feature.
+- [[#123](https://github.com/igiagkiozis/plotly/pull/123)] Compilation error for the `plotly_kaleido` feature.
 
 ## [0.8.2] - 2022-11-03
 ### Added
