@@ -8,6 +8,7 @@ use crate::{
         Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, LegendGroupTitle, Marker,
         Orientation, PlotType, TextAnchor, TextPosition, Visible,
     },
+    private::NumOrStringCollection,
     Trace,
 };
 
@@ -68,6 +69,8 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "customdata")]
+    custom_data: Option<NumOrStringCollection>,
     #[serde(rename = "xaxis")]
     x_axis: Option<String>,
     #[serde(rename = "yaxis")]
