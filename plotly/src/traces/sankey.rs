@@ -351,7 +351,7 @@ where
 {
     /// Creates a new empty Sankey diagram.
     pub fn new() -> Box<Self> {
-        Box::new(Default::default())
+        Box::default()
     }
 }
 
