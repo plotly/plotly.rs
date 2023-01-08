@@ -465,9 +465,8 @@ impl Plot {
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("cmd")
-            .arg("/C")
-            .arg(format!(r#"start {}"#, temp_path))
-            .output()
+            .arg(format!("/Cstart {}", temp_path))
+            .spawn()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 }
