@@ -446,10 +446,10 @@ impl Plot {
     #[cfg(target_os = "linux")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
-        Command::new("xdg-open")
-            .args([temp_path])
-            .output()
-            .expect(DEFAULT_HTML_APP_NOT_FOUND);
+        Command::new("cmd")
+            .arg(format!("/Cstart {}", temp_path))
+            .spawn()
+                .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
     #[cfg(target_os = "macos")]
