@@ -466,8 +466,8 @@ impl Plot {
         use std::process::Command;
         Command::new("cmd")
             .arg("/C")
-            .arg(format!(r#"start {}"#, temp_path))
-            .output()
+            .arg(format!("start {}", temp_path))
+            .spawn()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 }

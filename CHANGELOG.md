@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.4] - 2023-01-xx
+### Fixed
+- [[#129](https://github.com/igiagkiozis/plotly/pull/129)] Fix issue for plots not showing in browser in Windows. Thanks to [@juanespj](https://github.com/juanespj) for the PR.
+
 ## [0.8.3] - 2022-11-04
 ### Fixed
 - [[#122](https://github.com/igiagkiozis/plotly/pull/122)] Compilation error for the `wasm` feature.
