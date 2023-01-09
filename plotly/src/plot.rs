@@ -262,10 +262,13 @@ impl Plot {
 
         // Save the rendered plot to the temp file.
         let temp_path = temp.to_str().unwrap();
-        let mut file = File::create(temp_path).unwrap();
-        file.write_all(rendered.as_bytes())
-            .expect("failed to write html output");
-        file.flush().unwrap();
+        
+        {
+            let mut file = File::create(temp_path).unwrap();
+            file.write_all(rendered.as_bytes())
+                .expect("failed to write html output");
+            file.flush().unwrap();
+        }
 
         // Hand off the job of opening the browser to an OS-specific implementation.
         Plot::show_with_default_app(temp_path);
