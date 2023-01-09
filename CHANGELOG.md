@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.8.4] - 2023-01-xx
 ### Fixed
-- [[#129](https://github.com/igiagkiozis/plotly/pull/129)] Fix issue for plots not showing in browser in Windows. Thanks to @juanespj for the PR.
+- [[#129](https://github.com/igiagkiozis/plotly/pull/129)] Fix issue for plots not showing in browser in Windows. Thanks to [@juanespj](https://github.com/juanespj) for the PR.
 
 ## [0.8.3] - 2022-11-04
 ### Fixed
