@@ -262,7 +262,7 @@ impl Plot {
 
         // Save the rendered plot to the temp file.
         let temp_path = temp.to_str().unwrap();
-        
+
         {
             let mut file = File::create(temp_path).unwrap();
             file.write_all(rendered.as_bytes())
