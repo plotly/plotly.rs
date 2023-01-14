@@ -1018,11 +1018,11 @@ pub enum AxisSide {
 pub struct Marker {
     symbol: Option<MarkerSymbol>,
     opacity: Option<f64>,
-    size: Option<Dim<usize>>,
+    size: Option<Dim<f64>>,
     #[serde(rename = "maxdisplayed")]
     max_displayed: Option<usize>,
     #[serde(rename = "sizeref")]
-    size_ref: Option<usize>,
+    size_ref: Option<f64>,
     #[serde(rename = "sizemin")]
     size_min: Option<usize>,
     #[serde(rename = "sizemode")]
@@ -1063,12 +1063,12 @@ impl Marker {
         self
     }
 
-    pub fn size(mut self, size: usize) -> Self {
+    pub fn size(mut self, size: f64) -> Self {
         self.size = Some(Dim::Scalar(size));
         self
     }
 
-    pub fn size_array(mut self, size: Vec<usize>) -> Self {
+    pub fn size_array(mut self, size: Vec<f64>) -> Self {
         self.size = Some(Dim::Vector(size));
         self
     }
@@ -1078,7 +1078,7 @@ impl Marker {
         self
     }
 
-    pub fn size_ref(mut self, size: usize) -> Self {
+    pub fn size_ref(mut self, size: f64) -> Self {
         self.size_ref = Some(size);
         self
     }
