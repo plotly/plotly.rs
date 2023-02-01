@@ -467,6 +467,11 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
+    #[cfg(target_os = "ios")]
+    fn show_with_default_app(temp_path: &str) {
+        panic!("Can't show in default app on iOS");
+    }
+
     #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
