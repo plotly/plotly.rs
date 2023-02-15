@@ -247,7 +247,11 @@ impl Plot {
     ///
     /// The HTML file is saved in a temp file, from which it is read and
     /// displayed by the browser.
+    ///
+    /// Supported only on certain OSes. On unsupported OSes, this function is
+    /// unavailable.
     #[cfg(not(target_family = "wasm"))]
+    #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
     pub fn show(&self) {
         use std::env;
 
@@ -276,7 +280,11 @@ impl Plot {
 
     /// Display the fully rendered `Plot` as a static image of the given format
     /// in the default system browser.
+    ///
+    /// Supported only on certain OSes. On unsupported OSes, this function is
+    /// unavailable.
     #[cfg(not(target_family = "wasm"))]
+    #[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
@@ -465,11 +473,6 @@ impl Plot {
             .args(&[temp_path])
             .output()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
-    }
-
-    #[cfg(target_os = "ios")]
-    fn show_with_default_app(temp_path: &str) {
-        panic!("Can't show in default app on iOS");
     }
 
     #[cfg(target_os = "windows")]
