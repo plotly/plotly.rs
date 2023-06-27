@@ -1360,6 +1360,50 @@ impl Mapbox {
     }
 }
 
+#[derive(Serialize, Debug, Clone)]
+pub enum AspectMode {
+    #[serde(rename = "auto")]
+    Auto,
+    #[serde(rename = "cube")]
+    Cube,
+    #[serde(rename = "data")]
+    Data,
+    #[serde(rename = "manual")]
+    Manual,
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct LayoutScene {
+    #[serde(rename = "bgcolor")]
+    background_color: Option<Box<dyn Color>>,
+
+    // camera: Camera,
+    // domain: Domain,
+    #[serde(rename = "aspectmode")]
+    aspect_mode: Option<AspectMode>,
+    // #[serde(rename = "aspectratio")]
+    // aspect_ratio: AspectRatio
+    #[serde(rename = "xaxis")]
+    x_axis: Option<Axis>,
+    #[serde(rename = "yaxis")]
+    y_axis: Option<Axis>,
+    #[serde(rename = "zaxis")]
+    z_axis: Option<Axis>,
+
+    #[serde(rename = "dragmode")]
+    drag_mode: Option<String>,
+    #[serde(rename = "hovermode")]
+    hover_mode: Option<HoverMode>,
+    annotations: Option<Vec<Annotation>>,
+}
+
+impl LayoutScene {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Template {
@@ -1481,7 +1525,7 @@ pub struct LayoutTemplate {
     y_axis8: Option<Box<Axis>>,
 
     // ternary: Option<LayoutTernary>,
-    // scene: Option<LayoutScene>,
+    scene: Option<LayoutScene>,
     // polar: Option<LayoutPolar>,
     annotations: Option<Vec<Annotation>>,
     shapes: Option<Vec<Shape>>,
@@ -1665,7 +1709,7 @@ pub struct Layout {
     z_axis8: Option<Box<Axis>>,
 
     // ternary: Option<LayoutTernary>,
-    // scene: Option<LayoutScene>,
+    scene: Option<LayoutScene>,
     // polar: Option<LayoutPolar>,
     annotations: Option<Vec<Annotation>>,
     shapes: Option<Vec<Shape>>,
