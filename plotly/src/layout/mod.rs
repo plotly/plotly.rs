@@ -1374,11 +1374,75 @@ pub enum AspectMode {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct Eye {
+    x: Option<f64>,
+    y: Option<f64>,
+    z: Option<f64>,
+}
+
+impl From<(f64, f64, f64)> for Eye {
+    fn from((x, y, z): (f64, f64, f64)) -> Self {
+        Eye {
+            x: Some(x),
+            y: Some(y),
+            z: Some(z),
+        }
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct Up {
+    x: Option<f64>,
+    y: Option<f64>,
+    z: Option<f64>,
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub enum ProjectionType {
+    #[serde(rename = "perspective")]
+    Perspective,
+    #[serde(rename = "orthographic")]
+    Orthographic,
+}
+
+impl From<ProjectionType> for Projection {
+    fn from(projection_type: ProjectionType) -> Self {
+        Projection {
+            projection_type: Some(projection_type),
+        }
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct Projection {
+    #[serde(rename = "type")]
+    projection_type: Option<ProjectionType>,
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct Camera {
+    // center: Option<Center>,
+    eye: Option<Eye>,
+    up: Option<Up>,
+    projection: Option<Projection>,
+}
+
+impl Camera {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct LayoutScene {
     #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
 
-    // camera: Camera,
+    camera: Option<Camera>,
     // domain: Domain,
     #[serde(rename = "aspectmode")]
     aspect_mode: Option<AspectMode>,
