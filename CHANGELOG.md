@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.8.4] - 2023-01-xx
+### Added
+- [[#143](https://github.com/igiagkiozis/plotly/pull/143)] Widen version range of `askama`.
+
 ### Fixed
 - [[#129](https://github.com/igiagkiozis/plotly/pull/129)] Fix issue for plots not showing in browser in Windows. Thanks to [@juanespj](https://github.com/juanespj) and [@M-NK-Y](https://github.com/M-NK-Y) for the PRs.
 
