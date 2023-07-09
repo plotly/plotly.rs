@@ -20,9 +20,10 @@ pub(crate) fn field_setter_impl(input: DeriveInput) -> proc_macro::TokenStream {
     .into()
 }
 
-#[derive(Debug, Clone, Copy, FromMeta)]
+#[derive(Debug, Clone, Copy, FromMeta, Default)]
 #[darling(default)]
 enum Kind {
+    #[default]
     Other,
     Layout,
     Trace,
@@ -35,12 +36,6 @@ impl Kind {
             Kind::Layout => "Relayout",
             Kind::Trace => "Restyle",
         }
-    }
-}
-
-impl Default for Kind {
-    fn default() -> Self {
-        Kind::Other
     }
 }
 
