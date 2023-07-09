@@ -70,41 +70,40 @@ jupyter lab
 create a new notebook and select the `Rust` kernel. Then create the following three cells and execute them in order:
 
 ```shell script
+:dep ndarray = "0.15.6"
 :dep plotly = { version = ">=0.7.0" }
-:dep itertools-num = "0.1.3"
 ```
 
 ```rust
+extern crate ndarray;
 extern crate plotly;
 extern crate rand_distr;
-extern crate itertools_num;
-extern crate itertools;
 ```
 
 ```rust
-use itertools_num::linspace;
-use plotly::common::{
-    ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
-};
-use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter};
-use rand_distr::{Distribution, Normal, Uniform};
+use ndarray::Array;
+use plotly::common::Mode;
+use plotly::layout::{Layout};
+use plotly::{Plot, Scatter};
+use rand_distr::{num_traits::Float, Distribution};
 ```
 
 Now we're ready to start plotting!
 
 ```rust
-let n: usize = 100;
-let t: Vec<f64> = linspace(0., 10., n).collect();
-let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
+let x0 = Array::linspace(1.0, 3.0, 200).into_raw_vec();
+let y0 = x0.iter().map(|v| *v * (v.powf(2.)).sin() + 1.).collect();
 
-let trace = Scatter::new(t, y).mode(Mode::Markers);
+let trace = Scatter::new(x0, y0);
 let mut plot = Plot::new();
 plot.add_trace(trace);
-let layout = Layout::new().height(800);
-plot.set_layout(layout);
-plot.lab_display();
-```
-For Jupyter Lab there are two ways to display a plot in the `EvCxR` kernel, either have the plot object be in the last line without a semicolon or directly invoke the `Plot::lab_display` method on it; both have the same result. You can also find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/jupyter_lab_examples.ipynb) that will periodically be updated with examples.
 
-The process for Jupyter Notebook is very much the same with one exception; the `Plot::noteboo_display` method must be used to display the plot. You can find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/jupyter_notebook_examples.ipynb) 
+let layout = Layout::new().height(525);
+plot.set_layout(layout);
+
+plot.lab_display();
+format!("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT", plot.to_json())
+```
+For Jupyter Lab there are two ways to display a plot in the `EvCxR` kernel, either have the plot object be in the last line without a semicolon or directly invoke the `Plot::lab_display` method on it; both have the same result. You can also find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/examples/jupyter/jupyter_lab.ipynb) that will periodically be updated with examples.
+
+The process for Jupyter Notebook is very much the same with one exception; the `Plot::notebook_display` method must be used to display the plot. You can find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/examples/jupyter/jupyter_notebook.ipynb) 
