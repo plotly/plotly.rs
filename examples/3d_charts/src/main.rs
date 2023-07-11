@@ -3,7 +3,7 @@
 use ndarray::Array;
 use plotly::{
     common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title},
-    layout::{Axis, Layout},
+    layout::{Axis, Layout, LayoutScene},
     Mesh3D, Plot, Scatter3D, Surface,
 };
 
@@ -56,11 +56,12 @@ fn customized_scatter3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.add_trace(trace2);
-    let layout = Layout::new()
-        .title("Helix".into())
-        .x_axis(Axis::new().title("x (A meaningful axis name goes here)".into()))
-        .y_axis(Axis::new().title(Title::new("This is the label of the Y axis")))
-        .z_axis(Axis::new().title("z Axis".into()));
+    let layout = Layout::new().title("Helix".into()).scene(
+        LayoutScene::new()
+            .x_axis(Axis::new().title("x (A meaningful axis name goes here)".into()))
+            .y_axis(Axis::new().title(Title::new("This is the label of the Y axis")))
+            .z_axis(Axis::new().title("z Axis".into())),
+    );
     plot.set_layout(layout);
 
     plot.show();
