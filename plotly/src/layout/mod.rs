@@ -1454,9 +1454,8 @@ pub struct LayoutScene {
     y_axis: Option<Axis>,
     #[serde(rename = "zaxis")]
     z_axis: Option<Axis>,
-
     #[serde(rename = "dragmode")]
-    drag_mode: Option<String>,
+    drag_mode: Option<DragMode>,
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     annotations: Option<Vec<Annotation>>,
@@ -3083,6 +3082,38 @@ mod tests {
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
             "zaxis": {},
+        });
+
+        assert_eq!(to_value(layout).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_layout_scene() {
+        let layout = Layout::new().scene(
+            LayoutScene::new()
+                .x_axis(Axis::new())
+                .y_axis(Axis::new())
+                .z_axis(Axis::new())
+                .camera(Camera::new())
+                .aspect_mode(AspectMode::Auto)
+                .hover_mode(HoverMode::Closest)
+                .drag_mode(DragMode::Turntable)
+                .background_color("#FFFFFF")
+                .annotations(vec![Annotation::new()]),
+        );
+
+        let expected = json!({
+            "scene": {
+                "xaxis": {},
+                "yaxis": {},
+                "zaxis": {},
+                "camera": {},
+                "aspectmode": "auto",
+                "hovermode": "closest",
+                "dragmode": "turntable",
+                "bgcolor": "#FFFFFF",
+                "annotations": [{}],
+            }
         });
 
         assert_eq!(to_value(layout).unwrap(), expected);
