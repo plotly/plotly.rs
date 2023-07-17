@@ -29,6 +29,7 @@ fn customized_scatter3d_plot() {
     let sizelookup = z.clone();
 
     let trace = Scatter3D::new(t.clone(), y.clone(), z.iter().map(|i| -i).collect())
+        .name("Helix 1")
         .mode(Mode::Markers)
         .marker(
             Marker::new()
@@ -42,26 +43,65 @@ fn customized_scatter3d_plot() {
                 .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
         );
 
-    let trace2 = Scatter3D::new(t, z, y).mode(Mode::Markers).marker(
-        Marker::new()
-            .size_array(
-                sizelookup
-                    .iter()
-                    .map(|i| (i.abs() * 25f64) as usize)
-                    .collect(),
-            )
-            .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
-    );
+    let trace2 = Scatter3D::new(t, z, y)
+        .name("Helix 2")
+        .mode(Mode::Markers)
+        .marker(
+            Marker::new()
+                .size_array(
+                    sizelookup
+                        .iter()
+                        .map(|i| (i.abs() * 25f64) as usize)
+                        .collect(),
+                )
+                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
+        );
 
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.add_trace(trace2);
-    let layout = Layout::new().title("Helix".into()).scene(
-        LayoutScene::new()
-            .x_axis(Axis::new().title("x (A meaningful axis name goes here)".into()))
-            .y_axis(Axis::new().title(Title::new("This is the label of the Y axis")))
-            .z_axis(Axis::new().title("z Axis".into())),
-    );
+
+    let background_color: Rgb = Rgb::new(70, 70, 70);
+    let front_color: Rgb = Rgb::new(255, 255, 255);
+
+    let layout = Layout::new()
+        .title("Helix".into())
+        .legend(Legend::new().x(0.9).y(0.9))
+        .font(Font::new().color(front_color))
+        .paper_background_color(background_color)
+        .scene(
+            LayoutScene::new()
+                .x_axis(
+                    Axis::new()
+                        .title("x (A meaningful axis name goes here)".into())
+                        .tick_angle(0f64)
+                        .grid_color(front_color)
+                        .color(front_color),
+                )
+                .y_axis(
+                    Axis::new()
+                        .title(Title::new("This is the label of the Y axis"))
+                        .tick_format(".1f")
+                        .grid_color(front_color)
+                        .color(front_color),
+                )
+                .z_axis(Axis::new().title("".into()).tick_values(vec![]))
+                .aspect_mode(plotly::layout::AspectMode::Manual)
+                .aspect_ratio((3.0, 1.0, 1.0).into())
+                .camera(
+                    Camera::new()
+                        .projection(ProjectionType::Orthographic.into())
+                        .eye((0.0, 0.0, 1.0).into())
+                        .up((0.0, 1.0, 0.0).into())
+                        .center((0.0, 0.0, 0.0).into()),
+                )
+                .drag_mode(plotly::layout::DragMode3D::Pan)
+                .hover_mode(plotly::layout::HoverMode::Closest)
+                .background_color(background_color),
+        )
+        .margin(Margin::new().left(0).right(0).top(50).bottom(0))
+        .width(1000)
+        .height(500);
     plot.set_layout(layout);
 
     plot.show();
