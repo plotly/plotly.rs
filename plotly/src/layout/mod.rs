@@ -1283,6 +1283,33 @@ impl Serialize for DragMode {
     }
 }
 
+#[derive(Debug, Clone)]
+/// Determines the mode of drag interactions.
+/// TODO: either make an outer DragMode enum with inner 2D and 3D enums or leave
+/// this as is -> Draw variants are only for 2D
+pub enum DragMode3D {
+    Zoom,
+    Pan,
+    Turntable,
+    Orbit,
+    False,
+}
+
+impl Serialize for DragMode3D {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match *self {
+            Self::Zoom => serializer.serialize_str("zoom"),
+            Self::Pan => serializer.serialize_str("pan"),
+            Self::Turntable => serializer.serialize_str("turntable"),
+            Self::Orbit => serializer.serialize_str("orbit"),
+            Self::False => serializer.serialize_bool(false),
+        }
+    }
+}
+
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum SelectDirection {
@@ -1590,7 +1617,7 @@ pub struct LayoutScene {
     #[serde(rename = "zaxis")]
     z_axis: Option<Axis>,
     #[serde(rename = "dragmode")]
-    drag_mode: Option<DragMode>,
+    drag_mode: Option<DragMode3D>,
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     annotations: Option<Vec<Annotation>>,
@@ -3236,7 +3263,7 @@ mod tests {
                 .camera(Camera::new())
                 .aspect_mode(AspectMode::Auto)
                 .hover_mode(HoverMode::Closest)
-                .drag_mode(DragMode::Turntable)
+                .drag_mode(DragMode3D::Turntable)
                 .background_color("#FFFFFF")
                 .annotations(vec![Annotation::new()]),
         );
