@@ -1361,6 +1361,14 @@ impl Mapbox {
 }
 
 #[derive(Serialize, Debug, Clone)]
+/// If "cube", this scene's axes are drawn as a cube, regardless of the axes'
+/// ranges. If "data", this scene's axes are drawn in proportion with the axes'
+/// ranges. If "manual", this scene's axes are drawn in proportion with the
+/// input of "aspectratio" (the default behavior if "aspectratio" is provided).
+/// If "auto", this scene's axes are drawn using the results of "data" except
+/// when one axis is more than four times the size of the two others, where in
+/// that case the results of "cube" are used.
+/// Default: "auto"
 pub enum AspectMode {
     #[serde(rename = "auto")]
     Auto,
@@ -1372,12 +1380,31 @@ pub enum AspectMode {
     Manual,
 }
 
+impl Default for AspectMode {
+    fn default() -> Self {
+        AspectMode::Auto
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+/// Sets the (x, y, z) components of the 'eye' camera vector. This vector
+/// determines the view point about the origin of this scene.
+/// Default: {x: 1.25, y: 1.25, z: 1.25}
 pub struct Eye {
     x: Option<f64>,
     y: Option<f64>,
     z: Option<f64>,
+}
+
+impl Eye {
+    pub fn new() -> Self {
+        Eye {
+            x: Some(1.25),
+            y: Some(1.25),
+            z: Some(1.25),
+        }
+    }
 }
 
 impl From<(f64, f64, f64)> for Eye {
@@ -1392,18 +1419,50 @@ impl From<(f64, f64, f64)> for Eye {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+/// Sets the (x, y, z) components of the 'up' camera vector. This vector
+/// determines the up direction of this scene with respect to the page. The
+/// Default: {x: 0, y: 0, z: 1} which means that the z axis points up.
 pub struct Up {
     x: Option<f64>,
     y: Option<f64>,
     z: Option<f64>,
 }
 
+impl Up {
+    pub fn new() -> Self {
+        Up {
+            x: Some(0.0),
+            y: Some(0.0),
+            z: Some(1.0),
+        }
+    }
+}
+
+impl From<(f64, f64, f64)> for Up {
+    fn from((x, y, z): (f64, f64, f64)) -> Self {
+        Up {
+            x: Some(x),
+            y: Some(y),
+            z: Some(z),
+        }
+    }
+}
+
 #[derive(Serialize, Debug, Clone)]
+/// Sets the projection type. The projection type could be either "perspective"
+/// or "orthographic".
+/// Default: "perspective"
 pub enum ProjectionType {
     #[serde(rename = "perspective")]
     Perspective,
     #[serde(rename = "orthographic")]
     Orthographic,
+}
+
+impl Default for ProjectionType {
+    fn default() -> Self {
+        ProjectionType::Perspective
+    }
 }
 
 impl From<ProjectionType> for Projection {
@@ -1416,15 +1475,57 @@ impl From<ProjectionType> for Projection {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+/// Container for ProjectionType
+/// TODO: Implemented according to https://plotly.com/python/reference/layout/scene/#layout-scene-camera-projection -> Complicating it to projection { type: ..} instead of projection: .. really necessary?
 pub struct Projection {
     #[serde(rename = "type")]
     projection_type: Option<ProjectionType>,
 }
 
+impl Projection {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+/// Sets the (x, y, z) components of the 'center' camera vector. This vector
+/// determines the translation (x, y, z) space about the center of this scene.
+/// Default: {x: 0, y: 0, z: 0} which means that the center of the scene is at
+/// the origin.
+pub struct CameraCenter {
+    x: Option<f64>,
+    y: Option<f64>,
+    z: Option<f64>,
+}
+
+impl CameraCenter {
+    pub fn new() -> Self {
+        CameraCenter {
+            x: Some(0.0),
+            y: Some(0.0),
+            z: Some(0.0),
+        }
+    }
+}
+
+impl From<(f64, f64, f64)> for CameraCenter {
+    fn from((x, y, z): (f64, f64, f64)) -> Self {
+        CameraCenter {
+            x: Some(x),
+            y: Some(y),
+            z: Some(z),
+        }
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+/// Container for CameraCenter, Eye, Up, and Projection objects. The camera of a
+/// 3D scene.
 pub struct Camera {
-    // center: Option<Center>,
+    center: Option<CameraCenter>,
     eye: Option<Eye>,
     up: Option<Up>,
     projection: Option<Projection>,
@@ -1438,16 +1539,50 @@ impl Camera {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
+/// Sets this scene's axis aspectratio.
+/// x, y, z must be positive.
+/// Default: {x: 1, y: 1, z: 1}
+pub struct AspectRatio {
+    x: Option<f64>,
+    y: Option<f64>,
+    z: Option<f64>,
+}
+
+impl AspectRatio {
+    pub fn new() -> Self {
+        AspectRatio {
+            x: Some(1.0),
+            y: Some(1.0),
+            z: Some(1.0),
+        }
+    }
+}
+
+impl From<(f64, f64, f64)> for AspectRatio {
+    fn from((x, y, z): (f64, f64, f64)) -> Self {
+        // assert!(x >= 0.0);
+        // assert!(y >= 0.0);
+        // assert!(z >= 0.0);
+        // TODO: panic if any of the values are negative?
+        AspectRatio {
+            x: Some(x),
+            y: Some(y),
+            z: Some(z),
+        }
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+/// 3D scene layout
 pub struct LayoutScene {
     #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
-
     camera: Option<Camera>,
-    // domain: Domain,
     #[serde(rename = "aspectmode")]
     aspect_mode: Option<AspectMode>,
-    // #[serde(rename = "aspectratio")]
-    // aspect_ratio: AspectRatio
+    #[serde(rename = "aspectratio")]
+    aspect_ratio: Option<AspectRatio>,
     #[serde(rename = "xaxis")]
     x_axis: Option<Axis>,
     #[serde(rename = "yaxis")]
@@ -1459,6 +1594,8 @@ pub struct LayoutScene {
     #[serde(rename = "hovermode")]
     hover_mode: Option<HoverMode>,
     annotations: Option<Vec<Annotation>>,
+    // domain: Domain,
+    // uirevision: Uirevision,
 }
 
 impl LayoutScene {
@@ -3015,7 +3152,8 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
-            .z_axis(Axis::new());
+            .z_axis(Axis::new())
+            .scene(LayoutScene::new());
 
         let expected = json!({
             "title": {"text": "Title"},
@@ -3082,6 +3220,7 @@ mod tests {
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
             "zaxis": {},
+            "scene": {}
         });
 
         assert_eq!(to_value(layout).unwrap(), expected);
@@ -3117,5 +3256,152 @@ mod tests {
         });
 
         assert_eq!(to_value(layout).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_eye() {
+        let eye = Eye::new();
+
+        assert_eq!(
+            to_value(eye).unwrap(),
+            json!({
+                "x": 1.25,
+                "y": 1.25,
+                "z": 1.25,
+            })
+        );
+
+        let eye = Eye::new().x(1f64).y(2f64).z(3f64);
+
+        let expected = json!({
+            "x": 1.0,
+            "y": 2.0,
+            "z": 3.0,
+        });
+
+        assert_eq!(to_value(eye).unwrap(), expected);
+
+        let eye: Eye = (1f64, 2f64, 3f64).into();
+
+        assert_eq!(to_value(eye).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_projection() {
+        let projection = Projection::new().projection_type(ProjectionType::default());
+
+        let expected = json!({
+            "type": "perspective",
+        });
+
+        assert_eq!(to_value(projection).unwrap(), expected);
+
+        let projection = Projection::new().projection_type(ProjectionType::Orthographic);
+
+        let expected = json!({
+            "type": "orthographic",
+        });
+
+        assert_eq!(to_value(projection).unwrap(), expected);
+
+        let projection: Projection = ProjectionType::Orthographic.into();
+
+        assert_eq!(to_value(projection).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_camera_center() {
+        let camera_center = CameraCenter::new();
+
+        let expected = json!({
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+        });
+
+        assert_eq!(to_value(camera_center).unwrap(), expected);
+
+        let camera_center = CameraCenter::new().x(1f64).y(2f64).z(3f64);
+
+        let expected = json!({
+            "x": 1.0,
+            "y": 2.0,
+            "z": 3.0,
+        });
+
+        assert_eq!(to_value(camera_center).unwrap(), expected);
+
+        let camera_center: CameraCenter = (1f64, 2f64, 3f64).into();
+
+        assert_eq!(to_value(camera_center).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_aspect_ratio() {
+        let aspect_ratio = AspectRatio::new();
+
+        let expected = json!({
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0,
+        });
+
+        assert_eq!(to_value(aspect_ratio).unwrap(), expected);
+
+        let aspect_ratio = AspectRatio::new().x(1f64).y(2f64).z(3f64);
+
+        let expected = json!({
+            "x": 1.0,
+            "y": 2.0,
+            "z": 3.0,
+        });
+
+        assert_eq!(to_value(aspect_ratio).unwrap(), expected);
+
+        let aspect_ratio: AspectRatio = (1f64, 2f64, 3f64).into();
+
+        assert_eq!(to_value(aspect_ratio).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_serialize_aspect_mode() {
+        let aspect_mode = AspectMode::default();
+
+        assert_eq!(to_value(aspect_mode).unwrap(), json!("auto"));
+
+        let aspect_mode = AspectMode::Data;
+
+        assert_eq!(to_value(aspect_mode).unwrap(), json!("data"));
+
+        let aspect_mode = AspectMode::Cube;
+
+        assert_eq!(to_value(aspect_mode).unwrap(), json!("cube"));
+    }
+
+    #[test]
+    fn test_serialize_up() {
+        let up = Up::new();
+
+        let expected = json!({
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0,
+        });
+
+        assert_eq!(to_value(up).unwrap(), expected);
+
+        let up = Up::new().x(1f64).y(2f64).z(3f64);
+
+        let expected = json!({
+            "x": 1.0,
+            "y": 2.0,
+            "z": 3.0,
+        });
+
+        assert_eq!(to_value(up).unwrap(), expected);
+
+        let up: Up = (1f64, 2f64, 3f64).into();
+
+        assert_eq!(to_value(up).unwrap(), expected);
     }
 }
