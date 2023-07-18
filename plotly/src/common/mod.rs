@@ -1352,20 +1352,15 @@ impl Label {
     }
 }
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone, Debug, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum ErrorType {
+    #[default]
     Percent,
     Constant,
     #[serde(rename = "sqrt")]
     SquareRoot,
     Data,
-}
-
-impl Default for ErrorType {
-    fn default() -> Self {
-        ErrorType::Percent
-    }
 }
 
 #[serde_with::skip_serializing_none]
