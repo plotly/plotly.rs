@@ -2,8 +2,9 @@
 
 use ndarray::Array;
 use plotly::{
-    common::{ColorScale, ColorScalePalette, Marker, MarkerSymbol, Mode, Title},
-    layout::{Axis, Layout, LayoutScene},
+    color::Rgb,
+    common::{ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode, Title},
+    layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
     Mesh3D, Plot, Scatter3D, Surface,
 };
 
