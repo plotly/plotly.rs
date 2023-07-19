@@ -1285,8 +1285,8 @@ impl Serialize for DragMode {
 
 #[derive(Debug, Clone)]
 /// Determines the mode of drag interactions.
-/// TODO: either make an outer DragMode enum with inner 2D and 3D enums or leave
-/// this as is -> Draw variants are only for 2D
+/// TODO: some DragMode variants are only valid for 2D -> either make an outer DragMode
+/// enum with inner 2D and 3D enums or leave this as is
 pub enum DragMode3D {
     Zoom,
     Pan,
