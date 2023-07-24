@@ -1285,8 +1285,8 @@ impl Serialize for DragMode {
 
 #[derive(Debug, Clone)]
 /// Determines the mode of drag interactions.
-/// TODO: some DragMode variants are only valid for 2D -> either make an outer DragMode
-/// enum with inner 2D and 3D enums or leave this as is
+/// TODO: some DragMode variants are only valid for 2D -> either make an outer
+/// DragMode enum with inner 2D and 3D enums or leave this as is
 pub enum DragMode3D {
     Zoom,
     Pan,
@@ -1475,21 +1475,16 @@ impl From<(f64, f64, f64)> for Up {
     }
 }
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Default, Serialize, Debug, Clone)]
 /// Sets the projection type. The projection type could be either "perspective"
 /// or "orthographic".
 /// Default: "perspective"
 pub enum ProjectionType {
+    #[default]
     #[serde(rename = "perspective")]
     Perspective,
     #[serde(rename = "orthographic")]
     Orthographic,
-}
-
-impl Default for ProjectionType {
-    fn default() -> Self {
-        ProjectionType::Perspective
-    }
 }
 
 impl From<ProjectionType> for Projection {
