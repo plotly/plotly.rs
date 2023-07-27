@@ -3,9 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.5] - 2023-07-19
+## [0.8.5] - 2023-xx-xx
 ### Added
-- [] Added `LayoutScene`
+- [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`
 
 ## [0.8.4] - 2023-07-09
 ### Added
