@@ -1285,8 +1285,6 @@ impl Serialize for DragMode {
 
 #[derive(Debug, Clone)]
 /// Determines the mode of drag interactions.
-/// TODO: some DragMode variants are only valid for 2D -> either make an outer
-/// DragMode enum with inner 2D and 3D enums or leave this as is
 pub enum DragMode3D {
     Zoom,
     Pan,
@@ -1409,8 +1407,6 @@ pub enum AspectMode {
     Manual,
 }
 
-
-
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 /// Sets the (x, y, z) components of the 'eye' camera vector. This vector
@@ -1495,8 +1491,7 @@ impl From<ProjectionType> for Projection {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Container for ProjectionType
-/// TODO: Implemented according to https://plotly.com/python/reference/layout/scene/#layout-scene-camera-projection -> Complicating it to projection { type: ..} instead of projection: .. really necessary?
+/// Container for Projection options.
 pub struct Projection {
     #[serde(rename = "type")]
     projection_type: Option<ProjectionType>,
@@ -1580,10 +1575,6 @@ impl AspectRatio {
 
 impl From<(f64, f64, f64)> for AspectRatio {
     fn from((x, y, z): (f64, f64, f64)) -> Self {
-        // assert!(x >= 0.0);
-        // assert!(y >= 0.0);
-        // assert!(z >= 0.0);
-        // TODO: panic if any of the values are negative?
         AspectRatio {
             x: Some(x),
             y: Some(y),
