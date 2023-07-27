@@ -1249,6 +1249,18 @@ pub struct Title {
     pad: Option<Pad>,
 }
 
+impl From<String> for Title {
+    fn from(title: String) -> Self {
+        Title::new(title)
+    }
+}
+
+impl From<&String> for Title {
+    fn from(title: &String) -> Self {
+        Title::new(title)
+    }
+}
+
 impl From<&str> for Title {
     fn from(title: &str) -> Self {
         Title::new(title)
@@ -1256,9 +1268,9 @@ impl From<&str> for Title {
 }
 
 impl Title {
-    pub fn new(text: &str) -> Self {
+    pub fn new<S: Into<String>>(text: S) -> Self {
         Title {
-            text: text.to_owned(),
+            text: text.into(),
             ..Default::default()
         }
     }

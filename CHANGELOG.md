@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [0.8.5] - 2023-xx-xx
 ### Added
 - [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`
+- [[#154](https://github.com/igiagkiozis/plotly/pull/154)] From<String> implementation for `Title`.
 
 ## [0.8.4] - 2023-07-09
 ### Added
