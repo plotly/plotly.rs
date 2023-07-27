@@ -750,6 +750,7 @@ pub struct ColorBar {
     len_mode: Option<ThicknessMode>,
     #[serde(rename = "nticks")]
     n_ticks: Option<usize>,
+    orientation: Option<Orientation>,
     #[serde(rename = "outlinecolor")]
     outline_color: Option<Box<dyn Color>>,
     #[serde(rename = "outlinewidth")]
@@ -849,6 +850,11 @@ impl ColorBar {
 
     pub fn n_ticks(mut self, n_ticks: usize) -> Self {
         self.n_ticks = Some(n_ticks);
+        self
+    }
+
+    pub fn orientation(mut self, orientation: Orientation) -> Self {
+        self.orientation = Some(orientation);
         self
     }
 
@@ -1662,6 +1668,7 @@ mod tests {
             .len(99)
             .len_mode(ThicknessMode::Pixels)
             .n_ticks(500)
+            .orientation(Orientation::Horizontal)
             .outline_color("#789456")
             .outline_width(7)
             .separate_thousands(true)
@@ -1702,6 +1709,7 @@ mod tests {
             "len": 99,
             "lenmode": "pixels",
             "nticks": 500,
+            "orientation": "h",
             "outlinecolor": "#789456",
             "outlinewidth": 7,
             "separatethousands": true,
