@@ -1396,8 +1396,10 @@ impl Mapbox {
 /// when one axis is more than four times the size of the two others, where in
 /// that case the results of "cube" are used.
 /// Default: "auto"
+#[derive(Default)]
 pub enum AspectMode {
     #[serde(rename = "auto")]
+    #[default]
     Auto,
     #[serde(rename = "cube")]
     Cube,
@@ -1407,11 +1409,7 @@ pub enum AspectMode {
     Manual,
 }
 
-impl Default for AspectMode {
-    fn default() -> Self {
-        AspectMode::Auto
-    }
-}
+
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
