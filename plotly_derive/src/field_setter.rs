@@ -140,6 +140,7 @@ enum FieldType {
     OptionString,
     OptionNumOrString,
     OptionNumOrStringCollection,
+    OptionTitle,
     OptionOther(syn::Type),
 }
 
@@ -202,6 +203,7 @@ impl FieldType {
             FieldType::OptionNumOrStringCollection => quote![crate::private::NumOrStringCollection],
             FieldType::OptionOther(inner) => quote![#inner],
             FieldType::OptionBoxOther(inner) => quote![Box<#inner>],
+            FieldType::OptionTitle => quote![Title],
         }
     }
 
@@ -225,6 +227,7 @@ impl FieldType {
             ["Box", "Color"] => FieldType::OptionBoxColor,
             ["Box", ..] => FieldType::OptionBoxOther(types.get(2).cloned().unwrap()),
             ["Vec", "Box", "Color"] => FieldType::OptionVecBoxColor,
+            ["Title"] => FieldType::OptionTitle,
             _ => FieldType::OptionOther(types.get(1).cloned().unwrap()),
         }
     }
@@ -344,6 +347,7 @@ impl FieldReceiver {
                 quote![value.into()],
                 quote![],
             ),
+            FieldType::OptionTitle => (quote![impl Into<Title>], quote![value.into()], quote![]),
         };
 
         struct ModifyEnum {

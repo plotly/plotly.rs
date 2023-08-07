@@ -160,7 +160,7 @@ impl Traces {
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
 ///
-///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
+///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>");
 ///     plot.set_layout(layout);
 ///     
 ///     # if false {  // We don't actually want to try and display the plot in a browser when running a doctest.
@@ -547,7 +547,7 @@ mod tests {
     #[test]
     fn test_plot_serialize_with_layout() {
         let mut plot = create_test_plot();
-        let layout = Layout::new().title("Title".into());
+        let layout = Layout::new().title("Title");
         plot.set_layout(layout);
 
         let expected = json!({
@@ -596,7 +596,9 @@ mod tests {
     #[test]
     fn test_layout_to_json() {
         let mut plot = create_test_plot();
-        let layout = Layout::new().title("TestTitle".into());
+        let layout = Layout::new()
+            .title("TestTitle")
+            .title(crate::common::Title::with_text("TestTitle"));
         plot.set_layout(layout);
 
         let expected = json!({

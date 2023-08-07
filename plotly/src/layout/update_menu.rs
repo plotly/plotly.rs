@@ -315,7 +315,7 @@ mod tests {
                 Visible::True,
                 Visible::False,
             ]))
-            .push_relayout(Layout::modify_title(Title::new("Hello")))
+            .push_relayout(Layout::modify_title(Title::with_text("Hello".to_string())))
             .push_relayout(Layout::modify_width(20))
             .build();
 
