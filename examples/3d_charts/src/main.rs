@@ -167,7 +167,6 @@ fn colorscale_plot() {
     let mut plot = Plot::new();
 
     let x = (0..100)
-        .into_iter()
         .map(|x| ((x - 50) as f64) / 100f64)
         .collect::<Vec<f64>>();
 
@@ -188,16 +187,13 @@ fn colorscale_plot() {
         .map(|(x, y)| ((x, y), -(x.powi(2) + y.powi(2)) + 0.5))
         .unzip();
 
-    let color: Vec<f64> = z.clone().into_iter().rev().collect();
-    // let color: Vec<usize> = (0..z.len()).collect();
-    // let color: Vec<u8> = (0..z.len()).into_iter().map(|x| x as u8).collect();
-    // let color: Vec<i16> = {
-    //     let mut rng = rand::thread_rng();
-    //     (0..z.len())
-    //         .into_iter()
-    //         .map(|_| rng.gen_range(0..100))
-    //         .collect()
-    // };
+    let color: Vec<f32> = z.clone().into_iter().rev().map(|x| x as f32).collect();
+    let _color: Vec<usize> = (0..z.len()).collect();
+    let _color: Vec<u8> = (0..z.len()).map(|x| x as u8).collect();
+    let _color: Vec<i16> = {
+        let mut rng = rand::thread_rng();
+        (0..z.len()).map(|_| rng.gen_range(0..100)).collect()
+    };
 
     let color_max = color.iter().fold(f64::MIN, |acc, x| acc.max(*x as f64));
 
