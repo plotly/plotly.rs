@@ -20,7 +20,6 @@
 
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
-
 use serde::Serialize;
 
 /// A marker trait allowing several ways to describe a color.

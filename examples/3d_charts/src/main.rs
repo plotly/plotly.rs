@@ -7,7 +7,6 @@ use plotly::{
     layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
     Mesh3D, Plot, Scatter3D, Surface,
 };
-
 use rand::Rng;
 
 // 3D Scatter Plots
