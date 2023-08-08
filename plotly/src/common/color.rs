@@ -45,9 +45,6 @@ impl Color for i16 {}
 impl Color for i8 {}
 impl Color for usize {}
 
-// #[derive(Debug, Clone, Copy, serde::Serialize)]
-// pub struct ColorRef<T: Num>(pub T);
-
 /// ColorArray is only used internally to provide a helper method for converting
 /// Vec<impl Color> to Vec<Box<dyn Color>>, as we would otherwise fall foul of
 /// the orphan rules.
