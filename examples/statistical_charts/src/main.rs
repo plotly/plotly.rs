@@ -4,7 +4,7 @@ use ndarray::Array;
 use plotly::{
     box_plot::{BoxMean, BoxPoints},
     color::{NamedColor, Rgb, Rgba},
-    common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation, Title},
+    common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation},
     histogram::{Bins, Cumulative, HistFunc, HistNorm},
     layout::{Axis, BarMode, BoxMode, Layout, Margin},
     Bar, BoxPlot, Histogram, Plot, Scatter,
@@ -203,11 +203,7 @@ fn grouped_box_plot() {
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .y_axis(
-            Axis::new()
-                .title(Title::new("normalized moisture"))
-                .zero_line(false),
-        )
+        .y_axis(Axis::new().title("normalized moisture").zero_line(false))
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
@@ -248,7 +244,7 @@ fn box_plot_styling_outliers() {
         .marker(Marker::new().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
 
-    let layout = Layout::new().title(Title::new("Box Plot Styling Outliers"));
+    let layout = Layout::new().title("Box Plot Styling Outliers");
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -274,7 +270,7 @@ fn box_plot_styling_mean_and_standard_deviation() {
         .name("Mean and Standard Deviation")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);
-    let layout = Layout::new().title(Title::new("Box Plot Styling Mean and Standard Deviation"));
+    let layout = Layout::new().title("Box Plot Styling Mean and Standard Deviation");
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -321,12 +317,8 @@ fn grouped_horizontal_box_plot() {
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .title(Title::new("Grouped Horizontal Box Plot"))
-        .x_axis(
-            Axis::new()
-                .title(Title::new("normalized moisture"))
-                .zero_line(false),
-        )
+        .title("Grouped Horizontal Box Plot")
+        .x_axis(Axis::new().title("normalized moisture").zero_line(false))
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
@@ -370,9 +362,7 @@ fn fully_styled_box_plot() {
 
     let mut plot = Plot::new();
     let layout = Layout::new()
-        .title(Title::new(
-            "Points Scored by the Top 9 Scoring NBA Players in 2012",
-        ))
+        .title("Points Scored by the Top 9 Scoring NBA Players in 2012")
         .y_axis(
             Axis::new()
                 .auto_range(true)
@@ -522,9 +512,9 @@ fn colored_and_styled_histograms() {
         .auto_bin_x(false)
         .x_bins(Bins::new(-3.2, 4.0, 0.06));
     let layout = Layout::new()
-        .title(Title::new("Colored and Styled Histograms"))
-        .x_axis(Axis::new().title(Title::new("Value")))
-        .y_axis(Axis::new().title(Title::new("Count")))
+        .title("Colored and Styled Histograms")
+        .x_axis(Axis::new().title("Value"))
+        .y_axis(Axis::new().title("Count"))
         .bar_mode(BarMode::Overlay)
         .bar_gap(0.05)
         .bar_group_gap(0.2);

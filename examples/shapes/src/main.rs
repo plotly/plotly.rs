@@ -138,7 +138,7 @@ fn creating_tangent_lines_with_shapes() {
     plot.add_trace(trace);
 
     let mut layout =
-        Layout::new().title("$f(x)=x\\sin(x^2)+1\\\\ f\'(x)=\\sin(x^2)+2x^2\\cos(x^2)$".into());
+        Layout::new().title("$f(x)=x\\sin(x^2)+1\\\\ f\'(x)=\\sin(x^2)+2x^2\\cos(x^2)$");
 
     layout.add_shape(
         Shape::new()

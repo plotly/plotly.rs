@@ -3,7 +3,7 @@
 use std::env;
 use std::path::PathBuf;
 
-use plotly::common::{TickFormatStop, Title};
+use plotly::common::TickFormatStop;
 use plotly::layout::{Axis, RangeSelector, RangeSlider, SelectorButton, SelectorStep, StepMode};
 use plotly::{Candlestick, Layout, Ohlc, Plot, Scatter};
 use serde::Deserialize;
@@ -50,7 +50,7 @@ fn time_series_plot_with_custom_date_range() {
 
     let layout = Layout::new()
         .x_axis(Axis::new().range(vec!["2016-07-01", "2016-12-31"]))
-        .title(Title::new("Manually Set Date Range"));
+        .title("Manually Set Date Range");
     plot.set_layout(layout);
 
     plot.show();
@@ -68,7 +68,7 @@ fn time_series_with_range_slider() {
 
     let layout = Layout::new()
         .x_axis(Axis::new().range_slider(RangeSlider::new().visible(true)))
-        .title(Title::new("Manually Set Date Range"));
+        .title("Manually Set Date Range");
     plot.set_layout(layout);
 
     plot.show();
