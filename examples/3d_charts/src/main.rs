@@ -42,10 +42,11 @@ fn customized_scatter3d_plot() {
                         .map(|i| (i.abs() * 25f64) as usize)
                         .collect(),
                 )
-                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
+                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+                .color_array(z.clone()),
         );
 
-    let trace2 = Scatter3D::new(t, z, y)
+    let trace2 = Scatter3D::new(t, z.clone(), y)
         .name("Helix 2")
         .mode(Mode::Markers)
         .marker(
@@ -56,7 +57,8 @@ fn customized_scatter3d_plot() {
                         .map(|i| (i.abs() * 25f64) as usize)
                         .collect(),
                 )
-                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
+                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+                .color_array(z),
         );
 
     let mut plot = Plot::new();
