@@ -20,6 +20,7 @@
 
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
+
 use serde::Serialize;
 
 /// A marker trait allowing several ways to describe a color.
@@ -33,6 +34,20 @@ impl Color for &'static str {}
 impl Color for String {}
 impl Color for Rgb {}
 impl Color for Rgba {}
+impl Color for f64 {}
+impl Color for f32 {}
+impl Color for u64 {}
+impl Color for u32 {}
+impl Color for u16 {}
+impl Color for u8 {}
+impl Color for i64 {}
+impl Color for i32 {}
+impl Color for i16 {}
+impl Color for i8 {}
+impl Color for usize {}
+
+// #[derive(Debug, Clone, Copy, serde::Serialize)]
+// pub struct ColorRef<T: Num>(pub T);
 
 /// ColorArray is only used internally to provide a helper method for converting
 /// Vec<impl Color> to Vec<Box<dyn Color>>, as we would otherwise fall foul of
@@ -288,6 +303,20 @@ mod tests {
     fn test_serialize_string() {
         let color = "any_arbitrary_string".to_string();
         assert_eq!(to_value(color).unwrap(), json!("any_arbitrary_string"));
+    }
+
+    #[test]
+    fn test_serialize_numbers() {
+        assert_eq!(to_value(1f64).unwrap(), json!(1f64));
+        assert_eq!(to_value(1f32).unwrap(), json!(1f32));
+        assert_eq!(to_value(1i64).unwrap(), json!(1i64));
+        assert_eq!(to_value(1i32).unwrap(), json!(1i32));
+        assert_eq!(to_value(1i16).unwrap(), json!(1i16));
+        assert_eq!(to_value(1i8).unwrap(), json!(1i8));
+        assert_eq!(to_value(1u64).unwrap(), json!(1u64));
+        assert_eq!(to_value(1u32).unwrap(), json!(1u32));
+        assert_eq!(to_value(1u16).unwrap(), json!(1u16));
+        assert_eq!(to_value(1u8).unwrap(), json!(1u8));
     }
 
     #[test]
