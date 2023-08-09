@@ -436,7 +436,7 @@ mod tests {
             .name("sankey")
             .visible(true)
             .legend_rank(1000)
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .ids(vec!["one"])
             .hover_info(HoverInfo::All)
             .hover_label(Label::new())

@@ -58,14 +58,36 @@ pub enum HoverInfo {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct LegendGroupTitle {
-    text: String,
+    text: Option<String>,
     font: Option<Font>,
 }
 
+impl From<&str> for LegendGroupTitle {
+    fn from(title: &str) -> Self {
+        LegendGroupTitle::with_text(title)
+    }
+}
+
+impl From<String> for LegendGroupTitle {
+    fn from(value: String) -> Self {
+        LegendGroupTitle::with_text(value)
+    }
+}
+
+impl From<&String> for LegendGroupTitle {
+    fn from(value: &String) -> Self {
+        LegendGroupTitle::with_text(value)
+    }
+}
+
 impl LegendGroupTitle {
-    pub fn new(text: &str) -> Self {
-        Self {
-            text: text.to_string(),
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn with_text<S: Into<String>>(text: S) -> Self {
+        LegendGroupTitle {
+            text: Some(text.into()),
             ..Default::default()
         }
     }

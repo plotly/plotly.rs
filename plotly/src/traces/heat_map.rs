@@ -202,7 +202,7 @@ mod tests {
             .hover_template_array(vec!["tmpl1", "tmpl2"])
             .hover_text(vec!["hov", "er"])
             .legend_group("1")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .name("name")
             .opacity(0.99)
             .reverse_scale(false)

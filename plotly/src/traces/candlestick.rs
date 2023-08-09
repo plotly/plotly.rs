@@ -144,7 +144,7 @@ mod tests {
         .visible(Visible::True)
         .show_legend(false)
         .legend_group("group_1")
-        .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+        .legend_group_title("Legend Group Title")
         .opacity(0.3)
         .text_array(vec!["text", "here"])
         .text("text here")

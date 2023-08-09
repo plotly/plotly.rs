@@ -28,7 +28,7 @@ use crate::{
 /// let expected = serde_json::json!({
 ///     "type": "ohlc",
 ///     "x": ["2022-08-22", "2022-08-23"],
-///     "open": [5, 6],        
+///     "open": [5, 6],
 ///     "high": [8, 10],
 ///     "low": [2, 4],
 ///     "close": [6, 7]
@@ -133,7 +133,7 @@ mod test {
         .hover_text("1")
         .increasing(Direction::Increasing { line: Line::new() })
         .legend_group("legendgroup")
-        .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+        .legend_group_title("Legend Group Title")
         .line(Line::new())
         .name("ohlc_trace")
         .opacity(0.4)
