@@ -157,5 +157,5 @@ fn main() {
 
     // Heatmaps
     // basic_heat_map();
-    customized_heat_map();
+    // customized_heat_map();
 }
