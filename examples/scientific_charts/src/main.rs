@@ -2,7 +2,7 @@
 
 use std::f64::consts::PI;
 
-use plotly::common::{ColorScale, ColorScalePalette, Title};
+use plotly::common::{ColorScale, ColorScalePalette, Font, Title};
 use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
 
@@ -109,15 +109,53 @@ fn basic_heat_map() {
     plot.show();
 }
 
+fn customized_heat_map() {
+    let x = (0..100).map(|x| x as f64).collect::<Vec<f64>>();
+    let y = (0..100).map(|y| y as f64).collect::<Vec<f64>>();
+    let z: Vec<Vec<f64>> = x
+        .iter()
+        .map(|x| {
+            y.iter()
+                .map(|y| (x / 5.0).powf(2.0) + (y / 5.0).powf(2.0))
+                .collect::<Vec<f64>>()
+        })
+        .collect::<Vec<Vec<f64>>>();
+
+    let (_z_min, z_max) = z
+        .iter()
+        .flatten()
+        .fold((f64::MAX, f64::MIN), |(min, max), &x| {
+            (min.min(x), max.max(x))
+        });
+
+    let colorscale = ColorScalePalette::Jet;
+
+    let trace = HeatMap::new(x, y, z)
+        .zmin(z_max * 0.4)
+        .zmax(z_max * 0.5)
+        .color_scale(colorscale.into());
+
+    let layout = Layout::new()
+        .title(Title::new("Customized Heatmap"))
+        .font(Font::new().size(32));
+
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    plot.show();
+}
+
 fn main() {
     // Uncomment any of these lines to display the example.
 
     // Contour Plots
-    simple_contour_plot();
-    colorscale_for_contour_plot();
-    customizing_size_and_range_of_a_contour_plots_contours();
-    customizing_spacing_between_x_and_y_ticks();
+    // simple_contour_plot();
+    // colorscale_for_contour_plot();
+    // customizing_size_and_range_of_a_contour_plots_contours();
+    // customizing_spacing_between_x_and_y_ticks();
 
     // Heatmaps
-    basic_heat_map();
+    // basic_heat_map();
+    customized_heat_map();
 }
