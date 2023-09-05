@@ -182,7 +182,7 @@ mod tests {
         let trace = HeatMap::new_z(vec![vec![1.0]]);
         let expected = json!({
             "type": "heatmap",
-            "z": [1.0],
+            "z": [[1.0]],
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
@@ -253,7 +253,7 @@ mod tests {
             "y": [2.0, 3.0],
             "yaxis": "y",
             "ycalendar": "islamic",
-            "z": [4.0, 5.0],
+            "z": [[4.0, 5.0], [6.0, 7.0]],
             "zauto": true,
             "zhoverformat": "fmt",
             "zmax": 10.0,
