@@ -440,6 +440,9 @@ pub struct Axis {
     #[serde(rename = "nticks")]
     n_ticks: Option<usize>,
 
+    #[serde(rename = "scaleanchor")]
+    scale_anchor: Option<String>,
+
     tick0: Option<f64>,
     dtick: Option<f64>,
 
