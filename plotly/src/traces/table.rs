@@ -51,6 +51,7 @@ where
     N: Serialize + Clone + Default + 'static,
 {
     pub fn new(header: Vec<T>, cells: Vec<Vec<N>>) -> Box<Self> {
+        
         Box::new(Table {
             header: Header::new().values(header).into(),
             cells: Cells::new().values(cells).into(),
