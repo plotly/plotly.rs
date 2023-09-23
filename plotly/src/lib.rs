@@ -34,7 +34,7 @@ pub use traces::{box_plot, contour, histogram, image, mesh3d, sankey, scatter_ma
 // Bring the different trace types into the top-level scope
 pub use traces::{
     Bar, BoxPlot, Candlestick, Contour, HeatMap, Histogram, Image, Mesh3D, Ohlc, Sankey, Scatter,
-    Scatter3D, ScatterMapbox, ScatterPolar, Surface,
+    Scatter3D, ScatterMapbox, ScatterPolar, Surface, Table,
 };
 
 pub trait Restyle: serde::Serialize {}

@@ -201,6 +201,7 @@ pub enum PlotType {
     Ohlc,
     Sankey,
     Surface,
+    Table,
 }
 
 #[derive(Serialize, Clone, Debug)]

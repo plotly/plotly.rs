@@ -15,6 +15,7 @@ mod scatter3d;
 pub mod scatter_mapbox;
 mod scatter_polar;
 pub mod surface;
+pub mod table;
 
 pub use bar::Bar;
 pub use box_plot::BoxPlot;
@@ -30,5 +31,6 @@ pub use scatter3d::Scatter3D;
 pub use scatter_mapbox::ScatterMapbox;
 pub use scatter_polar::ScatterPolar;
 pub use surface::Surface;
+pub use table::Table;
 
 pub use self::image::Image;
