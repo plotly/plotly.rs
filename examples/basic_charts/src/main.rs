@@ -620,7 +620,6 @@ fn table_chart() {
 
 fn main() {
     // Uncomment any of these lines to display the example.
-    table_chart();
 
     // Scatter Plots
     // simple_scatter_plot();
@@ -644,6 +643,7 @@ fn main() {
     // basic_bar_chart();
     // grouped_bar_chart();
     // stacked_bar_chart();
+    // table_chart();
 
     // Sankey Diagrams
     // basic_sankey_diagram();
