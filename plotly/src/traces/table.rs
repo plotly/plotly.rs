@@ -51,7 +51,6 @@ where
     N: Serialize + Clone + Default + 'static,
 {
     pub fn new(header: Vec<T>, cells: Vec<Vec<N>>) -> Box<Self> {
-        
         Box::new(Table {
             header: Header::new().values(header).into(),
             cells: Cells::new().values(cells).into(),
@@ -131,7 +130,7 @@ where
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Fill {
-    color: Option<Box<dyn Color>>
+    color: Option<Box<dyn Color>>,
 }
 
 impl Fill {
