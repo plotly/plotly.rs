@@ -86,7 +86,7 @@ pub struct Cells<N> {
     line: Option<Line>,
     ///Sets the cell fill color. It accepts either a specific color,
     ///or an array of colors or a 2D array of colors
-    fill: Option<Box<dyn Color>>,
+    fill: Option<Fill>,
     font: Option<Font>,
 }
 
@@ -115,7 +115,7 @@ pub struct Header<T> {
     line: Option<Line>,
     ///Sets the cell fill color. It accepts either a specific color,
     ///or an array of colors or a 2D array of colors
-    fill: Option<Box<dyn Color>>,
+    fill: Option<Fill>,
     font: Option<Font>,
 }
 
@@ -123,6 +123,18 @@ impl<T> Header<T>
 where
     T: Serialize + Clone + Default + 'static,
 {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Fill {
+    color: Option<Box<dyn Color>>
+}
+
+impl Fill {
     pub fn new() -> Self {
         Default::default()
     }
@@ -136,10 +148,9 @@ mod tests {
 
     #[test]
     fn test_serialize_table() {
-        let trace = Table::new(
-            vec![String::from("col1"), String::from("col2")],
-            vec![vec![1, 2], vec![2, 3]],
-        );
+        let columns = vec![String::from("col1"), String::from("col2")];
+        let values = vec![vec![1, 2], vec![2, 3]];
+        let trace = Table::new(columns.clone(), values);
 
         let expected = json!({
             "type": "table",
