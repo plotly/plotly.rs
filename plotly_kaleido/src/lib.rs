@@ -145,6 +145,7 @@ impl Kaleido {
                 "--allow-file-access-from-files",
                 "--disable-breakpad",
                 "--disable-dev-shm-usage",
+                "--disable-software-rasterizer",
                 "--single-process",
             ])
             .stdin(Stdio::piped())
