@@ -13,6 +13,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::num::ParseIntError;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
@@ -137,7 +138,7 @@ impl Kaleido {
         let p = p.to_str().unwrap();
         let p = String::from(p);
 
-        let process = Command::new(p.as_str())
+        let mut process = Command::new(p.as_str())
             .current_dir(self.cmd_path.parent().unwrap())
             .args([
                 "plotly",
@@ -156,14 +157,14 @@ impl Kaleido {
 
         {
             let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
-            let mut process_stdin = process.stdin.unwrap();
+            let mut process_stdin = process.stdin.take().unwrap();
             process_stdin
                 .write_all(plot_data.as_bytes())
                 .expect("couldn't write to Kaleido stdin");
             process_stdin.flush()?;
         }
 
-        let output_lines = BufReader::new(process.stdout.unwrap()).lines();
+        let output_lines = BufReader::new(process.stdout.take().unwrap()).lines();
         for line in output_lines.flatten() {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
