@@ -50,10 +50,10 @@ where
     T: Serialize + Clone + Default + 'static,
     N: Serialize + Clone + Default + 'static,
 {
-    pub fn new(header: Vec<T>, cells: Vec<Vec<N>>) -> Box<Self> {
+    pub fn new(header: Header<T>, cells: Cells<N>) -> Box<Self> {
         Box::new(Table {
-            header: Header::new().values(header).into(),
-            cells: Cells::new().values(cells).into(),
+            header: Some(header),
+            cells: Some(cells),
             ..Default::default()
         })
     }
@@ -93,8 +93,11 @@ impl<N> Cells<N>
 where
     N: Serialize + Clone + Default + 'static,
 {
-    pub fn new() -> Self {
-        Default::default()
+    pub fn new(values: Vec<Vec<N>>) -> Self {
+        Cells {
+            values: Some(values),
+            ..Default::default()
+        }
     }
 }
 
@@ -122,8 +125,11 @@ impl<T> Header<T>
 where
     T: Serialize + Clone + Default + 'static,
 {
-    pub fn new() -> Self {
-        Default::default()
+    pub fn new(values: Vec<T>) -> Self {
+        Header {
+            values: Some(values),
+            ..Default::default()
+        }
     }
 }
 
@@ -147,9 +153,9 @@ mod tests {
 
     #[test]
     fn test_serialize_table() {
-        let columns = vec![String::from("col1"), String::from("col2")];
-        let values = vec![vec![1, 2], vec![2, 3]];
-        let trace = Table::new(columns.clone(), values);
+        let columns = Header::new(vec![String::from("col1"), String::from("col2")]);
+        let values = Cells::new(vec![vec![1, 2], vec![2, 3]]);
+        let trace = Table::new(columns, values);
 
         let expected = json!({
             "type": "table",
