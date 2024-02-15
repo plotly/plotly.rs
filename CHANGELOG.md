@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.8.5] - 2023-xx-xx
 ### Added
+- [[#181](https://github.com/igiagkiozis/plotly/pull/181)] Fix compilation error when mixing the crate with `askama/with-axum` by adding `with-axum` feature
 - [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`
 
 ## [0.8.4] - 2023-07-09
