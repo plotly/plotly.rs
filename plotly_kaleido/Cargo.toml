@@ -19,12 +19,12 @@ serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
 base64 = "0.13.0"
 dunce = "1.0.2"
-directories = "4.0.1"
+directories = "5.0.1"
 
 [dev-dependencies]
 zip = "0.5.13"
 
 [build-dependencies]
 zip = "0.5.13"
-directories = "4.0.1"
+directories = "5.0.1"
 
