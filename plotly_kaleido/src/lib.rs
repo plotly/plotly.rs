@@ -163,7 +163,7 @@ impl Kaleido {
         }
 
         let output_lines = BufReader::new(process.stdout.unwrap()).lines();
-        for line in output_lines.flatten() {
+        for line in output_lines.map_while(Result::ok) {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
                 let data: Vec<u8> = match format {
