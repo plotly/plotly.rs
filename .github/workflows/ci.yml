@@ -3,9 +3,9 @@ name: CI
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 # Cancel any in-flight jobs for the same PR/branch so there's only one active
 # at a time
