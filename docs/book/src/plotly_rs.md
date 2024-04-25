@@ -1,9 +1,9 @@
 <div align="center">
-    <a href="https://github.com/igiagkiozis/plotly/tree/master">
-        <img src="https://img.shields.io/badge/Plotly.rs-master-brightgreen" alt="build status">
+    <a href="https://github.com/plotly/plotly.rs/tree/main">
+        <img src="https://img.shields.io/badge/Plotly.rs-main-brightgreen" alt="build status">
     </a>
-    <a href="https://github.com/igiagkiozis/plotly/actions">
-        <img src="https://github.com/igiagkiozis/plotly/workflows/build/badge.svg" alt="build status">
+    <a href="https://github.com/plotly/plotly.rs/actions?query=branch%3Amain" style="text-decoration: none!important;">
+        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/ci.yml?branch=main" alt="Build status">
     </a>
     <a href="https://crates.io/crates/plotly">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
@@ -20,17 +20,17 @@
 
 Plotly.rs is a plotting library powered by [Plotly.js](https://plot.ly/javascript/). The aim is to bring over to Rust all the functionality that `Python` users have come to rely on with the added benefit of type safety and speed.
 
-Plotly.rs is free and open source. You can find the source on [GitHub](https://github.com/igiagkiozis/plotly). Issues and feature requests can be posted on the [issue tracker](https://github.com/igiagkiozis/plotly/issues).
+Plotly.rs is free and open source. You can find the source on [GitHub](https://github.com/plotly/plotly.rs). Issues and feature requests can be posted on the [issue tracker](https://github.com/plotly/plotly.rs/issues).
 
 ## API Docs
 
 This book is intended to be a recipe index, which closely follows the [plotly.js examples](https://plotly.com/javascript/), and is complemented by the [API documentation](https://docs.rs/plotly).
 
 ## Contributing
-Contributions are always welcomed, no matter how large or small. Refer to the [contributing guidelines](https://github.com/igiagkiozis/plotly/blob/master/CONTRIBUTING.md) for further pointers, and, if in doubt, [open an issue](https://github.com/igiagkiozis/plotly/issues).
+Contributions are always welcomed, no matter how large or small. Refer to the [contributing guidelines](https://github.com/plotly/plotly.rs/tree/main/CONTRIBUTING.md) for further pointers, and, if in doubt, [open an issue](https://github.com/plotly/plotly.rs/issues).
 
 ## License
 
 Plotly.rs is distributed under the terms of the MIT license.
 
-See [LICENSE-MIT](https://github.com/igiagkiozis/plotly/blob/master/LICENSE-MIT), and [COPYRIGHT](https://github.com/igiagkiozis/plotly/blob/master/COPYRIGHT) for details.
+See [LICENSE-MIT](https://github.com/plotly/plotly.rs/tree/main/LICENSE-MIT), and [COPYRIGHT](https://github.com/plotly/plotly.rs/tree/main/COPYRIGHT) for details.

@@ -62,7 +62,7 @@ let height = 680;
 let scale = 1.0;
 plot.write_image("filename", ImageFormat::PNG, width, height, scale);
 
-See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
+See https://plotly.github.io/plotly.rs/content/getting_started.html for further details.
 "#;
 
 /// Image format for static image export.
