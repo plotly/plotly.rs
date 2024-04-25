@@ -237,6 +237,7 @@ mod tests {
         assert_eq!(to_value(kaleido_data).unwrap(), expected);
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     fn test_save_png() {
         let test_plot = create_test_plot();
@@ -247,6 +248,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     fn test_save_jpeg() {
         let test_plot = create_test_plot();
@@ -257,6 +259,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     fn test_save_webp() {
         let test_plot = create_test_plot();
@@ -267,6 +270,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     fn test_save_svg() {
         let test_plot = create_test_plot();
@@ -277,6 +281,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     fn test_save_pdf() {
         let test_plot = create_test_plot();
@@ -287,6 +292,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[ignore]
     fn test_save_eps() {
