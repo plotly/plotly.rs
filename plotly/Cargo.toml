@@ -22,7 +22,7 @@ wasm = ["getrandom", "js-sys", "wasm-bindgen", "wasm-bindgen-futures"]
 [dependencies]
 askama = { version = ">=0.11.0, <0.13.0", features = ["serde-json"] }
 dyn-clone = "1"
-erased-serde = "0.3"
+erased-serde = "0.4"
 getrandom = { version = "0.2", features = ["js"], optional = true }
 image = { version = "0.24.2", optional = true }
 js-sys = { version = "0.3", optional = true }
