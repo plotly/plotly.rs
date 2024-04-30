@@ -22,7 +22,7 @@ wasm = ["getrandom", "js-sys", "wasm-bindgen", "wasm-bindgen-futures"]
 [dependencies]
 askama = { version = ">=0.11.0, <0.13.0", features = ["serde-json"] }
 dyn-clone = "1"
-erased-serde = "0.3"
+erased-serde = "0.4"
 getrandom = { version = "0.2", features = ["js"], optional = true }
 image = { version = "0.24.2", optional = true }
 js-sys = { version = "0.3", optional = true }
@@ -33,7 +33,7 @@ once_cell = "1"
 serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
 serde_repr = "0.1"
-serde_with = "2"
+serde_with = ">=2, <4"
 rand = "0.8"
 wasm-bindgen = { version = "0.2", optional = true }
 wasm-bindgen-futures = { version = "0.4", optional = true }
@@ -41,7 +41,7 @@ wasm-bindgen-futures = { version = "0.4", optional = true }
 [dev-dependencies]
 csv = "1.1.6"
 image = "0.24.4"
-itertools = "0.10.3"
+itertools = ">=0.10, <0.13"
 itertools-num = "0.1.3"
 ndarray = "0.15.4"
 plotly_kaleido = { version = "0.8.4", path = "../plotly_kaleido" }
