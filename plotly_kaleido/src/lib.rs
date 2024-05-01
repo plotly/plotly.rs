@@ -16,6 +16,7 @@ use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
+use base64::{engine::general_purpose, Engine as _};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -168,7 +169,7 @@ impl Kaleido {
             if let Some(image_data) = res.result {
                 let data: Vec<u8> = match format {
                     "svg" | "eps" => image_data.as_bytes().to_vec(),
-                    _ => base64::decode(image_data).unwrap(),
+                    _ => general_purpose::STANDARD.decode(image_data).unwrap(),
                 };
                 let mut file = File::create(dst.as_path())?;
                 file.write_all(&data)?;
