@@ -293,7 +293,6 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    #[cfg(not(target_os = "windows"))]
     #[test]
     #[ignore]
     fn test_save_eps() {

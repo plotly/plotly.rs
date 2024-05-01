@@ -686,7 +686,6 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
     #[test]
     #[ignore] // This seems to fail unpredictably on MacOs.
     #[cfg(feature = "kaleido")]
