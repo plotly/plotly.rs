@@ -17,7 +17,7 @@ exclude = ["target/*", "kaleido/*", "examples/*"]
 [dependencies]
 serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
-base64 = "0.13.0"
+base64 = "0.22.1"
 dunce = "1.0.2"
 directories = ">=4, <6"
 
