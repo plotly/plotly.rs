@@ -100,7 +100,7 @@ impl ButtonBuilder {
     pub fn new() -> Self {
         Default::default()
     }
-    pub fn push_restyle(mut self, restyle: impl Restyle + Serialize) -> Self {
+    pub fn push_restyle(mut self, restyle: impl Restyle) -> Self {
         let restyle = serde_json::to_value(&restyle).unwrap();
         for (k, v) in restyle.as_object().unwrap() {
             self.restyles.insert(k.clone(), v.clone());
