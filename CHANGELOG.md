@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.8.5] - 2024-xx-xx
 ### Added
+- [[#181](https://github.com/igiagkiozis/plotly/pull/181)] Fix compilation error when mixing the crate with `askama/with-axum` by adding `with-axum` feature.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
 - [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`.
 
@@ -47,8 +48,7 @@ Version 0.8.0 represents a significant release which refactors a lot of the code
 - Support for `Sankey` diagrams
 - Support for `Plot3D` - 3D plots for scatter, line and surface data
 ### Changed
-- Improve implementation of `private::NumOrString` to support more primitive types ([Issue
-#47](https://github.com/igiagkiozis/plotly/issues/47))
+- Improve implementation of `private::NumOrString` to support more primitive types ([Issue #47](https://github.com/igiagkiozis/plotly/issues/47))
 - Remove `private::TruthyEnum` in favour of a more robust way of serializing to `String` or `bool`
 - Refactor `Color` module
 - Refactored HTML templates with cleaner Javascript code
