@@ -3,9 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.5] - 2023-xx-xx
+## [0.8.5] - 2024-xx-xx
 ### Added
-- [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`
+- [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
+- [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`.
 
 ## [0.8.4] - 2023-07-09
 ### Added
@@ -46,7 +47,7 @@ Version 0.8.0 represents a significant release which refactors a lot of the code
 - Support for `Sankey` diagrams
 - Support for `Plot3D` - 3D plots for scatter, line and surface data
 ### Changed
-- Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
+- Improve implementation of `private::NumOrString` to support more primitive types ([Issue
 #47](https://github.com/igiagkiozis/plotly/issues/47))
 - Remove `private::TruthyEnum` in favour of a more robust way of serializing to `String` or `bool`
 - Refactor `Color` module
