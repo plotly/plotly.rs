@@ -3,9 +3,9 @@ name: CI
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 # Cancel any in-flight jobs for the same PR/branch so there's only one active
 # at a time
@@ -27,7 +27,7 @@ jobs:
           components: rustfmt
       - run: cargo fmt --all -- --check
       - run: cd ${{ github.workspace }}/examples && cargo fmt --all -- --check
-    
+
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
@@ -57,7 +57,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --features plotly_ndarray,plotly_image,kaleido
-  
+      - if: ${{ matrix.os == 'windows-latest' }}
+        run: gci -recurse -filter "*example*"
+
   code-coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
@@ -70,7 +72,7 @@ jobs:
       # we are skipping anything to do with wasm here
       - run: cargo llvm-cov --workspace --features plotly_ndarray,plotly_image,kaleido --lcov --output-path lcov.info
       - uses: codecov/codecov-action@v3
-      
+
   build_examples:
     name: Build Examples
     strategy:
@@ -94,7 +96,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build
-  
+
   build_wasm_examples:
     name: Build Wasm Examples
     strategy:
