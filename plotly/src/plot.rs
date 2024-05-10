@@ -20,6 +20,7 @@ struct PlotTemplate<'a> {
 
 #[derive(Template)]
 #[template(path = "static_plot.html", escape = "none")]
+#[cfg(not(target_family = "wasm"))]
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
