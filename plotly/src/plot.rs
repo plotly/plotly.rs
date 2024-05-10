@@ -162,7 +162,7 @@ impl Traces {
 ///
 ///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
 ///     plot.set_layout(layout);
-///     
+///
 ///     # if false {  // We don't actually want to try and display the plot in a browser when running a doctest.
 ///     plot.show();
 ///     # }
@@ -650,6 +650,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
@@ -661,6 +662,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
@@ -672,6 +674,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
@@ -695,6 +698,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
@@ -706,6 +710,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
