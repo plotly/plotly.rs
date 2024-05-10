@@ -7,6 +7,7 @@ use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 use update_menu::UpdateMenu;
 
+use crate::common::Domain;
 use crate::{
     color::Color,
     common::{
@@ -15,7 +16,6 @@ use crate::{
     },
     private::{NumOrString, NumOrStringCollection},
 };
-use crate::common::Domain;
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
