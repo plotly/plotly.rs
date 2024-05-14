@@ -1,16 +1,18 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js ayu">
+<html lang="en" class="ayu" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Shapes - Plotly.rs Book</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+        
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
+        <link rel="icon" href="../favicon.svg">
         <link rel="shortcut icon" href="../favicon.png">
         <link rel="stylesheet" href="../css/variables.css">
         <link rel="stylesheet" href="../css/general.css">
@@ -19,8 +21,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="../highlight.css">
@@ -28,24 +29,21 @@
         <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
         <link rel="stylesheet" href="../ferris.css">
-        
 
-        
         <!-- MathJax -->
-        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -61,46 +59,76 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('ayu')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item expanded "><a href="../fundamentals/shapes.html" class="active"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li></ol></li><li class="chapter-item "><a href="../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../recipes/subplots.html"><strong aria-hidden="true">3.5.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/subplots/subplots.html"><strong aria-hidden="true">3.5.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.5.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item expanded "><a href="../fundamentals/shapes.html" class="active"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="../recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item "><a href="../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item "><a href="../recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../recipes/subplots/subplots.html"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -109,13 +137,11 @@
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Plotly.rs Book</h1>
@@ -124,14 +150,13 @@
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -139,10 +164,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -152,10 +176,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#shapes" id="shapes">Shapes</a></h1>
+                        <h1 id="shapes"><a class="header" href="#shapes">Shapes</a></h1>
 <p>The following imports have been used to produce the plots below:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use itertools_num::linspace;
 use plotly::common::{
@@ -168,12 +191,10 @@ use plotly::layout::{
 use plotly::{Bar, NamedColor, Plot, Scatter};
 use rand::thread_rng;
 use rand_distr::{Distribution, Normal};
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
-<h2><a class="header" href="#filled-area-chart" id="filled-area-chart">Filled Area Chart</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="filled-area-chart"><a class="header" href="#filled-area-chart">Filled Area Chart</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn filled_area_chart(show: bool) {
     let trace1 = Scatter::new(vec![0, 1, 2, 0], vec![0, 2, 0, 0]).fill(Fill::ToSelf);
@@ -185,10 +206,9 @@ use rand_distr::{Distribution, Normal};
     if show {
         plot.show();
     }
-    println!(&quot;{}&quot;, plot.to_inline_html(Some(&quot;filled_area_chart&quot;)));
+    println!("{}", plot.to_inline_html(Some("filled_area_chart")));
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="filled_area_chart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -202,16 +222,15 @@ var layout = {};
         Plotly.newPlot('filled_area_chart', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#vertical-and-horizontal-lines-positioned-relative-to-axes" id="vertical-and-horizontal-lines-positioned-relative-to-axes">Vertical and Horizontal Lines Positioned Relative to Axes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="vertical-and-horizontal-lines-positioned-relative-to-axes"><a class="header" href="#vertical-and-horizontal-lines-positioned-relative-to-axes">Vertical and Horizontal Lines Positioned Relative to Axes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool) {
     let trace = Scatter::new(vec![2.0, 3.5, 6.0], vec![1.0, 1.5, 1.0])
         .text_array(vec![
-            &quot;Vertical Line&quot;,
-            &quot;Horizontal Dashed Line&quot;,
-            &quot;Diagonal dotted Line&quot;,
+            "Vertical Line",
+            "Horizontal Dashed Line",
+            "Diagonal dotted Line",
         ])
         .mode(Mode::Text);
     let mut plot = Plot::new();
@@ -241,7 +260,7 @@ var layout = {};
                 ShapeLine::new()
                     .color(NamedColor::LightSeaGreen)
                     .width(3.)
-                    .dash(&quot;dashdot&quot;),
+                    .dash("dashdot"),
             ),
     );
     layout.add_shape(
@@ -255,7 +274,7 @@ var layout = {};
                 ShapeLine::new()
                     .color(NamedColor::MediumPurple)
                     .width(3.)
-                    .dash(&quot;dot&quot;),
+                    .dash("dot"),
             ),
     );
 
@@ -264,14 +283,13 @@ var layout = {};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
+        "{}",
         plot.to_inline_html(Some(
-            &quot;vertical_and_horizontal_lines_positioned_relative_to_axes&quot;
+            "vertical_and_horizontal_lines_positioned_relative_to_axes"
         ))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="vertical_and_horizontal_lines_positioned_relative_to_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -284,15 +302,14 @@ var layout = {"xaxis":{"range":[0.0,7.0]},"yaxis":{"range":[0.0,2.5]},"shapes":[
         Plotly.newPlot('vertical_and_horizontal_lines_positioned_relative_to_axes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#lines-positioned-relative-to-the-plot-and-to-the-axes" id="lines-positioned-relative-to-the-plot-and-to-the-axes">Lines Positioned Relative to the Plot and to the Axes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="lines-positioned-relative-to-the-plot-and-to-the-axes"><a class="header" href="#lines-positioned-relative-to-the-plot-and-to-the-axes">Lines Positioned Relative to the Plot and to the Axes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn lines_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
     let trace = Scatter::new(vec![2.0, 6.0], vec![1.0, 1.0])
         .text_array(vec![
-            &quot;Line positioned relative to the plot&quot;,
-            &quot;Line positioned relative to the axes&quot;,
+            "Line positioned relative to the plot",
+            "Line positioned relative to the axes",
         ])
         .mode(Mode::Text);
     let mut plot = Plot::new();
@@ -304,8 +321,8 @@ var layout = {"xaxis":{"range":[0.0,7.0]},"yaxis":{"range":[0.0,2.5]},"shapes":[
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Line)
             .x0(4)
             .y0(0)
@@ -315,8 +332,8 @@ var layout = {"xaxis":{"range":[0.0,7.0]},"yaxis":{"range":[0.0,2.5]},"shapes":[
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;paper&quot;)
-            .y_ref(&quot;paper&quot;)
+            .x_ref("paper")
+            .y_ref("paper")
             .shape_type(ShapeType::Line)
             .x0(0.0)
             .y0(0.0)
@@ -330,14 +347,13 @@ var layout = {"xaxis":{"range":[0.0,7.0]},"yaxis":{"range":[0.0,2.5]},"shapes":[
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
+        "{}",
         plot.to_inline_html(Some(
-            &quot;lines_positioned_relative_to_the_plot_and_to_the_axes&quot;
+            "lines_positioned_relative_to_the_plot_and_to_the_axes"
         ))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="lines_positioned_relative_to_the_plot_and_to_the_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -350,9 +366,8 @@ var layout = {"xaxis":{"range":[0.0,8.0]},"yaxis":{"range":[0.0,2.0]},"shapes":[
         Plotly.newPlot('lines_positioned_relative_to_the_plot_and_to_the_axes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#creating-tangent-lines-with-shapes" id="creating-tangent-lines-with-shapes">Creating Tangent Lines with Shapes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="creating-tangent-lines-with-shapes"><a class="header" href="#creating-tangent-lines-with-shapes">Creating Tangent Lines with Shapes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn creating_tangent_lines_with_shapes(show: bool) {
     let x0: Vec&lt;f64&gt; = linspace(1.0, 3.0, 200).collect();
@@ -363,12 +378,12 @@ var layout = {"xaxis":{"range":[0.0,8.0]},"yaxis":{"range":[0.0,2.0]},"shapes":[
     plot.add_trace(trace);
 
     let mut layout =
-        Layout::new().title(&quot;$f(x)=x\\sin(x^2)+1\\\\ f\'(x)=\\sin(x^2)+2x^2\\cos(x^2)$&quot;.into());
+        Layout::new().title("$f(x)=x\\sin(x^2)+1\\\\ f\'(x)=\\sin(x^2)+2x^2\\cos(x^2)$".into());
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .opacity(0.7)
             .shape_type(ShapeType::Line)
             .x0(1.)
@@ -379,8 +394,8 @@ var layout = {"xaxis":{"range":[0.0,8.0]},"yaxis":{"range":[0.0,2.0]},"shapes":[
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .opacity(0.7)
             .shape_type(ShapeType::Line)
             .x0(2.5)
@@ -391,8 +406,8 @@ var layout = {"xaxis":{"range":[0.0,8.0]},"yaxis":{"range":[0.0,2.0]},"shapes":[
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .opacity(0.7)
             .shape_type(ShapeType::Line)
             .x0(1.90)
@@ -407,12 +422,11 @@ var layout = {"xaxis":{"range":[0.0,8.0]},"yaxis":{"range":[0.0,2.0]},"shapes":[
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;creating_tangent_lines_with_shapes&quot;))
+        "{}",
+        plot.to_inline_html(Some("creating_tangent_lines_with_shapes"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="creating_tangent_lines_with_shapes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -425,13 +439,12 @@ var layout = {"title":{"text":"$f(x)=x\\sin(x^2)+1\\\\ f'(x)=\\sin(x^2)+2x^2\\co
         Plotly.newPlot('creating_tangent_lines_with_shapes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#rectangles-positioned-relative-to-the-axes" id="rectangles-positioned-relative-to-the-axes">Rectangles Positioned Relative to the Axes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="rectangles-positioned-relative-to-the-axes"><a class="header" href="#rectangles-positioned-relative-to-the-axes">Rectangles Positioned Relative to the Axes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn rectangles_positioned_relative_to_the_axes(show: bool) {
     let trace = Scatter::new(vec![1.5, 4.5], vec![0.75, 0.75])
-        .text_array(vec![&quot;Unfilled Rectangle&quot;, &quot;Filled Rectangle&quot;])
+        .text_array(vec!["Unfilled Rectangle", "Filled Rectangle"])
         .mode(Mode::Text);
     let mut plot = Plot::new();
     plot.add_trace(trace);
@@ -442,8 +455,8 @@ var layout = {"title":{"text":"$f(x)=x\\sin(x^2)+1\\\\ f'(x)=\\sin(x^2)+2x^2\\co
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Rect)
             .x0(1.)
             .y0(1.)
@@ -453,8 +466,8 @@ var layout = {"title":{"text":"$f(x)=x\\sin(x^2)+1\\\\ f'(x)=\\sin(x^2)+2x^2\\co
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Rect)
             .x0(3.)
             .y0(1.)
@@ -469,12 +482,11 @@ var layout = {"title":{"text":"$f(x)=x\\sin(x^2)+1\\\\ f'(x)=\\sin(x^2)+2x^2\\co
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;rectangles_positioned_relative_to_the_axes&quot;))
+        "{}",
+        plot.to_inline_html(Some("rectangles_positioned_relative_to_the_axes"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="rectangles_positioned_relative_to_the_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -487,15 +499,14 @@ var layout = {"xaxis":{"range":[0.0,7.0],"showgrid":false},"yaxis":{"range":[0.0
         Plotly.newPlot('rectangles_positioned_relative_to_the_axes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#rectangle-positioned-relative-to-the-plot-and-to-the-axes" id="rectangle-positioned-relative-to-the-plot-and-to-the-axes">Rectangle Positioned Relative to the Plot and to the Axes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="rectangle-positioned-relative-to-the-plot-and-to-the-axes"><a class="header" href="#rectangle-positioned-relative-to-the-plot-and-to-the-axes">Rectangle Positioned Relative to the Plot and to the Axes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool) {
     let trace = Scatter::new(vec![1.5, 3.], vec![2.5, 2.5])
         .text_array(vec![
-            &quot;Rectangle reference to the plot&quot;,
-            &quot;Rectangle reference to the axes&quot;,
+            "Rectangle reference to the plot",
+            "Rectangle reference to the axes",
         ])
         .mode(Mode::Text);
     let mut plot = Plot::new();
@@ -507,8 +518,8 @@ var layout = {"xaxis":{"range":[0.0,7.0],"showgrid":false},"yaxis":{"range":[0.0
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Rect)
             .x0(2.5)
             .y0(0.0)
@@ -519,8 +530,8 @@ var layout = {"xaxis":{"range":[0.0,7.0],"showgrid":false},"yaxis":{"range":[0.0
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;paper&quot;)
-            .y_ref(&quot;paper&quot;)
+            .x_ref("paper")
+            .y_ref("paper")
             .shape_type(ShapeType::Rect)
             .x0(0.25)
             .y0(0.0)
@@ -535,14 +546,13 @@ var layout = {"xaxis":{"range":[0.0,7.0],"showgrid":false},"yaxis":{"range":[0.0
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
+        "{}",
         plot.to_inline_html(Some(
-            &quot;rectangle_positioned_relative_to_the_plot_and_to_the_axes&quot;
+            "rectangle_positioned_relative_to_the_plot_and_to_the_axes"
         ))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="rectangle_positioned_relative_to_the_plot_and_to_the_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -555,46 +565,45 @@ var layout = {"xaxis":{"range":[0.0,4.0],"showgrid":false},"yaxis":{"range":[0.0
         Plotly.newPlot('rectangle_positioned_relative_to_the_plot_and_to_the_axes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#highlighting-time-series-regions-with-rectangle-shapes" id="highlighting-time-series-regions-with-rectangle-shapes">Highlighting Time Series Regions with Rectangle Shapes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="highlighting-time-series-regions-with-rectangle-shapes"><a class="header" href="#highlighting-time-series-regions-with-rectangle-shapes">Highlighting Time Series Regions with Rectangle Shapes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn highlighting_time_series_regions_with_rectangle_shapes(show: bool) {
     let x = vec![
-        &quot;2015-02-01&quot;,
-        &quot;2015-02-02&quot;,
-        &quot;2015-02-03&quot;,
-        &quot;2015-02-04&quot;,
-        &quot;2015-02-05&quot;,
-        &quot;2015-02-06&quot;,
-        &quot;2015-02-07&quot;,
-        &quot;2015-02-08&quot;,
-        &quot;2015-02-09&quot;,
-        &quot;2015-02-10&quot;,
-        &quot;2015-02-11&quot;,
-        &quot;2015-02-12&quot;,
-        &quot;2015-02-13&quot;,
-        &quot;2015-02-14&quot;,
-        &quot;2015-02-15&quot;,
-        &quot;2015-02-16&quot;,
-        &quot;2015-02-17&quot;,
-        &quot;2015-02-18&quot;,
-        &quot;2015-02-19&quot;,
-        &quot;2015-02-20&quot;,
-        &quot;2015-02-21&quot;,
-        &quot;2015-02-22&quot;,
-        &quot;2015-02-23&quot;,
-        &quot;2015-02-24&quot;,
-        &quot;2015-02-25&quot;,
-        &quot;2015-02-26&quot;,
-        &quot;2015-02-27&quot;,
-        &quot;2015-02-28&quot;,
+        "2015-02-01",
+        "2015-02-02",
+        "2015-02-03",
+        "2015-02-04",
+        "2015-02-05",
+        "2015-02-06",
+        "2015-02-07",
+        "2015-02-08",
+        "2015-02-09",
+        "2015-02-10",
+        "2015-02-11",
+        "2015-02-12",
+        "2015-02-13",
+        "2015-02-14",
+        "2015-02-15",
+        "2015-02-16",
+        "2015-02-17",
+        "2015-02-18",
+        "2015-02-19",
+        "2015-02-20",
+        "2015-02-21",
+        "2015-02-22",
+        "2015-02-23",
+        "2015-02-24",
+        "2015-02-25",
+        "2015-02-26",
+        "2015-02-27",
+        "2015-02-28",
     ];
     let y = vec![
         -14, -17, -8, -4, -7, -10, -12, -14, -12, -7, -11, -7, -18, -14, -14, -16, -13, -7, -8,
         -14, -8, -3, -9, -9, -4, -13, -9, -6,
     ];
-    let trace = Scatter::new(x, y).mode(Mode::Lines).name(&quot;temperature&quot;);
+    let trace = Scatter::new(x, y).mode(Mode::Lines).name("temperature");
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
@@ -602,12 +611,12 @@ var layout = {"xaxis":{"range":[0.0,4.0],"showgrid":false},"yaxis":{"range":[0.0
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;paper&quot;)
+            .x_ref("x")
+            .y_ref("paper")
             .shape_type(ShapeType::Rect)
-            .x0(&quot;2015-02-04&quot;)
+            .x0("2015-02-04")
             .y0(0)
-            .x1(&quot;2015-02-06&quot;)
+            .x1("2015-02-06")
             .y1(1)
             .fill_color(NamedColor::LightSalmon)
             .opacity(0.5)
@@ -616,12 +625,12 @@ var layout = {"xaxis":{"range":[0.0,4.0],"showgrid":false},"yaxis":{"range":[0.0
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;paper&quot;)
+            .x_ref("x")
+            .y_ref("paper")
             .shape_type(ShapeType::Rect)
-            .x0(&quot;2015-02-20&quot;)
+            .x0("2015-02-20")
             .y0(0)
-            .x1(&quot;2015-02-22&quot;)
+            .x1("2015-02-22")
             .y1(1)
             .fill_color(NamedColor::LightSalmon)
             .opacity(0.5)
@@ -634,14 +643,13 @@ var layout = {"xaxis":{"range":[0.0,4.0],"showgrid":false},"yaxis":{"range":[0.0
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
+        "{}",
         plot.to_inline_html(Some(
-            &quot;highlighting_time_series_regions_with_rectangle_shapes&quot;
+            "highlighting_time_series_regions_with_rectangle_shapes"
         ))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="highlighting_time_series_regions_with_rectangle_shapes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -654,13 +662,12 @@ var layout = {"shapes":[{"type":"rect","layer":"below","xref":"x","x0":"2015-02-
         Plotly.newPlot('highlighting_time_series_regions_with_rectangle_shapes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#circles-positioned-relative-to-the-axes" id="circles-positioned-relative-to-the-axes">Circles Positioned Relative to the Axes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="circles-positioned-relative-to-the-axes"><a class="header" href="#circles-positioned-relative-to-the-axes">Circles Positioned Relative to the Axes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn circles_positioned_relative_to_the_axes(show: bool) {
     let trace = Scatter::new(vec![1.5, 3.5], vec![0.75, 2.5])
-        .text_array(vec![&quot;Unfilled Circle&quot;, &quot;Filled Circle&quot;])
+        .text_array(vec!["Unfilled Circle", "Filled Circle"])
         .mode(Mode::Text);
     let mut plot = Plot::new();
     plot.add_trace(trace);
@@ -673,8 +680,8 @@ var layout = {"shapes":[{"type":"rect","layer":"below","xref":"x","x0":"2015-02-
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(1)
             .y0(1)
@@ -684,8 +691,8 @@ var layout = {"shapes":[{"type":"rect","layer":"below","xref":"x","x0":"2015-02-
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(3)
             .y0(3)
@@ -700,12 +707,11 @@ var layout = {"shapes":[{"type":"rect","layer":"below","xref":"x","x0":"2015-02-
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;circles_positioned_relative_to_the_axes&quot;))
+        "{}",
+        plot.to_inline_html(Some("circles_positioned_relative_to_the_axes"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="circles_positioned_relative_to_the_axes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -718,9 +724,8 @@ var layout = {"width":800,"height":800,"xaxis":{"range":[0.0,4.5],"zeroline":fal
         Plotly.newPlot('circles_positioned_relative_to_the_axes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#highlighting-clusters-of-scatter-points-with-circle-shapes" id="highlighting-clusters-of-scatter-points-with-circle-shapes">Highlighting Clusters of Scatter Points with Circle Shapes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="highlighting-clusters-of-scatter-points-with-circle-shapes"><a class="header" href="#highlighting-clusters-of-scatter-points-with-circle-shapes">Highlighting Clusters of Scatter Points with Circle Shapes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn highlighting_clusters_of_scatter_points_with_circle_shapes(show: bool) {
     let rng = thread_rng();
@@ -778,8 +783,8 @@ var layout = {"width":800,"height":800,"xaxis":{"range":[0.0,4.5],"zeroline":fal
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(x0min)
             .y0(y0min)
@@ -791,8 +796,8 @@ var layout = {"width":800,"height":800,"xaxis":{"range":[0.0,4.5],"zeroline":fal
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(x1min)
             .y0(y1min)
@@ -804,8 +809,8 @@ var layout = {"width":800,"height":800,"xaxis":{"range":[0.0,4.5],"zeroline":fal
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(x2min)
             .y0(y2min)
@@ -817,8 +822,8 @@ var layout = {"width":800,"height":800,"xaxis":{"range":[0.0,4.5],"zeroline":fal
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(x1min)
             .y0(y0min)
@@ -834,14 +839,13 @@ var layout = {"width":800,"height":800,"xaxis":{"range":[0.0,4.5],"zeroline":fal
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
+        "{}",
         plot.to_inline_html(Some(
-            &quot;highlighting_clusters_of_scatter_points_with_circle_shapes&quot;
+            "highlighting_clusters_of_scatter_points_with_circle_shapes"
         ))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="highlighting_clusters_of_scatter_points_with_circle_shapes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -857,21 +861,20 @@ var layout = {"showlegend":false,"shapes":[{"type":"circle","xref":"x","x0":0.97
         Plotly.newPlot('highlighting_clusters_of_scatter_points_with_circle_shapes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#venn-diagram-with-circle-shapes" id="venn-diagram-with-circle-shapes">Venn Diagram with Circle Shapes</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="venn-diagram-with-circle-shapes"><a class="header" href="#venn-diagram-with-circle-shapes">Venn Diagram with Circle Shapes</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn venn_diagram_with_circle_shapes(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![1., 1.75, 2.5], vec![1., 1., 1.])
-            .text_array(vec![&quot;$A$&quot;, &quot;$A+B$&quot;, &quot;$B$&quot;])
+            .text_array(vec!["$A$", "$A+B$", "$B$"])
             .mode(Mode::Text)
             .text_font(
                 Font::new()
                     .color(NamedColor::Black)
                     .size(18)
-                    .family(&quot;Arial&quot;),
+                    .family("Arial"),
             ),
     );
 
@@ -895,8 +898,8 @@ var layout = {"showlegend":false,"shapes":[{"type":"circle","xref":"x","x0":0.97
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(0)
             .y0(0)
@@ -909,8 +912,8 @@ var layout = {"showlegend":false,"shapes":[{"type":"circle","xref":"x","x0":0.97
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x&quot;)
-            .y_ref(&quot;y&quot;)
+            .x_ref("x")
+            .y_ref("y")
             .shape_type(ShapeType::Circle)
             .x0(1.5)
             .y0(0.)
@@ -927,12 +930,11 @@ var layout = {"showlegend":false,"shapes":[{"type":"circle","xref":"x","x0":0.97
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;venn_diagram_with_circle_shapes&quot;))
+        "{}",
+        plot.to_inline_html(Some("venn_diagram_with_circle_shapes"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="venn_diagram_with_circle_shapes" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -945,31 +947,30 @@ var layout = {"margin":{"l":20,"r":20,"b":100},"width":800,"height":600,"plot_bg
         Plotly.newPlot('venn_diagram_with_circle_shapes', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#adding-shapes-to-subplots" id="adding-shapes-to-subplots">Adding Shapes to Subplots</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="adding-shapes-to-subplots"><a class="header" href="#adding-shapes-to-subplots">Adding Shapes to Subplots</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn adding_shapes_to_subplots(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![2, 6], vec![1, 1])
-            .x_axis(&quot;x1&quot;)
-            .y_axis(&quot;y1&quot;),
+            .x_axis("x1")
+            .y_axis("y1"),
     );
     plot.add_trace(
         Bar::new(vec![1, 2, 3], vec![4, 5, 6])
-            .x_axis(&quot;x2&quot;)
-            .y_axis(&quot;y2&quot;),
+            .x_axis("x2")
+            .y_axis("y2"),
     );
     plot.add_trace(
         Scatter::new(vec![10, 20], vec![40, 50])
-            .x_axis(&quot;x3&quot;)
-            .y_axis(&quot;y3&quot;),
+            .x_axis("x3")
+            .y_axis("y3"),
     );
     plot.add_trace(
         Bar::new(vec![11, 13, 15], vec![8, 11, 20])
-            .x_axis(&quot;x4&quot;)
-            .y_axis(&quot;y4&quot;),
+            .x_axis("x4")
+            .y_axis("y4"),
     );
 
     let mut layout = Layout::new()
@@ -979,19 +980,19 @@ var layout = {"margin":{"l":20,"r":20,"b":100},"width":800,"height":600,"plot_bg
                 .columns(2)
                 .pattern(GridPattern::Independent),
         )
-        .x_axis(Axis::new().domain(&amp;[0.0, 0.48]).anchor(&quot;x1&quot;))
-        .y_axis(Axis::new().domain(&amp;[0.52, 1.]).anchor(&quot;y1&quot;))
-        .x_axis2(Axis::new().domain(&amp;[0.52, 1.0]).anchor(&quot;x2&quot;))
-        .y_axis2(Axis::new().domain(&amp;[0.5, 1.]).anchor(&quot;y2&quot;))
-        .x_axis3(Axis::new().domain(&amp;[0.0, 0.48]).anchor(&quot;x3&quot;))
-        .y_axis3(Axis::new().domain(&amp;[0.0, 0.48]).anchor(&quot;y3&quot;))
-        .x_axis4(Axis::new().domain(&amp;[0.52, 1.0]).anchor(&quot;x4&quot;))
-        .y_axis4(Axis::new().domain(&amp;[0.0, 0.48]).anchor(&quot;y4&quot;));
+        .x_axis(Axis::new().domain(&amp;[0.0, 0.48]).anchor("x1"))
+        .y_axis(Axis::new().domain(&amp;[0.52, 1.]).anchor("y1"))
+        .x_axis2(Axis::new().domain(&amp;[0.52, 1.0]).anchor("x2"))
+        .y_axis2(Axis::new().domain(&amp;[0.5, 1.]).anchor("y2"))
+        .x_axis3(Axis::new().domain(&amp;[0.0, 0.48]).anchor("x3"))
+        .y_axis3(Axis::new().domain(&amp;[0.0, 0.48]).anchor("y3"))
+        .x_axis4(Axis::new().domain(&amp;[0.52, 1.0]).anchor("x4"))
+        .y_axis4(Axis::new().domain(&amp;[0.0, 0.48]).anchor("y4"));
 
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x1&quot;)
-            .y_ref(&quot;y1&quot;)
+            .x_ref("x1")
+            .y_ref("y1")
             .shape_type(ShapeType::Line)
             .x0(3)
             .y0(0.5)
@@ -1001,8 +1002,8 @@ var layout = {"margin":{"l":20,"r":20,"b":100},"width":800,"height":600,"plot_bg
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x2&quot;)
-            .y_ref(&quot;y2&quot;)
+            .x_ref("x2")
+            .y_ref("y2")
             .shape_type(ShapeType::Rect)
             .x0(4)
             .y0(2)
@@ -1011,8 +1012,8 @@ var layout = {"margin":{"l":20,"r":20,"b":100},"width":800,"height":600,"plot_bg
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x3&quot;)
-            .y_ref(&quot;y3&quot;)
+            .x_ref("x3")
+            .y_ref("y3")
             .shape_type(ShapeType::Rect)
             .x0(10)
             .y0(20)
@@ -1021,8 +1022,8 @@ var layout = {"margin":{"l":20,"r":20,"b":100},"width":800,"height":600,"plot_bg
     );
     layout.add_shape(
         Shape::new()
-            .x_ref(&quot;x4&quot;)
-            .y_ref(&quot;y4&quot;)
+            .x_ref("x4")
+            .y_ref("y4")
             .shape_type(ShapeType::Circle)
             .x0(5)
             .y0(12)
@@ -1034,10 +1035,9 @@ var layout = {"margin":{"l":20,"r":20,"b":100},"width":800,"height":600,"plot_bg
     if show {
         plot.show();
     }
-    println!(&quot;{}&quot;, plot.to_inline_html(Some(&quot;adding_shapes_to_subplots&quot;)));
+    println!("{}", plot.to_inline_html(Some("adding_shapes_to_subplots")));
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="adding_shapes_to_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -1053,19 +1053,18 @@ var layout = {"grid":{"rows":2,"columns":2,"pattern":"independent"},"xaxis":{"an
         Plotly.newPlot('adding_shapes_to_subplots', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#svg-paths" id="svg-paths">SVG Paths</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="svg-paths"><a class="header" href="#svg-paths">SVG Paths</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn svg_paths(show: bool) {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![2, 1, 8, 8], vec![0.25, 9., 2., 6.])
             .text_array(vec![
-                &quot;Filled Triangle&quot;,
-                &quot;Filled Polygon&quot;,
-                &quot;Quadratic Bezier Curves&quot;,
-                &quot;Cubic Bezier Curves&quot;,
+                "Filled Triangle",
+                "Filled Polygon",
+                "Quadratic Bezier Curves",
+                "Cubic Bezier Curves",
             ])
             .mode(Mode::Text),
     );
@@ -1086,26 +1085,26 @@ var layout = {"grid":{"rows":2,"columns":2,"pattern":"independent"},"xaxis":{"an
     layout.add_shape(
         Shape::new()
             .shape_type(ShapeType::Path)
-            .path(&quot;M 4,4 Q 6,0 8,4&quot;)
+            .path("M 4,4 Q 6,0 8,4")
             .line(ShapeLine::new().color(NamedColor::RoyalBlue)),
     );
     layout.add_shape(
         Shape::new()
             .shape_type(ShapeType::Path)
-            .path(&quot;M 1,4 C 2,8 6,4 8,8&quot;)
+            .path("M 1,4 C 2,8 6,4 8,8")
             .line(ShapeLine::new().color(NamedColor::MediumPurple)),
     );
     layout.add_shape(
         Shape::new()
             .shape_type(ShapeType::Path)
-            .path(&quot;M 1 1 L 1 3 L 4 1 Z&quot;)
+            .path("M 1 1 L 1 3 L 4 1 Z")
             .fill_color(NamedColor::LightPink)
             .line(ShapeLine::new().color(NamedColor::Crimson)),
     );
     layout.add_shape(
         Shape::new()
             .shape_type(ShapeType::Path)
-            .path(&quot;M 3,7 L2,8 L2,9 L3,10, L4,10 L5,9 L5,8 L4,7 Z&quot;)
+            .path("M 3,7 L2,8 L2,9 L3,10, L4,10 L5,9 L5,8 L4,7 Z")
             .fill_color(NamedColor::PaleTurquoise)
             .line(ShapeLine::new().color(NamedColor::LightSeaGreen)),
     );
@@ -1114,10 +1113,9 @@ var layout = {"grid":{"rows":2,"columns":2,"pattern":"independent"},"xaxis":{"an
     if show {
         plot.show();
     }
-    println!(&quot;{}&quot;, plot.to_inline_html(Some(&quot;svg_paths&quot;)));
+    println!("{}", plot.to_inline_html(Some("svg_paths")));
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="svg_paths" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -1135,17 +1133,13 @@ var layout = {"xaxis":{"range":[0.0,9.0],"zeroline":false,"domain":[0.05,0.95]},
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="../fundamentals/ndarray_support.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="../recipes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../recipes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -1153,53 +1147,38 @@ var layout = {"xaxis":{"range":[0.0,9.0],"zeroline":false,"domain":[0.05,0.95]},
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="../fundamentals/ndarray_support.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="../recipes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../recipes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
-        
-        <script type="text/javascript" src="../ferris.js"></script>
-        
-        <script type="text/javascript" src="../plotly-1.54.6.min.js"></script>
-        
+        <script src="../ferris.js"></script>
+        <script src="../plotly.min.js"></script>
 
-        
 
+    </div>
     </body>
 </html>

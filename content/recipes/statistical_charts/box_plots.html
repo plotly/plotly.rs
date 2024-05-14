@@ -1,16 +1,18 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js ayu">
+<html lang="en" class="ayu" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Box Plots - Plotly.rs Book</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+        
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
+        <link rel="icon" href="../../favicon.svg">
         <link rel="shortcut icon" href="../../favicon.png">
         <link rel="stylesheet" href="../../css/variables.css">
         <link rel="stylesheet" href="../../css/general.css">
@@ -19,8 +21,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="../../highlight.css">
@@ -28,24 +29,21 @@
         <link rel="stylesheet" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
         <link rel="stylesheet" href="../../ferris.css">
-        
 
-        
         <!-- MathJax -->
-        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -61,46 +59,76 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('ayu')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/box_plots.html" class="active"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.5.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">3.5.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.5.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/box_plots.html" class="active"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -109,13 +137,11 @@
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Plotly.rs Book</h1>
@@ -124,14 +150,13 @@
                         <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -139,10 +164,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -152,10 +176,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#box-plots" id="box-plots">Box Plots</a></h1>
+                        <h1 id="box-plots"><a class="header" href="#box-plots">Box Plots</a></h1>
 <p>The following imports have been used to produce the plots below:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use itertools_num::linspace;
 use plotly::box_plot::{BoxMean, BoxPoints};
@@ -165,12 +188,10 @@ use plotly::layout::{Axis, BarMode, BoxMode, Layout, Margin};
 use plotly::{Bar, BoxPlot, Histogram, NamedColor, Plot, Rgb, Rgba, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
-<h2><a class="header" href="#basic-box-plot" id="basic-box-plot">Basic Box Plot</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="basic-box-plot"><a class="header" href="#basic-box-plot">Basic Box Plot</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn basic_box_plot(show: bool) {
     let mut rng = rand::thread_rng();
@@ -195,12 +216,11 @@ use rand_distr::{Distribution, Normal, Uniform};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;basic_box_plot&quot;))
+        "{}",
+        plot.to_inline_html(Some("basic_box_plot"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="basic_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -214,9 +234,8 @@ var layout = {};
         Plotly.newPlot('basic_box_plot', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#box-plot-that-displays-the-underlying-data" id="box-plot-that-displays-the-underlying-data">Box Plot that Displays the Underlying Data</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="box-plot-that-displays-the-underlying-data"><a class="header" href="#box-plot-that-displays-the-underlying-data">Box Plot that Displays the Underlying Data</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn box_plot_that_displays_the_underlying_data(show: bool) {
     let trace1 = BoxPlot::new(vec![0, 1, 1, 2, 3, 5, 8, 13, 21])
@@ -229,13 +248,12 @@ var layout = {};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;box_plot_that_displays_the_underlying_data&quot;))
+        "{}",
+        plot.to_inline_html(Some("box_plot_that_displays_the_underlying_data"))
     );
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="box_plot_that_displays_the_underlying_data" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -248,13 +266,12 @@ var layout = {};
         Plotly.newPlot('box_plot_that_displays_the_underlying_data', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#horizontal-box-plot" id="horizontal-box-plot">Horizontal Box Plot</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="horizontal-box-plot"><a class="header" href="#horizontal-box-plot">Horizontal Box Plot</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn horizontal_box_plot(show: bool) {
-    let trace1 = BoxPlot::new(vec![1, 2, 3, 4, 4, 4, 8, 9, 10]).name(&quot;Set 1&quot;);
-    let trace2 = BoxPlot::new(vec![2, 3, 3, 3, 3, 5, 6, 6, 7]).name(&quot;Set 2&quot;);
+    let trace1 = BoxPlot::new(vec![1, 2, 3, 4, 4, 4, 8, 9, 10]).name("Set 1");
+    let trace2 = BoxPlot::new(vec![2, 3, 3, 3, 3, 5, 6, 6, 7]).name("Set 2");
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -263,12 +280,11 @@ var layout = {};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;horizontal_box_plot&quot;))
+        "{}",
+        plot.to_inline_html(Some("horizontal_box_plot"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="horizontal_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -282,14 +298,13 @@ var layout = {};
         Plotly.newPlot('horizontal_box_plot', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#grouped-box-plot" id="grouped-box-plot">Grouped Box Plot</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="grouped-box-plot"><a class="header" href="#grouped-box-plot">Grouped Box Plot</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn grouped_box_plot(show: bool) {
     let x = vec![
-        &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 2&quot;, &quot;day 2&quot;, &quot;day 2&quot;, &quot;day 2&quot;,
-        &quot;day 2&quot;, &quot;day 2&quot;,
+        "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
+        "day 2", "day 2",
     ];
 
     let trace1 = BoxPlot::new_xy(
@@ -313,7 +328,7 @@ var layout = {};
     let layout = Layout::new()
         .y_axis(
             Axis::new()
-                .title(Title::new(&quot;normalized moisture&quot;))
+                .title(Title::new("normalized moisture"))
                 .zero_line(false),
         )
         .box_mode(BoxMode::Group);
@@ -323,12 +338,11 @@ var layout = {};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;grouped_box_plot&quot;))
+        "{}",
+        plot.to_inline_html(Some("grouped_box_plot"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="grouped_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -343,9 +357,8 @@ var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},
         Plotly.newPlot('grouped_box_plot', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#box-plot-styling-outliers" id="box-plot-styling-outliers">Box Plot Styling Outliers</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="box-plot-styling-outliers"><a class="header" href="#box-plot-styling-outliers">Box Plot Styling Outliers</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn box_plot_styling_outliers(show: bool) {
     let y = vec![
@@ -353,17 +366,17 @@ var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},
         9.2, 9.5, 10.0, 10.25, 11.5, 12.0, 16.0, 20.90, 22.3, 23.25,
     ];
     let trace1 = BoxPlot::new(y.clone())
-        .name(&quot;All Points&quot;)
+        .name("All Points")
         .jitter(0.3)
         .point_pos(-1.8)
         .marker(Marker::new().color(Rgb::new(7, 40, 89)))
         .box_points(BoxPoints::All);
     let trace2 = BoxPlot::new(y.clone())
-        .name(&quot;Only Whiskers&quot;)
+        .name("Only Whiskers")
         .marker(Marker::new().color(Rgb::new(9, 56, 125)))
         .box_points(BoxPoints::False);
     let trace3 = BoxPlot::new(y.clone())
-        .name(&quot;Suspected Outlier&quot;)
+        .name("Suspected Outlier")
         .marker(
             Marker::new()
                 .color(Rgb::new(8, 81, 156))
@@ -376,11 +389,11 @@ var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},
         )
         .box_points(BoxPoints::SuspectedOutliers);
     let trace4 = BoxPlot::new(y.clone())
-        .name(&quot;Whiskers and Outliers&quot;)
+        .name("Whiskers and Outliers")
         .marker(Marker::new().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
 
-    let layout = Layout::new().title(Title::new(&quot;Box Plot Styling Outliers&quot;));
+    let layout = Layout::new().title(Title::new("Box Plot Styling Outliers"));
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -392,12 +405,11 @@ var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;box_plot_styling_outliers&quot;))
+        "{}",
+        plot.to_inline_html(Some("box_plot_styling_outliers"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="box_plot_styling_outliers" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -413,9 +425,8 @@ var layout = {"title":{"text":"Box Plot Styling Outliers"}};
         Plotly.newPlot('box_plot_styling_outliers', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#box-plot-styling-mean-and-standard-deviation" id="box-plot-styling-mean-and-standard-deviation">Box Plot Styling Mean and Standard Deviation</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="box-plot-styling-mean-and-standard-deviation"><a class="header" href="#box-plot-styling-mean-and-standard-deviation">Box Plot Styling Mean and Standard Deviation</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn box_plot_styling_mean_and_standard_deviation(show: bool) {
     let y = vec![
@@ -424,14 +435,14 @@ var layout = {"title":{"text":"Box Plot Styling Outliers"}};
     ];
 
     let trace1 = BoxPlot::new(y.clone())
-        .name(&quot;Only Mean&quot;)
+        .name("Only Mean")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::True);
     let trace2 = BoxPlot::new(y.clone())
-        .name(&quot;Mean and Standard Deviation&quot;)
+        .name("Mean and Standard Deviation")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);
-    let layout = Layout::new().title(Title::new(&quot;Box Plot Styling Mean and Standard Deviation&quot;));
+    let layout = Layout::new().title(Title::new("Box Plot Styling Mean and Standard Deviation"));
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -441,12 +452,11 @@ var layout = {"title":{"text":"Box Plot Styling Outliers"}};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;box_plot_styling_mean_and_standard_deviation&quot;))
+        "{}",
+        plot.to_inline_html(Some("box_plot_styling_mean_and_standard_deviation"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="box_plot_styling_mean_and_standard_deviation" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -460,38 +470,37 @@ var layout = {"title":{"text":"Box Plot Styling Mean and Standard Deviation"}};
         Plotly.newPlot('box_plot_styling_mean_and_standard_deviation', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#grouped-horizontal-box-plot" id="grouped-horizontal-box-plot">Grouped Horizontal Box Plot</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="grouped-horizontal-box-plot"><a class="header" href="#grouped-horizontal-box-plot">Grouped Horizontal Box Plot</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn grouped_horizontal_box_plot(show: bool) {
     let x = vec![
-        &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 1&quot;, &quot;day 2&quot;, &quot;day 2&quot;, &quot;day 2&quot;, &quot;day 2&quot;,
-        &quot;day 2&quot;, &quot;day 2&quot;,
+        "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
+        "day 2", "day 2",
     ];
 
     let trace1 = BoxPlot::new_xy(
         vec![0.2, 0.2, 0.6, 1.0, 0.5, 0.4, 0.2, 0.7, 0.9, 0.1, 0.5, 0.3],
         x.clone(),
     )
-        .name(&quot;Kale&quot;)
-        .marker(Marker::new().color(&quot;3D9970&quot;))
+        .name("Kale")
+        .marker(Marker::new().color("3D9970"))
         .box_mean(BoxMean::False)
         .orientation(Orientation::Horizontal);
     let trace2 = BoxPlot::new_xy(
         vec![0.6, 0.7, 0.3, 0.6, 0.0, 0.5, 0.7, 0.9, 0.5, 0.8, 0.7, 0.2],
         x.clone(),
     )
-        .name(&quot;Radishes&quot;)
-        .marker(Marker::new().color(&quot;FF4136&quot;))
+        .name("Radishes")
+        .marker(Marker::new().color("FF4136"))
         .box_mean(BoxMean::False)
         .orientation(Orientation::Horizontal);
     let trace3 = BoxPlot::new_xy(
         vec![0.1, 0.3, 0.1, 0.9, 0.6, 0.6, 0.9, 1.0, 0.3, 0.6, 0.8, 0.5],
         x.clone(),
     )
-        .name(&quot;Carrots&quot;)
-        .marker(Marker::new().color(&quot;FF851B&quot;))
+        .name("Carrots")
+        .marker(Marker::new().color("FF851B"))
         .box_mean(BoxMean::False)
         .orientation(Orientation::Horizontal);
 
@@ -501,10 +510,10 @@ var layout = {"title":{"text":"Box Plot Styling Mean and Standard Deviation"}};
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .title(Title::new(&quot;Grouped Horizontal Box Plot&quot;))
+        .title(Title::new("Grouped Horizontal Box Plot"))
         .x_axis(
             Axis::new()
-                .title(Title::new(&quot;normalized moisture&quot;))
+                .title(Title::new("normalized moisture"))
                 .zero_line(false),
         )
         .box_mode(BoxMode::Group);
@@ -514,12 +523,11 @@ var layout = {"title":{"text":"Box Plot Styling Mean and Standard Deviation"}};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;grouped_horizontal_box_plot&quot;))
+        "{}",
+        plot.to_inline_html(Some("grouped_horizontal_box_plot"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="grouped_horizontal_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -534,9 +542,8 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
         Plotly.newPlot('grouped_horizontal_box_plot', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#fully-styled-box-plot" id="fully-styled-box-plot">Fully Styled Box Plot</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="fully-styled-box-plot"><a class="header" href="#fully-styled-box-plot">Fully Styled Box Plot</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn fully_styled_box_plot(show: bool) {
     let rnd_sample = |num, mul| -&gt; Vec&lt;f64&gt; {
@@ -550,15 +557,15 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
     };
 
     let x_data = vec![
-        &quot;Carmelo&lt;br&gt;Anthony&quot;,
-        &quot;Dwyane&lt;br&gt;Wade&quot;,
-        &quot;Deron&lt;br&gt;Williams&quot;,
-        &quot;Brook&lt;br&gt;Lopez&quot;,
-        &quot;Damian&lt;br&gt;Lillard&quot;,
-        &quot;David&lt;br&gt;West&quot;,
-        &quot;Blake&lt;br&gt;Griffin&quot;,
-        &quot;David&lt;br&gt;Lee&quot;,
-        &quot;Demar&lt;br&gt;Derozan&quot;,
+        "Carmelo&lt;br&gt;Anthony",
+        "Dwyane&lt;br&gt;Wade",
+        "Deron&lt;br&gt;Williams",
+        "Brook&lt;br&gt;Lopez",
+        "Damian&lt;br&gt;Lillard",
+        "David&lt;br&gt;West",
+        "Blake&lt;br&gt;Griffin",
+        "David&lt;br&gt;Lee",
+        "Demar&lt;br&gt;Derozan",
     ];
     let y_data = vec![
         rnd_sample(30, 10.0),
@@ -575,7 +582,7 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
     let mut plot = Plot::new();
     let layout = Layout::new()
         .title(Title::new(
-            &quot;Points Scored by the Top 9 Scoring NBA Players in 2012&quot;,
+            "Points Scored by the Top 9 Scoring NBA Players in 2012",
         ))
         .y_axis(
             Axis::new()
@@ -608,12 +615,11 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;fully_styled_box_plot&quot;))
+        "{}",
+        plot.to_inline_html(Some("fully_styled_box_plot"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="fully_styled_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -638,17 +644,13 @@ var layout = {"title":{"text":"Points Scored by the Top 9 Scoring NBA Players in
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="../../recipes/statistical_charts/error_bars.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="../../recipes/statistical_charts/histograms.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../recipes/statistical_charts/histograms.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -656,53 +658,38 @@ var layout = {"title":{"text":"Points Scored by the Top 9 Scoring NBA Players in
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="../../recipes/statistical_charts/error_bars.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="../../recipes/statistical_charts/histograms.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../recipes/statistical_charts/histograms.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
-        
-        <script type="text/javascript" src="../../ferris.js"></script>
-        
-        <script type="text/javascript" src="../../plotly-1.54.6.min.js"></script>
-        
+        <script src="../../ferris.js"></script>
+        <script src="../../plotly.min.js"></script>
 
-        
 
+    </div>
     </body>
 </html>

@@ -1,16 +1,18 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js ayu">
+<html lang="en" class="ayu" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Getting Started - Plotly.rs Book</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+        
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
         <link rel="stylesheet" href="css/general.css">
@@ -19,8 +21,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -28,24 +29,21 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
         <link rel="stylesheet" href="ferris.css">
-        
 
-        
         <!-- MathJax -->
-        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -61,46 +59,76 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('ayu')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting_started.html" class="active"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li></ol></li><li class="chapter-item "><a href="recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="recipes/subplots.html"><strong aria-hidden="true">3.5.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/subplots/subplots.html"><strong aria-hidden="true">3.5.1.</strong> Subplots</a></li><li class="chapter-item "><a href="recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.5.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting_started.html" class="active"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item "><a href="recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item "><a href="recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="recipes/subplots/subplots.html"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -109,13 +137,11 @@
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Plotly.rs Book</h1>
@@ -124,14 +150,13 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -139,10 +164,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -169,42 +193,31 @@
         <img src="https://img.shields.io/badge/Minimum%20Rust%20Version-1.31-brightgreen.svg" alt="Minimum Version">
     </a>
 </div>
-<h1><a class="header" href="#getting-started" id="getting-started">Getting Started</a></h1>
-<p>To start using <a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> in your project add the following to your <code>Cargo.toml</code>:</p>
+<h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
+<p>To start using <a href="https://github.com/igiagkiozis/plotly">plotly.rs</a> in your project add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-plotly = &quot;0.6.0&quot;
+plotly = "0.8.4"
 </code></pre>
-<p>To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the <code>kaleido</code> feature. This feature depends on <a href="https://github.com/plotly/Kaleido">plotly/Kaleido</a>; a cross-platform library for generating static images. All the necessary binaries have been included with <code>plotly_kaleido</code> for <code>linux</code>, <code>windows</code> and <code>macos</code>. Previous versions of <a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> used the <code>orca</code> feature; however this has been deprecated as it provided the same functionality but required additional installation steps. To enable the <code>kaleido</code> feature add the following to your <code>Cargo.toml</code> instead: </p>
-<pre><code class="language-toml">[dependencies]
-plotly = { version = &quot;0.6.0&quot;, features = [&quot;kaleido&quot;] }
-</code></pre>
-<p>Plotly Kaleido is an open source project </p>
-<p><a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> has three main components: </p>
-<ul>
-<li>Traces; these are containers for the data for display,</li>
-<li>Layout, fine tunes the display of traces on the canvas and more generally controls the way that the plot is displayed, and,</li>
-<li>Plot; is the component that brings traces and the layout together to display the plot in either html format or rasterise the resulting view.</li>
-</ul>
-<p>All available traces (e.g. <code>Scatter</code>, <code>Bar</code>, <code>Histogram</code> etc), the <code>Layout</code> and <code>Plot</code> have been hoisted in the <code>plotly</code> namespace so that they can be imported simply using the following: </p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<p><a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> is ultimately a thin wrapper around the <code>plotly.js</code> library. The main job of this library is to provide <code>structs</code> and <code>enums</code> which get serialized to <code>json</code> and passed to the <code>plotly.js</code> library to actually do the heavy lifting. As such, if you are familiar with <code>plotly.js</code> or its derivatives (e.g. the equivalent Python library), then you should find <a href="https://github.com/igiagkiozis/plotly"><code>plotly.rs</code></a> intuitive to use.</p>
+<p>A <code>Plot</code> struct contains one or more <code>Trace</code> objects which describe the structure of data to be displayed. Optional <code>Layout</code> and <code>Configuration</code> structs can be used to specify the layout and config of the plot, respectively.</p>
+<p>The builder pattern is used extensively throughout the library, which means you only need to specify the attributes and details you desire. Any attributes that are not set will fall back to the default value used by <code>plotly.js</code>.</p>
+<p>All available traces (e.g. <code>Scatter</code>, <code>Bar</code>, <code>Histogram</code>, etc), the <code>Layout</code>, <code>Configuration</code> and  <code>Plot</code> have been hoisted in the <code>plotly</code> namespace so that they can be imported simply using the following:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use plotly::{Plot, Layout, Scatter};
-<span class="boring">}
-</span></code></pre></pre>
-<p>The aforementioned components can be combined to produce as simple plot as follows: </p>
-<pre><pre class="playpen"><code class="language-rust">extern crate plotly;
-use plotly::common::Mode;
+<span class="boring">}</span></code></pre></pre>
+<p>The aforementioned components can be combined to produce as simple plot as follows:</p>
+<pre><pre class="playground"><code class="language-rust">use plotly::common::Mode;
 use plotly::{Plot, Scatter};
 
 fn line_and_scatter_plot() {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
-        .name(&quot;trace1&quot;)
+        .name("trace1")
         .mode(Mode::Markers);
     let trace2 = Scatter::new(vec![2, 3, 4, 5], vec![16, 5, 11, 9])
-        .name(&quot;trace2&quot;)
+        .name("trace2")
         .mode(Mode::Lines);
-    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name(&quot;trace3&quot;);
+    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 9, 15, 12]).name("trace3");
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -216,48 +229,91 @@ fn line_and_scatter_plot() {
 fn main() -&gt; std::io::Result&lt;()&gt; {
     line_and_scatter_plot();
     Ok(())
-}
-</code></pre></pre>
-<p>which results in the following figure: </p>
+}</code></pre></pre>
+<p>which results in the following figure (displayed here as a static png file):</p>
 <p><img src="img/line_and_scatter_plot.png" alt="line_and_scatter_plot" /></p>
-<p>The above code will generate an html page of the <code>Plot</code> and display it in the default browser. The <code>html</code> for the plot is stored in the platform specific temporary directory. To save the <code>html</code> result the following can be used: </p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<p>The above code will generate an interactive <code>html</code> page of the <code>Plot</code> and display it in the default browser. The <code>html</code> for the plot is stored in the platform specific temporary directory. To save the <code>html</code> result, you can do so quite simply:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>plot.to_html(&quot;/home/user/line_and_scatter_plot.html&quot;);
-<span class="boring">}
-</span></code></pre></pre>
-<p>It is often the case that plots are produced to be included in a document and a different format for the plot is desirable (e.g. png, jpeg etc). Given that the <code>html</code> version of the plot is composed of vector graphics, the display when converted to a non-vector format (e.g. png) is not guaranteed to be identical to the one displayed in <code>html</code>. This means that some fine tuning may be required to get to the desired output. To support that iterative workflow the <code>Plot</code> has <code>show_*</code> methods which display the rasterised output to the target format, for example this: </p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+</span>plot.write_html("/home/user/line_and_scatter_plot.html");
+<span class="boring">}</span></code></pre></pre>
+<p>It is often the case that plots are produced to be included in a document and a different format for the plot is desirable (e.g. png, jpeg, etc). Given that the <code>html</code> version of the plot is composed of vector graphics, the display when converted to a non-vector format (e.g. png) is not guaranteed to be identical to the one displayed in <code>html</code>. This means that some fine tuning may be required to get to the desired output. To support that iterative workflow, <code>Plot</code> has a <code>show_image()</code> method which will display the rasterised output to the target format, for example:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>plot.show_png(1280, 900);
-<span class="boring">}
-</span></code></pre></pre>
-<p>will display in the browser the rasterised plot; 1280 pixels wide and 900 pixels tall, in png format. Once a satisfactory result is achieved, and assuming the <code>kaleido</code> feature is enabled, the plot can be saved using the following: </p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+</span>plot.show_image(ImageFormat::PNG, 1280, 900);
+<span class="boring">}</span></code></pre></pre>
+<p>will display in the browser the rasterised plot; 1280 pixels wide and 900 pixels tall, in png format.</p>
+<p>Once a satisfactory result is achieved, and assuming the <a href="getting_started#saving-plots"><code>kaleido</code></a> feature is enabled, the plot can be saved using the following:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>plot.save(&quot;/home/user/plot_name.ext&quot;, ImageFormat::PNG, 1280, 900, 1.0);
-<span class="boring">}
-</span></code></pre></pre>
-<p>The extension in the file-name path is optional as the appropriate extension (<code>ImageFormat::PNG</code>) will be included. Note that in all functions that save files to disk both relative and absolute paths are supported.</p>
+</span>plot.write_image("/home/user/plot_name.ext", ImageFormat::PNG, 1280, 900, 1.0);
+<span class="boring">}</span></code></pre></pre>
+<p>The extension in the file-name path is optional as the appropriate extension (<code>ImageFormat::PNG</code>) will be included. Note that in all functions that save files to disk, both relative and absolute paths are supported.</p>
+<h2 id="saving-plots"><a class="header" href="#saving-plots">Saving Plots</a></h2>
+<p>To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the <code>kaleido</code> feature. This feature depends on <a href="https://github.com/plotly/Kaleido">plotly/Kaleido</a>: a cross-platform open source library for generating static images. All the necessary binaries have been included with <code>plotly_kaleido</code> for <code>Linux</code>, <code>Windows</code> and <code>MacOS</code>. Previous versions of <a href="https://github.com/igiagkiozis/plotly">plotly.rs</a> used the <code>orca</code> feature, however, this has been deprecated as it provided the same functionality but required additional installation steps. To enable the <code>kaleido</code> feature add the following to your <code>Cargo.toml</code>:</p>
+<pre><code class="language-toml">[dependencies]
+plotly = { version = "0.8.4", features = ["kaleido"] }
+</code></pre>
+<h2 id="webassembly-support"><a class="header" href="#webassembly-support">WebAssembly Support</a></h2>
+<p>As of v0.8.0, <a href="https://github.com/igiagkiozis/plotly">plotly.rs</a> can now be used in a <code>Wasm</code> environment by enabling the <code>wasm</code> feature in your <code>Cargo.toml</code>:</p>
+<pre><code class="language-toml">[dependencies]
+plotly = { version = "&gt;=0.8.0" features = ["wasm"] }
+</code></pre>
+<p>The <code>wasm</code> feature exposes rudimentary bindings to the <code>plotly.js</code> library, which can then be used in a <code>wasm</code> environment such as the <a href="https://yew.rs/"><code>Yew</code></a> frontend framework.</p>
+<p>To make a very simple <code>Plot</code> component might look something like:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use yew::prelude::*;
+
+#[derive(Properties, PartialEq)]
+pub struct PlotProps {
+    pub id: String,
+    pub plot: plotly::Plot,
+    pub class: Option&lt;Classes&gt;,
+}
+
+#[function_component(Plot)]
+pub fn plot(props: &amp;PlotProps) -&gt; Html {
+    let PlotProps { id, plot, class } = props;
+
+    let p = yew_hooks::use_async::&lt;_, _, ()&gt;({
+        let id = id.clone();
+        let plot = plot.clone();
+        async move {
+            plotly::bindings::new_plot(&amp;id, &amp;plot).await;
+            Ok(())
+        }
+    });
+
+    {
+        let id = id.clone();
+        let plot = plot.clone();
+        use_effect_with_deps(
+            move |(_, _)| {
+                p.run();
+                || ()
+            },
+            (id, plot),
+        );
+    }
+
+    html! {
+        &lt;div id={id.clone()} class={class.clone()}&gt;&lt;/div&gt;
+    }
+}
+<span class="boring">}</span></code></pre></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="plotly_rs.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="fundamentals.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="fundamentals.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -265,53 +321,38 @@ fn main() -&gt; std::io::Result&lt;()&gt; {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="plotly_rs.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="fundamentals.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="fundamentals.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        
-        <script type="text/javascript" src="ferris.js"></script>
-        
-        <script type="text/javascript" src="plotly-1.54.6.min.js"></script>
-        
+        <script src="ferris.js"></script>
+        <script src="plotly.min.js"></script>
 
-        
 
+    </div>
     </body>
 </html>

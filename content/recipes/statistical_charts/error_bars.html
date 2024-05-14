@@ -1,16 +1,18 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js ayu">
+<html lang="en" class="ayu" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Error Bars - Plotly.rs Book</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+        
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
+        <link rel="icon" href="../../favicon.svg">
         <link rel="shortcut icon" href="../../favicon.png">
         <link rel="stylesheet" href="../../css/variables.css">
         <link rel="stylesheet" href="../../css/general.css">
@@ -19,8 +21,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="../../highlight.css">
@@ -28,24 +29,21 @@
         <link rel="stylesheet" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
         <link rel="stylesheet" href="../../ferris.css">
-        
 
-        
         <!-- MathJax -->
-        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
-    <body>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -61,46 +59,76 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
-            html.classList.remove('no-js')
             html.classList.remove('ayu')
             html.classList.add(theme);
-            html.classList.add('js');
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/error_bars.html" class="active"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.5.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">3.5.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.5.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/error_bars.html" class="active"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-1.54.6.min.js"></script>
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
@@ -109,13 +137,11 @@
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Plotly.rs Book</h1>
@@ -124,14 +150,13 @@
                         <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -139,10 +164,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -152,10 +176,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#error-bars" id="error-bars">Error Bars</a></h1>
+                        <h1 id="error-bars"><a class="header" href="#error-bars">Error Bars</a></h1>
 <p>The following imports have been used to produce the plots below:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use itertools_num::linspace;
 use plotly::box_plot::{BoxMean, BoxPoints};
@@ -165,16 +188,14 @@ use plotly::layout::{Axis, BarMode, BoxMode, Layout, Margin};
 use plotly::{Bar, BoxPlot, Histogram, NamedColor, Plot, Rgb, Rgba, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
-<h2><a class="header" href="#basic-symmetric-error-bars" id="basic-symmetric-error-bars">Basic Symmetric Error Bars</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="basic-symmetric-error-bars"><a class="header" href="#basic-symmetric-error-bars">Basic Symmetric Error Bars</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn basic_symmetric_error_bars(show: bool) {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
-        .name(&quot;trace1&quot;)
+        .name("trace1")
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 2.0, 3.0]));
 
     let mut plot = Plot::new();
@@ -183,12 +204,11 @@ use rand_distr::{Distribution, Normal, Uniform};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;basic_symmetric_error_bars&quot;))
+        "{}",
+        plot.to_inline_html(Some("basic_symmetric_error_bars"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="basic_symmetric_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -201,13 +221,12 @@ var layout = {};
         Plotly.newPlot('basic_symmetric_error_bars', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#asymmetric-error-bars" id="asymmetric-error-bars">Asymmetric Error Bars</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="asymmetric-error-bars"><a class="header" href="#asymmetric-error-bars">Asymmetric Error Bars</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn asymmetric_error_bars(show: bool) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
-        .name(&quot;trace1&quot;)
+        .name("trace1")
         .error_y(
             ErrorData::new(ErrorType::Data)
                 .array(vec![0.1, 0.2, 0.1, 0.1])
@@ -219,10 +238,9 @@ var layout = {};
     if show {
         plot.show();
     }
-    println!(&quot;{}&quot;, plot.to_inline_html(Some(&quot;asymmetric_error_bars&quot;)));
+    println!("{}", plot.to_inline_html(Some("asymmetric_error_bars")));
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="asymmetric_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -235,13 +253,12 @@ var layout = {};
         Plotly.newPlot('asymmetric_error_bars', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#error-bars-as-a-percentage-of-the-y-value" id="error-bars-as-a-percentage-of-the-y-value">Error Bars as a Percentage of the Y Value</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="error-bars-as-a-percentage-of-the-y-value"><a class="header" href="#error-bars-as-a-percentage-of-the-y-value">Error Bars as a Percentage of the Y Value</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn error_bars_as_a_percentage_of_the_y_value(show: bool) {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
-        .name(&quot;trace1&quot;)
+        .name("trace1")
         .error_y(ErrorData::new(ErrorType::Percent).value(50.).visible(true));
 
     let mut plot = Plot::new();
@@ -250,12 +267,11 @@ var layout = {};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;error_bars_as_a_percentage_of_the_y_value&quot;))
+        "{}",
+        plot.to_inline_html(Some("error_bars_as_a_percentage_of_the_y_value"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="error_bars_as_a_percentage_of_the_y_value" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -268,13 +284,12 @@ var layout = {};
         Plotly.newPlot('error_bars_as_a_percentage_of_the_y_value', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#asymmetric-error-bars-with-a-constant-offset" id="asymmetric-error-bars-with-a-constant-offset">Asymmetric Error Bars with a Constant Offset</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="asymmetric-error-bars-with-a-constant-offset"><a class="header" href="#asymmetric-error-bars-with-a-constant-offset">Asymmetric Error Bars with a Constant Offset</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn asymmetric_error_bars_with_a_constant_offset(show: bool) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
-        .name(&quot;trace1&quot;)
+        .name("trace1")
         .error_y(
             ErrorData::new(ErrorType::Percent)
                 .symmetric(false)
@@ -288,13 +303,12 @@ var layout = {};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;asymmetric_error_bars_with_a_constant_offset&quot;))
+        "{}",
+        plot.to_inline_html(Some("asymmetric_error_bars_with_a_constant_offset"))
     );
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="asymmetric_error_bars_with_a_constant_offset" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -307,13 +321,12 @@ var layout = {};
         Plotly.newPlot('asymmetric_error_bars_with_a_constant_offset', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#horizontal-error-bars" id="horizontal-error-bars">Horizontal Error Bars</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="horizontal-error-bars"><a class="header" href="#horizontal-error-bars">Horizontal Error Bars</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn horizontal_error_bars(show: bool) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
-        .name(&quot;trace1&quot;)
+        .name("trace1")
         .error_x(ErrorData::new(ErrorType::Percent).value(10.));
 
     let mut plot = Plot::new();
@@ -321,10 +334,9 @@ var layout = {};
     if show {
         plot.show();
     }
-    println!(&quot;{}&quot;, plot.to_inline_html(Some(&quot;horizontal_error_bars&quot;)));
+    println!("{}", plot.to_inline_html(Some("horizontal_error_bars")));
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="horizontal_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -337,14 +349,13 @@ var layout = {};
         Plotly.newPlot('horizontal_error_bars', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#bar-chart-with-error-bars" id="bar-chart-with-error-bars">Bar Chart with Error Bars</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="bar-chart-with-error-bars"><a class="header" href="#bar-chart-with-error-bars">Bar Chart with Error Bars</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn bar_chart_with_error_bars(show: bool) {
-    let trace_c = Bar::new(vec![&quot;Trial 1&quot;, &quot;Trial 2&quot;, &quot;Trial 3&quot;], vec![3, 6, 4])
+    let trace_c = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![3, 6, 4])
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1., 0.5, 1.5]));
-    let trace_e = Bar::new(vec![&quot;Trial 1&quot;, &quot;Trial 2&quot;, &quot;Trial 3&quot;], vec![4, 7, 3])
+    let trace_e = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![4, 7, 3])
         .error_y(ErrorData::new(ErrorType::Data).array(vec![0.5, 1., 2.]));
 
     let mut plot = Plot::new();
@@ -357,10 +368,9 @@ var layout = {};
     if show {
         plot.show();
     }
-    println!(&quot;{}&quot;, plot.to_inline_html(Some(&quot;bar_chart_with_error_bars&quot;)));
+    println!("{}", plot.to_inline_html(Some("bar_chart_with_error_bars")));
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="bar_chart_with_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -374,9 +384,8 @@ var layout = {"barmode":"group"};
         Plotly.newPlot('bar_chart_with_error_bars', data, layout, {"responsive": true});
     };
 </script>
-<h2><a class="header" href="#colored-and-styled-error-bars" id="colored-and-styled-error-bars">Colored and Styled Error Bars</a></h2>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<h2 id="colored-and-styled-error-bars"><a class="header" href="#colored-and-styled-error-bars">Colored and Styled Error Bars</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn colored_and_styled_error_bars(show: bool) {
     let x_theo: Vec&lt;f64&gt; = linspace(-4., 4., 100).collect();
@@ -391,10 +400,10 @@ var layout = {"barmode":"group"};
         -0.02, 0.04, -0.01, -0.27, 0.36, 0.75, 1.03, 0.65, 0.28, 0.02, -0.11, 0.16, 0.04, -0.15,
     ];
 
-    let trace1 = Scatter::new(x_theo, sincx).name(&quot;sinc(x)&quot;);
+    let trace1 = Scatter::new(x_theo, sincx).name("sinc(x)");
     let trace2 = Scatter::new(x, y)
         .mode(Mode::Markers)
-        .name(&quot;measured&quot;)
+        .name("measured")
         .error_y(
             ErrorData::new(ErrorType::Constant)
                 .value(0.1)
@@ -419,12 +428,11 @@ var layout = {"barmode":"group"};
         plot.show();
     }
     println!(
-        &quot;{}&quot;,
-        plot.to_inline_html(Some(&quot;colored_and_styled_error_bars&quot;))
+        "{}",
+        plot.to_inline_html(Some("colored_and_styled_error_bars"))
     );
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div id="colored_and_styled_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     window.PLOTLYENV=window.PLOTLYENV || {};
@@ -443,17 +451,13 @@ var layout = {};
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="../../recipes/statistical_charts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="../../recipes/statistical_charts/box_plots.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../recipes/statistical_charts/box_plots.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -461,53 +465,38 @@ var layout = {};
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="../../recipes/statistical_charts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="../../recipes/statistical_charts/box_plots.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../recipes/statistical_charts/box_plots.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
 
-        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
 
         <!-- Custom JS scripts -->
-        
-        <script type="text/javascript" src="../../ferris.js"></script>
-        
-        <script type="text/javascript" src="../../plotly-1.54.6.min.js"></script>
-        
+        <script src="../../ferris.js"></script>
+        <script src="../../plotly.min.js"></script>
 
-        
 
+    </div>
     </body>
 </html>
