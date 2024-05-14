@@ -4,9 +4,9 @@ version = "0.8.4"
 description = "Internal proc macro crate for Plotly-rs."
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"
-homepage = "https://github.com/igiagkiozis/plotly"
+homepage = "https://github.com/plotly/plotly.rs"
 documentation = "https://docs.rs/plotly"
-repository = "https://github.com/igiagkiozis/plotly"
+repository = "https://github.com/plotly/plotly.rs"
 edition = "2018"
 keywords = ["plot", "chart", "plotly"]
 

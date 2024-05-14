@@ -1,5 +1,5 @@
 //! # Plotly Kaleido
-//! Plotly Kaleido implements the `kaleido` feature for [Plotly.rs](https://github.com/igiagkiozis/plotly)
+//! Plotly Kaleido implements the `kaleido` feature for [Plotly.rs](https://github.com/plotly/plotly.rs)
 //!
 //! The `kaleido` feature enables `Plot` conversion to the following output
 //! formats: png, jpeg, webp, svg, pdf and eps. It has the added benefit over
