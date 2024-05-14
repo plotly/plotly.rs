@@ -177,16 +177,16 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="ndarray-support"><a class="header" href="#ndarray-support"><code>ndarray</code> Support</a></h1>
-<p>To enable <a href="https://github.com/rust-ndarray/ndarray">ndarray</a> support in <a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> add the following feature to your <code>Cargo.toml</code> file:</p>
+<p>To enable <a href="https://github.com/rust-ndarray/ndarray">ndarray</a> support in <a href="https://github.com/plotly/plotly.rs">Plotly.rs</a> add the following feature to your <code>Cargo.toml</code> file:</p>
 <pre><code class="language-toml">[dependencies]
 plotly = { version = "&gt;=0.7.0", features = ["plotly_ndarray"] }
 </code></pre>
-<p>This extends the <a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> API in two ways:</p>
+<p>This extends the <a href="https://github.com/plotly/plotly.rs">Plotly.rs</a> API in two ways:</p>
 <ul>
 <li><code>Scatter</code> traces can now be created using the <code>Scatter::from_ndarray</code> constructor,</li>
 <li>and also multiple traces can be created with the <code>Scatter::to_traces</code> method.</li>
 </ul>
-<p>The full source code for the examples below can be found <a href="https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/ndarray_support.rs">here</a>.</p>
+<p>The full source code for the examples below can be found <a href="https://github.com/plotly/plotly.rs/tree/main/examples/ndarray_support">here</a>.</p>
 <h2 id="ndarray-traces"><a class="header" href="#ndarray-traces"><code>ndarray</code> Traces</a></h2>
 <p>The following imports have been used to produce the plots below:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]

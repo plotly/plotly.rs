@@ -177,11 +177,11 @@
                 <div id="content" class="content">
                     <main>
                         <div align="center">
-    <a href="https://github.com/igiagkiozis/plotly/tree/master">
-        <img src="https://img.shields.io/badge/Plotly.rs-master-brightgreen" alt="build status">
+    <a href="https://github.com/plotly/plotly.rs/tree/main">
+        <img src="https://img.shields.io/badge/Plotly.rs-main-brightgreen" alt="build status">
     </a>
-    <a href="https://github.com/igiagkiozis/plotly/actions">
-        <img src="https://github.com/igiagkiozis/plotly/workflows/build/badge.svg" alt="build status">
+    <a href="https://github.com/plotly/plotly.rs/actions">
+        <img src="https://github.com/plotly/plotly.rs/workflows/build/badge.svg" alt="build status">
     </a>
     <a href="https://crates.io/crates/plotly">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
@@ -194,11 +194,11 @@
     </a>
 </div>
 <h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
-<p>To start using <a href="https://github.com/igiagkiozis/plotly">plotly.rs</a> in your project add the following to your <code>Cargo.toml</code>:</p>
+<p>To start using <a href="https://github.com/plotly/plotly.rs">plotly.rs</a> in your project add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
 plotly = "0.8.4"
 </code></pre>
-<p><a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> is ultimately a thin wrapper around the <code>plotly.js</code> library. The main job of this library is to provide <code>structs</code> and <code>enums</code> which get serialized to <code>json</code> and passed to the <code>plotly.js</code> library to actually do the heavy lifting. As such, if you are familiar with <code>plotly.js</code> or its derivatives (e.g. the equivalent Python library), then you should find <a href="https://github.com/igiagkiozis/plotly"><code>plotly.rs</code></a> intuitive to use.</p>
+<p><a href="https://github.com/plotly/plotly.rs">Plotly.rs</a> is ultimately a thin wrapper around the <code>plotly.js</code> library. The main job of this library is to provide <code>structs</code> and <code>enums</code> which get serialized to <code>json</code> and passed to the <code>plotly.js</code> library to actually do the heavy lifting. As such, if you are familiar with <code>plotly.js</code> or its derivatives (e.g. the equivalent Python library), then you should find <a href="https://github.com/plotly/plotly.rs"><code>plotly.rs</code></a> intuitive to use.</p>
 <p>A <code>Plot</code> struct contains one or more <code>Trace</code> objects which describe the structure of data to be displayed. Optional <code>Layout</code> and <code>Configuration</code> structs can be used to specify the layout and config of the plot, respectively.</p>
 <p>The builder pattern is used extensively throughout the library, which means you only need to specify the attributes and details you desire. Any attributes that are not set will fall back to the default value used by <code>plotly.js</code>.</p>
 <p>All available traces (e.g. <code>Scatter</code>, <code>Bar</code>, <code>Histogram</code>, etc), the <code>Layout</code>, <code>Configuration</code> and  <code>Plot</code> have been hoisted in the <code>plotly</code> namespace so that they can be imported simply using the following:</p>
@@ -250,12 +250,12 @@ fn main() -&gt; std::io::Result&lt;()&gt; {
 <span class="boring">}</span></code></pre></pre>
 <p>The extension in the file-name path is optional as the appropriate extension (<code>ImageFormat::PNG</code>) will be included. Note that in all functions that save files to disk, both relative and absolute paths are supported.</p>
 <h2 id="saving-plots"><a class="header" href="#saving-plots">Saving Plots</a></h2>
-<p>To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the <code>kaleido</code> feature. This feature depends on <a href="https://github.com/plotly/Kaleido">plotly/Kaleido</a>: a cross-platform open source library for generating static images. All the necessary binaries have been included with <code>plotly_kaleido</code> for <code>Linux</code>, <code>Windows</code> and <code>MacOS</code>. Previous versions of <a href="https://github.com/igiagkiozis/plotly">plotly.rs</a> used the <code>orca</code> feature, however, this has been deprecated as it provided the same functionality but required additional installation steps. To enable the <code>kaleido</code> feature add the following to your <code>Cargo.toml</code>:</p>
+<p>To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the <code>kaleido</code> feature. This feature depends on <a href="https://github.com/plotly/Kaleido">plotly/Kaleido</a>: a cross-platform open source library for generating static images. All the necessary binaries have been included with <code>plotly_kaleido</code> for <code>Linux</code>, <code>Windows</code> and <code>MacOS</code>. Previous versions of <a href="https://github.com/plotly/plotly.rs">plotly.rs</a> used the <code>orca</code> feature, however, this has been deprecated as it provided the same functionality but required additional installation steps. To enable the <code>kaleido</code> feature add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
 plotly = { version = "0.8.4", features = ["kaleido"] }
 </code></pre>
 <h2 id="webassembly-support"><a class="header" href="#webassembly-support">WebAssembly Support</a></h2>
-<p>As of v0.8.0, <a href="https://github.com/igiagkiozis/plotly">plotly.rs</a> can now be used in a <code>Wasm</code> environment by enabling the <code>wasm</code> feature in your <code>Cargo.toml</code>:</p>
+<p>As of v0.8.0, <a href="https://github.com/plotly/plotly.rs">plotly.rs</a> can now be used in a <code>Wasm</code> environment by enabling the <code>wasm</code> feature in your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
 plotly = { version = "&gt;=0.8.0" features = ["wasm"] }
 </code></pre>

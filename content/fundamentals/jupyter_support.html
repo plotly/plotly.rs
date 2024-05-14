@@ -177,7 +177,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="jupyter-support"><a class="header" href="#jupyter-support">Jupyter Support</a></h1>
-<p>As of version <code>0.7.0</code>, <a href="https://github.com/igiagkiozis/plotly">Plotly.rs</a> has native support for the <a href="https://github.com/google/evcxr/tree/master/evcxr_jupyter">EvCxR Jupyter Kernel</a>.</p>
+<p>As of version <code>0.7.0</code>, <a href="https://github.com/plotly/plotly.rs">Plotly.rs</a> has native support for the <a href="https://github.com/google/evcxr/tree/master/evcxr_jupyter">EvCxR Jupyter Kernel</a>.</p>
 <p>Once you've installed the required packages you'll be able to run all the examples shown here as well as all <a href="../recipes.html">the recipes</a> in Jupyter Lab!</p>
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <p>It is assumed that an installation of the <a href="https://www.anaconda.com/products/individual">Anaconda</a> Python distribution is already present in the system. If that is not the case you can follow these <a href="https://www.anaconda.com/products/individual">instructions</a> to get up and running with <code>Anaconda</code>.</p>
@@ -256,8 +256,8 @@ plot.set_layout(layout);
 plot.lab_display();
 format!("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT", plot.to_json())
 <span class="boring">}</span></code></pre></pre>
-<p>For Jupyter Lab there are two ways to display a plot in the <code>EvCxR</code> kernel, either have the plot object be in the last line without a semicolon or directly invoke the <code>Plot::lab_display</code> method on it; both have the same result. You can also find an example notebook <a href="https://github.com/igiagkiozis/plotly/blob/master/examples/jupyter/jupyter_lab.ipynb">here</a> that will periodically be updated with examples.</p>
-<p>The process for Jupyter Notebook is very much the same with one exception; the <code>Plot::notebook_display</code> method must be used to display the plot. You can find an example notebook <a href="https://github.com/igiagkiozis/plotly/blob/master/examples/jupyter/jupyter_notebook.ipynb">here</a></p>
+<p>For Jupyter Lab there are two ways to display a plot in the <code>EvCxR</code> kernel, either have the plot object be in the last line without a semicolon or directly invoke the <code>Plot::lab_display</code> method on it; both have the same result. You can also find an example notebook <a href="https://github.com/plotly/plotly.rs/tree/main/examples/jupyter/jupyter_lab.ipynb">here</a> that will periodically be updated with examples.</p>
+<p>The process for Jupyter Notebook is very much the same with one exception; the <code>Plot::notebook_display</code> method must be used to display the plot. You can find an example notebook <a href="https://github.com/plotly/plotly.rs/tree/main/examples/jupyter/jupyter_notebook.ipynb">here</a></p>
 
                     </main>
 
