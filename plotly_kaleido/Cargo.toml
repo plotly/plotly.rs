@@ -22,5 +22,5 @@ dunce = "1.0.2"
 directories = ">=4, <6"
 
 [build-dependencies]
-zip = "1.1"
+zip = "2.1"
 directories = ">=4, <6"
