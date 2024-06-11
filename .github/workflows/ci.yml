@@ -46,6 +46,20 @@ jobs:
       # lint the wasm examples
       - run: cd ${{ github.workspace }}/examples && cargo clippy --target wasm32-unknown-unknown --package "wasm*"
 
+  semver:
+    name: semver
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check semver
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          package: plotly
+          feature-group: only-explicit-features
+          features: kaleido
+          rust-toolchain: stable
+          release-type: minor
+
   test:
     name: Tests
     strategy:
