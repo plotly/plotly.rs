@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
 use plotly::common::{Anchor, AxisSide, Font, Title};
-
 use plotly::layout::{
     Annotation, Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder,
 };
