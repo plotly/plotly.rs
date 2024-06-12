@@ -5,7 +5,7 @@ pub mod box_plot;
 mod candlestick;
 pub mod contour;
 mod density_mapbox;
-mod heat_map;
+pub mod heat_map;
 pub mod histogram;
 pub mod image;
 pub mod mesh3d;
