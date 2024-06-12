@@ -1,16 +1,16 @@
-# `ndarray` Support 
+# `ndarray` Support
 
-To enable [ndarray](https://github.com/rust-ndarray/ndarray) support in [Plotly.rs](https://github.com/igiagkiozis/plotly) add the following feature to your `Cargo.toml` file:
+To enable [ndarray](https://github.com/rust-ndarray/ndarray) support in [Plotly.rs](https://github.com/plotly/plotly.rs) add the following feature to your `Cargo.toml` file:
 ```toml
 [dependencies]
 plotly = { version = ">=0.7.0", features = ["plotly_ndarray"] }
 ```
 
-This extends the [Plotly.rs](https://github.com/igiagkiozis/plotly) API in two ways: 
+This extends the [Plotly.rs](https://github.com/plotly/plotly.rs) API in two ways:
 * `Scatter` traces can now be created using the `Scatter::from_ndarray` constructor,
 * and also multiple traces can be created with the `Scatter::to_traces` method.
 
-The full source code for the examples below can be found [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/ndarray_support.rs).
+The full source code for the examples below can be found [here](https://github.com/plotly/plotly.rs/tree/main/examples/ndarray_support).
 
 ## `ndarray` Traces
 
@@ -55,7 +55,7 @@ var layout = {};
 </script>
 
 ### Multiple Traces
-To display a `2D` array (`Array<_, Ix2>`) you can use the `Scatter::to_traces` method. The first argument of the method represents the common axis for the traces (`x` axis) whilst the second argument contains a collection of traces. At this point it should be noted that there is some ambiguity when passing a `2D` array; namely are the traces arranged along the columns or the rows of the matrix? This ambiguity is resolved by the third argument of the `Scatter::to_traces` method. If that argument is set to `ArrayTraces::OverColumns` then the library assumes that every column represents an individual trace, alternatively if this is set to `ArrayTraces::OverRows` the assumption is that every row represents a trace.   
+To display a `2D` array (`Array<_, Ix2>`) you can use the `Scatter::to_traces` method. The first argument of the method represents the common axis for the traces (`x` axis) whilst the second argument contains a collection of traces. At this point it should be noted that there is some ambiguity when passing a `2D` array; namely are the traces arranged along the columns or the rows of the matrix? This ambiguity is resolved by the third argument of the `Scatter::to_traces` method. If that argument is set to `ArrayTraces::OverColumns` then the library assumes that every column represents an individual trace, alternatively if this is set to `ArrayTraces::OverRows` the assumption is that every row represents a trace.
 
 To illustrate this distinction consider the following examples:
 ```rust

@@ -2,8 +2,8 @@
   <h1>Plotly.rs</h1>
   <p><strong>Plotly for Rust</strong></p>
   <p>
-    <a href="https://github.com/igiagkiozis/plotly/actions?query=branch%3Amaster" style="text-decoration: none!important;">
-        <img src="https://img.shields.io/github/actions/workflow/status/igiagkiozis/plotly/ci.yml?branch=master" alt="Build status">
+    <a href="https://github.com/plotly/plotly.rs/actions?query=branch%3Amain" style="text-decoration: none!important;">
+        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/ci.yml?branch=main" alt="Build status">
     </a>
     <a href="https://crates.io/crates/plotly" style="text-decoration: none!important;">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
@@ -14,18 +14,18 @@
 	<a href="https://docs.rs/plotly" style="text-decoration: none!important;">
         <img src="https://img.shields.io/badge/docs.rs-plotly-green" alt="Documentation">
     </a>
-	<a href="https://app.codecov.io/github/igiagkiozis/plotly" style="text-decoration: none!important;">
+	<a href="https://app.codecov.io/github/plotly/plotly.rs" style="text-decoration: none!important;">
         <img src="https://img.shields.io/codecov/c/github/igiagkiozis/plotly" alt="Code coverage">
     </a>
   </p>
   <h4>
-    <a href="https://igiagkiozis.github.io/plotly/content/getting_started.html">Getting Started</a>
+    <a href="https://plotly.github.io/plotly.rs/content/getting_started.html">Getting Started</a>
     <span> | </span>
-    <a href="https://igiagkiozis.github.io/plotly/content/recipes.html">Recipes</a>
+    <a href="https://plotly.github.io/plotly.rs/content/recipes.html">Recipes</a>
     <span> | </span>
     <a href="https://docs.rs/crate/plotly/">API Docs</a>
     <span> | </span>
-    <a href="https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md">Changelog</a>
+    <a href="https://github.com/plotly/plotly.rs/tree/main/CHANGELOG.md">Changelog</a>
   </h4>
 </div>
 
@@ -44,10 +44,10 @@
 
 A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
-Documentation and numerous interactive examples are available in the [Plotly.rs Book](https://igiagkiozis.github.io/plotly/content/getting_started.html), the [examples/](https://github.com/igiagkiozis/plotly/tree/master/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
+Documentation and numerous interactive examples are available in the [Plotly.rs Book](https://plotly.github.io/plotly.rs/content/getting_started.html), the [examples/](https://github.com/plotly/plotly.rs/tree/main/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
 
 
-For changes since the last version, please consult the [changelog](https://github.com/igiagkiozis/plotly/blob/master/CHANGELOG.md).
+For changes since the last version, please consult the [changelog](https://github.com/plotly/plotly.rs/tree/main/CHANGELOG.md).
 
 # Basic Usage
 
@@ -163,13 +163,13 @@ pub fn plot_component() -> Html {
         }
     });
 
-    
+
         use_effect_with_deps(move |_| {
             p.run();
             || ()
         }, (),
     );
-    
+
 
     html! {
         <div id="plot-div"></div>
@@ -177,7 +177,7 @@ pub fn plot_component() -> Html {
 }
 ```
 
-More detailed standalone examples can be found in the [examples/](https://github.com/igiagkiozis/plotly/tree/master/examples) directory.
+More detailed standalone examples can be found in the [examples/](https://github.com/plotly/plotly.rs/tree/main/examples) directory.
 
 # Crate Feature Flags
 
@@ -201,12 +201,12 @@ Enables compilation for the `wasm32-unknown-unknown` target and provides access 
 
 # Contributing
 
-* If you've spotted a bug or would like to see a new feature, please submit an issue on the [issue tracker](https://github.com/igiagkiozis/plotly/issues).
+* If you've spotted a bug or would like to see a new feature, please submit an issue on the [issue tracker](https://github.com/plotly/plotly.rs/issues).
 
-* Pull requests are welcome, see the [contributing guide](https://github.com/igiagkiozis/plotly/blob/master/CONTRIBUTING.md) for more information.
+* Pull requests are welcome, see the [contributing guide](https://github.com/plotly/plotly.rs/tree/main/CONTRIBUTING.md) for more information.
 
 # License
 
 `Plotly.rs` is distributed under the terms of the MIT license.
 
-See [LICENSE-MIT](https://github.com/igiagkiozis/plotly/blob/master/LICENSE-MIT), and [COPYRIGHT](https://github.com/igiagkiozis/plotly/blob/master/COPYRIGHT) for details.
+See [LICENSE-MIT](https://github.com/plotly/plotly.rs/tree/main/LICENSE-MIT), and [COPYRIGHT](https://github.com/plotly/plotly.rs/tree/main/COPYRIGHT) for details.
