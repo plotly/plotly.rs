@@ -12,11 +12,11 @@ When making a feature request, please make it clear what problem you intend to s
 
 ## Pull Requests
 
-Before spending time and effort in making changes to the library, it's a good idea to discuss it first on the issue tracker to see whether your change is likely to be accepted. 
+Before spending time and effort in making changes to the library, it's a good idea to discuss it first on the issue tracker to see whether your change is likely to be accepted.
 
-Fork [plotly](https://igiagkiozis.github.io/plotly/) to your own account and create a new branch for your feature. Remember to update the [changelog](CHANGELOG.md) - use previous entries as a template. 
+Fork [plotly](https://github.com/plotly/plotly.rs.git) to your own account and create a new branch for your feature. Remember to update the [changelog](CHANGELOG.md) - use previous entries as a template.
 
-When your contribution is ready for review, make a pull request with your changes directly to the `master` branch. One of the maintainers will have a look at what you've done, suggest any necessary changes and, when everyone is happy, merge the pull request.
+When your contribution is ready for review, make a pull request with your changes directly to the `main` branch. One of the maintainers will have a look at what you've done, suggest any necessary changes and, when everyone is happy, merge the pull request.
 
 ## Code of Conduct
 

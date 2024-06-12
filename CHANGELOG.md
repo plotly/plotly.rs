@@ -3,35 +3,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.5] - 2023-xx-xx
+## [0.8.5] - 2024-xx-xx
 ### Added
-- [[#153](https://github.com/igiagkiozis/plotly/pull/153)] Added `LayoutScene`
+- [[#181](https://github.com/plotly/plotly,rs/pull/181)] Fix compilation error when mixing the crate with `askama/with-axum` by adding `with-axum` feature.
+- [[#180](https://github.com/plotly/plotly.rs/pull/180)] Add setter for `Mapbox::domain`.
+- [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
+- [[#153](https://github.com/plotly/plotly.rs/pull/153)] Added `LayoutScene`.
 
 ## [0.8.4] - 2023-07-09
 ### Added
-- [[#143](https://github.com/igiagkiozis/plotly/pull/143)] Widen version range of `askama`.
+- [[#143](https://github.com/plotly/plotly.rs/pull/143)] Widen version range of `askama`.
 
 ### Fixed
-- [[#129](https://github.com/igiagkiozis/plotly/pull/129)] Fix issue for plots not showing in browser in Windows. Thanks to [@juanespj](https://github.com/juanespj) and [@M-NK-Y](https://github.com/M-NK-Y) for the PRs.
-- [[#147](https://github.com/igiagkiozis/plotly/pull/147)] Update documentation for `jupyter notebook` example.
+- [[#129](https://github.com/plotly/plotly.rs/pull/129)] Fix issue for plots not showing in browser in Windows. Thanks to [@juanespj](https://github.com/juanespj) and [@M-NK-Y](https://github.com/M-NK-Y) for the PRs.
+- [[#147](https://github.com/plotly/plotly.rs/pull/147)] Update documentation for `jupyter notebook` example.
 
 ## [0.8.3] - 2022-11-04
 ### Fixed
-- [[#122](https://github.com/igiagkiozis/plotly/pull/122)] Compilation error for the `wasm` feature.
-- [[#123](https://github.com/igiagkiozis/plotly/pull/123)] Compilation error for the `plotly_kaleido` feature.
+- [[#122](https://github.com/plotly/plotly.rs/pull/122)] Compilation error for the `wasm` feature.
+- [[#123](https://github.com/plotly/plotly.rs/pull/123)] Compilation error for the `plotly_kaleido` feature.
 
 ## [0.8.2] - 2022-11-03
 ### Added
-- [[#110](https://github.com/igiagkiozis/plotly/pull/110)] `LegendGroupTitle` to existing traces.
-- [[#88](https://github.com/igiagkiozis/plotly/pull/88)] `Mesh3D`, `Image`, `ScatterMapbox` traces.
+- [[#110](https://github.com/plotly/plotly.rs/pull/110)] `LegendGroupTitle` to existing traces.
+- [[#88](https://github.com/plotly/plotly.rs/pull/88)] `Mesh3D`, `Image`, `ScatterMapbox` traces.
 
 ### Changed
-- [[#113](https://github.com/igiagkiozis/plotly/pull/113)] Refactored the structure of the examples to make them more accessible, whilst adding more examples e.g. for `wasm`.
-- [[#115](https://github.com/igiagkiozis/plotly/pull/115)] Simplify the function signature of Plot.to_inline_html() so that it just takes `Option<&str>` as an argument.
+- [[#113](https://github.com/plotly/plotly.rs/pull/113)] Refactored the structure of the examples to make them more accessible, whilst adding more examples e.g. for `wasm`.
+- [[#115](https://github.com/plotly/plotly.rs/pull/115)] Simplify the function signature of Plot.to_inline_html() so that it just takes `Option<&str>` as an argument.
 
 ## [0.8.1] - 2022-09-25
 ### Added
-- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/igiagkiozis/plotly/pull/99).
+- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/plotly/plotly.rs/pull/99).
 - Internally, there is now a `plotly-derive` crate which defines a `FieldSetter` procedural macro. This massively cuts down the amount of code duplication by generating the setter methods based on the struct fields. Again thanks to @sreenathkrishnan for this effort.
 
 ## [0.8.0] - 2022-08-26
@@ -46,8 +49,7 @@ Version 0.8.0 represents a significant release which refactors a lot of the code
 - Support for `Sankey` diagrams
 - Support for `Plot3D` - 3D plots for scatter, line and surface data
 ### Changed
-- Improve implementation of `private::NumOrString` to support more primitive types ([Issue 
-#47](https://github.com/igiagkiozis/plotly/issues/47))
+- Improve implementation of `private::NumOrString` to support more primitive types ([Issue #47](https://github.com/plotly/plotly.rs/issues/47))
 - Remove `private::TruthyEnum` in favour of a more robust way of serializing to `String` or `bool`
 - Refactor `Color` module
 - Refactored HTML templates with cleaner Javascript code
@@ -57,7 +59,7 @@ Version 0.8.0 represents a significant release which refactors a lot of the code
 - `Plot::to_html()` now has similar behaviour to `Plot::to_inline_html()` and just returns a `String`
 ### Fixed
 - Typos in `CONTRIBUTING.md`
-- Serialization of `plotly_kaleido::PlotData` ([Issue #50](https://github.com/igiagkiozis/plotly/issues/50))
+- Serialization of `plotly_kaleido::PlotData` ([Issue #50](https://github.com/plotly/plotly.rs/issues/50))
 ### Updated
 - `ndarray` to `0.15.4`.
 - `serde` to `1.0.132`.
@@ -85,11 +87,11 @@ Version 0.8.0 represents a significant release which refactors a lot of the code
 
 ## [0.6.0] - 2020-07-25
 ### Added
-- Shapes support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/shapes.html)).
+- Shapes support ([documentation](https://plotly.github.io/plotly.rs/content/fundamentals/shapes.html)).
 - Annotations support.
 - Docstrings to `Scatter`.
-- `ndarray` support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/ndarray_support.html)).
-- Jupyter lab and notebook support ([documentation](https://igiagkiozis.github.io/plotly/content/fundamentals/jupyter_support.html)).
+- `ndarray` support ([documentation](https://plotly.github.io/plotly.rs/content/fundamentals/ndarray_support.html)).
+- Jupyter lab and notebook support ([documentation](https://plotly.github.io/plotly.rs/content/fundamentals/jupyter_support.html)).
 ### Changed
 - Removed `num` dependence.
 - Removed `plotly_orca` and the `orca` feature. Use the `kaleido` feature for static image generation.
@@ -107,7 +109,7 @@ Version 0.8.0 represents a significant release which refactors a lot of the code
 
 ## [0.5.0] - 2020-07-12
 ### Added
-- [Plotly.rs Book](https://igiagkiozis.github.io/plotly/).
+- [Plotly.rs Book](https://plotly.github.io/plotly.rs/).
 - Using plotly.js from the official CDN is now the default. To use the local version use the `Plot::use_local_plotly` method.
 - Plot rasterization to `png`, `jpg`, `eps`, `pdf`, `webp` and `svg` using [plotly/Kaleido](https://github.com/plotly/Kaleido), enabled using the `kaleido` feature.
 - Multi-axis support and examples.

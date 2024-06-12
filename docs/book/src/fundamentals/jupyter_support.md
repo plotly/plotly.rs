@@ -1,12 +1,12 @@
 # Jupyter Support
 
-As of version `0.7.0`, [Plotly.rs](https://github.com/igiagkiozis/plotly) has native support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter). 
+As of version `0.7.0`, [Plotly.rs](https://github.com/plotly/plotly.rs) has native support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter).
 
 Once you've installed the required packages you'll be able to run all the examples shown here as well as all [the recipes](../recipes.md) in Jupyter Lab!
 
 
 ## Installation
-It is assumed that an installation of the [Anaconda](https://www.anaconda.com/products/individual) Python distribution is already present in the system. If that is not the case you can follow these [instructions](https://www.anaconda.com/products/individual) to get up and running with `Anaconda`. 
+It is assumed that an installation of the [Anaconda](https://www.anaconda.com/products/individual) Python distribution is already present in the system. If that is not the case you can follow these [instructions](https://www.anaconda.com/products/individual) to get up and running with `Anaconda`.
 
 ```shell script
 conda install -c plotly plotly=4.9.0
@@ -20,17 +20,17 @@ conda install notebook
 
 Although there are alternative methods to enable support for the [EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter), we have elected to keep the requirements consistent with what those of other languages, e.g. Julia, Python and R. This way users know what to expect; and also the folks at [Plotly](https://plotly.com/python/getting-started/#jupyter-notebook-support) have done already most of the heavy lifting to create an extension for Jupyter Lab that works very well.
 
-Run the following to install the Plotly Jupyter Lab extension: 
+Run the following to install the Plotly Jupyter Lab extension:
 ```shell script
 jupyter labextension install jupyterlab-plotly@4.9.0
 ```
 
-Once this step is complete to make sure the installation so far was successful, run the following command: 
+Once this step is complete to make sure the installation so far was successful, run the following command:
 ```shell script
 jupyter lab
 ```
 
-Open a `Python 3` kernel copy/paste the following code in a cell and run it: 
+Open a `Python 3` kernel copy/paste the following code in a cell and run it:
 ```python
 import plotly.graph_objects as go
 fig = go.Figure(data=go.Bar(x=['a', 'b', 'c'], y=[11, 22, 33]))
@@ -62,7 +62,7 @@ If you're not familiar with the EvCxR kernel it would be good that you at least 
 
 ## Usage
 
-Launch Jupyter Lab: 
+Launch Jupyter Lab:
 ```shell script
 jupyter lab
 ```
@@ -104,6 +104,6 @@ plot.set_layout(layout);
 plot.lab_display();
 format!("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT", plot.to_json())
 ```
-For Jupyter Lab there are two ways to display a plot in the `EvCxR` kernel, either have the plot object be in the last line without a semicolon or directly invoke the `Plot::lab_display` method on it; both have the same result. You can also find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/examples/jupyter/jupyter_lab.ipynb) that will periodically be updated with examples.
+For Jupyter Lab there are two ways to display a plot in the `EvCxR` kernel, either have the plot object be in the last line without a semicolon or directly invoke the `Plot::lab_display` method on it; both have the same result. You can also find an example notebook [here](https://github.com/plotly/plotly.rs/tree/main/examples/jupyter/jupyter_lab.ipynb) that will periodically be updated with examples.
 
-The process for Jupyter Notebook is very much the same with one exception; the `Plot::notebook_display` method must be used to display the plot. You can find an example notebook [here](https://github.com/igiagkiozis/plotly/blob/master/examples/jupyter/jupyter_notebook.ipynb) 
+The process for Jupyter Notebook is very much the same with one exception; the `Plot::notebook_display` method must be used to display the plot. You can find an example notebook [here](https://github.com/plotly/plotly.rs/tree/main/examples/jupyter/jupyter_notebook.ipynb)
