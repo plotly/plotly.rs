@@ -7,6 +7,7 @@ use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 use update_menu::UpdateMenu;
 
+use crate::common::Domain;
 use crate::{
     color::Color,
     common::{
@@ -1373,6 +1374,8 @@ pub struct Mapbox {
     bearing: Option<f64>,
     /// Sets the latitude and longitude of the center of the map.
     center: Option<Center>,
+    /// Sets the domain within which the mapbox will be drawn.
+    domain: Option<Domain>,
     /// Sets the pitch angle of the map in degrees, where `0` means
     /// perpendicular to the surface of the map.
     pitch: Option<f64>,

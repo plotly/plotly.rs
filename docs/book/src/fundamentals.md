@@ -1,9 +1,9 @@
 <div align="center">
-    <a href="https://github.com/igiagkiozis/plotly/tree/master">
-        <img src="https://img.shields.io/badge/Plotly.rs-master-brightgreen" alt="build status">
+    <a href="https://github.com/plotly/plotly.rs/tree/main">
+        <img src="https://img.shields.io/badge/Plotly.rs-main-brightgreen" alt="build status">
     </a>
-    <a href="https://github.com/igiagkiozis/plotly/actions">
-        <img src="https://github.com/igiagkiozis/plotly/workflows/build/badge.svg" alt="build status">
+    <a href="https://github.com/plotly/plotly.rs/actions?query=branch%3Amain" style="text-decoration: none!important;">
+        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/ci.yml?branch=main" alt="Build status">
     </a>
     <a href="https://crates.io/crates/plotly">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
@@ -18,4 +18,4 @@
 
 # Fundamentals
 
-Functionality that applies to the library as a whole is described in the next sections. 
+Functionality that applies to the library as a whole is described in the next sections.
