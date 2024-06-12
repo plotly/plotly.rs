@@ -345,7 +345,7 @@ fn fully_styled_box_plot() {
         v
     };
 
-    let x_data = vec![
+    let x_data = [
         "Carmelo<br>Anthony",
         "Dwyane<br>Wade",
         "Deron<br>Williams",
