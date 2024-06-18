@@ -38,13 +38,15 @@ jobs:
           components: clippy
           targets: wasm32-unknown-unknown
       # lint the main library workspace excluding the wasm feature
-      - run: cargo clippy --features plotly_ndarray,plotly_image,kaleido -- -D warnings
+      # Rust 1.79 generates a new lint in autogenrated code:
+      # Added clippy allow at the command line until it is fixed. See: https://github.com/rust-lang/rust-clippy/issues/12643 and https://github.com/TedDriggs/darling/issues/293
+      - run: cargo clippy --features plotly_ndarray,plotly_image,kaleido -- -D warnings -Aclippy::manual_unwrap_or_default
       # lint the plotly library with wasm enabled
-      - run: cargo clippy --package plotly --features wasm --target wasm32-unknown-unknown -- -D warnings
+      - run: cargo clippy --package plotly --features wasm --target wasm32-unknown-unknown -- -D warnings -Aclippy::manual_unwrap_or_default
       # lint the non-wasm examples
-      - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" -- -D warnings
+      - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" -- -D warnings -Aclippy::manual_unwrap_or_default
       # lint the wasm examples
-      - run: cd ${{ github.workspace }}/examples && cargo clippy --target wasm32-unknown-unknown --package "wasm*"
+      - run: cd ${{ github.workspace }}/examples && cargo clippy --target wasm32-unknown-unknown --package "wasm*" -- -Aclippy::manual_unwrap_or_default
 
   semver:
     name: semver

@@ -138,7 +138,7 @@ impl Kaleido {
         let p = p.to_str().unwrap();
         let p = String::from(p);
 
-        let process = Command::new(p.as_str())
+        let mut process = Command::new(p.as_str())
             .current_dir(self.cmd_path.parent().unwrap())
             .args([
                 "plotly",
@@ -146,6 +146,7 @@ impl Kaleido {
                 "--allow-file-access-from-files",
                 "--disable-breakpad",
                 "--disable-dev-shm-usage",
+                "--disable-software-rasterizer",
                 "--single-process",
             ])
             .stdin(Stdio::piped())
@@ -156,14 +157,14 @@ impl Kaleido {
 
         {
             let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
-            let mut process_stdin = process.stdin.unwrap();
+            let mut process_stdin = process.stdin.take().unwrap();
             process_stdin
                 .write_all(plot_data.as_bytes())
                 .expect("couldn't write to Kaleido stdin");
             process_stdin.flush()?;
         }
 
-        let output_lines = BufReader::new(process.stdout.unwrap()).lines();
+        let output_lines = BufReader::new(process.stdout.take().unwrap()).lines();
         for line in output_lines.map_while(Result::ok) {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
