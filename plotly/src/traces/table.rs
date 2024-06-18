@@ -27,21 +27,24 @@ where
     /// `Visible::LegendOnly`, the trace is not drawn, but can appear as a
     /// legend item (provided that the legend itself is visible).
     visible: Option<Visible>,
-    ///Specifies the rendered order of the data columns; for example, a value `2` at position `0`,
-    ///means that column index `0` in the data will be rendered as the,
-    ///third column, as columns have an index base of zero.
+    ///Specifies the rendered order of the data columns; for example, a value
+    /// `2` at position `0`, means that column index `0` in the data will be
+    /// rendered as the, third column, as columns have an index base of
+    /// zero.
     column_order: Option<Vec<usize>>,
     #[serde(rename = "columnwidth")]
-    ///The width of columns expressed as a ratio. Columns fill the available width,
-    ///in proportion of their specified column widths.
+    ///The width of columns expressed as a ratio. Columns fill the available
+    /// width, in proportion of their specified column widths.
     column_width: Option<f64>,
-    ///Header cell values. `values[m][n]` represents the value of the `n`th point in column `m`,,
-    ///therefore the `values[m]` vector length for all columns must be the same (longer vectors,
-    ///will be truncated). Each value must be a finite number or a string.
+    ///Header cell values. `values[m][n]` represents the value of the `n`th
+    /// point in column `m`,, therefore the `values[m]` vector length for
+    /// all columns must be the same (longer vectors, will be truncated).
+    /// Each value must be a finite number or a string.
     header: Option<Header<T>>,
-    ///Cell values. `values[m][n]` represents the value of the `n`th point in column `m`,,
-    ///therefore the `values[m]` vector length for all columns must be the same (longer vectors,
-    ///will be truncated). Each value must be a finite number or a string.
+    ///Cell values. `values[m][n]` represents the value of the `n`th point in
+    /// column `m`,, therefore the `values[m]` vector length for all columns
+    /// must be the same (longer vectors, will be truncated). Each value
+    /// must be a finite number or a string.
     cells: Option<Cells<N>>,
 }
 
@@ -72,9 +75,10 @@ where
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Cells<N> {
-    ///Cell values. `values[m][n]` represents the value of the `n`th point in column `m`,
-    ///therefore the `values[m]` vector length for all columns must be the same (longer vectors,
-    ///will be truncated). Each value must be a finite number or a string
+    ///Cell values. `values[m][n]` represents the value of the `n`th point in
+    /// column `m`, therefore the `values[m]` vector length for all columns
+    /// must be the same (longer vectors, will be truncated). Each value
+    /// must be a finite number or a string
     values: Option<Vec<Vec<N>>>,
     ///Prefix for cell values.
     prefix: Option<String>,
@@ -104,9 +108,10 @@ where
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Header<T> {
-    ///Header cell values. `values[m][n]` represents the value of the `n`th point in column `m`,
-    ///therefore the `values[m]` vector length for all columns must be the same (longer vectors,
-    ///will be truncated). Each value must be a finite number or a string.
+    ///Header cell values. `values[m][n]` represents the value of the `n`th
+    /// point in column `m`, therefore the `values[m]` vector length for all
+    /// columns must be the same (longer vectors, will be truncated). Each
+    /// value must be a finite number or a string.
     values: Option<Vec<T>>,
     ///Prefix for cell values.
     prefix: Option<String>,
