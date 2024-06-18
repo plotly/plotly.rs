@@ -6,9 +6,9 @@ authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 workspace = ".."
-homepage = "https://github.com/igiagkiozis/plotly"
+homepage = "https://github.com/plotly/plotly.rs"
 documentation = "https://docs.rs/plotly_kaleido"
-repository = "https://github.com/igiagkiozis/plotly"
+repository = "https://github.com/plotly/plotly.rs"
 edition = "2018"
 keywords = ["plot", "chart", "plotly", "ndarray"]
 
@@ -17,14 +17,10 @@ exclude = ["target/*", "kaleido/*", "examples/*"]
 [dependencies]
 serde = { version = "1.0.132", features = ["derive"] }
 serde_json = "1.0.73"
-base64 = "0.13.0"
+base64 = "0.22"
 dunce = "1.0.2"
-directories = "4.0.1"
-
-[dev-dependencies]
-zip = "0.5.13"
+directories = ">=4, <6"
 
 [build-dependencies]
-zip = "0.5.13"
-directories = "4.0.1"
-
+zip = "2.1"
+directories = ">=4, <6"

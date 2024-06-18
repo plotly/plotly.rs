@@ -10,9 +10,13 @@ use std::process::Command;
 
 use directories::ProjectDirs;
 
-#[cfg(target_os = "linux")]
+#[cfg(all(target_arch = "x86_64", target_os = "linux"))]
 const KALEIDO_URL: &str =
     "https://github.com/plotly/Kaleido/releases/download/v0.2.1/kaleido_linux_x64.zip";
+
+#[cfg(all(target_arch = "aarch64", target_os = "linux"))]
+const KALEIDO_URL: &str =
+    "https://github.com/plotly/Kaleido/releases/download/v0.2.1/kaleido_linux_arm64.zip";
 
 #[cfg(target_os = "windows")]
 const KALEIDO_URL: &str =

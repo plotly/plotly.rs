@@ -18,7 +18,7 @@ pub fn plot_component() -> Html {
             Ok(())
         }
     });
-
+    // Only on first render
     use_effect_with((), move |_| {
         p.run();
     });

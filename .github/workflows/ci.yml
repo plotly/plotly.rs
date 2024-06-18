@@ -3,9 +3,9 @@ name: CI
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 # Cancel any in-flight jobs for the same PR/branch so there's only one active
 # at a time
@@ -21,18 +21,18 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt
       - run: cargo fmt --all -- --check
       - run: cd ${{ github.workspace }}/examples && cargo fmt --all -- --check
-    
+
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -46,6 +46,20 @@ jobs:
       # lint the wasm examples
       - run: cd ${{ github.workspace }}/examples && cargo clippy --target wasm32-unknown-unknown --package "wasm*"
 
+  semver:
+    name: semver
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check semver
+        uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          package: plotly
+          feature-group: only-explicit-features
+          features: kaleido
+          rust-toolchain: stable
+          release-type: minor
+
   test:
     name: Tests
     strategy:
@@ -54,15 +68,17 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --features plotly_ndarray,plotly_image,kaleido
-  
+      - if: ${{ matrix.os == 'windows-latest' }}
+        run: gci -recurse -filter "*example*"
+
   code-coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: llvm-tools-preview
@@ -70,7 +86,7 @@ jobs:
       # we are skipping anything to do with wasm here
       - run: cargo llvm-cov --workspace --features plotly_ndarray,plotly_image,kaleido --lcov --output-path lcov.info
       - uses: codecov/codecov-action@v3
-      
+
   build_examples:
     name: Build Examples
     strategy:
@@ -91,10 +107,10 @@ jobs:
         ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build
-  
+
   build_wasm_examples:
     name: Build Wasm Examples
     strategy:
@@ -103,7 +119,7 @@ jobs:
         example: [wasm-yew-minimal]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown

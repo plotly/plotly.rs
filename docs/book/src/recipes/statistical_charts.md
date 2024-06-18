@@ -1,6 +1,6 @@
 # Statistical Charts
 
-The complete source code for the following examples can also be found [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/statistical_charts.rs).
+The complete source code for the following examples can also be found [here](https://github.com/plotly/plotly.rs/tree/main/examples/statistical_charts).
 
 Kind | Link
 :---|:----:
