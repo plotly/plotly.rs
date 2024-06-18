@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#180](https://github.com/plotly/plotly.rs/pull/180)] Add setter for `Mapbox::domain`.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
 - [[#153](https://github.com/plotly/plotly.rs/pull/153)] Added `LayoutScene`.
+- [[#212](https://github.com/plotly/plotly.rs/pull/212)] Update LICENSE
 
 ## [0.8.4] - 2023-07-09
 ### Added
