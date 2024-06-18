@@ -1,6 +1,6 @@
 # 3D Charts
 
-The complete source code for the following examples can also be found [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/plot3d.rs).
+The complete source code for the following examples can also be found [here](https://github.com/plotly/plotly.rs/tree/main/examples/plot3d).
 
 Kind | Link
 :---|:----:

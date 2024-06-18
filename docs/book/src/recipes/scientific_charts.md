@@ -1,6 +1,6 @@
 # Scientific Charts
 
-The source code for the following examples can also be found [here](https://github.com/igiagkiozis/plotly/blob/master/plotly/examples/scientific_charts.rs).
+The source code for the following examples can also be found [here](https://github.com/plotly/plotly.rs/tree/main/examples/scientific_charts).
 
 Kind | Link
 :---|:----:
