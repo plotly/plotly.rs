@@ -5,8 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.9.0] - 2024-xx-xx
 ### Added
+- [[#207](https://github.com/plotly/plotly,rs/pull/207)] Add `Table` trace.
 - [[#181](https://github.com/plotly/plotly,rs/pull/181)] Fix compilation error when mixing the crate with `askama/with-axum` by adding `with-axum` feature.
 - [[#180](https://github.com/plotly/plotly.rs/pull/180)] Add setter for `Mapbox::domain`.
+- [[#178](https://github.com/plotly/plotly.rs/pull/178)] Fix setter for `Axis::matches` to take string arg.
 - [[#166](https://github.com/plotly/plotly.rs/pull/166)] Added subplot example with multiple titles.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
 - [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` settter.
