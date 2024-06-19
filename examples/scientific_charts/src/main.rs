@@ -102,7 +102,7 @@ fn customizing_spacing_between_x_and_y_ticks() {
 // Heatmaps
 fn basic_heat_map() {
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
-    let trace = HeatMap::new_z(z);
+    let trace = HeatMap::new_z(z).zmin(1.0).zmax(60.0);
     let mut plot = Plot::new();
     plot.add_trace(trace);
 

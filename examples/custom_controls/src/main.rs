@@ -44,7 +44,7 @@ fn bar_plot_with_dropdown_for_different_data() {
 /// Display a heat map, with buttons to allow for toggling of different
 /// colorscales.
 fn heat_map_with_modifiable_colorscale() {
-    type HeatMapType = HeatMap<f64, f64, f64>;
+    type HeatMapType = HeatMap<f64, f64, Vec<f64>>;
     let gauss = |v: i32| (-v as f64 * v as f64 / 200.0).exp();
     let z = (-30..30)
         .map(|x| (-30..30).map(|y| gauss(x) * gauss(y)).collect_vec())

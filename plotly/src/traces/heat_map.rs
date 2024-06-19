@@ -106,13 +106,13 @@ where
     y_axis: Option<String>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
-    z: Option<Vec<Vec<Z>>>,
+    z: Option<Vec<Z>>,
     zauto: Option<bool>,
     #[serde(rename = "zhoverformat")]
     zhover_format: Option<String>,
-    zmax: Option<Z>,
-    zmid: Option<Z>,
-    zmin: Option<Z>,
+    zmax: Option<f64>,
+    zmid: Option<f64>,
+    zmin: Option<f64>,
     zsmooth: Option<Smoothing>,
 }
 
@@ -120,7 +120,7 @@ impl<Z> HeatMap<f64, f64, Z>
 where
     Z: Serialize + Clone,
 {
-    pub fn new_z(z: Vec<Vec<Z>>) -> Box<Self> {
+    pub fn new_z(z: Vec<Z>) -> Box<Self> {
         Box::new(Self {
             z: Some(z),
             ..Default::default()
@@ -134,7 +134,7 @@ where
     Y: Serialize + Clone,
     Z: Serialize + Clone,
 {
-    pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Vec<Z>>) -> Box<Self> {
+    pub fn new(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Self> {
         Box::new(Self {
             x: Some(x),
             y: Some(y),
