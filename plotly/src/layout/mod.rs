@@ -447,6 +447,7 @@ pub struct Axis {
     tick0: Option<f64>,
     dtick: Option<f64>,
 
+    #[field_setter(skip)]
     matches: Option<String>,
 
     #[serde(rename = "tickvals")]
@@ -545,10 +546,8 @@ impl Axis {
         Default::default()
     }
 
-    pub fn matches_x(mut self, matches: bool) -> Self {
-        if matches {
-            self.matches = Some(String::from("x"));
-        }
+    pub fn matches(mut self, matches: &str) -> Self {
+        self.matches = Some(matches.to_string());
         self
     }
 
@@ -2443,7 +2442,7 @@ mod tests {
             .n_ticks(600)
             .tick0(5.0)
             .dtick(10.0)
-            .matches_x(true)
+            .matches("x")
             .tick_values(vec![1.0, 2.0])
             .tick_text(vec!["one".to_string(), "two".to_string()])
             .ticks(TicksDirection::Inside)
