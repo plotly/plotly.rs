@@ -9,6 +9,7 @@ use plotly::{
     },
     layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder},
     sankey::{Line as SankeyLine, Link, Node},
+    traces::table::{Cells, Header},
     Bar, Plot, Sankey, Scatter, ScatterPolar, Table,
 };
 use rand_distr::{Distribution, Normal, Uniform};
@@ -606,8 +607,8 @@ fn basic_sankey_diagram() {
 
 fn table_chart() {
     let trace = Table::new(
-        vec![String::from("col1"), String::from("col2")],
-        vec![vec![1, 2], vec![2, 3]],
+        Header::new(vec![String::from("col1"), String::from("col2")]),
+        Cells::new(vec![vec![1, 2], vec![2, 3]]),
     );
     let mut plot = Plot::new();
     plot.add_trace(trace);
