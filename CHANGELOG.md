@@ -3,11 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.5] - 2024-xx-xx
+## [0.9.0] - 2024-xx-xx
 ### Added
 - [[#181](https://github.com/plotly/plotly,rs/pull/181)] Fix compilation error when mixing the crate with `askama/with-axum` by adding `with-axum` feature.
 - [[#180](https://github.com/plotly/plotly.rs/pull/180)] Add setter for `Mapbox::domain`.
+- [[#166](https://github.com/plotly/plotly.rs/pull/166)] Added subplot example with multiple titles.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
+- [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` settter.
+- [[#159](https://github.com/plotly/plotly.rs/pull/159)] Make `heat_map` module public to expose `Smoothing enum`.
 - [[#153](https://github.com/plotly/plotly.rs/pull/153)] Added `LayoutScene`.
 - [[#212](https://github.com/plotly/plotly.rs/pull/212)] Update LICENSE
 
