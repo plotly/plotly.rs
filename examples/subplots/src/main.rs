@@ -29,6 +29,50 @@ fn simple_subplot() {
     plot.show();
 }
 
+fn simple_subplot_matches_x_axis() {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name("trace2")
+        .x_axis("x2")
+        .y_axis("y2");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().x_axis(Axis::new().matches("x2")).grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
+fn simple_subplot_matches_y_axis() {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name("trace2")
+        .x_axis("x2")
+        .y_axis("y2");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().y_axis(Axis::new().matches("y2")).grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
 fn custom_sized_subplot() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
@@ -289,6 +333,8 @@ fn main() {
 
     // Subplots
     // simple_subplot();
+    // simple_subplot_matches_x_axis();
+    // simple_subplot_matches_y_axis();
     // custom_sized_subplot();
     // multiple_subplots();
     // stacked_subplots();
