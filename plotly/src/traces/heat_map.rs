@@ -110,9 +110,9 @@ where
     zauto: Option<bool>,
     #[serde(rename = "zhoverformat")]
     zhover_format: Option<String>,
-    zmax: Option<Z>,
-    zmid: Option<Z>,
-    zmin: Option<Z>,
+    zmax: Option<f64>,
+    zmid: Option<f64>,
+    zmin: Option<f64>,
     zsmooth: Option<Smoothing>,
 }
 
@@ -179,10 +179,10 @@ mod tests {
 
     #[test]
     fn test_serialize_heat_map_z() {
-        let trace = HeatMap::new_z(vec![1.0]);
+        let trace = HeatMap::new_z(vec![vec![1.0]]);
         let expected = json!({
             "type": "heatmap",
-            "z": [1.0],
+            "z": [[1.0]],
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
@@ -190,37 +190,41 @@ mod tests {
 
     #[test]
     fn test_serialize_heat_map() {
-        let trace = HeatMap::new(vec![0.0, 1.0], vec![2.0, 3.0], vec![4.0, 5.0])
-            .auto_color_scale(true)
-            .color_bar(ColorBar::new())
-            .color_scale(ColorScale::Palette(ColorScalePalette::Picnic))
-            .connect_gaps(false)
-            .hover_info(HoverInfo::None)
-            .hover_label(Label::new())
-            .hover_on_gaps(true)
-            .hover_template("tmpl")
-            .hover_template_array(vec!["tmpl1", "tmpl2"])
-            .hover_text(vec!["hov", "er"])
-            .legend_group("1")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
-            .name("name")
-            .opacity(0.99)
-            .reverse_scale(false)
-            .show_legend(true)
-            .show_scale(false)
-            .text(vec!["te", "xt"])
-            .transpose(true)
-            .visible(Visible::LegendOnly)
-            .x_axis("x")
-            .x_calendar(Calendar::Hebrew)
-            .y_axis("y")
-            .y_calendar(Calendar::Islamic)
-            .zauto(true)
-            .zhover_format("fmt")
-            .zmax(10.0)
-            .zmid(5.0)
-            .zmin(0.0)
-            .zsmooth(Smoothing::Fast);
+        let trace = HeatMap::new(
+            vec![0.0, 1.0],
+            vec![2.0, 3.0],
+            vec![vec![4.0, 5.0], vec![6.0, 7.0]],
+        )
+        .auto_color_scale(true)
+        .color_bar(ColorBar::new())
+        .color_scale(ColorScale::Palette(ColorScalePalette::Picnic))
+        .connect_gaps(false)
+        .hover_info(HoverInfo::None)
+        .hover_label(Label::new())
+        .hover_on_gaps(true)
+        .hover_template("tmpl")
+        .hover_template_array(vec!["tmpl1", "tmpl2"])
+        .hover_text(vec!["hov", "er"])
+        .legend_group("1")
+        .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+        .name("name")
+        .opacity(0.99)
+        .reverse_scale(false)
+        .show_legend(true)
+        .show_scale(false)
+        .text(vec!["te", "xt"])
+        .transpose(true)
+        .visible(Visible::LegendOnly)
+        .x_axis("x")
+        .x_calendar(Calendar::Hebrew)
+        .y_axis("y")
+        .y_calendar(Calendar::Islamic)
+        .zauto(true)
+        .zhover_format("fmt")
+        .zmax(10.0)
+        .zmid(5.0)
+        .zmin(0.0)
+        .zsmooth(Smoothing::Fast);
 
         let expected = json!({
             "type": "heatmap",
@@ -249,7 +253,7 @@ mod tests {
             "y": [2.0, 3.0],
             "yaxis": "y",
             "ycalendar": "islamic",
-            "z": [4.0, 5.0],
+            "z": [[4.0, 5.0], [6.0, 7.0]],
             "zauto": true,
             "zhoverformat": "fmt",
             "zmax": 10.0,
