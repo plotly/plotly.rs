@@ -20,6 +20,7 @@ struct PlotTemplate<'a> {
 
 #[derive(Template)]
 #[template(path = "static_plot.html", escape = "none")]
+#[cfg(not(target_family = "wasm"))]
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
@@ -61,7 +62,7 @@ let height = 680;
 let scale = 1.0;
 plot.write_image("filename", ImageFormat::PNG, width, height, scale);
 
-See https://igiagkiozis.github.io/plotly/content/getting_started.html for further details.
+See https://plotly.github.io/plotly.rs/content/getting_started.html for further details.
 "#;
 
 /// Image format for static image export.
@@ -162,7 +163,7 @@ impl Traces {
 ///
 ///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>");
 ///     plot.set_layout(layout);
-///     
+///
 ///     # if false {  // We don't actually want to try and display the plot in a browser when running a doctest.
 ///     plot.show();
 ///     # }
@@ -652,6 +653,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
@@ -663,6 +665,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
@@ -674,6 +677,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
@@ -697,6 +701,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
@@ -708,6 +713,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {

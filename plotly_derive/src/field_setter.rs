@@ -504,7 +504,7 @@ impl FieldReceiver {
         self.attrs
             .iter()
             .filter(|attr| {
-                attr.path
+                attr.path()
                     .segments
                     .first()
                     .map_or(false, |p| p.ident == name)

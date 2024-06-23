@@ -3,10 +3,11 @@
 use ndarray::Array;
 use plotly::{
     color::Rgb,
-    common::{ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode},
+    common::{ColorBar, ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode, Title},
     layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
     Mesh3D, Plot, Scatter3D, Surface,
 };
+use rand::Rng;
 
 // 3D Scatter Plots
 fn simple_scatter3d_plot() {
@@ -41,10 +42,11 @@ fn customized_scatter3d_plot() {
                         .map(|i| (i.abs() * 25f64) as usize)
                         .collect(),
                 )
-                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
+                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+                .color_array(z.clone()),
         );
 
-    let trace2 = Scatter3D::new(t, z, y)
+    let trace2 = Scatter3D::new(t, z.clone(), y)
         .name("Helix 2")
         .mode(Mode::Markers)
         .marker(
@@ -55,7 +57,8 @@ fn customized_scatter3d_plot() {
                         .map(|i| (i.abs() * 25f64) as usize)
                         .collect(),
                 )
-                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis)),
+                .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+                .color_array(z),
         );
 
     let mut plot = Plot::new();
@@ -161,6 +164,71 @@ fn mesh_3d_plot() {
     plot.show();
 }
 
+fn colorscale_plot() {
+    let mut plot = Plot::new();
+
+    let x = (0..100)
+        .map(|x| ((x - 50) as f64) / 100f64)
+        .collect::<Vec<f64>>();
+
+    let y = x.clone();
+
+    let iproduct = |x: &[f64], y: &[f64]| -> Vec<(f64, f64)> {
+        let mut result = Vec::new();
+        for x in x {
+            for y in y {
+                result.push((*x, *y));
+            }
+        }
+        result
+    };
+
+    let ((x, y), z): ((Vec<f64>, Vec<f64>), Vec<f64>) = iproduct(&x, &y)
+        .into_iter()
+        .map(|(x, y)| ((x, y), -(x.powi(2) + y.powi(2)) + 0.5))
+        .unzip();
+
+    let color: Vec<f32> = z.clone().into_iter().rev().map(|x| x as f32).collect();
+    let _color: Vec<usize> = (0..z.len()).collect();
+    let _color: Vec<u8> = (0..z.len()).map(|x| x as u8).collect();
+    let _color: Vec<i16> = {
+        let mut rng = rand::thread_rng();
+        (0..z.len()).map(|_| rng.gen_range(0..100)).collect()
+    };
+
+    let color_max = color.iter().fold(f64::MIN, |acc, x| acc.max(*x as f64));
+
+    let colorscale = ColorScalePalette::YlGnBu;
+
+    let marker = Marker::new()
+        .color_array(color)
+        .color_scale(plotly::common::ColorScale::Palette(colorscale.clone()))
+        .cauto(false)
+        .cmax(color_max * 1.5)
+        .color_bar(ColorBar::new());
+
+    let scatter = Scatter3D::new(x, y, z).mode(Mode::Markers).marker(marker);
+
+    plot.add_trace(scatter);
+
+    let layout = Layout::new()
+        .font(Font::new().size(18).family("Palatino-Linotype"))
+        .title(format!("Colorscale: {colorscale:?}").as_str().into())
+        .width(1200)
+        .height(1000)
+        .scene(
+            LayoutScene::new()
+                .aspect_mode(plotly::layout::AspectMode::Data)
+                .x_axis(Axis::new().tick_format(".1f"))
+                .y_axis(Axis::new().tick_format(".1f"))
+                .z_axis(Axis::new().tick_format(".1f")),
+        );
+
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
 fn main() {
     // Uncomment any of these lines to display the example.
 
@@ -168,6 +236,7 @@ fn main() {
     // simple_scatter3d_plot();
     // simple_line3d_plot();
     // customized_scatter3d_plot();
+    // colorscale_plot();
 
     // Surface Plots
     // surface_plot();

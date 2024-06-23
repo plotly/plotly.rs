@@ -1,9 +1,11 @@
 #![allow(dead_code)]
 
-use plotly::common::{AxisSide, Font, Title};
-use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder};
+use plotly::common::{Anchor, AxisSide, Font, Title};
+use plotly::layout::{
+    Annotation, Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder, TraceOrder,
+};
+use plotly::Configuration;
 use plotly::{color::Rgb, Plot, Scatter};
-
 // Subplots
 fn simple_subplot() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
@@ -17,6 +19,50 @@ fn simple_subplot() {
     plot.add_trace(trace2);
 
     let layout = Layout::new().grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
+fn simple_subplot_matches_x_axis() {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name("trace2")
+        .x_axis("x2")
+        .y_axis("y2");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().x_axis(Axis::new().matches("x2")).grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
+fn simple_subplot_matches_y_axis() {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name("trace2")
+        .x_axis("x2")
+        .y_axis("y2");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().y_axis(Axis::new().matches("y2")).grid(
         LayoutGrid::new()
             .rows(1)
             .columns(2)
@@ -242,16 +288,59 @@ fn multiple_axes() {
     plot.show();
 }
 
+fn many_subplots_with_titles() {
+    let trace1 = Scatter::new(vec![1, 2], vec![4, 5]);
+
+    let number_of_plots = 10;
+
+    let mut plot = Plot::new();
+    let mut layout = Layout::new()
+        .grid(
+            LayoutGrid::new()
+                .rows(number_of_plots / 2)
+                .columns(2)
+                .pattern(GridPattern::Independent),
+        )
+        .height(number_of_plots * 200);
+
+    for i in 1..number_of_plots + 1 {
+        plot.add_trace(
+            trace1
+                .clone()
+                .y_axis(format!("y{}", i))
+                .x_axis(format!("x{}", i)),
+        );
+        layout.add_annotation(
+            Annotation::new()
+                .y_ref(format!("y{} domain", i))
+                .y_anchor(Anchor::Bottom)
+                .y(1)
+                .text(format!("Title {}", i))
+                .x_ref(format!("x{} domain", i))
+                .x_anchor(Anchor::Center)
+                .x(0.5)
+                .show_arrow(false),
+        )
+    }
+
+    plot.set_layout(layout);
+    plot.set_configuration(Configuration::new().responsive(true));
+    plot.show();
+}
+
 fn main() {
     // Uncomment any of these lines to display the example.
 
     // Subplots
     // simple_subplot();
+    // simple_subplot_matches_x_axis();
+    // simple_subplot_matches_y_axis();
     // custom_sized_subplot();
     // multiple_subplots();
     // stacked_subplots();
     // stacked_subplots_with_shared_x_axis();
     // multiple_custom_sized_subplots();
+    // many_subplots_with_titles();
 
     // Multiple Axes
     // two_y_axes();

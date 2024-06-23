@@ -3,7 +3,7 @@
 use plotly::{
     common::Marker,
     layout::{Center, DragMode, Mapbox, MapboxStyle, Margin},
-    Layout, Plot, ScatterMapbox,
+    DensityMapbox, Layout, Plot, ScatterMapbox,
 };
 
 fn scatter_mapbox() {
@@ -27,8 +27,29 @@ fn scatter_mapbox() {
     plot.show();
 }
 
+fn density_mapbox() {
+    let trace = DensityMapbox::new(vec![45.5017], vec![-73.5673], vec![0.75]).zauto(true);
+
+    let layout = Layout::new()
+        .drag_mode(DragMode::Zoom)
+        .margin(Margin::new().top(0).left(0).bottom(0).right(0))
+        .mapbox(
+            Mapbox::new()
+                .style(MapboxStyle::OpenStreetMap)
+                .center(Center::new(45.5017, -73.5673))
+                .zoom(5),
+        );
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
 fn main() {
     // Uncomment any of these lines to display the example.
 
     // scatter_mapbox();
+    // density_mapbox();
 }

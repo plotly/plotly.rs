@@ -1,12 +1,12 @@
 [package]
 name = "wasm-yew-minimal"
 version = "0.1.0"
-authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
+authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>", "Yuichi Nakamura <yuichi.nakamura86@gmail.com>"]
 edition = "2021"
 
 [dependencies]
 plotly = { path = "../../plotly", features = ["wasm"] }
-yew = "0.19.0"
-yew-hooks = "0.1.56"
+yew = "0.21.0"
+yew-hooks = "0.3.2"
 log = "0.4.6"
 wasm-logger = "0.2"

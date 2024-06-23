@@ -17,14 +17,10 @@ pub fn plot_component() -> Html {
             Ok(())
         }
     });
-
-    use_effect_with_deps(
-        move |_| {
-            p.run();
-            || ()
-        },
-        (),
-    );
+    // Only on first render
+    use_effect_with((), move |_| {
+        p.run();
+    });
 
     html! {
         <div id="plot-div"></div>
@@ -33,5 +29,5 @@ pub fn plot_component() -> Html {
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
-    yew::start_app::<App>();
+    yew::Renderer::<App>::new().render();
 }

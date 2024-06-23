@@ -223,6 +223,8 @@ pub enum PlotType {
     Ohlc,
     Sankey,
     Surface,
+    DensityMapbox,
+    Table,
 }
 
 #[derive(Serialize, Clone, Debug)]

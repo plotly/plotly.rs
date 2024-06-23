@@ -7,6 +7,7 @@ use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 use update_menu::UpdateMenu;
 
+use crate::common::Domain;
 use crate::{
     color::Color,
     common::{
@@ -440,6 +441,9 @@ pub struct Axis {
     #[serde(rename = "nticks")]
     n_ticks: Option<usize>,
 
+    #[serde(rename = "scaleanchor")]
+    scale_anchor: Option<String>,
+
     tick0: Option<f64>,
     dtick: Option<f64>,
 
@@ -542,10 +546,8 @@ impl Axis {
         Default::default()
     }
 
-    pub fn matches(mut self, matches: bool) -> Self {
-        if matches {
-            self.matches = Some(String::from("x"));
-        }
+    pub fn matches(mut self, matches: &str) -> Self {
+        self.matches = Some(matches.to_string());
         self
     }
 
@@ -1370,6 +1372,8 @@ pub struct Mapbox {
     bearing: Option<f64>,
     /// Sets the latitude and longitude of the center of the map.
     center: Option<Center>,
+    /// Sets the domain within which the mapbox will be drawn.
+    domain: Option<Domain>,
     /// Sets the pitch angle of the map in degrees, where `0` means
     /// perpendicular to the surface of the map.
     pitch: Option<f64>,
@@ -2438,7 +2442,7 @@ mod tests {
             .n_ticks(600)
             .tick0(5.0)
             .dtick(10.0)
-            .matches(true)
+            .matches("x")
             .tick_values(vec![1.0, 2.0])
             .tick_text(vec!["one".to_string(), "two".to_string()])
             .ticks(TicksDirection::Inside)
