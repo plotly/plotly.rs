@@ -463,7 +463,7 @@ impl Plot {
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("open")
-            .args(&[temp_path])
+            .args([temp_path])
             .output()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
@@ -597,9 +597,7 @@ mod tests {
     #[test]
     fn test_layout_to_json() {
         let mut plot = create_test_plot();
-        let layout = Layout::new()
-            .title("TestTitle")
-            .title(crate::common::Title::with_text("TestTitle"));
+        let layout = Layout::new().title("TestTitle");
         plot.set_layout(layout);
 
         let expected = json!({
