@@ -2,7 +2,7 @@
 
 use std::f64::consts::PI;
 
-use plotly::common::{ColorScale, ColorScalePalette, Font, Title};
+use plotly::common::{ColorScale, ColorScalePalette, Font};
 use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
 
@@ -136,7 +136,7 @@ fn customized_heat_map() {
         .color_scale(colorscale.into());
 
     let layout = Layout::new()
-        .title(Title::new("Customized Heatmap"))
+        .title("Customized Heatmap")
         .font(Font::new().size(32));
 
     let mut plot = Plot::new();

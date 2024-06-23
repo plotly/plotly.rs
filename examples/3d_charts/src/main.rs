@@ -3,7 +3,7 @@
 use ndarray::Array;
 use plotly::{
     color::Rgb,
-    common::{ColorBar, ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode, Title},
+    common::{ColorBar, ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode},
     layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
     Mesh3D, Plot, Scatter3D, Surface,
 };
@@ -213,7 +213,7 @@ fn colorscale_plot() {
 
     let layout = Layout::new()
         .font(Font::new().size(18).family("Palatino-Linotype"))
-        .title(format!("Colorscale: {colorscale:?}").as_str().into())
+        .title(format!("Colorscale: {colorscale:?}"))
         .width(1200)
         .height(1000)
         .scene(

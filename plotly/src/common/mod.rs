@@ -2347,10 +2347,11 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::needless_borrows_for_generic_args)]
     fn test_title_method_can_take_string() {
         ColorBar::new().title("Title");
-        ColorBar::new().title(format!("{}", "title"));
-        ColorBar::new().title(&format!("{}", "title"));
+        ColorBar::new().title(String::from("Title"));
+        ColorBar::new().title(&String::from("Title"));
         ColorBar::new().title(Title::with_text("Title"));
     }
 }

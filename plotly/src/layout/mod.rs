@@ -2180,7 +2180,7 @@ mod tests {
             .y(2.0)
             .y_anchor(Anchor::Left)
             .valign(VAlign::Middle)
-            .title(Title::with_text(&"title".to_owned()))
+            .title("title")
             .group_click(GroupClick::ToggleItem)
             .item_width(50);
 
