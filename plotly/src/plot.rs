@@ -652,8 +652,8 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
+    #[cfg(target_os = "linux")]
     #[test]
-    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
         let plot = create_test_plot();
@@ -665,8 +665,8 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
+    #[cfg(target_os = "linux")]
     #[test]
-    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
         let plot = create_test_plot();
@@ -678,8 +678,8 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
+    #[cfg(target_os = "linux")]
     #[test]
-    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
         let plot = create_test_plot();
@@ -691,8 +691,8 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
+    #[cfg(target_os = "linux")]
     #[test]
-    #[ignore]
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();
@@ -704,8 +704,8 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
+    #[cfg(target_os = "linux")]
     #[test]
-    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
         let plot = create_test_plot();
@@ -717,8 +717,8 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
+    #[cfg(target_os = "linux")]
     #[test]
-    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
         let plot = create_test_plot();
