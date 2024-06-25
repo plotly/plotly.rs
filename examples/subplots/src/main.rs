@@ -29,6 +29,50 @@ fn simple_subplot() {
     plot.show();
 }
 
+fn simple_subplot_matches_x_axis() {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name("trace2")
+        .x_axis("x2")
+        .y_axis("y2");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().x_axis(Axis::new().matches("x2")).grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
+fn simple_subplot_matches_y_axis() {
+    let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
+    let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
+        .name("trace2")
+        .x_axis("x2")
+        .y_axis("y2");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let layout = Layout::new().y_axis(Axis::new().matches("y2")).grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
 fn custom_sized_subplot() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
@@ -150,7 +194,7 @@ fn multiple_custom_sized_subplots() {
     plot.add_trace(trace4);
 
     let layout = Layout::new()
-        .title(Title::new("Multiple Custom Sized Subplots"))
+        .title("Multiple Custom Sized Subplots")
         .x_axis(Axis::new().domain(&[0., 0.45]).anchor("y1"))
         .y_axis(Axis::new().domain(&[0.5, 1.]).anchor("x1"))
         .x_axis2(Axis::new().domain(&[0.55, 1.]).anchor("y2"))
@@ -176,11 +220,11 @@ fn two_y_axes() {
     plot.add_trace(trace2);
 
     let layout = Layout::new()
-        .title(Title::new("Double Y Axis Example"))
-        .y_axis(Axis::new().title(Title::new("yaxis title")))
+        .title("Double Y Axis Example")
+        .y_axis(Axis::new().title("yaxis title"))
         .y_axis2(
             Axis::new()
-                .title(Title::new("yaxis2 title").font(Font::new().color(Rgb::new(148, 103, 189))))
+                .title(Title::from("yaxis2 title").font(Font::new().color(Rgb::new(148, 103, 189))))
                 .tick_font(Font::new().color(Rgb::new(148, 103, 189)))
                 .overlaying("y")
                 .side(AxisSide::Right),
@@ -205,17 +249,17 @@ fn multiple_axes() {
     plot.add_trace(trace4);
 
     let layout = Layout::new()
-        .title(Title::new("multiple y-axes example"))
+        .title("multiple y-axes example")
         .width(800)
         .x_axis(Axis::new().domain(&[0.3, 0.7]))
         .y_axis(
             Axis::new()
-                .title(Title::new("yaxis title").font(Font::new().color("#1f77b4")))
+                .title(Title::from("yaxis title").font(Font::new().color("#1f77b4")))
                 .tick_font(Font::new().color("#1f77b4")),
         )
         .y_axis2(
             Axis::new()
-                .title(Title::new("yaxis2 title").font(Font::new().color("#ff7f0e")))
+                .title(Title::from("yaxis2 title").font(Font::new().color("#ff7f0e")))
                 .tick_font(Font::new().color("#ff7f0e"))
                 .anchor("free")
                 .overlaying("y")
@@ -224,7 +268,7 @@ fn multiple_axes() {
         )
         .y_axis3(
             Axis::new()
-                .title(Title::new("yaxis3 title").font(Font::new().color("#d62728")))
+                .title(Title::from("yaxis3 title").font(Font::new().color("#d62728")))
                 .tick_font(Font::new().color("#d62728"))
                 .anchor("x")
                 .overlaying("y")
@@ -232,7 +276,7 @@ fn multiple_axes() {
         )
         .y_axis4(
             Axis::new()
-                .title(Title::new("yaxis4 title").font(Font::new().color("#9467bd")))
+                .title(Title::from("yaxis4 title").font(Font::new().color("#9467bd")))
                 .tick_font(Font::new().color("#9467bd"))
                 .anchor("free")
                 .overlaying("y")
@@ -289,6 +333,8 @@ fn main() {
 
     // Subplots
     // simple_subplot();
+    // simple_subplot_matches_x_axis();
+    // simple_subplot_matches_y_axis();
     // custom_sized_subplot();
     // multiple_subplots();
     // stacked_subplots();

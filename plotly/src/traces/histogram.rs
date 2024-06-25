@@ -410,7 +410,7 @@ mod tests {
             .hover_text("hover_text")
             .hover_text_array(vec!["hover_text_1", "hover_text_2"])
             .legend_group("legendgroup")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .marker(Marker::new())
             .n_bins_x(5)
             .n_bins_y(10)

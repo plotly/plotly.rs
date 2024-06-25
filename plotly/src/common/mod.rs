@@ -58,14 +58,36 @@ pub enum HoverInfo {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct LegendGroupTitle {
-    text: String,
+    text: Option<String>,
     font: Option<Font>,
 }
 
+impl From<&str> for LegendGroupTitle {
+    fn from(title: &str) -> Self {
+        LegendGroupTitle::with_text(title)
+    }
+}
+
+impl From<String> for LegendGroupTitle {
+    fn from(value: String) -> Self {
+        LegendGroupTitle::with_text(value)
+    }
+}
+
+impl From<&String> for LegendGroupTitle {
+    fn from(value: &String) -> Self {
+        LegendGroupTitle::with_text(value)
+    }
+}
+
 impl LegendGroupTitle {
-    pub fn new(text: &str) -> Self {
-        Self {
-            text: text.to_string(),
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn with_text<S: Into<String>>(text: S) -> Self {
+        LegendGroupTitle {
+            text: Some(text.into()),
             ..Default::default()
         }
     }
@@ -202,6 +224,7 @@ pub enum PlotType {
     Sankey,
     Surface,
     DensityMapbox,
+    Table,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -975,8 +998,8 @@ impl ColorBar {
         self
     }
 
-    pub fn title(mut self, title: Title) -> Self {
-        self.title = Some(title);
+    pub fn title<T: Into<Title>>(mut self, title: T) -> Self {
+        self.title = Some(title.into());
         self
     }
 
@@ -1234,7 +1257,7 @@ impl Pad {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Title {
-    text: String,
+    text: Option<String>,
     font: Option<Font>,
     side: Option<Side>,
     #[serde(rename = "xref")]
@@ -1252,14 +1275,30 @@ pub struct Title {
 
 impl From<&str> for Title {
     fn from(title: &str) -> Self {
-        Title::new(title)
+        Title::with_text(title)
+    }
+}
+
+impl From<String> for Title {
+    fn from(value: String) -> Self {
+        Title::with_text(value)
+    }
+}
+
+impl From<&String> for Title {
+    fn from(value: &String) -> Self {
+        Title::with_text(value)
     }
 }
 
 impl Title {
-    pub fn new(text: &str) -> Self {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn with_text<S: Into<String>>(text: S) -> Self {
         Title {
-            text: text.to_owned(),
+            text: Some(text.into()),
             ..Default::default()
         }
     }
@@ -1693,7 +1732,7 @@ mod tests {
             .tick_width(55)
             .tick0(0.0)
             .ticks(Ticks::Outside)
-            .title(Title::new("title"))
+            .title(Title::new())
             .x(5.0)
             .x_anchor(Anchor::Bottom)
             .x_pad(2.2)
@@ -1734,7 +1773,7 @@ mod tests {
             "tickwidth": 55,
             "tick0": 0.0,
             "ticks": "outside",
-            "title": {"text": "title"},
+            "title": {},
             "x": 5.0,
             "xanchor": "bottom",
             "xpad": 2.2,
@@ -2172,6 +2211,15 @@ mod tests {
     }
 
     #[test]
+    #[rustfmt::skip]
+    fn test_serialize_legend_group_title() {
+        assert_eq!(to_value(LegendGroupTitle::new()).unwrap(), json!({}));
+        assert_eq!(to_value(LegendGroupTitle::with_text("title_str").font(Font::default())).unwrap(), json!({"font": {}, "text": "title_str"}));
+        assert_eq!(to_value(LegendGroupTitle::from(String::from("title_string"))).unwrap(), json!({"text" : "title_string"}));
+        assert_eq!(to_value(LegendGroupTitle::from(&String::from("title_string"))).unwrap(), json!({"text" : "title_string"}));
+    }
+
+    #[test]
     fn test_serialize_pad() {
         let pad = Pad::new(1, 2, 3);
         let expected = json!({
@@ -2185,7 +2233,7 @@ mod tests {
 
     #[test]
     fn test_serialize_title() {
-        let title = Title::new("title")
+        let title = Title::with_text("title")
             .font(Font::new())
             .side(Side::Top)
             .x_ref(Reference::Paper)
@@ -2305,5 +2353,14 @@ mod tests {
         assert_eq!(to_value(HoverOn::Fills).unwrap(), json!("fills"));
         assert_eq!(to_value(HoverOn::PointsAndFills).unwrap(), json!("points+fills"));
 
+    }
+
+    #[test]
+    #[allow(clippy::needless_borrows_for_generic_args)]
+    fn test_title_method_can_take_string() {
+        ColorBar::new().title("Title");
+        ColorBar::new().title(String::from("Title"));
+        ColorBar::new().title(&String::from("Title"));
+        ColorBar::new().title(Title::with_text("Title"));
     }
 }

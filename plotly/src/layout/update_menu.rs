@@ -246,10 +246,7 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
-    use crate::{
-        common::{Title, Visible},
-        Layout,
-    };
+    use crate::{common::Visible, Layout};
 
     #[test]
     fn test_serialize_button_method() {
@@ -315,7 +312,7 @@ mod tests {
                 Visible::True,
                 Visible::False,
             ]))
-            .push_relayout(Layout::modify_title(Title::new("Hello")))
+            .push_relayout(Layout::modify_title("Hello"))
             .push_relayout(Layout::modify_width(20))
             .build();
 

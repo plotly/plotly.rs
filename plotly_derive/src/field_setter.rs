@@ -140,6 +140,8 @@ enum FieldType {
     OptionString,
     OptionNumOrString,
     OptionNumOrStringCollection,
+    OptionTitle,
+    OptionLegendGroupTitle,
     OptionOther(syn::Type),
 }
 
@@ -202,6 +204,8 @@ impl FieldType {
             FieldType::OptionNumOrStringCollection => quote![crate::private::NumOrStringCollection],
             FieldType::OptionOther(inner) => quote![#inner],
             FieldType::OptionBoxOther(inner) => quote![Box<#inner>],
+            FieldType::OptionTitle => quote![Title],
+            FieldType::OptionLegendGroupTitle => quote![LegendGroupTitle],
         }
     }
 
@@ -225,6 +229,8 @@ impl FieldType {
             ["Box", "Color"] => FieldType::OptionBoxColor,
             ["Box", ..] => FieldType::OptionBoxOther(types.get(2).cloned().unwrap()),
             ["Vec", "Box", "Color"] => FieldType::OptionVecBoxColor,
+            ["Title"] => FieldType::OptionTitle,
+            ["LegendGroupTitle"] => FieldType::OptionLegendGroupTitle,
             _ => FieldType::OptionOther(types.get(1).cloned().unwrap()),
         }
     }
@@ -341,6 +347,12 @@ impl FieldReceiver {
             ),
             FieldType::OptionNumOrStringCollection => (
                 quote![Vec<impl Into<crate::private::NumOrString> + Clone>],
+                quote![value.into()],
+                quote![],
+            ),
+            FieldType::OptionTitle => (quote![impl Into<Title>], quote![value.into()], quote![]),
+            FieldType::OptionLegendGroupTitle => (
+                quote![impl Into<LegendGroupTitle>],
                 quote![value.into()],
                 quote![],
             ),

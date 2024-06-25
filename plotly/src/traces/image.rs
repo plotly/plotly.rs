@@ -408,7 +408,7 @@ mod tests {
             .name("image name")
             .visible(Visible::True)
             .legend_rank(1000)
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .opacity(0.5)
             .ids(vec!["one"])
             .x0(0.0)

@@ -546,10 +546,8 @@ impl Axis {
         Default::default()
     }
 
-    pub fn matches(mut self, matches: bool) -> Self {
-        if matches {
-            self.matches = Some(String::from("x"));
-        }
+    pub fn matches(mut self, matches: &str) -> Self {
+        self.matches = Some(matches.to_string());
         self
     }
 
@@ -2182,7 +2180,7 @@ mod tests {
             .y(2.0)
             .y_anchor(Anchor::Left)
             .valign(VAlign::Middle)
-            .title(Title::new("title"))
+            .title("title")
             .group_click(GroupClick::ToggleItem)
             .item_width(50);
 
@@ -2432,7 +2430,7 @@ mod tests {
         let axis = Axis::new()
             .visible(false)
             .color("#678123")
-            .title(Title::new("title"))
+            .title(Title::with_text("title"))
             .type_(AxisType::Date)
             .auto_range(false)
             .range_mode(RangeMode::NonNegative)
@@ -2444,7 +2442,7 @@ mod tests {
             .n_ticks(600)
             .tick0(5.0)
             .dtick(10.0)
-            .matches(true)
+            .matches("x")
             .tick_values(vec![1.0, 2.0])
             .tick_text(vec!["one".to_string(), "two".to_string()])
             .ticks(TicksDirection::Inside)
@@ -2964,7 +2962,7 @@ mod tests {
     #[test]
     fn test_serialize_layout_template() {
         let layout_template = LayoutTemplate::new()
-            .title("Title".into())
+            .title("Title")
             .show_legend(false)
             .legend(Legend::new())
             .margin(Margin::new())
@@ -3106,7 +3104,9 @@ mod tests {
     #[test]
     fn test_serialize_layout() {
         let layout = Layout::new()
-            .title("Title".into())
+            .title("Title")
+            .title(String::from("Title"))
+            .title(Title::with_text("Title"))
             .show_legend(false)
             .legend(Legend::new())
             .margin(Margin::new())

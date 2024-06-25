@@ -5,12 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.9.0] - 2024-xx-xx
 ### Added
+- [[#207](https://github.com/plotly/plotly,rs/pull/207)] Add `Table` trace.
 - [[#181](https://github.com/plotly/plotly,rs/pull/181)] Fix compilation error when mixing the crate with `askama/with-axum` by adding `with-axum` feature.
 - [[#180](https://github.com/plotly/plotly.rs/pull/180)] Add setter for `Mapbox::domain`.
+- [[#178](https://github.com/plotly/plotly.rs/pull/178)] Fix setter for `Axis::matches` to take string arg.
 - [[#166](https://github.com/plotly/plotly.rs/pull/166)] Added subplot example with multiple titles.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
 - [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` settter.
 - [[#159](https://github.com/plotly/plotly.rs/pull/159)] Make `heat_map` module public to expose `Smoothing enum`.
+- [[#157](https://github.com/plotly/plotly.rs/pull/157)] Fix `HeatMap`'s setters for correctly setting `zmin`, `zmax` and `zmin` independent of `Z` input type.
+- [[#154](https://github.com/plotly/plotly.rs/pull/154)] Improve ergonomics of `Title` and `LegendGroupTitle` structs: `new` method now takes no arguments as per other structs, whilst a new `with_text()` constructor is added for convenience. Where other structs contain a `Title` (and `LegendGroupTitle`), users  can now call the `title()` (and `legend_group_title()`) method with anything that `impl`s `Into<Title>`, viz. `String`, `&String`, `&str` and `Title`.
 - [[#153](https://github.com/plotly/plotly.rs/pull/153)] Added `LayoutScene`.
 - [[#212](https://github.com/plotly/plotly.rs/pull/212)] Update LICENSE
 

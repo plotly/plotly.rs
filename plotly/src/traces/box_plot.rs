@@ -283,7 +283,7 @@ mod tests {
             .jitter(0.5)
             .line(Line::new())
             .legend_group("one")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .lower_fence(vec![0., 1.])
             .marker(Marker::new())
             .mean(vec![12., 13.])
