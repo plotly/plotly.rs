@@ -644,7 +644,7 @@ mod tests {
     #[test]
     fn test_save_html() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.html");
+        let dst = PathBuf::from("example.html");
         plot.write_html(&dst);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
@@ -656,7 +656,7 @@ mod tests {
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.png");
+        let dst = PathBuf::from("example.png");
         plot.write_image(&dst, ImageFormat::PNG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
@@ -668,7 +668,7 @@ mod tests {
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.jpeg");
+        let dst = PathBuf::from("example.jpeg");
         plot.write_image(&dst, ImageFormat::JPEG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
@@ -680,7 +680,7 @@ mod tests {
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.svg");
+        let dst = PathBuf::from("example.svg");
         plot.write_image(&dst, ImageFormat::SVG, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
@@ -692,7 +692,7 @@ mod tests {
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.eps");
+        let dst = PathBuf::from("example.eps");
         plot.write_image(&dst, ImageFormat::EPS, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
@@ -704,7 +704,7 @@ mod tests {
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.pdf");
+        let dst = PathBuf::from("example.pdf");
         plot.write_image(&dst, ImageFormat::PDF, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
@@ -716,7 +716,7 @@ mod tests {
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("/tmp/example.webp");
+        let dst = PathBuf::from("example.webp");
         plot.write_image(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
