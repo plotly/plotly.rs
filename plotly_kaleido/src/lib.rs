@@ -245,7 +245,7 @@ mod tests {
     fn test_save_png() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
-        let dst = PathBuf::from("example.png");
+        let dst = PathBuf::from("/tmp/example.png");
         let r = k.save(dst.as_path(), &test_plot, "png", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
@@ -257,7 +257,7 @@ mod tests {
     fn test_save_jpeg() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
-        let dst = PathBuf::from("example.jpeg");
+        let dst = PathBuf::from("/tmp/example.jpeg");
         let r = k.save(dst.as_path(), &test_plot, "jpeg", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
@@ -269,7 +269,7 @@ mod tests {
     fn test_save_webp() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
-        let dst = PathBuf::from("example.webp");
+        let dst = PathBuf::from("/tmp/example.webp");
         let r = k.save(dst.as_path(), &test_plot, "webp", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
@@ -281,7 +281,7 @@ mod tests {
     fn test_save_svg() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
-        let dst = PathBuf::from("example.svg");
+        let dst = PathBuf::from("/tmp/example.svg");
         let r = k.save(dst.as_path(), &test_plot, "svg", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
@@ -293,7 +293,7 @@ mod tests {
     fn test_save_pdf() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
-        let dst = PathBuf::from("example.pdf");
+        let dst = PathBuf::from("/tmp/example.pdf");
         let r = k.save(dst.as_path(), &test_plot, "pdf", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
@@ -305,7 +305,7 @@ mod tests {
     fn test_save_eps() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
-        let dst = PathBuf::from("example.eps");
+        let dst = PathBuf::from("/tmp/example.eps");
         let r = k.save(dst.as_path(), &test_plot, "eps", 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
