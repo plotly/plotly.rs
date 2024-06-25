@@ -166,6 +166,31 @@ mod tests {
     use crate::*;
 
     #[test]
+    fn test_plotly_default() {
+        let template = &*DEFAULT;
+        let layout = Layout::new().template(template);
+        let mut plot = Plot::new();
+        plot.set_layout(layout);
+        plot.add_trace(Bar::new(vec![0], vec![1]));
+
+        let expected = r##"{"template":{"layout":{}}}"##; // etc...
+        assert!(plot.to_json().contains(expected));
+    }
+
+    #[test]
+    fn test_plotly_white() {
+        let template = &*PLOTLY_WHITE;
+        let layout = Layout::new().template(template);
+        let mut plot = Plot::new();
+        plot.set_layout(layout);
+        plot.add_trace(Bar::new(vec![0], vec![1]));
+        dbg!(plot.to_json());
+
+        let expected = r##"{"template":{"layout":{"title":{"x":0.05},"font":{"color":"#2a3f5f"}"##; // etc...
+        assert!(plot.to_json().contains(expected));
+    }
+
+    #[test]
     fn test_plotly_dark() {
         let template = &*PLOTLY_DARK;
         let layout = Layout::new().template(template);

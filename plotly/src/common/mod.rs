@@ -2211,6 +2211,15 @@ mod tests {
     }
 
     #[test]
+    #[rustfmt::skip]
+    fn test_serialize_legend_group_title() {
+        assert_eq!(to_value(LegendGroupTitle::new()).unwrap(), json!({}));
+        assert_eq!(to_value(LegendGroupTitle::with_text("title_str").font(Font::default())).unwrap(), json!({"font": {}, "text": "title_str"}));
+        assert_eq!(to_value(LegendGroupTitle::from(String::from("title_string"))).unwrap(), json!({"text" : "title_string"}));
+        assert_eq!(to_value(LegendGroupTitle::from(&String::from("title_string"))).unwrap(), json!({"text" : "title_string"}));
+    }
+
+    #[test]
     fn test_serialize_pad() {
         let pad = Pad::new(1, 2, 3);
         let expected = json!({

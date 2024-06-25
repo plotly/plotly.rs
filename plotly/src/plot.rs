@@ -651,8 +651,9 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    // This seems to fail unpredictably on MacOs.
     #[test]
+    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
         let plot = create_test_plot();
@@ -663,8 +664,9 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    // This seems to fail unpredictably on MacOs.
     #[test]
+    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
         let plot = create_test_plot();
@@ -675,8 +677,9 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    // This seems to fail unpredictably on MacOs.
     #[test]
+    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
         let plot = create_test_plot();
@@ -687,8 +690,9 @@ mod tests {
         assert!(!dst.exists());
     }
 
+    // This seems to fail unpredictably on MacOs.
     #[test]
-    #[ignore] // This seems to fail unpredictably on MacOs.
+    #[ignore]
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();
@@ -699,8 +703,9 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    // This seems to fail unpredictably on MacOs.
     #[test]
+    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
         let plot = create_test_plot();
@@ -711,8 +716,9 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    // This seems to fail unpredictably on MacOs.
     #[test]
+    #[cfg(not(all(target_os = "windows", target_os = "macos")))]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
         let plot = create_test_plot();
