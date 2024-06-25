@@ -62,7 +62,7 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
         .hover_mode(HoverMode::Closest)
         .paper_background_color("#ffffff")
         .plot_background_color("#ffffff")
-        .title(Title::new("").x(0.05))
+        .title(Title::new().x(0.05))
         .x_axis(
             Axis::new()
                 .auto_margin(true)
@@ -138,7 +138,7 @@ pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
         .hover_mode(HoverMode::Closest)
         .paper_background_color("#111111")
         .plot_background_color("#111111")
-        .title(Title::new("").x(0.05))
+        .title(Title::new().x(0.05))
         .x_axis(
             Axis::new()
                 .auto_margin(true)
@@ -166,6 +166,31 @@ mod tests {
     use crate::*;
 
     #[test]
+    fn test_plotly_default() {
+        let template = &*DEFAULT;
+        let layout = Layout::new().template(template);
+        let mut plot = Plot::new();
+        plot.set_layout(layout);
+        plot.add_trace(Bar::new(vec![0], vec![1]));
+
+        let expected = r##"{"template":{"layout":{}}}"##; // etc...
+        assert!(plot.to_json().contains(expected));
+    }
+
+    #[test]
+    fn test_plotly_white() {
+        let template = &*PLOTLY_WHITE;
+        let layout = Layout::new().template(template);
+        let mut plot = Plot::new();
+        plot.set_layout(layout);
+        plot.add_trace(Bar::new(vec![0], vec![1]));
+        dbg!(plot.to_json());
+
+        let expected = r##"{"template":{"layout":{"title":{"x":0.05},"font":{"color":"#2a3f5f"}"##; // etc...
+        assert!(plot.to_json().contains(expected));
+    }
+
+    #[test]
     fn test_plotly_dark() {
         let template = &*PLOTLY_DARK;
         let layout = Layout::new().template(template);
@@ -173,8 +198,7 @@ mod tests {
         plot.set_layout(layout);
         plot.add_trace(Bar::new(vec![0], vec![1]));
 
-        let expected =
-            r##"{"template":{"layout":{"title":{"text":"","x":0.05},"font":{"color":"#f2f5fa"}"##; // etc...
+        let expected = r##"{"template":{"layout":{"title":{"x":0.05},"font":{"color":"#f2f5fa"}"##; // etc...
         assert!(plot.to_json().contains(expected));
     }
 }

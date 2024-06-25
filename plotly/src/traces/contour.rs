@@ -339,8 +339,11 @@ where
         Box::new(self)
     }
 
-    pub fn legend_group_title(mut self, legend_group_title: LegendGroupTitle) -> Box<Self> {
-        self.legend_group_title = Some(legend_group_title);
+    pub fn legend_group_title(
+        mut self,
+        legend_group_title: impl Into<LegendGroupTitle>,
+    ) -> Box<Self> {
+        self.legend_group_title = Some(legend_group_title.into());
         Box::new(self)
     }
 
@@ -583,7 +586,7 @@ mod tests {
             .hover_template_array(vec!["ok {1}", "ok {2}"])
             .hover_text(vec!["p3", "p4"])
             .legend_group("group_1")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .line(Line::new())
             .n_contours(5)
             .name("contour trace")

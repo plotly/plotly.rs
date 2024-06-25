@@ -328,7 +328,7 @@ mod tests {
             .hover_text("hover_text")
             .hover_text_array(vec!["hover_text_1"])
             .legend_group("legend_group")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .lighting(Lighting::new())
             .light_position(Position::new(0, 0, 0))
             .name("surface_trace")

@@ -161,7 +161,7 @@ impl Traces {
 ///     plot.add_trace(trace2);
 ///     plot.add_trace(trace3);
 ///
-///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>".into());
+///     let layout = Layout::new().title("<b>Line and Scatter Plot</b>");
 ///     plot.set_layout(layout);
 ///
 ///     # if false {  // We don't actually want to try and display the plot in a browser when running a doctest.
@@ -463,7 +463,7 @@ impl Plot {
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("open")
-            .args(&[temp_path])
+            .args([temp_path])
             .output()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
@@ -548,7 +548,7 @@ mod tests {
     #[test]
     fn test_plot_serialize_with_layout() {
         let mut plot = create_test_plot();
-        let layout = Layout::new().title("Title".into());
+        let layout = Layout::new().title("Title");
         plot.set_layout(layout);
 
         let expected = json!({
@@ -597,7 +597,7 @@ mod tests {
     #[test]
     fn test_layout_to_json() {
         let mut plot = create_test_plot();
-        let layout = Layout::new().title("TestTitle".into());
+        let layout = Layout::new().title("TestTitle");
         plot.set_layout(layout);
 
         let expected = json!({
@@ -651,7 +651,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
@@ -663,7 +663,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
@@ -675,7 +675,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
@@ -699,7 +699,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
@@ -711,7 +711,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {

@@ -311,7 +311,7 @@ mod tests {
             .show_legend(true)
             .legend_rank(1000)
             .legend_group("legend group")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .opacity(0.5)
             .mode(Mode::LinesText)
             .ids(vec!["one"])

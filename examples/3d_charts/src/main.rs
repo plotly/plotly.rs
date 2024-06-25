@@ -3,7 +3,7 @@
 use ndarray::Array;
 use plotly::{
     color::Rgb,
-    common::{ColorBar, ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode, Title},
+    common::{ColorBar, ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode},
     layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
     Mesh3D, Plot, Scatter3D, Surface,
 };
@@ -69,7 +69,7 @@ fn customized_scatter3d_plot() {
     let front_color: Rgb = Rgb::new(255, 255, 255);
 
     let layout = Layout::new()
-        .title("Helix".into())
+        .title("Helix")
         .legend(Legend::new().x(0.9).y(0.9))
         .font(Font::new().color(front_color))
         .paper_background_color(background_color)
@@ -77,19 +77,19 @@ fn customized_scatter3d_plot() {
             LayoutScene::new()
                 .x_axis(
                     Axis::new()
-                        .title("x (A meaningful axis name goes here)".into())
+                        .title("x (A meaningful axis name goes here)")
                         .tick_angle(0f64)
                         .grid_color(front_color)
                         .color(front_color),
                 )
                 .y_axis(
                     Axis::new()
-                        .title(Title::new("This is the label of the Y axis"))
+                        .title("This is the label of the Y axis")
                         .tick_format(".1f")
                         .grid_color(front_color)
                         .color(front_color),
                 )
-                .z_axis(Axis::new().title("".into()).tick_values(vec![]))
+                .z_axis(Axis::new().title("").tick_values(vec![]))
                 .aspect_mode(plotly::layout::AspectMode::Manual)
                 .aspect_ratio((3.0, 1.0, 1.0).into())
                 .camera(
@@ -213,7 +213,7 @@ fn colorscale_plot() {
 
     let layout = Layout::new()
         .font(Font::new().size(18).family("Palatino-Linotype"))
-        .title(format!("Colorscale: {colorscale:?}").as_str().into())
+        .title(format!("Colorscale: {colorscale:?}"))
         .width(1200)
         .height(1000)
         .scene(

@@ -2,7 +2,7 @@
 
 use std::f64::consts::PI;
 
-use plotly::common::{ColorScale, ColorScalePalette, Font, Title};
+use plotly::common::{ColorScale, ColorScalePalette, Font};
 use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
 
@@ -47,7 +47,7 @@ fn colorscale_for_contour_plot() {
     ];
     let trace = Contour::new_z(z).color_scale(ColorScale::Palette(ColorScalePalette::Jet));
 
-    let layout = Layout::new().title(Title::new("Colorscale for Contour Plot"));
+    let layout = Layout::new().title("Colorscale for Contour Plot");
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -68,7 +68,7 @@ fn customizing_size_and_range_of_a_contour_plots_contours() {
         .auto_contour(false)
         .contours(Contours::new().start(0.0).end(8.0).size(2));
 
-    let layout = Layout::new().title(Title::new("Customizing Size and Range of Contours"));
+    let layout = Layout::new().title("Customizing Size and Range of Contours");
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -91,7 +91,7 @@ fn customizing_spacing_between_x_and_y_ticks() {
         .dy(10.0)
         .y0(10.0);
 
-    let layout = Layout::new().title(Title::new("Customizing Size and Range of Contours"));
+    let layout = Layout::new().title("Customizing Size and Range of Contours");
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -136,7 +136,7 @@ fn customized_heat_map() {
         .color_scale(colorscale.into());
 
     let layout = Layout::new()
-        .title(Title::new("Customized Heatmap"))
+        .title("Customized Heatmap")
         .font(Font::new().size(32));
 
     let mut plot = Plot::new();

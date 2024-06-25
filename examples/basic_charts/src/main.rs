@@ -5,7 +5,7 @@ use plotly::{
     color::{NamedColor, Rgb, Rgba},
     common::{
         ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
-        Orientation, Title,
+        Orientation,
     },
     layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder},
     sankey::{Line as SankeyLine, Link, Node},
@@ -118,9 +118,9 @@ fn data_labels_hover() {
     plot.add_trace(trace2);
 
     let layout = Layout::new()
-        .title("Data Labels Hover".into())
-        .x_axis(Axis::new().title("x".into()).range(vec![0.75, 5.25]))
-        .y_axis(Axis::new().title("y".into()).range(vec![0., 8.]));
+        .title("Data Labels Hover")
+        .x_axis(Axis::new().title("x").range(vec![0.75, 5.25]))
+        .y_axis(Axis::new().title("y").range(vec![0., 8.]));
     plot.set_layout(layout);
 
     plot.show();
@@ -143,7 +143,7 @@ fn data_labels_on_the_plot() {
     plot.add_trace(trace2);
 
     let layout = Layout::new()
-        .title("Data Labels on the Plot".into())
+        .title("Data Labels on the Plot")
         .x_axis(Axis::new().range(vec![0.75, 5.25]))
         .y_axis(Axis::new().range(vec![0., 8.]));
     plot.set_layout(layout);
@@ -216,14 +216,14 @@ fn colored_and_styled_scatter_plot() {
     .marker(Marker::new().color(Rgb::new(142, 124, 195)).size(12));
 
     let layout = Layout::new()
-        .title(Title::new("Quarter 1 Growth"))
+        .title("Quarter 1 Growth")
         .x_axis(
             Axis::new()
-                .title(Title::new("GDP per Capita"))
+                .title("GDP per Capita")
                 .show_grid(false)
                 .zero_line(false),
         )
-        .y_axis(Axis::new().title(Title::new("Percent")).show_line(false));
+        .y_axis(Axis::new().title("Percent").show_line(false));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -280,7 +280,7 @@ fn adding_names_to_line_and_scatter_plot() {
         .mode(Mode::LinesMarkers)
         .name("Scatter + Lines");
 
-    let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
+    let layout = Layout::new().title("Adding Names to Line and Scatter Plot");
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -305,7 +305,7 @@ fn line_and_scatter_styling() {
         .marker(Marker::new().color(Rgb::new(128, 0, 128)).size(12))
         .line(Line::new().color(Rgb::new(128, 0, 128)).width(1.0));
 
-    let layout = Layout::new().title(Title::new("Line and Scatter Styling"));
+    let layout = Layout::new().title("Line and Scatter Styling");
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -326,7 +326,7 @@ fn styling_line_plot() {
         .line(Line::new().color(Rgb::new(55, 128, 191)).width(1.0));
 
     let layout = Layout::new()
-        .title(Title::new("Styling Line Plot"))
+        .title("Styling Line Plot")
         .width(500)
         .height(500);
     let mut plot = Plot::new();
@@ -595,7 +595,7 @@ fn basic_sankey_diagram() {
         );
 
     let layout = Layout::new()
-        .title("Basic Sankey".into())
+        .title("Basic Sankey")
         .font(Font::new().size(10));
 
     let mut plot = Plot::new();

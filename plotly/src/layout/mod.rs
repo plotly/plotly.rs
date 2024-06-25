@@ -2180,7 +2180,7 @@ mod tests {
             .y(2.0)
             .y_anchor(Anchor::Left)
             .valign(VAlign::Middle)
-            .title(Title::new("title"))
+            .title("title")
             .group_click(GroupClick::ToggleItem)
             .item_width(50);
 
@@ -2430,7 +2430,7 @@ mod tests {
         let axis = Axis::new()
             .visible(false)
             .color("#678123")
-            .title(Title::new("title"))
+            .title(Title::with_text("title"))
             .type_(AxisType::Date)
             .auto_range(false)
             .range_mode(RangeMode::NonNegative)
@@ -2962,7 +2962,7 @@ mod tests {
     #[test]
     fn test_serialize_layout_template() {
         let layout_template = LayoutTemplate::new()
-            .title("Title".into())
+            .title("Title")
             .show_legend(false)
             .legend(Legend::new())
             .margin(Margin::new())
@@ -3104,7 +3104,9 @@ mod tests {
     #[test]
     fn test_serialize_layout() {
         let layout = Layout::new()
-            .title("Title".into())
+            .title("Title")
+            .title(String::from("Title"))
+            .title(Title::with_text("Title"))
             .show_legend(false)
             .legend(Legend::new())
             .margin(Margin::new())

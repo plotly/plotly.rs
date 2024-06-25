@@ -368,7 +368,7 @@ mod tests {
             .hover_text_array(vec!["hover_text"])
             .ids(vec!["1"])
             .legend_group("legend_group")
-            .legend_group_title(LegendGroupTitle::new("Legend Group Title"))
+            .legend_group_title("Legend Group Title")
             .line(Line::new())
             .marker(Marker::new())
             .meta("meta")

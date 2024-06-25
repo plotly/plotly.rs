@@ -159,7 +159,7 @@ mod tests {
             .inside_text_anchor(TextAnchor::End)
             .inside_text_font(Font::new())
             .legend_group("legend-group")
-            .legend_group_title(LegendGroupTitle::new("legend-group-title"))
+            .legend_group_title("legend-group-title")
             .marker(Marker::new())
             .name("Bar")
             .offset(5)
