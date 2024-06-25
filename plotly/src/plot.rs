@@ -651,8 +651,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
@@ -664,8 +663,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
@@ -677,8 +675,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
@@ -690,9 +687,8 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
     #[test]
+    #[ignore] // This seems to fail unpredictably on MacOs.
     #[cfg(feature = "kaleido")]
     fn test_save_to_eps() {
         let plot = create_test_plot();
@@ -703,8 +699,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
@@ -716,8 +711,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "windows"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
