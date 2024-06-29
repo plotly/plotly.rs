@@ -61,7 +61,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.8.4"
+plotly = "0.9.0"
 ```
 
 ## Exporting an Interactive Plot
@@ -103,7 +103,7 @@ To save a plot as a static image, the `kaleido` feature is required:
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.8.4", features = ["kaleido"] }
+plotly = { version = "0.9.0", features = ["kaleido"] }
 ```
 
 With this feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
@@ -130,7 +130,7 @@ Using `Plotly.rs` in a Wasm-based frontend framework is possible by enabling the
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.8.4", features = ["wasm"] }
+plotly = { version = "0.9.0", features = ["wasm"] }
 ```
 
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
