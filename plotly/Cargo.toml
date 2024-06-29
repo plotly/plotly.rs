@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.8.4"
+version = "0.9.0"
 description = "A plotting library powered by Plotly.js"
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"
@@ -28,8 +28,8 @@ erased-serde = "0.4"
 getrandom = { version = "0.2", features = ["js"], optional = true }
 image = { version = "0.25", optional = true }
 js-sys = { version = "0.3", optional = true }
-plotly_derive = { version = "0.8.4", path = "../plotly_derive" }
-plotly_kaleido = { version = "0.8.4", path = "../plotly_kaleido", optional = true }
+plotly_derive = { version = "0.9.0", path = "../plotly_derive" }
+plotly_kaleido = { version = "0.9.0", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.15.4", optional = true }
 once_cell = "1"
 serde = { version = "1.0.132", features = ["derive"] }
@@ -46,5 +46,5 @@ image = "0.25"
 itertools = ">=0.10, <0.14"
 itertools-num = "0.1.3"
 ndarray = "0.15.4"
-plotly_kaleido = { version = "0.8.4", path = "../plotly_kaleido" }
+plotly_kaleido = { version = "0.9.0", path = "../plotly_kaleido" }
 rand_distr = "0.4"
