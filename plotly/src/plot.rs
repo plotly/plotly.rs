@@ -277,8 +277,9 @@ impl Plot {
 
     /// Display the fully rendered HTML `Plot` in the default system browser.
     ///
-    /// The HTML file is generated and saved in the provided filename as long as the path
-    /// already exists, after the file is saved, it is read and displayed by the browser.
+    /// The HTML file is generated and saved in the provided filename as long as
+    /// the path already exists, after the file is saved, it is read and
+    /// displayed by the browser.
     #[cfg(not(target_family = "wasm"))]
     pub fn show_html<P: AsRef<Path> + std::clone::Clone>(&self, filename: P) {
         let path = filename.as_ref().to_str().unwrap();
