@@ -2,7 +2,7 @@ pub mod themes;
 pub mod update_menu;
 
 use std::borrow::Cow;
-
+use std::collections::HashMap;
 use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 use update_menu::UpdateMenu;
@@ -1743,38 +1743,10 @@ pub struct LayoutTemplate {
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
 
-    #[serde(rename = "xaxis")]
-    x_axis: Option<Box<Axis>>,
-    #[serde(rename = "yaxis")]
-    y_axis: Option<Box<Axis>>,
-    #[serde(rename = "xaxis2")]
-    x_axis2: Option<Box<Axis>>,
-    #[serde(rename = "yaxis2")]
-    y_axis2: Option<Box<Axis>>,
-    #[serde(rename = "xaxis3")]
-    x_axis3: Option<Box<Axis>>,
-    #[serde(rename = "yaxis3")]
-    y_axis3: Option<Box<Axis>>,
-    #[serde(rename = "xaxis4")]
-    x_axis4: Option<Box<Axis>>,
-    #[serde(rename = "yaxis4")]
-    y_axis4: Option<Box<Axis>>,
-    #[serde(rename = "xaxis5")]
-    x_axis5: Option<Box<Axis>>,
-    #[serde(rename = "yaxis5")]
-    y_axis5: Option<Box<Axis>>,
-    #[serde(rename = "xaxis6")]
-    x_axis6: Option<Box<Axis>>,
-    #[serde(rename = "yaxis6")]
-    y_axis6: Option<Box<Axis>>,
-    #[serde(rename = "xaxis7")]
-    x_axis7: Option<Box<Axis>>,
-    #[serde(rename = "yaxis7")]
-    y_axis7: Option<Box<Axis>>,
-    #[serde(rename = "xaxis8")]
-    x_axis8: Option<Box<Axis>>,
-    #[serde(rename = "yaxis8")]
-    y_axis8: Option<Box<Axis>>,
+    #[serde(flatten, serialize_with="serialize_x_axes")]
+    x_axis: Option<Vec<Option<Box<Axis>>>>,
+    #[serde(flatten, serialize_with="serialize_y_axes")]
+    y_axis: Option<Vec<Option<Box<Axis>>>>,
 
     // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
@@ -1910,55 +1882,12 @@ pub struct Layout {
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
 
-    #[serde(rename = "xaxis")]
-    x_axis: Option<Box<Axis>>,
-    #[serde(rename = "yaxis")]
-    y_axis: Option<Box<Axis>>,
-    #[serde(rename = "zaxis")]
-    z_axis: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis2")]
-    x_axis2: Option<Box<Axis>>,
-    #[serde(rename = "yaxis2")]
-    y_axis2: Option<Box<Axis>>,
-    #[serde(rename = "zaxis2")]
-    z_axis2: Option<Box<Axis>>,
-    #[serde(rename = "xaxis3")]
-    x_axis3: Option<Box<Axis>>,
-    #[serde(rename = "yaxis3")]
-    y_axis3: Option<Box<Axis>>,
-    #[serde(rename = "zaxis3")]
-    z_axis3: Option<Box<Axis>>,
-    #[serde(rename = "xaxis4")]
-    x_axis4: Option<Box<Axis>>,
-    #[serde(rename = "yaxis4")]
-    y_axis4: Option<Box<Axis>>,
-    #[serde(rename = "zaxis4")]
-    z_axis4: Option<Box<Axis>>,
-    #[serde(rename = "xaxis5")]
-    x_axis5: Option<Box<Axis>>,
-    #[serde(rename = "yaxis5")]
-    y_axis5: Option<Box<Axis>>,
-    #[serde(rename = "zaxis5")]
-    z_axis5: Option<Box<Axis>>,
-    #[serde(rename = "xaxis6")]
-    x_axis6: Option<Box<Axis>>,
-    #[serde(rename = "yaxis6")]
-    y_axis6: Option<Box<Axis>>,
-    #[serde(rename = "zaxis6")]
-    z_axis6: Option<Box<Axis>>,
-    #[serde(rename = "xaxis7")]
-    x_axis7: Option<Box<Axis>>,
-    #[serde(rename = "yaxis7")]
-    y_axis7: Option<Box<Axis>>,
-    #[serde(rename = "zaxis7")]
-    z_axis7: Option<Box<Axis>>,
-    #[serde(rename = "xaxis8")]
-    x_axis8: Option<Box<Axis>>,
-    #[serde(rename = "yaxis8")]
-    y_axis8: Option<Box<Axis>>,
-    #[serde(rename = "zaxis8")]
-    z_axis8: Option<Box<Axis>>,
+    #[serde(flatten, serialize_with="serialize_x_axes")]
+    x_axis: Option<Vec<Option<Box<Axis>>>>,
+    #[serde(flatten, serialize_with="serialize_y_axes")]
+    y_axis: Option<Vec<Option<Box<Axis>>>>,
+    #[serde(flatten, serialize_with="serialize_z_axes")]
+    z_axis: Option<Vec<Option<Box<Axis>>>>,
 
     // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
