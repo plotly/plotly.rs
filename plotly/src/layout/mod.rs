@@ -2927,6 +2927,14 @@ mod tests {
 
     #[test]
     fn test_serialize_layout_template() {
+
+        let mut xaxis:Vec<Option<Box<Axis>>> = Vec::new();
+        let mut yaxis:Vec<Option<Box<Axis>>> = Vec::new();
+        for _ in 0..8{
+            xaxis.push(Some(Box::new(Axis::new())));
+            yaxis.push(Some(Box::new(Axis::new())));
+        }
+
         let layout_template = LayoutTemplate::new()
             .title("Title")
             .show_legend(false)
@@ -2953,22 +2961,8 @@ mod tests {
             .hover_label(Label::new())
             .grid(LayoutGrid::new())
             .calendar(Calendar::Jalali)
-            .x_axis(Axis::new())
-            .x_axis2(Axis::new())
-            .x_axis3(Axis::new())
-            .x_axis4(Axis::new())
-            .x_axis5(Axis::new())
-            .x_axis6(Axis::new())
-            .x_axis7(Axis::new())
-            .x_axis8(Axis::new())
-            .y_axis(Axis::new())
-            .y_axis2(Axis::new())
-            .y_axis3(Axis::new())
-            .y_axis4(Axis::new())
-            .y_axis5(Axis::new())
-            .y_axis6(Axis::new())
-            .y_axis7(Axis::new())
-            .y_axis8(Axis::new())
+            .x_axis(xaxis)
+            .y_axis(yaxis)
             .annotations(vec![Annotation::new()])
             .shapes(vec![Shape::new()])
             .new_shape(NewShape::new())
@@ -3069,6 +3063,14 @@ mod tests {
 
     #[test]
     fn test_serialize_layout() {
+
+        let mut xaxis:Vec<Option<Box<Axis>>> = Vec::new();
+        let mut yaxis:Vec<Option<Box<Axis>>> = Vec::new();
+        for _ in 0..8{
+            xaxis.push(Some(Box::new(Axis::new())));
+            yaxis.push(Some(Box::new(Axis::new())));
+        }
+
         let layout = Layout::new()
             .title("Title")
             .title(String::from("Title"))
@@ -3098,22 +3100,8 @@ mod tests {
             .template(Template::new())
             .grid(LayoutGrid::new())
             .calendar(Calendar::Jalali)
-            .x_axis(Axis::new())
-            .x_axis2(Axis::new())
-            .x_axis3(Axis::new())
-            .x_axis4(Axis::new())
-            .x_axis5(Axis::new())
-            .x_axis6(Axis::new())
-            .x_axis7(Axis::new())
-            .x_axis8(Axis::new())
-            .y_axis(Axis::new())
-            .y_axis2(Axis::new())
-            .y_axis3(Axis::new())
-            .y_axis4(Axis::new())
-            .y_axis5(Axis::new())
-            .y_axis6(Axis::new())
-            .y_axis7(Axis::new())
-            .y_axis8(Axis::new())
+            .x_axis(xaxis)
+            .y_axis(yaxis)
             .annotations(vec![Annotation::new()])
             .shapes(vec![Shape::new()])
             .new_shape(NewShape::new())
@@ -3135,7 +3123,7 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
-            .z_axis(Axis::new())
+            .z_axis(Vec::from([Some(Box::new(Axis::new()))]))
             .scene(LayoutScene::new());
 
         let expected = json!({
