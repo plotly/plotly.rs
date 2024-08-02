@@ -17,6 +17,43 @@ use crate::{
     private::{NumOrString, NumOrStringCollection},
 };
 
+
+fn serialize_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S, axis_prefix: &str) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let mut map = HashMap::new();
+    let axes = axes.as_ref().unwrap();
+
+    for (i, axis) in axes.iter().enumerate() {
+        let axe = axis.as_ref().unwrap();
+        let key = if i == 0 {
+            axis_prefix.to_string()
+        } else {
+            format!("{}{}", axis_prefix, i + 1)
+        };
+        map.insert(key, axe);
+    }
+
+    map.serialize(serializer)
+}
+
+fn serialize_x_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer:S)-> Result<S::Ok,S::Error>
+where S:Serializer{
+    serialize_axes(axes, serializer, "xaxis")
+}
+
+fn serialize_y_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer:S)-> Result<S::Ok,S::Error>
+where S:Serializer{
+    serialize_axes(axes, serializer, "yaxis")
+}
+
+
+fn serialize_z_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer:S)-> Result<S::Ok,S::Error>
+where S:Serializer{
+    serialize_axes(axes, serializer, "zaxis")
+}
+
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum AxisType {
