@@ -275,6 +275,19 @@ impl Plot {
         Plot::show_with_default_app(temp_path);
     }
 
+    /// Display the fully rendered HTML `Plot` in the default system browser.
+    ///
+    /// The HTML file is generated and saved in the provided filename as long as
+    /// the path already exists, after the file is saved, it is read and
+    /// displayed by the browser.
+    #[cfg(not(target_family = "wasm"))]
+    pub fn show_html<P: AsRef<Path> + std::clone::Clone>(&self, filename: P) {
+        let path = filename.as_ref().to_str().unwrap();
+        self.write_html(filename.clone());
+        // Hand off the job of opening the browser to an OS-specific implementation.
+        Plot::show_with_default_app(path);
+    }
+
     /// Display the fully rendered `Plot` as a static image of the given format
     /// in the default system browser.
     #[cfg(not(target_family = "wasm"))]
@@ -311,7 +324,8 @@ impl Plot {
     pub fn write_html<P: AsRef<Path>>(&self, filename: P) {
         let rendered = self.to_html();
 
-        let mut file = File::create(filename).unwrap();
+        let mut file =
+            File::create(filename).expect("Provided filepath does not exist or is not accessible");
         file.write_all(rendered.as_bytes())
             .expect("failed to write html output");
         file.flush().unwrap();

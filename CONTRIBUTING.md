@@ -20,7 +20,7 @@ When your contribution is ready for review, make a pull request with your change
 
 ## Code of Conduct
 
-In all forums, we follow the [Rust Code of Conduct]. For escalation or moderation issues please contact Ioannis (i.giagkiozis@gmail.com) instead of the Rust moderation team.
+In all forums, we follow the [Rust Code of Conduct]. For escalation or moderation issues please reach out to @andrei-ng or the Plotly official community at [community@plot.ly](mailto:community@plot.ly) instead of the Rust moderation team.
 
 [Rust Code of Conduct]: https://www.rust-lang.org/conduct.html
 

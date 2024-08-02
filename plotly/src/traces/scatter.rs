@@ -315,15 +315,13 @@ where
     /// indexed by `x`. This function requires the `ndarray` feature.
     ///
     /// # Arguments
-    /// * `x`             - One dimensional array (or view) that represents the
-    ///   `x` axis coordinates.
+    /// * `x`- One dimensional array (or view) that represents the `x` axis
+    ///   coordinates.
     /// * `traces_matrix` - Two dimensional array (or view) containing the `y`
-    ///   axis coordinates of
-    /// the traces.
+    ///   axis coordinates of the traces.
     /// * `array_traces`  - Determines whether the traces are arranged in the
-    ///   matrix over the
-    /// columns (`ArrayTraces::OverColumns`) or over the rows
-    /// (`ArrayTraces::OverRows`).
+    ///   matrix over the columns (`ArrayTraces::OverColumns`) or over the rows
+    ///   (`ArrayTraces::OverRows`).
     ///
     /// # Examples
     ///
