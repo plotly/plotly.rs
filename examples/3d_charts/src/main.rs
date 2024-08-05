@@ -12,7 +12,7 @@ use rand::Rng;
 // 3D Scatter Plots
 fn simple_scatter3d_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
 
@@ -25,7 +25,7 @@ fn simple_scatter3d_plot() {
 
 fn customized_scatter3d_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
     let sizelookup = z.clone();
@@ -114,7 +114,7 @@ fn customized_scatter3d_plot() {
 // 3D Line Plots
 fn simple_line3d_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
     let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
 
@@ -128,8 +128,8 @@ fn simple_line3d_plot() {
 // 3D Surface Plot
 fn surface_plot() {
     let n: usize = 100;
-    let x: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec();
-    let y: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec();
+    let x: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
+    let y: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
     let z: Vec<Vec<f64>> = x
         .iter()
         .map(|i| {
