@@ -130,7 +130,7 @@ fn lines_positioned_relative_to_the_plot_and_to_the_axes() {
 }
 
 fn creating_tangent_lines_with_shapes() {
-    let x0 = Array::linspace(1.0, 3.0, 200).into_raw_vec();
+    let x0 = Array::linspace(1.0, 3.0, 200).into_raw_vec_and_offset().0;
     let y0 = x0.iter().map(|v| *v * (v.powf(2.)).sin() + 1.).collect();
 
     let trace = Scatter::new(x0, y0);
