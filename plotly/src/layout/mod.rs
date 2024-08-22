@@ -597,14 +597,6 @@ impl Axis {
         self.domain = Some(domain.to_vec());
         self
     }
-
-    pub fn single_axis(axis: Axis)->Vec<Option<Box<Axis>>>{
-        vec![Some(Box::new(axis))]
-    }
-
-    pub fn from_axes(axes: Vec<Axis>) -> Vec<Option<Box<Axis>>> {
-        axes.into_iter().map(|axis| Some(Box::new(axis))).collect()
-    }
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -1983,6 +1975,27 @@ impl Layout {
         self.template = Some(Box::new(template.into()));
         self
     }
+
+    pub fn add_x_axis(&mut self, axis: Axis){
+        if self.x_axis.is_none(){
+            self.x_axis = Some(Vec::new());
+        }
+        self.x_axis.as_mut().unwrap().push(Some(Box::new(axis)));
+    }
+
+    pub fn add_y_axis(&mut self, axis: Axis){
+        if self.y_axis.is_none(){
+            self.y_axis = Some(Vec::new());
+        }
+        self.y_axis.as_mut().unwrap().push(Some(Box::new(axis)));
+    }
+
+    pub fn add_z_axis(&mut self, axis: Axis){
+        if self.z_axis.is_none(){
+            self.z_axis = Some(Vec::new());
+        }
+        self.z_axis.as_mut().unwrap().push(Some(Box::new(axis)));
+    }
 }
 
 #[cfg(test)]
@@ -2878,20 +2891,6 @@ mod tests {
         });
 
         assert_eq!(to_value(annotation).unwrap(), expected);
-    }
-
-    #[test]
-    fn test_single_axis_builder(){
-        let single_axis = Axis::single_axis(Axis::new());
-        let expected = json!([{}]);
-        assert_eq!(to_value(single_axis).unwrap(), expected);
-    }
-
-    #[test]
-    fn test_axes_builder(){
-        let axes = Axis::from_axes(vec![Axis::new(), Axis::new()]);
-        let expected = json!([{}, {}]);
-        assert_eq!(to_value(axes).unwrap(), expected);
     }
 
     #[test]
