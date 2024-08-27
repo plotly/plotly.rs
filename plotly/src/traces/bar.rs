@@ -55,7 +55,7 @@ where
     legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     ids: Option<Vec<String>>,
-    width: Option<usize>,
+    width: Option<f64>,
     offset: Option<Dim<usize>>,
     text: Option<Dim<String>>,
     #[serde(rename = "textposition")]
@@ -178,7 +178,7 @@ mod tests {
             .text_template("text_template")
             .text_template_array(vec!["text_template"])
             .visible(Visible::LegendOnly)
-            .width(999)
+            .width(999.0)
             .x_axis("xaxis")
             .x_calendar(Calendar::Nanakshahi)
             .y_axis("yaxis")
@@ -197,7 +197,7 @@ mod tests {
             "legendgrouptitle": {"text": "legend-group-title"},
             "opacity": 0.5,
             "ids": ["1"],
-            "width": 999,
+            "width": 999.0,
             "offset": [5, 5],
             "text": ["text"],
             "textposition": ["none"],
