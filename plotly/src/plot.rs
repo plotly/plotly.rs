@@ -1,12 +1,12 @@
 use std::{fs::File, io::Write, path::Path};
 
-use askama::Template;
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use rand::{
     distributions::{Alphanumeric, DistString},
     thread_rng,
 };
+use rinja::Template;
 use serde::Serialize;
 
 use crate::{Configuration, Layout};
