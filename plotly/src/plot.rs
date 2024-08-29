@@ -11,6 +11,7 @@ use serde::Serialize;
 
 use crate::{Configuration, Layout};
 
+#[cfg(not(feature = "plotly_noembed"))]
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
@@ -18,6 +19,14 @@ struct PlotTemplate<'a> {
     remote_plotly_js: bool,
 }
 
+#[cfg(feature = "plotly_noembed")]
+#[derive(Template)]
+#[template(path = "plot_noembed.html", escape = "none")]
+struct PlotTemplate<'a> {
+    plot: &'a Plot,
+}
+
+#[cfg(not(feature = "plotly_noembed"))]
 #[derive(Template)]
 #[template(path = "static_plot.html", escape = "none")]
 #[cfg(not(target_family = "wasm"))]
@@ -25,6 +34,17 @@ struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
     remote_plotly_js: bool,
+    width: usize,
+    height: usize,
+}
+
+#[cfg(feature = "plotly_noembed")]
+#[derive(Template)]
+#[template(path = "static_plot_noembed.html", escape = "none")]
+#[cfg(not(target_family = "wasm"))]
+struct StaticPlotTemplate<'a> {
+    plot: &'a Plot,
+    format: ImageFormat,
     width: usize,
     height: usize,
 }
@@ -182,6 +202,7 @@ pub struct Plot {
     #[serde(rename = "config")]
     configuration: Configuration,
     #[serde(skip)]
+    #[cfg(not(feature = "plotly_noembed"))]
     remote_plotly_js: bool,
 }
 
@@ -190,6 +211,7 @@ impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Traces::new(),
+            #[cfg(not(feature = "plotly_noembed"))]
             remote_plotly_js: true,
             ..Default::default()
         }
@@ -203,6 +225,7 @@ impl Plot {
     /// Note that when using `Plot::to_inline_html()`, it is assumed that the
     /// `plotly.js` library is already in scope, so setting this attribute
     /// will have no effect.
+    #[cfg(not(feature = "plotly_noembed"))]
     pub fn use_local_plotly(&mut self) {
         self.remote_plotly_js = false;
     }
@@ -422,6 +445,7 @@ impl Plot {
     fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
+            #[cfg(not(feature = "plotly_noembed"))]
             remote_plotly_js: self.remote_plotly_js,
         };
         tmpl.render().unwrap()
@@ -432,6 +456,7 @@ impl Plot {
         let tmpl = StaticPlotTemplate {
             plot: self,
             format,
+            #[cfg(not(feature = "plotly_noembed"))]
             remote_plotly_js: self.remote_plotly_js,
             width,
             height,

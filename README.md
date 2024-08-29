@@ -201,6 +201,11 @@ Adds trait implementations so that `image::RgbImage` and `image::RgbaImage` can 
 
 Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
 
+### `plotly_noembed`
+
+This feature can be used to reduce the binary size by not embedding `plotly.min.js`. This requires the use of the CDN version,
+and disables the `use_local_plotly` method.
+
 ### `wasm`
 
 Enables compilation for the `wasm32-unknown-unknown` target and provides access to a `bindings` module containing wrappers around functions exported by the plotly.js library.

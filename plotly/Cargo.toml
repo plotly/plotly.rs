@@ -17,6 +17,7 @@ exclude = ["target/*"]
 kaleido = ["plotly_kaleido"]
 plotly_ndarray = ["ndarray"]
 plotly_image = ["image"]
+plotly_noembed = []
 wasm = ["getrandom", "js-sys", "wasm-bindgen", "wasm-bindgen-futures"]
 with-axum = ["rinja/with-axum", "rinja_axum"]
 
