@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2024-09-06
+### Added
+- [[#217](https://github.com/plotly/plotly.rs/pull/217)] Added show_html(filename) method to bypass situations where accessing default `/tmp` is not possible, e.g., with in SNAP Firefox
+- [[#227](https://github.com/plotly/plotly.rs/pull/227)] Switch from HTML template render from `askama` to `rinja`
+
+### Fixed
+- [[#232](https://github.com/plotly/plotly.rs/pull/232)] Generalize OS detection in the context of opening HTML pages with default app via `xdg-open`
+- [[#233](https://github.com/plotly/plotly.rs/pull/233)] Fix mdBook code examples
+
 ## [0.9.0] - 2024-06-29
 ### Added
 - [[#153](https://github.com/plotly/plotly.rs/pull/153)] Added `LayoutScene`.

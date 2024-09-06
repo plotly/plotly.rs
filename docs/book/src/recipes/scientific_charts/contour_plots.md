@@ -72,7 +72,7 @@ fn colorscale_for_contour_plot(show: bool) {
     ];
     let trace = Contour::new_z(z).color_scale(ColorScale::Palette(ColorScalePalette::Jet));
 
-    let layout = Layout::new().title(Title::new("Colorscale for Contour Plot"));
+    let layout = Layout::new().title(Title::with_text("Colorscale for Contour Plot"));
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -115,7 +115,7 @@ fn customizing_size_and_range_of_a_contour_plots_contours(show: bool) {
         .auto_contour(false)
         .contours(Contours::new().start(0.0).end(8.0).size(2));
 
-    let layout = Layout::new().title(Title::new("Customizing Size and Range of Contours"));
+    let layout = Layout::new().title(Title::with_text("Customizing Size and Range of Contours"));
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -161,7 +161,7 @@ fn customizing_spacing_between_x_and_y_ticks(show: bool) {
         .dy(10.0)
         .y0(10.0);
 
-    let layout = Layout::new().title(Title::new("Customizing Size and Range of Contours"));
+    let layout = Layout::new().title(Title::with_text("Customizing Size and Range of Contours"));
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);

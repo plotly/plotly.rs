@@ -8,7 +8,7 @@ use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
 use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{Bar, color::{NamedColor, Rgb, Rgba}, Plot, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 ```
 
@@ -16,7 +16,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 
 
 ## Basic Bar Chart
-```rust 
+```rust
 fn basic_bar_chart(show: bool) {
     let animals = vec!["giraffes", "orangutans", "monkeys"];
     let t = Bar::new(animals, vec![20, 14, 23]);
@@ -43,7 +43,7 @@ var layout = {};
 </script>
 
 ## Grouped Bar Chart
-```rust 
+```rust
 fn grouped_bar_chart(show: bool) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
@@ -79,7 +79,7 @@ var layout = {"barmode":"group"};
 
 
 ## Stacked Bar Chart
-```rust 
+```rust
 fn stacked_bar_chart(show: bool) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
