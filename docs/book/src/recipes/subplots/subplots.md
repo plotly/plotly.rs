@@ -270,7 +270,7 @@ fn multiple_custom_sized_subplots(show: bool) {
     plot.add_trace(trace4);
 
     let layout = Layout::new()
-        .title(Title::new("Multiple Custom Sized Subplots"))
+        .title(Title::with_text("Multiple Custom Sized Subplots"))
         .x_axis(Axis::new().domain(&[0., 0.45]).anchor("y1"))
         .y_axis(Axis::new().domain(&[0.5, 1.]).anchor("x1"))
         .x_axis2(Axis::new().domain(&[0.55, 1.]).anchor("y2"))
