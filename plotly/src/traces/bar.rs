@@ -56,7 +56,7 @@ where
     opacity: Option<f64>,
     ids: Option<Vec<String>>,
     width: Option<f64>,
-    offset: Option<Dim<usize>>,
+    offset: Option<Dim<f64>>,
     text: Option<Dim<String>>,
     #[serde(rename = "textposition")]
     text_position: Option<Dim<TextPosition>>,
@@ -162,8 +162,8 @@ mod tests {
             .legend_group_title("legend-group-title")
             .marker(Marker::new())
             .name("Bar")
-            .offset(5)
-            .offset_array(vec![5, 5])
+            .offset(5.0)
+            .offset_array(vec![5.0, 5.0])
             .offset_group("offset_group")
             .opacity(0.5)
             .orientation(Orientation::Vertical)
@@ -198,7 +198,7 @@ mod tests {
             "opacity": 0.5,
             "ids": ["1"],
             "width": 999.0,
-            "offset": [5, 5],
+            "offset": [5.0, 5.0],
             "text": ["text"],
             "textposition": ["none"],
             "texttemplate": ["text_template"],
