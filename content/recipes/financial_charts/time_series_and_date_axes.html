@@ -203,7 +203,7 @@ use std::path::PathBuf;
 
     let layout = Layout::new()
         .x_axis(Axis::new().range(vec!["2016-07-01", "2016-12-31"]))
-        .title(Title::new("Manually Set Date Range"));
+        .title(Title::with_text("Manually Set Date Range"));
     plot.set_layout(layout);
 
     if show {
@@ -243,7 +243,7 @@ var layout = {"title":{"text":"Manually Set Date Range"},"xaxis":{"range":["2016
 
     let layout = Layout::new()
         .x_axis(Axis::new().range_slider(RangeSlider::new().visible(true)))
-        .title(Title::new("Manually Set Date Range"));
+        .title(Title::with_text("Manually Set Date Range"));
     plot.set_layout(layout);
 
     if show {

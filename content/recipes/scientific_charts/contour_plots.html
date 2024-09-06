@@ -247,7 +247,7 @@ var layout = {};
     ];
     let trace = Contour::new_z(z).color_scale(ColorScale::Palette(ColorScalePalette::Jet));
 
-    let layout = Layout::new().title(Title::new("Colorscale for Contour Plot"));
+    let layout = Layout::new().title(Title::with_text("Colorscale for Contour Plot"));
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -289,7 +289,7 @@ var layout = {"title":{"text":"Colorscale for Contour Plot"}};
         .auto_contour(false)
         .contours(Contours::new().start(0.0).end(8.0).size(2));
 
-    let layout = Layout::new().title(Title::new("Customizing Size and Range of Contours"));
+    let layout = Layout::new().title(Title::with_text("Customizing Size and Range of Contours"));
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);
@@ -334,7 +334,7 @@ var layout = {"title":{"text":"Customizing Size and Range of Contours"}};
         .dy(10.0)
         .y0(10.0);
 
-    let layout = Layout::new().title(Title::new("Customizing Size and Range of Contours"));
+    let layout = Layout::new().title(Title::with_text("Customizing Size and Range of Contours"));
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace);

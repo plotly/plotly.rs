@@ -185,7 +185,7 @@ use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
 use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{Bar, color::{NamedColor, Rgb, Rgba}, Plot, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 <span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
@@ -203,7 +203,7 @@ use rand_distr::{Distribution, Normal, Uniform};
         .mode(Mode::LinesMarkers)
         .name("Scatter + Lines");
 
-    let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
+    let layout = Layout::new().title(Title::with_text("Adding Names to Line and Scatter Plot"));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -248,7 +248,7 @@ var layout = {"title":{"text":"Adding Names to Line and Scatter Plot"}};
         .marker(Marker::new().color(Rgb::new(128, 0, 128)).size(12))
         .line(Line::new().color(Rgb::new(128, 0, 128)).width(1.0));
 
-    let layout = Layout::new().title(Title::new("Line and Scatter Styling"));
+    let layout = Layout::new().title(Title::with_text("Line and Scatter Styling"));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -288,7 +288,7 @@ var layout = {"title":{"text":"Line and Scatter Styling"}};
         .line(Line::new().color(Rgb::new(55, 128, 191)).width(1.0));
 
     let layout = Layout::new()
-        .title(Title::new("Styling Line Plot"))
+        .title(Title::with_text("Styling Line Plot"))
         .width(500)
         .height(500);
     let mut plot = Plot::new();
