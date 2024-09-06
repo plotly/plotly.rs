@@ -22,7 +22,7 @@ To start using [plotly.rs](https://github.com/plotly/plotly.rs) in your project 
 
 ```toml
 [dependencies]
-plotly = "0.9.0"
+plotly = "0.9.1"
 ```
 
 [Plotly.rs](https://github.com/plotly/plotly.rs) is ultimately a thin wrapper around the `plotly.js` library. The main job of this library is to provide `structs` and `enums` which get serialized to `json` and passed to the `plotly.js` library to actually do the heavy lifting. As such, if you are familiar with `plotly.js` or its derivatives (e.g. the equivalent Python library), then you should find [`plotly.rs`](https://github.com/plotly/plotly.rs) intuitive to use.
@@ -97,7 +97,7 @@ To add the ability to save plots in the following formats: png, jpeg, webp, svg,
 
 ```toml
 [dependencies]
-plotly = { version = "0.9.0", features = ["kaleido"] }
+plotly = { version = "0.9.1", features = ["kaleido"] }
 ```
 
 ## WebAssembly Support
