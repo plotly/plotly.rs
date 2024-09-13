@@ -6,11 +6,8 @@
     <body>
         <div>
             <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-            {% if remote_plotly_js -%}
-            <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
-            {% else -%}
-            <script type="text/javascript">{% include "plotly.min.js" %}</script>
-            {% endif -%}
+
+           {{plotly_js_source}}
 
             <div id="plotly-html-element" hidden></div>
             <img id="plotly-img-element"></img>
