@@ -11,40 +11,20 @@ use serde::Serialize;
 
 use crate::{Configuration, Layout};
 
-#[cfg(not(feature = "plotly_noembed"))]
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
     plot: &'a Plot,
-    remote_plotly_js: bool,
+    plotly_js_source: String,
 }
 
-#[cfg(feature = "plotly_noembed")]
-#[derive(Template)]
-#[template(path = "plot_noembed.html", escape = "none")]
-struct PlotTemplate<'a> {
-    plot: &'a Plot,
-}
-
-#[cfg(not(feature = "plotly_noembed"))]
 #[derive(Template)]
 #[template(path = "static_plot.html", escape = "none")]
 #[cfg(not(target_family = "wasm"))]
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
-    remote_plotly_js: bool,
-    width: usize,
-    height: usize,
-}
-
-#[cfg(feature = "plotly_noembed")]
-#[derive(Template)]
-#[template(path = "static_plot_noembed.html", escape = "none")]
-#[cfg(not(target_family = "wasm"))]
-struct StaticPlotTemplate<'a> {
-    plot: &'a Plot,
-    format: ImageFormat,
+    plotly_js_source: String,
     width: usize,
     height: usize,
 }
@@ -202,8 +182,7 @@ pub struct Plot {
     #[serde(rename = "config")]
     configuration: Configuration,
     #[serde(skip)]
-    #[cfg(not(feature = "plotly_noembed"))]
-    remote_plotly_js: bool,
+    plotly_js_source: String,
 }
 
 impl Plot {
@@ -211,23 +190,18 @@ impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Traces::new(),
-            #[cfg(not(feature = "plotly_noembed"))]
-            remote_plotly_js: true,
+            plotly_js_source: Self::plotly_js_source(),
             ..Default::default()
         }
     }
 
-    /// This option results in the plotly.js library being written directly in
-    /// the html output. The benefit is that the plot will load faster in
-    /// the browser and the downside is that the resulting html will be much
-    /// larger.
-    ///
-    /// Note that when using `Plot::to_inline_html()`, it is assumed that the
-    /// `plotly.js` library is already in scope, so setting this attribute
-    /// will have no effect.
-    #[cfg(not(feature = "plotly_noembed"))]
-    pub fn use_local_plotly(&mut self) {
-        self.remote_plotly_js = false;
+    /// Switch to CDN `plotly.js` in the generated HTML instead of the default
+    /// local `plotly.js` version. Method is only available when the feature
+    /// `plotly_embed_js` is enabled since without this feature the default
+    /// version used is always the CDN version.
+    #[cfg(feature = "plotly_embed_js")]
+    pub fn use_cdn_plotly(&mut self) {
+        self.plotly_js_source = Self::cdn_plotly_js();
     }
 
     /// Add a `Trace` to the `Plot`.
@@ -445,8 +419,7 @@ impl Plot {
     fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
-            #[cfg(not(feature = "plotly_noembed"))]
-            remote_plotly_js: self.remote_plotly_js,
+            plotly_js_source: self.plotly_js_source.clone(),
         };
         tmpl.render().unwrap()
     }
@@ -456,8 +429,7 @@ impl Plot {
         let tmpl = StaticPlotTemplate {
             plot: self,
             format,
-            #[cfg(not(feature = "plotly_noembed"))]
-            remote_plotly_js: self.remote_plotly_js,
+            plotly_js_source: self.plotly_js_source.clone(),
             width,
             height,
         };
@@ -470,6 +442,23 @@ impl Plot {
             plot_div_id,
         };
         tmpl.render().unwrap()
+    }
+
+    fn plotly_js_source() -> String {
+        if cfg!(feature = "plotly_embed_js") {
+            Self::local_plotly_js()
+        } else {
+            Self::cdn_plotly_js()
+        }
+    }
+
+    fn local_plotly_js() -> String {
+        let local_plotly = include_str!("../templates/plotly.min.js");
+        format!("<script type=\"text/javascript\">{}</script>", local_plotly).to_string()
+    }
+
+    fn cdn_plotly_js() -> String {
+        r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>"##.to_string()
     }
 
     pub fn to_json(&self) -> String {
