@@ -1987,6 +1987,44 @@ impl Layout {
     pub fn add_z_axis(&mut self, axis: Axis) {
         self.z_axis.get_or_insert_with(|| Vec::new()).push(Some(Box::new(axis)));
     }
+
+    fn set_axis(axes: &mut Option<Vec<Option<Box<Axis>>>>, index: usize, axis: Axis) -> Result<(), String> {
+        match axes {
+            None => Err("No axes found".into()),
+            Some(axes) => {
+                if index < axes.len() {
+                    axes[index] = Some(Box::new(axis));
+                    Ok(())
+                } else {
+                    Err("Index out of bounds".into())
+                }
+            }
+        }
+    }
+
+    pub fn set_x_axis(&mut self, axis_index: u32, axis: Axis) -> Result<(), String> {
+        Self::set_axis(&mut self.x_axis, axis_index as usize, axis)
+    }
+
+    pub fn set_x_axes(&mut self, axes: Vec<Axis>) {
+        self.x_axis = Some(axes.into_iter().map(|axis| Some(Box::new(axis))).collect());
+    }
+
+    pub fn set_y_axis(&mut self, axis_index: u32, axis: Axis) -> Result<(), String> {
+        Self::set_axis(&mut self.y_axis, axis_index as usize, axis)
+    }
+
+    pub fn set_y_axes(&mut self, axes: Vec<Axis>) {
+        self.y_axis = Some(axes.into_iter().map(|axis| Some(Box::new(axis))).collect());
+    }
+
+    pub fn set_z_axis(&mut self, axis_index: u32, axis: Axis) -> Result<(), String> {
+        Self::set_axis(&mut self.z_axis, axis_index as usize, axis)
+    }
+
+    pub fn set_z_axes(&mut self, axes: Vec<Axis>) {
+        self.z_axis = Some(axes.into_iter().map(|axis| Some(Box::new(axis))).collect());
+    }
 }
 
 #[cfg(test)]
