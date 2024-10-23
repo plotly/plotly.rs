@@ -1976,25 +1976,16 @@ impl Layout {
         self
     }
 
-    pub fn add_x_axis(&mut self, axis: Axis){
-        if self.x_axis.is_none(){
-            self.x_axis = Some(Vec::new());
-        }
-        self.x_axis.as_mut().unwrap().push(Some(Box::new(axis)));
+    pub fn add_x_axis(&mut self, axis: Axis) {
+        self.x_axis.get_or_insert_with(|| Vec::new()).push(Some(Box::new(axis)));
     }
 
-    pub fn add_y_axis(&mut self, axis: Axis){
-        if self.y_axis.is_none(){
-            self.y_axis = Some(Vec::new());
-        }
-        self.y_axis.as_mut().unwrap().push(Some(Box::new(axis)));
+    pub fn add_y_axis(&mut self, axis: Axis) {
+        self.y_axis.get_or_insert_with(|| Vec::new()).push(Some(Box::new(axis)));
     }
 
-    pub fn add_z_axis(&mut self, axis: Axis){
-        if self.z_axis.is_none(){
-            self.z_axis = Some(Vec::new());
-        }
-        self.z_axis.as_mut().unwrap().push(Some(Box::new(axis)));
+    pub fn add_z_axis(&mut self, axis: Axis) {
+        self.z_axis.get_or_insert_with(|| Vec::new()).push(Some(Box::new(axis)));
     }
 }
 
