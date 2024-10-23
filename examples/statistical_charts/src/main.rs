@@ -93,7 +93,7 @@ fn bar_chart_with_error_bars() {
 }
 
 fn colored_and_styled_error_bars() {
-    let x_theo: Vec<f64> = Array::linspace(-4., 4., 100).into_raw_vec();
+    let x_theo: Vec<f64> = Array::linspace(-4., 4., 100).into_raw_vec_and_offset().0;
     let sincx: Vec<f64> = x_theo
         .iter()
         .map(|x| (x * std::f64::consts::PI).sin() / (*x * std::f64::consts::PI))

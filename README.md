@@ -61,7 +61,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.9.0"
+plotly = "0.10.0"
 ```
 
 ## Exporting an Interactive Plot
@@ -78,12 +78,12 @@ plot.add_trace(trace);
 plot.write_html("out.html");
 ```
 
-By default, the Plotly JavaScript library will be included via CDN, which results in a smaller filesize, but slightly slower first load as the JavaScript library has to be downloaded first. To instead embed the JavaScript library (several megabytes in size) directly into the HTML file, the following can be done:
+By default, the Plotly JavaScript library will be included via CDN, which results in a smaller filesize, but slightly slower first load as the JavaScript library has to be downloaded first. To instead embed the JavaScript library (several megabytes in size) directly into the HTML file, the library must be compiled with the feature flag `plotly_embed_js`. Once enabled, by default the JavaScript library is directly embedded in the generated HTML file. It is still possible to use the CDN version, by using the `use_cdn_plotly` method.
 
 ```rust
 // <-- Create a `Plot` -->
 
-plot.use_local_plotly();
+plot.use_cdn_plotly();
 plot.write_html("out.html");
 ```
 
@@ -103,7 +103,7 @@ To save a plot as a static image, the `kaleido` feature is required:
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.9.0", features = ["kaleido"] }
+plotly = { version = "0.10.0", features = ["kaleido"] }
 ```
 
 With this feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
@@ -130,7 +130,7 @@ Using `Plotly.rs` in a Wasm-based frontend framework is possible by enabling the
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.9.0", features = ["wasm"] }
+plotly = { version = "0.10.0", features = ["wasm"] }
 ```
 
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
@@ -200,6 +200,16 @@ Adds trait implementations so that `image::RgbImage` and `image::RgbaImage` can 
 ### `plotly_ndarray`
 
 Adds support for creating plots directly using [ndarray](https://github.com/rust-ndarray/ndarray) types.
+
+### `plotly_embed_js`
+
+By default, the CDN version of `plotly.js` is used in the library and in the generated HTML files. This feature can be used to opt in for embedding `plotly.min.js` in the generated HTML files. The benefit is that the plot will load faster in the browser.
+
+However, there are two downsides of using this feature flag, one is that the resulting html will be much larger, as a copy of the `plotly.min.js` library is embedded in each HTML file. The second, more relevant, is that a copy of the `plotly.min.js` library needs to be compiled in the `plotly-rs` library itself which increases the size by approx `3.5 Mb`.
+
+When the feature is enabled, users can still opt in for the CDN version by using the method `use_cdn_plotly`.
+
+Note that when using `Plot::to_inline_html()`, it is assumed that the `plotly.js` library is already in scope within the HTML file, so enabling this feature flag will have no effect.
 
 ### `wasm`
 

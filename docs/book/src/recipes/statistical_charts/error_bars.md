@@ -8,7 +8,7 @@ use plotly::box_plot::{BoxMean, BoxPoints};
 use plotly::common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation, Title};
 use plotly::histogram::{Bins, Cumulative, HistFunc, HistNorm};
 use plotly::layout::{Axis, BarMode, BoxMode, Layout, Margin};
-use plotly::{Bar, BoxPlot, Histogram, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{Bar, BoxPlot, Histogram, Plot, color::{NamedColor, Rgb, Rgba}, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 
 ```

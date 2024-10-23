@@ -266,7 +266,7 @@ where
     ///     let theta: Array<f64, Ix1> = Array::range(0., 360., 360. / n as f64);
     ///     let mut rs: Array<f64, Ix2> = Array::zeros((11, 11));
     ///     let mut count = 0.;
-    ///     for mut row in rs.gencolumns_mut() {
+    ///     for mut row in rs.columns_mut() {
     ///         for index in 0..row.len() {
     ///             row[index] = count + (index as f64).powf(2.);
     ///         }

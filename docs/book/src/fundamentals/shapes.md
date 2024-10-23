@@ -11,7 +11,7 @@ use plotly::layout::{
     Axis, GridPattern, Layout, LayoutGrid, Margin, Shape, ShapeLayer, ShapeLine,
     ShapeType,
 };
-use plotly::{Bar, NamedColor, Plot, Scatter};
+use plotly::{Bar, color::NamedColor, Plot, Scatter};
 use rand::thread_rng;
 use rand_distr::{Distribution, Normal};
 ```

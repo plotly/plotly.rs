@@ -8,7 +8,7 @@ use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
 use plotly::layout::{Axis, BarMode, Layout, Legend, TicksDirection};
-use plotly::{Bar, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{Bar, color::{NamedColor, Rgb, Rgba}, Plot, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 ```
 
@@ -28,7 +28,7 @@ fn adding_names_to_line_and_scatter_plot(show: bool) {
         .mode(Mode::LinesMarkers)
         .name("Scatter + Lines");
 
-    let layout = Layout::new().title(Title::new("Adding Names to Line and Scatter Plot"));
+    let layout = Layout::new().title(Title::with_text("Adding Names to Line and Scatter Plot"));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -74,7 +74,7 @@ fn line_and_scatter_styling(show: bool) {
         .marker(Marker::new().color(Rgb::new(128, 0, 128)).size(12))
         .line(Line::new().color(Rgb::new(128, 0, 128)).width(1.0));
 
-    let layout = Layout::new().title(Title::new("Line and Scatter Styling"));
+    let layout = Layout::new().title(Title::with_text("Line and Scatter Styling"));
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -114,7 +114,7 @@ fn styling_line_plot(show: bool) {
         .line(Line::new().color(Rgb::new(55, 128, 191)).width(1.0));
 
     let layout = Layout::new()
-        .title(Title::new("Styling Line Plot"))
+        .title(Title::with_text("Styling Line Plot"))
         .width(500)
         .height(500);
     let mut plot = Plot::new();

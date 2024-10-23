@@ -1,12 +1,12 @@
 use std::{fs::File, io::Write, path::Path};
 
-use askama::Template;
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use rand::{
     distributions::{Alphanumeric, DistString},
     thread_rng,
 };
+use rinja::Template;
 use serde::Serialize;
 
 use crate::{Configuration, Layout};
@@ -15,7 +15,7 @@ use crate::{Configuration, Layout};
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
     plot: &'a Plot,
-    remote_plotly_js: bool,
+    plotly_js_source: String,
 }
 
 #[derive(Template)]
@@ -24,7 +24,7 @@ struct PlotTemplate<'a> {
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
-    remote_plotly_js: bool,
+    plotly_js_source: String,
     width: usize,
     height: usize,
 }
@@ -182,7 +182,7 @@ pub struct Plot {
     #[serde(rename = "config")]
     configuration: Configuration,
     #[serde(skip)]
-    remote_plotly_js: bool,
+    plotly_js_source: String,
 }
 
 impl Plot {
@@ -190,21 +190,18 @@ impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Traces::new(),
-            remote_plotly_js: true,
+            plotly_js_source: Self::plotly_js_source(),
             ..Default::default()
         }
     }
 
-    /// This option results in the plotly.js library being written directly in
-    /// the html output. The benefit is that the plot will load faster in
-    /// the browser and the downside is that the resulting html will be much
-    /// larger.
-    ///
-    /// Note that when using `Plot::to_inline_html()`, it is assumed that the
-    /// `plotly.js` library is already in scope, so setting this attribute
-    /// will have no effect.
-    pub fn use_local_plotly(&mut self) {
-        self.remote_plotly_js = false;
+    /// Switch to CDN `plotly.js` in the generated HTML instead of the default
+    /// local `plotly.js` version. Method is only available when the feature
+    /// `plotly_embed_js` is enabled since without this feature the default
+    /// version used is always the CDN version.
+    #[cfg(feature = "plotly_embed_js")]
+    pub fn use_cdn_plotly(&mut self) {
+        self.plotly_js_source = Self::cdn_plotly_js();
     }
 
     /// Add a `Trace` to the `Plot`.
@@ -422,7 +419,7 @@ impl Plot {
     fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
-            remote_plotly_js: self.remote_plotly_js,
+            plotly_js_source: self.plotly_js_source.clone(),
         };
         tmpl.render().unwrap()
     }
@@ -432,7 +429,7 @@ impl Plot {
         let tmpl = StaticPlotTemplate {
             plot: self,
             format,
-            remote_plotly_js: self.remote_plotly_js,
+            plotly_js_source: self.plotly_js_source.clone(),
             width,
             height,
         };
@@ -445,6 +442,23 @@ impl Plot {
             plot_div_id,
         };
         tmpl.render().unwrap()
+    }
+
+    fn plotly_js_source() -> String {
+        if cfg!(feature = "plotly_embed_js") {
+            Self::local_plotly_js()
+        } else {
+            Self::cdn_plotly_js()
+        }
+    }
+
+    fn local_plotly_js() -> String {
+        let local_plotly = include_str!("../templates/plotly.min.js");
+        format!("<script type=\"text/javascript\">{}</script>", local_plotly).to_string()
+    }
+
+    fn cdn_plotly_js() -> String {
+        r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>"##.to_string()
     }
 
     pub fn to_json(&self) -> String {
@@ -464,7 +478,7 @@ impl Plot {
             .expect("Invalid JSON structure - expected a top-level Object")
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(unix, not(target_os = "android"), not(target_os = "macos")))]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
         Command::new("xdg-open")

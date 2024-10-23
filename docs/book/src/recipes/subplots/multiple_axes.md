@@ -3,7 +3,7 @@
 The following imports have been used to produce the plots below:
 
 ```rust
-use plotly::common::{Font, Side, Title};
+use plotly::common::{Font, AxisSide, Title};
 use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder};
 use plotly::{Plot, Rgb, Scatter};
 ```
@@ -23,14 +23,14 @@ fn two_y_axes(show: bool) {
     plot.add_trace(trace2);
 
     let layout = Layout::new()
-        .title(Title::new("Double Y Axis Example"))
-        .y_axis(Axis::new().title(Title::new("yaxis title")))
+        .title(Title::with_text("Double Y Axis Example"))
+        .y_axis(Axis::new().title(Title::with_text("yaxis title")))
         .y_axis2(
             Axis::new()
-                .title(Title::new("yaxis2 title").font(Font::new().color(Rgb::new(148, 103, 189))))
+                .title(Title::with_text("yaxis2 title").font(Font::new().color(Rgb::new(148, 103, 189))))
                 .tick_font(Font::new().color(Rgb::new(148, 103, 189)))
                 .overlaying("y")
-                .side(Side::Right),
+                .side(AxisSide::Right),
         );
     plot.set_layout(layout);
     if show {
@@ -71,38 +71,38 @@ fn multiple_axes(show: bool) {
     plot.add_trace(trace4);
 
     let layout = Layout::new()
-        .title(Title::new("multiple y-axes example"))
+        .title(Title::with_text("multiple y-axes example"))
         .width(800)
         .x_axis(Axis::new().domain(&[0.3, 0.7]))
         .y_axis(
             Axis::new()
-                .title(Title::new("yaxis title").font(Font::new().color("#1f77b4")))
+                .title(Title::with_text("yaxis title").font(Font::new().color("#1f77b4")))
                 .tick_font(Font::new().color("#1f77b4")),
         )
         .y_axis2(
             Axis::new()
-                .title(Title::new("yaxis2 title").font(Font::new().color("#ff7f0e")))
+                .title(Title::with_text("yaxis2 title").font(Font::new().color("#ff7f0e")))
                 .tick_font(Font::new().color("#ff7f0e"))
                 .anchor("free")
                 .overlaying("y")
-                .side(Side::Left)
+                .side(AxisSide::Left)
                 .position(0.15),
         )
         .y_axis3(
             Axis::new()
-                .title(Title::new("yaxis3 title").font(Font::new().color("#d62728")))
+                .title(Title::with_text("yaxis3 title").font(Font::new().color("#d62728")))
                 .tick_font(Font::new().color("#d62728"))
                 .anchor("x")
                 .overlaying("y")
-                .side(Side::Right),
+                .side(AxisSide::Right),
         )
         .y_axis4(
             Axis::new()
-                .title(Title::new("yaxis4 title").font(Font::new().color("#9467bd")))
+                .title(Title::with_text("yaxis4 title").font(Font::new().color("#9467bd")))
                 .tick_font(Font::new().color("#9467bd"))
                 .anchor("free")
                 .overlaying("y")
-                .side(Side::Right)
+                .side(AxisSide::Right)
                 .position(0.85),
         );
     plot.set_layout(layout);

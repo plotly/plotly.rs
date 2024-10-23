@@ -8,7 +8,7 @@ use plotly::box_plot::{BoxMean, BoxPoints};
 use plotly::common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation, Title};
 use plotly::histogram::{Bins, Cumulative, HistFunc, HistNorm};
 use plotly::layout::{Axis, BarMode, BoxMode, Layout, Margin};
-use plotly::{Bar, BoxPlot, Histogram, NamedColor, Plot, Rgb, Rgba, Scatter};
+use plotly::{Bar, BoxPlot, Histogram, color::{NamedColor, Rgb, Rgba}, Scatter};
 use rand_distr::{Distribution, Normal, Uniform};
 
 ```
@@ -156,7 +156,7 @@ fn grouped_box_plot(show: bool) {
     let layout = Layout::new()
         .y_axis(
             Axis::new()
-                .title(Title::new("normalized moisture"))
+                .title(Title::with_text("normalized moisture"))
                 .zero_line(false),
         )
         .box_mode(BoxMode::Group);
@@ -222,7 +222,7 @@ fn box_plot_styling_outliers(show: bool) {
         .marker(Marker::new().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
 
-    let layout = Layout::new().title(Title::new("Box Plot Styling Outliers"));
+    let layout = Layout::new().title(Title::with_text("Box Plot Styling Outliers"));
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -272,7 +272,7 @@ fn box_plot_styling_mean_and_standard_deviation(show: bool) {
         .name("Mean and Standard Deviation")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);
-    let layout = Layout::new().title(Title::new("Box Plot Styling Mean and Standard Deviation"));
+    let layout = Layout::new().title(Title::with_text("Box Plot Styling Mean and Standard Deviation"));
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -341,10 +341,10 @@ fn grouped_horizontal_box_plot(show: bool) {
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .title(Title::new("Grouped Horizontal Box Plot"))
+        .title(Title::with_text("Grouped Horizontal Box Plot"))
         .x_axis(
             Axis::new()
-                .title(Title::new("normalized moisture"))
+                .title(Title::with_text("normalized moisture"))
                 .zero_line(false),
         )
         .box_mode(BoxMode::Group);

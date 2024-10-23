@@ -3,6 +3,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2024-09-16
+### Added
+- [[#231](https://github.com/plotly/plotly.rs/pull/231)] Added new `plotly_embed_js` feature to reduce binary sizes by not embedding `plotly.min.js` in the library unless explicitly enabled via the feature flag. Deprecates `use_local_plotly` in favor of explicit opt-in via the feature flag and introduce method `use_cdn_plotly` to allow users to use CDN version even behind the `plotly_embed_js` feature flag.
+
+### Fixed
+- [[#230](https://github.com/plotly/plotly.rs/pull/230)] Make Bar chart `width` and `offset` use `f64` values.
+
+## [0.10.0] - 2024-09-06
+### Added
+- [[#217](https://github.com/plotly/plotly.rs/pull/217)] Added show_html(filename) method to bypass situations where accessing default `/tmp` is not possible, e.g., with in SNAP Firefox
+- [[#227](https://github.com/plotly/plotly.rs/pull/227)] Switch from HTML template render from `askama` to `rinja`
+
+### Fixed
+- [[#232](https://github.com/plotly/plotly.rs/pull/232)] Generalize OS detection in the context of opening HTML pages with default app via `xdg-open`
+- [[#233](https://github.com/plotly/plotly.rs/pull/233)] Fix mdBook code examples
+
 ## [0.9.0] - 2024-06-29
 ### Added
 - [[#153](https://github.com/plotly/plotly.rs/pull/153)] Added `LayoutScene`.

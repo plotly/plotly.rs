@@ -17,7 +17,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 // Scatter Plots
 fn simple_scatter_plot() {
     let n: usize = 100;
-    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec();
+    let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
 
     let trace = Scatter::new(t, y).mode(Mode::Markers);
@@ -30,7 +30,7 @@ fn simple_scatter_plot() {
 fn line_and_scatter_plots() {
     let n: usize = 100;
     let mut rng = rand::thread_rng();
-    let random_x: Vec<f64> = Array::linspace(0., 1., n).into_raw_vec();
+    let random_x: Vec<f64> = Array::linspace(0., 1., n).into_raw_vec_and_offset().0;
     let random_y0: Vec<f64> = Normal::new(5., 1.)
         .unwrap()
         .sample_iter(&mut rng)
@@ -86,7 +86,7 @@ fn bubble_scatter_plots() {
 
 fn polar_scatter_plot() {
     let n: usize = 400;
-    let theta: Vec<f64> = Array::linspace(0., 360., n).into_raw_vec();
+    let theta: Vec<f64> = Array::linspace(0., 360., n).into_raw_vec_and_offset().0;
     let r: Vec<f64> = theta
         .iter()
         .map(|x| {
