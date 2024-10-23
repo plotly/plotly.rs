@@ -38,19 +38,25 @@ where
     map.serialize(serializer)
 }
 
-fn serialize_x_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer:S)-> Result<S::Ok,S::Error>
-where S:Serializer{
+fn serialize_x_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
     serialize_axes(axes, serializer, "xaxis")
 }
 
-fn serialize_y_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer:S)-> Result<S::Ok,S::Error>
-where S:Serializer{
+fn serialize_y_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
     serialize_axes(axes, serializer, "yaxis")
 }
 
 
-fn serialize_z_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer:S)-> Result<S::Ok,S::Error>
-where S:Serializer{
+fn serialize_z_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
     serialize_axes(axes, serializer, "zaxis")
 }
 
@@ -181,7 +187,7 @@ pub enum ItemClick {
 impl Serialize for ItemClick {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: Serializer,
     {
         match *self {
             Self::Toggle => serializer.serialize_str("toggle"),
@@ -1303,7 +1309,7 @@ pub enum DragMode {
 impl Serialize for DragMode {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: Serializer,
     {
         match *self {
             Self::Zoom => serializer.serialize_str("zoom"),
@@ -1335,7 +1341,7 @@ pub enum DragMode3D {
 impl Serialize for DragMode3D {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: Serializer,
     {
         match *self {
             Self::Zoom => serializer.serialize_str("zoom"),
@@ -1743,9 +1749,9 @@ pub struct LayoutTemplate {
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
 
-    #[serde(flatten, serialize_with="serialize_x_axes")]
+    #[serde(flatten, serialize_with = "serialize_x_axes")]
     x_axis: Option<Vec<Option<Box<Axis>>>>,
-    #[serde(flatten, serialize_with="serialize_y_axes")]
+    #[serde(flatten, serialize_with = "serialize_y_axes")]
     y_axis: Option<Vec<Option<Box<Axis>>>>,
 
     // ternary: Option<LayoutTernary>,
@@ -1882,11 +1888,11 @@ pub struct Layout {
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
 
-    #[serde(flatten, serialize_with="serialize_x_axes")]
+    #[serde(flatten, serialize_with = "serialize_x_axes")]
     x_axis: Option<Vec<Option<Box<Axis>>>>,
-    #[serde(flatten, serialize_with="serialize_y_axes")]
+    #[serde(flatten, serialize_with = "serialize_y_axes")]
     y_axis: Option<Vec<Option<Box<Axis>>>>,
-    #[serde(flatten, serialize_with="serialize_z_axes")]
+    #[serde(flatten, serialize_with = "serialize_z_axes")]
     z_axis: Option<Vec<Option<Box<Axis>>>>,
 
     // ternary: Option<LayoutTernary>,
@@ -2977,10 +2983,9 @@ mod tests {
 
     #[test]
     fn test_serialize_layout_template() {
-
-        let mut xaxis:Vec<Option<Box<Axis>>> = Vec::new();
-        let mut yaxis:Vec<Option<Box<Axis>>> = Vec::new();
-        for _ in 0..8{
+        let mut xaxis: Vec<Option<Box<Axis>>> = Vec::new();
+        let mut yaxis: Vec<Option<Box<Axis>>> = Vec::new();
+        for _ in 0..8 {
             xaxis.push(Some(Box::new(Axis::new())));
             yaxis.push(Some(Box::new(Axis::new())));
         }
@@ -3113,10 +3118,9 @@ mod tests {
 
     #[test]
     fn test_serialize_layout() {
-
-        let mut xaxis:Vec<Option<Box<Axis>>> = Vec::new();
-        let mut yaxis:Vec<Option<Box<Axis>>> = Vec::new();
-        for _ in 0..8{
+        let mut xaxis: Vec<Option<Box<Axis>>> = Vec::new();
+        let mut yaxis: Vec<Option<Box<Axis>>> = Vec::new();
+        for _ in 0..8 {
             xaxis.push(Some(Box::new(Axis::new())));
             yaxis.push(Some(Box::new(Axis::new())));
         }
