@@ -418,10 +418,72 @@ pub enum SpikeSnap {
     HoveredData,
 }
 
+#[derive(Serialize, Debug, Clone)]
+pub enum CategoryOrder {
+    #[serde(rename = "trace")]
+    Trace,
+    #[serde(rename = "category ascending")]
+    CategoryAscending,
+    #[serde(rename = "category descending")]
+    CategoryDescending,
+    #[serde(rename = "array")]
+    Array,
+    #[serde(rename = "total ascending")]
+    TotalAscending,
+    #[serde(rename = "total descending")]
+    TotalDescending,
+    #[serde(rename = "min ascending")]
+    MinAscending,
+    #[serde(rename = "min descending")]
+    MinDescending,
+    #[serde(rename = "max ascending")]
+    MaxAscending,
+    #[serde(rename = "max descending")]
+    MaxDescending,
+    #[serde(rename = "sum ascending")]
+    SumAscending,
+    #[serde(rename = "sum descending")]
+    SumDescending,
+    #[serde(rename = "mean ascending")]
+    MeanAscending,
+    #[serde(rename = "mean descending")]
+    MeanDescending,
+    #[serde(rename = "geometric mean ascending")]
+    GeometricMeanAscending,
+    #[serde(rename = "geometric mean descending")]
+    GeometricMeanDescending,
+    #[serde(rename = "median ascending")]
+    MedianAscending,
+    #[serde(rename = "median descending")]
+    MedianDescending,
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Axis {
     visible: Option<bool>,
+    /// Sets the order in which categories on this axis appear. Only has an
+    /// effect if `category_order` is set to [`CategoryOrder::Array`].
+    /// Used with `category_order`.
+    #[serde(rename = "categoryarray")]
+    category_array: Option<NumOrStringCollection>,
+    /// Specifies the ordering logic for the case of categorical variables.
+    /// By default, plotly uses [`CategoryOrder::Trace`], which specifies
+    /// the order that is present in the data supplied. Set `category_order` to
+    /// [`CategoryOrder::CategoryAscending`] or
+    /// [`CategoryOrder::CategoryDescending`] if order should be determined
+    /// by the alphanumerical order of the category names. Set `category_order`
+    /// to [`CategoryOrder::Array`] to derive the ordering from the attribute
+    /// `category_array`. If a category is not found in the `category_array`
+    /// array, the sorting behavior for that attribute will be identical to the
+    /// [`CategoryOrder::Trace`] mode. The unspecified categories will follow
+    /// the categories in `category_array`. Set `category_order` to
+    /// [`CategoryOrder::TotalAscending`] or
+    /// [`CategoryOrder::TotalDescending`] if order should be determined by the
+    /// numerical order of the values. Similarly, the order can be determined
+    /// by the min, max, sum, mean, geometric mean or median of all the values.
+    #[serde(rename = "categoryorder")]
+    category_order: Option<CategoryOrder>,
     color: Option<Box<dyn Color>>,
     title: Option<Title>,
     #[field_setter(skip)]
@@ -2342,6 +2404,29 @@ mod tests {
     }
 
     #[test]
+    #[rustfmt::skip]
+    fn test_serialize_category_order() {
+        assert_eq!(to_value(CategoryOrder::Trace).unwrap(), json!("trace"));
+        assert_eq!(to_value(CategoryOrder::CategoryAscending).unwrap(), json!("category ascending"));
+        assert_eq!(to_value(CategoryOrder::CategoryDescending).unwrap(), json!("category descending"));
+        assert_eq!(to_value(CategoryOrder::Array).unwrap(), json!("array"));
+        assert_eq!(to_value(CategoryOrder::TotalAscending).unwrap(), json!("total ascending"));
+        assert_eq!(to_value(CategoryOrder::TotalDescending).unwrap(), json!("total descending"));
+        assert_eq!(to_value(CategoryOrder::MinAscending).unwrap(), json!("min ascending"));
+        assert_eq!(to_value(CategoryOrder::MinDescending).unwrap(), json!("min descending"));
+        assert_eq!(to_value(CategoryOrder::MaxAscending).unwrap(), json!("max ascending"));
+        assert_eq!(to_value(CategoryOrder::MaxDescending).unwrap(), json!("max descending"));
+        assert_eq!(to_value(CategoryOrder::SumAscending).unwrap(), json!("sum ascending"));
+        assert_eq!(to_value(CategoryOrder::SumDescending).unwrap(), json!("sum descending"));
+        assert_eq!(to_value(CategoryOrder::MeanAscending).unwrap(), json!("mean ascending"));
+        assert_eq!(to_value(CategoryOrder::MeanDescending).unwrap(), json!("mean descending"));
+        assert_eq!(to_value(CategoryOrder::GeometricMeanAscending).unwrap(), json!("geometric mean ascending"));
+        assert_eq!(to_value(CategoryOrder::GeometricMeanDescending).unwrap(), json!("geometric mean descending"));
+        assert_eq!(to_value(CategoryOrder::MedianAscending).unwrap(), json!("median ascending"));
+        assert_eq!(to_value(CategoryOrder::MedianDescending).unwrap(), json!("median descending"));
+    }
+
+    #[test]
     fn test_serialize_selector_button() {
         let selector_button = SelectorButton::new()
             .visible(false)
@@ -2490,7 +2575,9 @@ mod tests {
             .position(0.6)
             .range_slider(RangeSlider::new())
             .range_selector(RangeSelector::new())
-            .calendar(Calendar::Coptic);
+            .calendar(Calendar::Coptic)
+            .category_order(CategoryOrder::Array)
+            .category_array(vec!["Category0", "Category1"]);
 
         let expected = json!({
             "visible": false,
@@ -2556,6 +2643,8 @@ mod tests {
             "rangeslider": {},
             "rangeselector": {},
             "calendar": "coptic",
+            "categoryorder": "array",
+            "categoryarray": ["Category0", "Category1"]
         });
 
         assert_eq!(to_value(axis).unwrap(), expected);

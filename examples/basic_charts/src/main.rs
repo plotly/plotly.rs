@@ -7,7 +7,7 @@ use plotly::{
         ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
         Orientation,
     },
-    layout::{Axis, BarMode, Layout, Legend, TicksDirection, TraceOrder},
+    layout::{Axis, BarMode, CategoryOrder, Layout, Legend, TicksDirection, TraceOrder},
     sankey::{Line as SankeyLine, Link, Node},
     traces::table::{Cells, Header},
     Bar, Plot, Sankey, Scatter, ScatterPolar, Table,
@@ -523,6 +523,49 @@ fn filled_lines() {
     plot.show();
 }
 
+/// Scatter plot showing y axis categories and category ordering.
+fn categories_scatter_chart() {
+    // Categories are ordered on the y axis from bottom to top.
+    let categories = vec!["Unknown", "Off", "On"];
+
+    let x = vec![
+        "2024-10-30T08:30:05.05Z",
+        "2024-10-30T08:35:05.05Z",
+        "2024-10-30T08:50:05.05Z",
+        "2024-10-30T08:50:20.05Z",
+        "2024-10-30T09:00:05.05Z",
+        "2024-10-30T09:05:05.05Z",
+        "2024-10-30T09:10:05.05Z",
+        "2024-10-30T09:10:20.05Z",
+    ];
+    let y = vec![
+        "On",
+        "Off",
+        "Unknown",
+        "Off",
+        "On",
+        "Off",
+        // Categories that aren't in the category_array follow the Trace order.
+        "NewCategory",
+        "Off",
+    ];
+
+    let trace = Scatter::new(x, y).line(Line::new().shape(LineShape::Hv));
+
+    let layout = Layout::new().y_axis(
+        Axis::new()
+            .category_order(CategoryOrder::Array)
+            .category_array(categories),
+    );
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
 // Bar Charts
 fn basic_bar_chart() {
     let animals = vec!["giraffes", "orangutans", "monkeys"];
@@ -558,6 +601,29 @@ fn stacked_bar_chart() {
     let trace2 = Bar::new(animals2, vec![12, 18, 29]).name("LA Zoo");
 
     let layout = Layout::new().bar_mode(BarMode::Stack);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
+/// Graph a bar chart that orders the x axis categories by the total number
+/// of animals in each category.
+fn category_order_bar_chart() {
+    let animals1 = vec!["giraffes", "orangutans", "monkeys"];
+    let trace1 = Bar::new(animals1, vec![10, 14, 23]).name("SF Zoo");
+
+    let animals2 = vec!["giraffes", "orangutans", "monkeys"];
+    let trace2 = Bar::new(animals2, vec![12, 18, 29]).name("LA Zoo");
+
+    let layout = Layout::new()
+        .bar_mode(BarMode::Stack)
+        // Order the x axis categories so the category with the most animals
+        // appears first.
+        .x_axis(Axis::new().category_order(CategoryOrder::TotalDescending));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -627,6 +693,7 @@ fn main() {
     // data_labels_on_the_plot();
     // colored_and_styled_scatter_plot();
     // large_data_sets();
+    // categories_scatter_chart();
 
     // Line Charts
     // adding_names_to_line_and_scatter_plot();
@@ -641,6 +708,7 @@ fn main() {
     // grouped_bar_chart();
     // stacked_bar_chart();
     // table_chart();
+    // category_order_bar_chart();
 
     // Sankey Diagrams
     // basic_sankey_diagram();
