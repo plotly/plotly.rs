@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2024-10-29
+### Added
+- [[#239](https://github.com/plotly/plotly.rs/pull/239)] Add Categorical Axis Ordering and Axis Category Array.
+
+### Fixed
+- [[#237](https://github.com/plotly/plotly.rs/issues/237)] Add Categorical Axis ordering.
+
 ## [0.10.0] - 2024-09-16
 ### Added
 - [[#231](https://github.com/plotly/plotly.rs/pull/231)] Added new `plotly_embed_js` feature to reduce binary sizes by not embedding `plotly.min.js` in the library unless explicitly enabled via the feature flag. Deprecates `use_local_plotly` in favor of explicit opt-in via the feature flag and introduce method `use_cdn_plotly` to allow users to use CDN version even behind the `plotly_embed_js` feature flag.
