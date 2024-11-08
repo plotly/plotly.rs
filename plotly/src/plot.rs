@@ -15,7 +15,7 @@ use crate::{Configuration, Layout};
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
     plot: &'a Plot,
-    plotly_js_source: String,
+    js_scripts: String,
 }
 
 #[derive(Template)]
@@ -24,7 +24,7 @@ struct PlotTemplate<'a> {
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
-    plotly_js_source: String,
+    js_scripts: String,
     width: usize,
     height: usize,
 }
@@ -182,7 +182,7 @@ pub struct Plot {
     #[serde(rename = "config")]
     configuration: Configuration,
     #[serde(skip)]
-    plotly_js_source: String,
+    js_scripts: String,
 }
 
 impl Plot {
@@ -190,18 +190,19 @@ impl Plot {
     pub fn new() -> Plot {
         Plot {
             traces: Traces::new(),
-            plotly_js_source: Self::plotly_js_source(),
+            js_scripts: Self::js_scripts(),
             ..Default::default()
         }
     }
 
-    /// Switch to CDN `plotly.js` in the generated HTML instead of the default
-    /// local `plotly.js` version. Method is only available when the feature
+    /// Switch to CDN for `plotly.js` and `MathJax` components in the standalone
+    /// HTML plots rather than using the default local copies of the
+    /// Javascript libraries. Method is only available when the feature
     /// `plotly_embed_js` is enabled since without this feature the default
-    /// version used is always the CDN version.
+    /// versions used are always the CDN versions.
     #[cfg(feature = "plotly_embed_js")]
-    pub fn use_cdn_plotly(&mut self) {
-        self.plotly_js_source = Self::cdn_plotly_js();
+    pub fn use_cdn_js(&mut self) {
+        self.js_scripts = Self::online_cdn_js();
     }
 
     /// Add a `Trace` to the `Plot`.
@@ -419,7 +420,7 @@ impl Plot {
     fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
-            plotly_js_source: self.plotly_js_source.clone(),
+            js_scripts: self.js_scripts.clone(),
         };
         tmpl.render().unwrap()
     }
@@ -429,7 +430,7 @@ impl Plot {
         let tmpl = StaticPlotTemplate {
             plot: self,
             format,
-            plotly_js_source: self.plotly_js_source.clone(),
+            js_scripts: self.js_scripts.clone(),
             width,
             height,
         };
@@ -444,21 +445,43 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
-    fn plotly_js_source() -> String {
+    fn js_scripts() -> String {
         if cfg!(feature = "plotly_embed_js") {
-            Self::local_plotly_js()
+            Self::offline_js_sources()
         } else {
-            Self::cdn_plotly_js()
+            Self::online_cdn_js()
         }
     }
 
-    fn local_plotly_js() -> String {
-        let local_plotly = include_str!("../templates/plotly.min.js");
-        format!("<script type=\"text/javascript\">{}</script>", local_plotly).to_string()
+    fn offline_js_sources() -> String {
+        let local_plotly_js = include_str!("../templates/plotly.min.js");
+        let local_tex_mml_js = include_str!("../templates/tex-mml-chtml-3.2.0.js");
+        let local_tex_svg_js = include_str!("../templates/tex-svg-3.2.2.js");
+        format!(
+            "<script type=\"text/javascript\">{}</script>\n
+            <script type=\"text/javascript\">
+            /**
+             * tex-mml-chtml JS script
+             **/
+            {}
+            </script>\n
+            <script type=\"text/javascript\">
+            /**
+             * tex-svg JS script
+             **/
+            {}
+            </script>\n",
+            local_plotly_js, local_tex_mml_js, local_tex_svg_js
+        )
+        .to_string()
     }
 
-    fn cdn_plotly_js() -> String {
-        r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>"##.to_string()
+    fn online_cdn_js() -> String {
+        r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+        "##
+        .to_string()
     }
 
     pub fn to_json(&self) -> String {

@@ -64,7 +64,7 @@ Add this to your `Cargo.toml`:
 plotly = "0.10.0"
 ```
 
-## Exporting an Interactive Plot
+## Exporting a single Interactive Plot
 
 Any figure can be saved as an HTML file using the `Plot.write_html()` method. These HTML files can be opened in any web browser to access the fully interactive figure.
 
@@ -78,12 +78,12 @@ plot.add_trace(trace);
 plot.write_html("out.html");
 ```
 
-By default, the Plotly JavaScript library will be included via CDN, which results in a smaller filesize, but slightly slower first load as the JavaScript library has to be downloaded first. To instead embed the JavaScript library (several megabytes in size) directly into the HTML file, the library must be compiled with the feature flag `plotly_embed_js`. Once enabled, by default the JavaScript library is directly embedded in the generated HTML file. It is still possible to use the CDN version, by using the `use_cdn_plotly` method.
+By default, the Plotly JavaScript library and some [MathJax](https://docs.mathjax.org/en/latest/web/components/index.html) components will always be included via CDN, which results in smaller file-size, but slightly slower first load as the JavaScript libraries have to be downloaded first. Alternatively, to embed the JavaScript libraries (several megabytes in size) directly into the HTML file, `plotly-rs` must be compiled with the feature flag `plotly_embed_js`. With this feature flag the Plotly and MathJax JavaScript libraries are directly embedded in the generated HTML file. It is still possible to use the CDN version, by using the `use_cdn_js` method.
 
 ```rust
 // <-- Create a `Plot` -->
 
-plot.use_cdn_plotly();
+plot.use_cdn_js();
 plot.write_html("out.html");
 ```
 
@@ -207,7 +207,7 @@ By default, the CDN version of `plotly.js` is used in the library and in the gen
 
 However, there are two downsides of using this feature flag, one is that the resulting html will be much larger, as a copy of the `plotly.min.js` library is embedded in each HTML file. The second, more relevant, is that a copy of the `plotly.min.js` library needs to be compiled in the `plotly-rs` library itself which increases the size by approx `3.5 Mb`.
 
-When the feature is enabled, users can still opt in for the CDN version by using the method `use_cdn_plotly`.
+When the feature is enabled, users can still opt in for the CDN version by using the method `use_cdn_js`.
 
 Note that when using `Plot::to_inline_html()`, it is assumed that the `plotly.js` library is already in scope within the HTML file, so enabling this feature flag will have no effect.
 
