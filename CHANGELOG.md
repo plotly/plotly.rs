@@ -3,11 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.10.0] - 2024-10-29
+## [0.10.1] - 2024-11-x
 ### Added
+- [[#243](https://github.com/plotly/plotly.rs/pull/243)] Made `plotly_embed_js` embed all JS scripts when enabled. 
+   Renamed `use_cdn_plotly` to `use_cdn_js`.
 - [[#239](https://github.com/plotly/plotly.rs/pull/239)] Add Categorical Axis Ordering and Axis Category Array.
 
 ### Fixed
+- [[#242](https://github.com/plotly/plotly.rs/issues/242)] Disable request for tex-svg.js file
 - [[#237](https://github.com/plotly/plotly.rs/issues/237)] Add Categorical Axis ordering.
 
 ## [0.10.0] - 2024-09-16
