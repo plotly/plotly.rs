@@ -19,9 +19,9 @@ fn simple_contour_plot() {
         y.push(value);
     }
 
-    x.iter().take(n).for_each(|x| {
+    y.iter().take(n).for_each(|y| {
         let mut row = Vec::<f64>::new();
-        y.iter().take(n).for_each(|y| {
+        x.iter().take(n).for_each(|x| {
             let radius_squared = x.powf(2.0) + y.powf(2.0);
             let zv = x.sin() * y.cos() * radius_squared.sin() / (radius_squared + 1.0).log10();
             row.push(zv);
@@ -112,11 +112,11 @@ fn basic_heat_map() {
 fn customized_heat_map() {
     let x = (0..100).map(|x| x as f64).collect::<Vec<f64>>();
     let y = (0..100).map(|y| y as f64).collect::<Vec<f64>>();
-    let z: Vec<Vec<f64>> = x
+    let z: Vec<Vec<f64>> = y
         .iter()
-        .map(|x| {
-            y.iter()
-                .map(|y| (x / 5.0).powf(2.0) + (y / 5.0).powf(2.0))
+        .map(|y| {
+            x.iter()
+                .map(|x| (x / 5.0).powf(2.0) + (y / 5.0).powf(2.0))
                 .collect::<Vec<f64>>()
         })
         .collect::<Vec<Vec<f64>>>();
