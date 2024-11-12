@@ -66,7 +66,7 @@ fn customizing_size_and_range_of_a_contour_plots_contours() {
     let trace = Contour::new_z(z)
         .color_scale(ColorScale::Palette(ColorScalePalette::Jet))
         .auto_contour(false)
-        .contours(Contours::new().start(0.0).end(8.0).size(2));
+        .contours(Contours::new().start(0.0).end(8.0).size(2.0));
 
     let layout = Layout::new().title("Customizing Size and Range of Contours");
     let mut plot = Plot::new();

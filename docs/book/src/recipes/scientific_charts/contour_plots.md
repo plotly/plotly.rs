@@ -113,7 +113,7 @@ fn customizing_size_and_range_of_a_contour_plots_contours(show: bool) {
     let trace = Contour::new_z(z)
         .color_scale(ColorScale::Palette(ColorScalePalette::Jet))
         .auto_contour(false)
-        .contours(Contours::new().start(0.0).end(8.0).size(2));
+        .contours(Contours::new().start(0.0).end(8.0).size(2.0));
 
     let layout = Layout::new().title(Title::with_text("Customizing Size and Range of Contours"));
     let mut plot = Plot::new();
@@ -136,7 +136,7 @@ fn customizing_size_and_range_of_a_contour_plots_contours(show: bool) {
     if (document.getElementById("customizing_size_and_range_of_a_contour_plots_contours")) {
         var d3 = Plotly.d3;
         var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"contour","z":[[10.0,10.625,12.5,15.625,20.0],[5.625,6.25,8.125,11.25,15.625],[2.5,3.125,5.0,8.125,12.5],[0.625,1.25,3.125,6.25,10.625],[0.0,0.625,2.5,5.625,10.0]],"colorscale":"Jet","autocontour":false,"contours":{"start":0.0,"end":8.0,"size":2}};
+        var trace_0 = {"type":"contour","z":[[10.0,10.625,12.5,15.625,20.0],[5.625,6.25,8.125,11.25,15.625],[2.5,3.125,5.0,8.125,12.5],[0.625,1.25,3.125,6.25,10.625],[0.0,0.625,2.5,5.625,10.0]],"colorscale":"Jet","autocontour":false,"contours":{"start":0.0,"end":8.0,"size":2.0}};
 var data = [trace_0];
 var layout = {"title":{"text":"Customizing Size and Range of Contours"}};
         Plotly.newPlot('customizing_size_and_range_of_a_contour_plots_contours', data, layout, {"responsive": true});
