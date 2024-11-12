@@ -130,10 +130,10 @@ fn surface_plot() {
     let n: usize = 100;
     let x: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
-    let z: Vec<Vec<f64>> = x
+    let z: Vec<Vec<f64>> = y
         .iter()
         .map(|i| {
-            y.iter()
+            x.iter()
                 .map(|j| 1.0 / (j * j + 5.0) * j.sin() + 1.0 / (i * i + 5.0) * i.cos())
                 .collect()
         })
