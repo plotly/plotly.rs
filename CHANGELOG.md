@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2024-11-x
+### Changed
+- [[#245](https://github.com/plotly/plotly.rs/pull/245)] Change Contours size to be `f64` instead of `usize`
+
 ## [0.10.1] - 2024-11-x
 ### Added
 - [[#243](https://github.com/plotly/plotly.rs/pull/243)] Made `plotly_embed_js` embed all JS scripts when enabled. 
