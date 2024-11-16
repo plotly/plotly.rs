@@ -5,7 +5,7 @@ use plotly::{
     color::{NamedColor, Rgb, Rgba},
     common::{
         ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
-        Orientation,
+        Orientation, Pattern, PatternShape,
     },
     layout::{Axis, BarMode, CategoryOrder, Layout, Legend, TicksDirection, TraceOrder},
     sankey::{Line as SankeyLine, Link, Node},
@@ -633,6 +633,35 @@ fn category_order_bar_chart() {
     plot.show();
 }
 
+fn bar_chart_with_pattern_fills() {
+    let animals1 = vec!["giraffes", "orangutans", "monkeys"];
+    let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo").marker(
+        Marker::new().line(Line::new().width(1.0)).pattern(
+            Pattern::new()
+                .shape(PatternShape::LeftDiagonalLine)
+                .solidity(0.1),
+        ),
+    );
+
+    let animals2 = vec!["giraffes", "orangutans", "monkeys"];
+    let trace2 = Bar::new(animals2, vec![12, 18, 29]).name("LA Zoo").marker(
+        Marker::new().line(Line::new().width(1.0)).pattern(
+            Pattern::new()
+                .shape(PatternShape::RightDiagonalLine)
+                .solidity(0.5),
+        ),
+    );
+
+    let layout = Layout::new().bar_mode(BarMode::Group);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.set_layout(layout);
+
+    plot.show();
+}
+
 // Sankey Diagrams
 fn basic_sankey_diagram() {
     // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
@@ -709,6 +738,7 @@ fn main() {
     // stacked_bar_chart();
     // table_chart();
     // category_order_bar_chart();
+    // bar_chart_with_pattern_fills();
 
     // Sankey Diagrams
     // basic_sankey_diagram();

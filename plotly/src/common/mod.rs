@@ -1043,6 +1043,115 @@ pub enum AxisSide {
     Right,
 }
 
+#[derive(Serialize, Debug, Clone)]
+pub enum PatternShape {
+    #[serde(rename = "")]
+    None,
+    #[serde(rename = "-")]
+    HorizonalLine,
+    #[serde(rename = "|")]
+    VerticalLine,
+    #[serde(rename = "/")]
+    RightDiagonalLine,
+    #[serde(rename = "\\")]
+    LeftDiagonalLine,
+    #[serde(rename = "+")]
+    Cross,
+    #[serde(rename = "x")]
+    DiagonalCross,
+    #[serde(rename = ".")]
+    Dot,
+}
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum PatternFillMode {
+    Replace,
+    Overlay,
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Pattern {
+    shape: Option<Dim<PatternShape>>,
+    #[serde(rename = "fillmode")]
+    fill_mode: Option<PatternFillMode>,
+    #[serde(rename = "bgcolor")]
+    background_color: Option<Dim<Box<dyn Color>>>,
+    #[serde(rename = "fgcolor")]
+    foreground_color: Option<Dim<Box<dyn Color>>>,
+    #[serde(rename = "fgopacity")]
+    foreground_opacity: Option<f64>,
+    size: Option<Dim<f64>>,
+    solidity: Option<Dim<f64>>,
+}
+
+impl Pattern {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    pub fn shape(mut self, shape: PatternShape) -> Self {
+        self.shape = Some(Dim::Scalar(shape));
+        self
+    }
+
+    pub fn shape_array(mut self, shape: Vec<PatternShape>) -> Self {
+        self.shape = Some(Dim::Vector(shape));
+        self
+    }
+
+    pub fn fill_mode(mut self, fill_mode: PatternFillMode) -> Self {
+        self.fill_mode = Some(fill_mode);
+        self
+    }
+
+    pub fn background_color<C: Color>(mut self, color: C) -> Self {
+        self.background_color = Some(Dim::Scalar(Box::new(color)));
+        self
+    }
+
+    pub fn background_color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.background_color = Some(Dim::Vector(ColorArray(colors).into()));
+        self
+    }
+
+    pub fn foreground_color<C: Color>(mut self, color: C) -> Self {
+        self.foreground_color = Some(Dim::Scalar(Box::new(color)));
+        self
+    }
+
+    pub fn foreground_color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.foreground_color = Some(Dim::Vector(ColorArray(colors).into()));
+        self
+    }
+
+    pub fn foreground_opacity(mut self, opacity: f64) -> Self {
+        self.foreground_opacity = Some(opacity);
+        self
+    }
+
+    pub fn size(mut self, size: f64) -> Self {
+        self.size = Some(Dim::Scalar(size));
+        self
+    }
+
+    pub fn size_array(mut self, size: Vec<f64>) -> Self {
+        self.size = Some(Dim::Vector(size));
+        self
+    }
+
+    pub fn solidity(mut self, solidity: f64) -> Self {
+        self.solidity = Some(Dim::Scalar(solidity));
+        self
+    }
+
+    pub fn solidity_array(mut self, solidity: Vec<f64>) -> Self {
+        self.solidity = Some(Dim::Vector(solidity));
+        self
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, Default)]
 pub struct Marker {
@@ -1076,6 +1185,7 @@ pub struct Marker {
     color_bar: Option<ColorBar>,
     #[serde(rename = "outliercolor")]
     outlier_color: Option<Box<dyn Color>>,
+    pattern: Option<Pattern>,
 }
 
 impl Marker {
@@ -1190,6 +1300,11 @@ impl Marker {
 
     pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Self {
         self.outlier_color = Some(Box::new(outlier_color));
+        self
+    }
+
+    pub fn pattern(mut self, pattern: Pattern) -> Self {
+        self.pattern = Some(pattern);
         self
     }
 }
@@ -2133,6 +2248,63 @@ mod tests {
     }
 
     #[test]
+    fn test_serialize_pattern_shape() {
+        assert_eq!(to_value(PatternShape::None).unwrap(), json!(""));
+        assert_eq!(to_value(PatternShape::HorizonalLine).unwrap(), json!("-"));
+        assert_eq!(to_value(PatternShape::VerticalLine).unwrap(), json!("|"));
+        assert_eq!(
+            to_value(PatternShape::RightDiagonalLine).unwrap(),
+            json!("/")
+        );
+        assert_eq!(
+            to_value(PatternShape::LeftDiagonalLine).unwrap(),
+            json!("\\")
+        );
+        assert_eq!(to_value(PatternShape::Cross).unwrap(), json!("+"));
+        assert_eq!(to_value(PatternShape::DiagonalCross).unwrap(), json!("x"));
+        assert_eq!(to_value(PatternShape::Dot).unwrap(), json!("."));
+    }
+
+    #[test]
+    fn test_serialize_pattern_fill_mode() {
+        assert_eq!(
+            to_value(PatternFillMode::Replace).unwrap(),
+            json!("replace")
+        );
+        assert_eq!(
+            to_value(PatternFillMode::Overlay).unwrap(),
+            json!("overlay")
+        );
+    }
+
+    #[test]
+    fn test_serialize_pattern() {
+        let pattern = Pattern::new()
+            .shape_array(vec![
+                PatternShape::HorizonalLine,
+                PatternShape::VerticalLine,
+            ])
+            .fill_mode(PatternFillMode::Overlay)
+            .background_color_array(vec![NamedColor::Black, NamedColor::Blue])
+            .foreground_color_array(vec![NamedColor::Red, NamedColor::Green])
+            .foreground_opacity(0.9)
+            .size_array(vec![10.0, 20.0])
+            .solidity_array(vec![0.1, 0.2]);
+
+        let expected = json!({
+            "shape": ["-", "|"],
+            "fillmode": "overlay",
+            "bgcolor": ["black", "blue"],
+            "fgcolor": ["red", "green"],
+            "fgopacity": 0.9,
+            "size": [10.0, 20.0],
+            "solidity": [0.1, 0.2]
+        });
+
+        assert_eq!(to_value(pattern).unwrap(), expected);
+    }
+
+    #[test]
     fn test_serialize_marker() {
         let marker = Marker::new()
             .symbol(MarkerSymbol::Circle)
@@ -2155,7 +2327,13 @@ mod tests {
             .reverse_scale(true)
             .show_scale(true)
             .color_bar(ColorBar::new())
-            .outlier_color("#FFFFFF");
+            .outlier_color("#FFFFFF")
+            .pattern(
+                Pattern::new()
+                    .shape(PatternShape::Cross)
+                    .foreground_color(NamedColor::Red)
+                    .size(10.0),
+            );
 
         let expected = json!({
             "symbol": "circle",
@@ -2177,7 +2355,12 @@ mod tests {
             "autocolorscale": true,
             "reversescale": true,
             "showscale": true,
-            "outliercolor": "#FFFFFF"
+            "outliercolor": "#FFFFFF",
+            "pattern": {
+                "shape": "+",
+                "fgcolor": "red",
+                "size": 10.0
+            }
         });
 
         assert_eq!(to_value(marker).unwrap(), expected);
