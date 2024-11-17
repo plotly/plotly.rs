@@ -202,8 +202,9 @@ fn grouped_box_plot() {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
 
+    let y_axis = Vec::from([Some(Box::new(Axis::new().title("normalized moisture").zero_line(false)))]);
     let layout = Layout::new()
-        .y_axis(Axis::new().title("normalized moisture").zero_line(false))
+        .y_axis(y_axis)
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
@@ -316,9 +317,10 @@ fn grouped_horizontal_box_plot() {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
 
+    let x_axis = Vec::from([Some(Box::new(Axis::new().title("normalized moisture").zero_line(false)))]);
     let layout = Layout::new()
         .title("Grouped Horizontal Box Plot")
-        .x_axis(Axis::new().title("normalized moisture").zero_line(false))
+        .x_axis(x_axis)
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
@@ -361,10 +363,9 @@ fn fully_styled_box_plot() {
     ];
 
     let mut plot = Plot::new();
-    let layout = Layout::new()
-        .title("Points Scored by the Top 9 Scoring NBA Players in 2012")
-        .y_axis(
-            Axis::new()
+
+    let y_axis = Vec::from([Some(
+        Box::new(Axis::new()
                 .auto_range(true)
                 .show_grid(true)
                 .zero_line(true)
@@ -372,8 +373,11 @@ fn fully_styled_box_plot() {
                 .grid_color(Rgb::new(255, 255, 255))
                 .grid_width(1)
                 .zero_line_color(Rgb::new(255, 255, 255))
-                .zero_line_width(2),
-        )
+                .zero_line_width(2)
+        ))]);
+    let layout = Layout::new()
+        .title("Points Scored by the Top 9 Scoring NBA Players in 2012")
+        .y_axis(y_axis )
         .margin(Margin::new().left(40).right(30).bottom(80).top(100))
         .paper_background_color(Rgb::new(243, 243, 243))
         .plot_background_color(Rgb::new(243, 243, 243))
@@ -511,10 +515,13 @@ fn colored_and_styled_histograms() {
         .opacity(0.75)
         .auto_bin_x(false)
         .x_bins(Bins::new(-3.2, 4.0, 0.06));
+
+    let x_axis = Vec::from([Some(Box::new(Axis::new().title("Value")))]);
+    let y_axis = Vec::from([Some(Box::new(Axis::new().title("Count")))]);
     let layout = Layout::new()
         .title("Colored and Styled Histograms")
-        .x_axis(Axis::new().title("Value"))
-        .y_axis(Axis::new().title("Count"))
+        .x_axis(x_axis)
+        .y_axis(y_axis)
         .bar_mode(BarMode::Overlay)
         .bar_gap(0.05)
         .bar_group_gap(0.2);
