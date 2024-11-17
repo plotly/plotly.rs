@@ -225,7 +225,6 @@ impl Kaleido {
 
         let mut b64_str: String = "".into();
         for line in output_lines.map_while(Result::ok) {
-            // println!("{}", &line);
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
                 b64_str = image_data
