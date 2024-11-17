@@ -419,7 +419,7 @@ impl Plot {
 
     // similar to write_image, but returns b64 string
     #[cfg(feature = "kaleido")]
-    pub fn get_b64(
+    pub fn to_b64(
         &self,
         format: ImageFormat,
         width: usize,
