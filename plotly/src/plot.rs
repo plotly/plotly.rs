@@ -417,6 +417,28 @@ impl Plot {
             .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
     }
 
+    // similar to write_image, but returns b64 string
+    #[cfg(feature = "kaleido")]
+    pub fn get_b64(
+        &self,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> String {
+        let kaleido = plotly_kaleido::Kaleido::new();
+        let output = kaleido
+            .to_b64(
+                &serde_json::to_value(self).unwrap(),
+                &format.to_string(),
+                width,
+                height,
+                scale,
+            )
+            .unwrap_or_else(|_| panic!("failed to generate b64"));
+        output
+    }
+
     fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
