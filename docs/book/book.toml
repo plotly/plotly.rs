@@ -9,6 +9,7 @@ src = "src"
 [build]
 build-dir = "../../gh-pages/content"
 create-missing = false
+extra-watch-dirs = ["../../examples"]
 
 [output.html]
 default-theme = "Ayu"

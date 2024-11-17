@@ -2,8 +2,8 @@
 
 The following imports have been used to produce the plots below:
 
-```rust
-use itertools_num::linspace;
+```rust,no_run
+use ndarray::Array;
 use plotly::common::{
     ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode, Title,
 };
