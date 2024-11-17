@@ -180,6 +180,60 @@ impl Kaleido {
 
         Ok(())
     }
+
+    // similar to save, but returns b64 string
+    pub fn to_b64(
+        &self,
+        plotly_data: &Value,
+        format: &str,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+
+        let p = self.cmd_path.as_path();
+        let p = p.to_str().unwrap();
+        let p = String::from(p);
+
+        let mut process = Command::new(p.as_str())
+            .current_dir(self.cmd_path.parent().unwrap())
+            .args([
+                "plotly",
+                "--disable-gpu",
+                "--allow-file-access-from-files",
+                "--disable-breakpad",
+                "--disable-dev-shm-usage",
+                "--disable-software-rasterizer",
+                "--single-process",
+            ])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("failed to spawn Kaleido binary");
+
+        {
+            let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
+            let mut process_stdin = process.stdin.take().unwrap();
+            process_stdin
+                .write_all(plot_data.as_bytes())
+                .expect("couldn't write to Kaleido stdin");
+            process_stdin.flush()?;
+        }
+
+        let output_lines = BufReader::new(process.stdout.take().unwrap()).lines();
+
+        let mut b64_str: String = "".into();
+        for line in output_lines.map_while(Result::ok) {
+            // println!("{}", &line);
+            let res = KaleidoResult::from(line.as_str());
+            if let Some(image_data) = res.result {
+                b64_str = image_data
+            }
+        }
+
+        Ok(b64_str)
+    }
 }
 
 #[cfg(test)]
