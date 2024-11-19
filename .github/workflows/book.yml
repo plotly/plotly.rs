@@ -1,0 +1,37 @@
+name: Book
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  RUST_BACKTRACE: full
+
+jobs:
+  build:
+    name: Build and deploy book
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo install mdbook
+      - name: Build examples
+        run: cd ${{ github.workspace }}/examples/basic_charts && cargo run
+      - run: mdbook build docs/book
+      - name: Checkout gh-pages branch
+        run: |
+            git fetch origin gh-pages:gh-pages
+            git checkout gh-pages
+      - name: Overwrite book content
+        run: |
+            rm -rf content
+            cp -r gh-pages/content .
+      - name: Deploy to GitHub Pages
+        run: |
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            
+            git add content
+            git commit --allow-empty -m 'Deploy to GitHub Pages'
+            git push origin gh-pages
