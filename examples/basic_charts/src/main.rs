@@ -835,15 +835,24 @@ fn main() {
     write_example_to_html(polar_scatter_plot(false), "polar_scatter_plot");
     write_example_to_html(data_labels_hover(false), "data_labels_hover");
     write_example_to_html(data_labels_on_the_plot(false), "data_labels_on_the_plot");
-    write_example_to_html(colored_and_styled_scatter_plot(false), "colored_and_styled_scatter_plot");
+    write_example_to_html(
+        colored_and_styled_scatter_plot(false),
+        "colored_and_styled_scatter_plot",
+    );
     write_example_to_html(large_data_sets(false), "large_data_sets");
     write_example_to_html(categories_scatter_chart(false), "categories_scatter_chart");
 
     // Line Charts
-    write_example_to_html(adding_names_to_line_and_scatter_plot(false), "adding_names_to_line_and_scatter_plot");
+    write_example_to_html(
+        adding_names_to_line_and_scatter_plot(false),
+        "adding_names_to_line_and_scatter_plot",
+    );
     write_example_to_html(line_and_scatter_styling(false), "line_and_scatter_styling");
     write_example_to_html(styling_line_plot(false), "styling_line_plot");
-    write_example_to_html(line_shape_options_for_interpolation(false), "line_shape_options_for_interpolation");
+    write_example_to_html(
+        line_shape_options_for_interpolation(false),
+        "line_shape_options_for_interpolation",
+    );
     write_example_to_html(line_dash(false), "line_dash");
     write_example_to_html(filled_lines(false), "filled_lines");
 
@@ -853,7 +862,10 @@ fn main() {
     write_example_to_html(stacked_bar_chart(false), "stacked_bar_chart");
     write_example_to_html(table_chart(false), "table_chart");
     write_example_to_html(category_order_bar_chart(false), "category_order_bar_chart");
-    write_example_to_html(bar_chart_with_pattern_fills(false), "bar_chart_with_pattern_fills");
+    write_example_to_html(
+        bar_chart_with_pattern_fills(false),
+        "bar_chart_with_pattern_fills",
+    );
 
     // Sankey Diagrams
     write_example_to_html(basic_sankey_diagram(false), "basic_sankey_diagram");
