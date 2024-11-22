@@ -425,13 +425,13 @@ impl Plot {
         width: usize,
         height: usize,
         scale: f64,
-    ) -> Result<String, Error> {
+    ) -> Result<String, String> {
         match format{
             ImageFormat::JPEG => {},
             ImageFormat::PNG => {},
             ImageFormat::WEBP => {},
             _ => {
-                return Err(Error::new("format can only be JPEG, PNG, or WEBP"));
+                return Err("Format can only be JPEG, PNG, WEBP are allowed".into());
             },
         }
         let kaleido = plotly_kaleido::Kaleido::new();
@@ -444,29 +444,22 @@ impl Plot {
                 scale,
             )
             .unwrap_or_else(|_| panic!("failed to generate b64"));
-        output
+        Ok(output)
     }
 
     // similar to write_image, but returns svg contents
     #[cfg(feature = "kaleido")]
     pub fn to_svg(
         &self,
-        format: ImageFormat,
         width: usize,
         height: usize,
         scale: f64,
-    ) -> Result<String, Error> {
-        match format{
-            ImageFormat::SVG => {},
-            _ => {
-                return Err(Error::new("format can only be SVG"));
-            },
-        }
+    ) -> String {
         let kaleido = plotly_kaleido::Kaleido::new();
         let output = kaleido
             .get_image_data(
                 &serde_json::to_value(self).unwrap(),
-                &format.to_string(),
+                "svg",
                 width,
                 height,
                 scale,
