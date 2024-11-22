@@ -182,7 +182,7 @@ impl Kaleido {
     }
 
     // similar to save, but returns b64 string
-    pub fn to_b64(
+    pub fn get_image_data(
         &self,
         plotly_data: &Value,
         format: &str,
