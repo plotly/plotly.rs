@@ -190,7 +190,6 @@ impl Kaleido {
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
-
         let p = self.cmd_path.as_path();
         let p = p.to_str().unwrap();
         let p = String::from(p);
