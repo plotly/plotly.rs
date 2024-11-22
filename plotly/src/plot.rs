@@ -436,7 +436,35 @@ impl Plot {
         }
         let kaleido = plotly_kaleido::Kaleido::new();
         let output = kaleido
-            .to_b64(
+            .get_image_data(
+                &serde_json::to_value(self).unwrap(),
+                &format.to_string(),
+                width,
+                height,
+                scale,
+            )
+            .unwrap_or_else(|_| panic!("failed to generate b64"));
+        output
+    }
+
+    // similar to write_image, but returns svg contents
+    #[cfg(feature = "kaleido")]
+    pub fn to_svg(
+        &self,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Error> {
+        match format{
+            ImageFormat::SVG => {},
+            _ => {
+                return Err(Error::new("format can only be SVG"));
+            },
+        }
+        let kaleido = plotly_kaleido::Kaleido::new();
+        let output = kaleido
+            .get_image_data(
                 &serde_json::to_value(self).unwrap(),
                 &format.to_string(),
                 width,
