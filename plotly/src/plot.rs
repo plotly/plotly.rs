@@ -425,7 +425,15 @@ impl Plot {
         width: usize,
         height: usize,
         scale: f64,
-    ) -> String {
+    ) -> Result<String, Error> {
+        match format{
+            ImageFormat::JPEG => {},
+            ImageFormat::PNG => {},
+            ImageFormat::WEBP => {},
+            _ => {
+                return Err(Error::new("format can only be JPEG, PNG, or WEBP"));
+            },
+        }
         let kaleido = plotly_kaleido::Kaleido::new();
         let output = kaleido
             .to_b64(
