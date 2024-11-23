@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cargo install mdbook
+      - run: cargo install mdbook --no-default-features --features search --vers "^0.4" --locked --quiet
       - name: Build examples
         run: |
           cd ${{ github.workspace }}/examples/basic_charts && cargo run
@@ -40,5 +40,9 @@ jobs:
             git config --global user.email 'github-actions[bot]@users.noreply.github.com'
             
             git add content
-            git commit --allow-empty -m 'Deploy to GitHub Pages'
+            if [ "${{ github.ref_type }}" == "tag" ]; then
+              git commit --allow-empty -m "update book for release ${{ github.ref }}"
+            else
+              git commit --allow-empty -m 'update book from commit ${{ github.sha }}'
+            fi
             git push origin gh-pages

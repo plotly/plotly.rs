@@ -10,7 +10,7 @@ This extends the [Plotly.rs](https://github.com/plotly/plotly.rs) API in two way
 * `Scatter` traces can now be created using the `Scatter::from_ndarray` constructor,
 * and also multiple traces can be created with the `Scatter::to_traces` method.
 
-The full source code for the examples below can be found [here](https://github.com/plotly/plotly.rs/tree/main/examples/ndarray_support).
+The full source code for the examples below can be found [here](https://github.com/plotly/plotly.rs/tree/main/examples/ndarray).
 
 ## `ndarray` Traces
 
