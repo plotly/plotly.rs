@@ -22,6 +22,7 @@ jobs:
           cd ${{ github.workspace }}/examples/statistical_charts && cargo run
           cd ${{ github.workspace }}/examples/scientific_charts && cargo run
           cd ${{ github.workspace }}/examples/financial_charts && cargo run
+          cd ${{ github.workspace }}/examples/3d_charts && cargo run
       - run: mdbook build docs/book
       - name: Checkout gh-pages branch
         run: |
