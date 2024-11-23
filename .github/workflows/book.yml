@@ -17,7 +17,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: cargo install mdbook
       - name: Build examples
-        run: cd ${{ github.workspace }}/examples/basic_charts && cargo run
+        run: |
+          cd ${{ github.workspace }}/examples/basic_charts && cargo run
+          cd ${{ github.workspace }}/examples/statistical_charts && cargo run
       - run: mdbook build docs/book
       - name: Checkout gh-pages branch
         run: |
