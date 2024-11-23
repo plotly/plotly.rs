@@ -6,8 +6,10 @@ use plotly::layout::{
 };
 use plotly::Configuration;
 use plotly::{color::Rgb, Plot, Scatter};
+
 // Subplots
-fn simple_subplot() {
+// ANCHOR: simple_subplot
+fn simple_subplot(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -26,10 +28,15 @@ fn simple_subplot() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_subplot
 
-fn simple_subplot_matches_x_axis() {
+// ANCHOR: simple_subplot_matches_x_axis
+fn simple_subplot_matches_x_axis(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -48,10 +55,15 @@ fn simple_subplot_matches_x_axis() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_subplot_matches_x_axis
 
-fn simple_subplot_matches_y_axis() {
+// ANCHOR: simple_subplot_matches_y_axis
+fn simple_subplot_matches_y_axis(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -70,10 +82,15 @@ fn simple_subplot_matches_y_axis() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_subplot_matches_y_axis
 
-fn custom_sized_subplot() {
+// ANCHOR: custom_sized_subplot
+fn custom_sized_subplot(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -90,10 +107,15 @@ fn custom_sized_subplot() {
         .x_axis2(Axis::new().domain(&[0.8, 1.]));
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: custom_sized_subplot
 
-fn multiple_subplots() {
+// ANCHOR: multiple_subplots
+fn multiple_subplots(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -120,10 +142,15 @@ fn multiple_subplots() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: multiple_subplots
 
-fn stacked_subplots() {
+// ANCHOR: stacked_subplots
+fn stacked_subplots(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -147,10 +174,15 @@ fn stacked_subplots() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: stacked_subplots
 
-fn stacked_subplots_with_shared_x_axis() {
+// ANCHOR: stacked_subplots_with_shared_x_axis
+fn stacked_subplots_with_shared_x_axis(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -169,10 +201,15 @@ fn stacked_subplots_with_shared_x_axis() {
         .y_axis3(Axis::new().domain(&[0.66, 1.]));
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: stacked_subplots_with_shared_x_axis
 
-fn multiple_custom_sized_subplots() {
+// ANCHOR: multiple_custom_sized_subplots
+fn multiple_custom_sized_subplots(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2], vec![1, 2]).name("(1,1)");
     let trace2 = Scatter::new(vec![1, 2], vec![1, 2])
         .name("(1,2,1)")
@@ -205,11 +242,16 @@ fn multiple_custom_sized_subplots() {
         .y_axis4(Axis::new().domain(&[0., 0.45]).anchor("x4"));
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: multiple_custom_sized_subplots
 
 // Multiple Axes
-fn two_y_axes() {
+// ANCHOR: two_y_axes
+fn two_y_axes(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![40, 50, 60]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![4, 5, 6])
         .name("trace2")
@@ -231,10 +273,15 @@ fn two_y_axes() {
         );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: two_y_axes
 
-fn multiple_axes() {
+// ANCHOR: multiple_axes
+fn multiple_axes(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![40, 50, 60])
         .name("trace2")
@@ -285,10 +332,15 @@ fn multiple_axes() {
         );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: multiple_axes
 
-fn many_subplots_with_titles() {
+// ANCHOR: many_subplots_with_titles
+fn many_subplots_with_titles(show: bool) -> Plot {
     let trace1 = Scatter::new(vec![1, 2], vec![4, 5]);
 
     let number_of_plots = 10;
@@ -325,24 +377,50 @@ fn many_subplots_with_titles() {
 
     plot.set_layout(layout);
     plot.set_configuration(Configuration::new().responsive(true));
-    plot.show();
+
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: many_subplots_with_titles
+
+fn write_example_to_html(plot: Plot, name: &str) {
+    std::fs::create_dir_all("./out").unwrap();
+    let html = plot.to_inline_html(Some(name));
+    std::fs::write(format!("./out/{}.html", name), html).unwrap();
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
     // Subplots
-    // simple_subplot();
-    // simple_subplot_matches_x_axis();
-    // simple_subplot_matches_y_axis();
-    // custom_sized_subplot();
-    // multiple_subplots();
-    // stacked_subplots();
-    // stacked_subplots_with_shared_x_axis();
-    // multiple_custom_sized_subplots();
-    // many_subplots_with_titles();
+    write_example_to_html(simple_subplot(false), "simple_subplot");
+    write_example_to_html(
+        simple_subplot_matches_x_axis(false),
+        "simple_subplot_matches_x_axis",
+    );
+    write_example_to_html(
+        simple_subplot_matches_y_axis(false),
+        "simple_subplot_matches_y_axis",
+    );
+    write_example_to_html(custom_sized_subplot(false), "custom_sized_subplot");
+    write_example_to_html(multiple_subplots(false), "multiple_subplots");
+    write_example_to_html(stacked_subplots(false), "stacked_subplots");
+    write_example_to_html(
+        stacked_subplots_with_shared_x_axis(false),
+        "stacked_subplots_with_shared_x_axis",
+    );
+    write_example_to_html(
+        multiple_custom_sized_subplots(false),
+        "multiple_custom_sized_subplots",
+    );
+    write_example_to_html(
+        many_subplots_with_titles(false),
+        "many_subplots_with_titles",
+    );
 
     // Multiple Axes
-    // two_y_axes();
-    // multiple_axes();
+    write_example_to_html(two_y_axes(false), "two_y_axes");
+    write_example_to_html(multiple_axes(false), "multiple_axes");
 }

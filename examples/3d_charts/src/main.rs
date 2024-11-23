@@ -10,7 +10,8 @@ use plotly::{
 use rand::Rng;
 
 // 3D Scatter Plots
-fn simple_scatter3d_plot() {
+// ANCHOR: simple_scatter3d_plot
+fn simple_scatter3d_plot(show: bool) -> Plot {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -20,10 +21,15 @@ fn simple_scatter3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_scatter3d_plot
 
-fn customized_scatter3d_plot() {
+// ANCHOR: customized_scatter3d_plot
+fn customized_scatter3d_plot(show: bool) -> Plot {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -108,11 +114,16 @@ fn customized_scatter3d_plot() {
         .height(500);
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: customized_scatter3d_plot
 
 // 3D Line Plots
-fn simple_line3d_plot() {
+// ANCHOR: simple_line3d_plot
+fn simple_line3d_plot(show: bool) -> Plot {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -122,11 +133,16 @@ fn simple_line3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_line3d_plot
 
 // 3D Surface Plot
-fn surface_plot() {
+// ANCHOR: surface_plot
+fn surface_plot(show: bool) -> Plot {
     let n: usize = 100;
     let x: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
@@ -143,10 +159,15 @@ fn surface_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: surface_plot
 
-fn mesh_3d_plot() {
+// ANCHOR: mesh_3d_plot
+fn mesh_3d_plot(show: bool) -> Plot {
     let trace = Mesh3D::new(
         vec![0, 1, 2, 0],
         vec![0, 0, 1, 2],
@@ -161,10 +182,15 @@ fn mesh_3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: mesh_3d_plot
 
-fn colorscale_plot() {
+// ANCHOR: colorscale_plot
+fn colorscale_plot(show: bool) -> Plot {
     let mut plot = Plot::new();
 
     let x = (0..100)
@@ -226,21 +252,34 @@ fn colorscale_plot() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: colorscale_plot
+
+fn write_example_to_html(plot: Plot, name: &str) {
+    std::fs::create_dir_all("./out").unwrap();
+    let html = plot.to_inline_html(Some(name));
+    std::fs::write(format!("./out/{}.html", name), html).unwrap();
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
     // Scatter3D Plots
-    // simple_scatter3d_plot();
-    // simple_line3d_plot();
-    // customized_scatter3d_plot();
-    // colorscale_plot();
+    write_example_to_html(simple_scatter3d_plot(false), "simple_scatter3d_plot");
+    write_example_to_html(simple_line3d_plot(false), "simple_line3d_plot");
+    write_example_to_html(
+        customized_scatter3d_plot(false),
+        "customized_scatter3d_plot",
+    );
+    write_example_to_html(colorscale_plot(false), "colorscale_plot");
 
     // Surface Plots
-    // surface_plot();
+    write_example_to_html(surface_plot(false), "surface_plot");
 
     // Mesh Plots
-    // mesh_3d_plot();
+    write_example_to_html(mesh_3d_plot(false), "mesh_3d_plot");
 }

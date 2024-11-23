@@ -38,7 +38,8 @@ fn load_apple_data() -> Vec<FinData> {
 }
 
 // Time Series and Date Axes
-fn time_series_plot_with_custom_date_range() {
+// ANCHOR: time_series_plot_with_custom_date_range
+fn time_series_plot_with_custom_date_range(show: bool) -> Plot {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -53,10 +54,15 @@ fn time_series_plot_with_custom_date_range() {
         .title("Manually Set Date Range");
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: time_series_plot_with_custom_date_range
 
-fn time_series_with_range_slider() {
+// ANCHOR: time_series_with_range_slider
+fn time_series_with_range_slider(show: bool) -> Plot {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -71,10 +77,15 @@ fn time_series_with_range_slider() {
         .title("Manually Set Date Range");
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: time_series_with_range_slider
 
-fn time_series_with_range_selector_buttons() {
+// ANCHOR: time_series_with_range_selector_buttons
+fn time_series_with_range_selector_buttons(show: bool) -> Plot {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -113,10 +124,15 @@ fn time_series_with_range_selector_buttons() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: time_series_with_range_selector_buttons
 
-fn customizing_tick_label_formatting_by_zoom_level() {
+// ANCHOR: customizing_tick_label_formatting_by_zoom_level
+fn customizing_tick_label_formatting_by_zoom_level(show: bool) -> Plot {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -152,11 +168,16 @@ fn customizing_tick_label_formatting_by_zoom_level() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: customizing_tick_label_formatting_by_zoom_level
 
 // Candlestick Charts
-fn simple_candlestick_chart() {
+// ANCHOR: simple_candlestick_chart
+fn simple_candlestick_chart(show: bool) -> Plot {
     let x = vec![
         "2017-01-04",
         "2017-01-05",
@@ -219,11 +240,16 @@ fn simple_candlestick_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_candlestick_chart
 
 // OHLC Charts
-fn simple_ohlc_chart() {
+// ANCHOR: simple_ohlc_chart
+fn simple_ohlc_chart(show: bool) -> Plot {
     let x = vec![
         "2017-01-04",
         "2017-01-05",
@@ -286,21 +312,43 @@ fn simple_ohlc_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: simple_ohlc_chart
+
+fn write_example_to_html(plot: Plot, name: &str) {
+    std::fs::create_dir_all("./out").unwrap();
+    let html = plot.to_inline_html(Some(name));
+    std::fs::write(format!("./out/{}.html", name), html).unwrap();
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
     // Time Series and Date Axes
-    // time_series_plot_with_custom_date_range();
-    // time_series_with_range_slider();
-    // time_series_with_range_selector_buttons();
-    // customizing_tick_label_formatting_by_zoom_level();
+    write_example_to_html(
+        time_series_plot_with_custom_date_range(false),
+        "time_series_plot_with_custom_date_range",
+    );
+    write_example_to_html(
+        time_series_with_range_slider(false),
+        "time_series_with_range_slider",
+    );
+    write_example_to_html(
+        time_series_with_range_selector_buttons(false),
+        "time_series_with_range_selector_buttons",
+    );
+    write_example_to_html(
+        customizing_tick_label_formatting_by_zoom_level(false),
+        "customizing_tick_label_formatting_by_zoom_level",
+    );
 
     // Candlestick Charts
-    // simple_candlestick_chart();
+    write_example_to_html(simple_candlestick_chart(false), "simple_candlestick_chart");
 
     // OHLC Charts
-    // simple_ohlc_chart();
+    write_example_to_html(simple_ohlc_chart(false), "simple_ohlc_chart");
 }
