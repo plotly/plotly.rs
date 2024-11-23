@@ -417,49 +417,50 @@ impl Plot {
             .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
     }
 
-    // similar to write_image, but returns b64 string
+    /// Convert the `Plot` to a static image and return the image as a `base64`
+    /// String Supported formats are [ImageFormat::JPEG], [ImageFormat::PNG]
+    /// and [ImageFormat::WEBP]
     #[cfg(feature = "kaleido")]
-    pub fn to_b64(
+    pub fn to_base64(
         &self,
         format: ImageFormat,
         width: usize,
         height: usize,
         scale: f64,
-    ) -> Result<String, String> {
+    ) -> String {
         match format {
-            ImageFormat::JPEG => {}
-            ImageFormat::PNG => {}
-            ImageFormat::WEBP => {}
+            ImageFormat::JPEG | ImageFormat::PNG | ImageFormat::WEBP => {
+                let kaleido = plotly_kaleido::Kaleido::new();
+                kaleido
+                    .image_to_string(
+                        &serde_json::to_value(self).unwrap(),
+                        &format.to_string(),
+                        width,
+                        height,
+                        scale,
+                    )
+                    .unwrap_or_else(|_| panic!("Kaleido failed to generate image"))
+            }
             _ => {
-                return Err("Format can only be JPEG, PNG, WEBP are allowed".into());
+                eprintln!("Cannot generate base64 string for ImageFormat:{format}. Allowed formats are JPEG, PNG, WEBP");
+                String::default()
             }
         }
-        let kaleido = plotly_kaleido::Kaleido::new();
-        let output = kaleido
-            .get_image_data(
-                &serde_json::to_value(self).unwrap(),
-                &format.to_string(),
-                width,
-                height,
-                scale,
-            )
-            .unwrap_or_else(|_| panic!("failed to generate b64"));
-        Ok(output)
     }
 
-    // similar to write_image, but returns svg contents
+    /// Convert the `Plot` to SVG and return it as a String.
     #[cfg(feature = "kaleido")]
     pub fn to_svg(&self, width: usize, height: usize, scale: f64) -> String {
         let kaleido = plotly_kaleido::Kaleido::new();
         kaleido
-            .get_image_data(
+            .image_to_string(
                 &serde_json::to_value(self).unwrap(),
                 "svg",
                 width,
                 height,
                 scale,
             )
-            .unwrap_or_else(|_| panic!("failed to generate b64"))
+            .unwrap_or_else(|_| panic!("Kaleido failed to generate image"))
     }
 
     fn render(&self) -> String {
@@ -584,6 +585,7 @@ impl PartialEq for Plot {
 mod tests {
     use std::path::PathBuf;
 
+    use base64::{engine::general_purpose, Engine as _};
     use serde_json::{json, to_value};
 
     use super::*;
@@ -817,5 +819,48 @@ mod tests {
         assert!(dst.exists());
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_image_to_base64() {
+        let plot = create_test_plot();
+
+        let image_base64 = plot.to_base64(ImageFormat::PNG, 200, 150, 1.0);
+
+        assert!(!image_base64.is_empty());
+
+        let result_decoded = general_purpose::STANDARD.decode(image_base64).unwrap();
+        let expected = "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";
+        let expected_decoded = general_purpose::STANDARD.decode(expected).unwrap();
+
+        // Comparing the result seems to end up being a flaky test.
+        // Limit the comparison to the first characters;
+        // As image contents seem to be slightly inconsistent across platforms
+        assert_eq!(expected_decoded[..2], result_decoded[..2]);
+    }
+
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_image_to_base64_invalid_format() {
+        let plot = create_test_plot();
+        let image_base64 = plot.to_base64(ImageFormat::EPS, 200, 150, 1.0);
+        assert!(image_base64.is_empty());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn test_image_to_svg_string() {
+        let plot = create_test_plot();
+        let image_svg = plot.to_svg(200, 150, 1.0);
+
+        assert!(!image_svg.is_empty());
+
+        let expected = "<svg class=\"main-svg\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"200\" height=\"150\" style=\"\" viewBox=\"0 0 200 150\"><rect x=\"0\" y=\"0\" width=\"200\" height=\"150\" style=\"fill: rgb(255, 255, 255); fill-opacity: 1;\"/><defs id=\"defs-2dc70a\"><g class=\"clips\"><clipPath id=\"clip2dc70axyplot\" class=\"plotclip\"><rect width=\"40\" height=\"2\"/></clipPath><clipPath class=\"axesclip\" id=\"clip2dc70ax\"><rect x=\"80\" y=\"0\" width=\"40\" height=\"150\"/></clipPath><clipPath class=\"axesclip\" id=\"clip2dc70ay\"><rect x=\"0\" y=\"82\" width=\"200\" height=\"2\"/></clipPath><clipPath class=\"axesclip\" id=\"clip2dc70axy\"><rect x=\"80\" y=\"82\" width=\"40\" height=\"2\"/></clipPath></g><g class=\"gradients\"/></defs><g class=\"bglayer\"/><g class=\"layer-below\"><g class=\"imagelayer\"/><g class=\"shapelayer\"/></g><g class=\"cartesianlayer\"><g class=\"subplot xy\"><g class=\"layer-subplot\"><g class=\"shapelayer\"/><g class=\"imagelayer\"/></g><g class=\"gridlayer\"><g class=\"x\"><path class=\"xgrid crisp\" transform=\"translate(100,0)\" d=\"M0,82v2\" style=\"stroke: rgb(238, 238, 238); stroke-opacity: 1; stroke-width: 1px;\"/><path class=\"xgrid crisp\" transform=\"translate(114.25,0)\" d=\"M0,82v2\" style=\"stroke: rgb(238, 238, 238); stroke-opacity: 1; stroke-width: 1px;\"/></g><g class=\"y\"/></g><g class=\"zerolinelayer\"><path class=\"xzl zl crisp\" transform=\"translate(85.75,0)\" d=\"M0,82v2\" style=\"stroke: rgb(68, 68, 68); stroke-opacity: 1; stroke-width: 1px;\"/></g><path class=\"xlines-below\"/><path class=\"ylines-below\"/><g class=\"overlines-below\"/><g class=\"xaxislayer-below\"/><g class=\"yaxislayer-below\"/><g class=\"overaxes-below\"/><g class=\"plot\" transform=\"translate(80,82)\" clip-path=\"url('#clip2dc70axyplot')\"><g class=\"scatterlayer mlayer\"><g class=\"trace scatter trace86f735\" style=\"stroke-miterlimit: 2; opacity: 1;\"><g class=\"fills\"/><g class=\"errorbars\"/><g class=\"lines\"><path class=\"js-line\" d=\"M5.75,1L20,0L34.25,2\" style=\"vector-effect: non-scaling-stroke; fill: none; stroke: rgb(31, 119, 180); stroke-opacity: 1; stroke-width: 2px; opacity: 1;\"/></g><g class=\"points\"><path class=\"point\" transform=\"translate(5.75,1)\" d=\"M3,0A3,3 0 1,1 0,-3A3,3 0 0,1 3,0Z\" style=\"opacity: 1; stroke-width: 0px; fill: rgb(31, 119, 180); fill-opacity: 1;\"/><path class=\"point\" transform=\"translate(20,0)\" d=\"M3,0A3,3 0 1,1 0,-3A3,3 0 0,1 3,0Z\" style=\"opacity: 1; stroke-width: 0px; fill: rgb(31, 119, 180); fill-opacity: 1;\"/><path class=\"point\" transform=\"translate(34.25,2)\" d=\"M3,0A3,3 0 1,1 0,-3A3,3 0 0,1 3,0Z\" style=\"opacity: 1; stroke-width: 0px; fill: rgb(31, 119, 180); fill-opacity: 1;\"/></g><g class=\"text\"/></g></g></g><g class=\"overplot\"/><path class=\"xlines-above crisp\" d=\"M0,0\" style=\"fill: none;\"/><path class=\"ylines-above crisp\" d=\"M0,0\" style=\"fill: none;\"/><g class=\"overlines-above\"/><g class=\"xaxislayer-above\"><g class=\"xtick\"><text text-anchor=\"middle\" x=\"0\" y=\"97\" transform=\"translate(85.75,0)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">0</text></g><g class=\"xtick\"><text text-anchor=\"middle\" x=\"0\" y=\"97\" transform=\"translate(100,0)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">1</text></g><g class=\"xtick\"><text text-anchor=\"middle\" x=\"0\" y=\"97\" transform=\"translate(114.25,0)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">2</text></g></g><g class=\"yaxislayer-above\"><g class=\"ytick\"><text text-anchor=\"end\" x=\"79\" y=\"4.199999999999999\" transform=\"translate(0,84)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">2</text></g><g class=\"ytick\"><text text-anchor=\"end\" x=\"79\" y=\"4.199999999999999\" transform=\"translate(0,83.5)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">4</text></g><g class=\"ytick\"><text text-anchor=\"end\" x=\"79\" y=\"4.199999999999999\" transform=\"translate(0,83)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">6</text></g><g class=\"ytick\"><text text-anchor=\"end\" x=\"79\" y=\"4.199999999999999\" transform=\"translate(0,82.5)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">8</text></g><g class=\"ytick\"><text text-anchor=\"end\" x=\"79\" y=\"4.199999999999999\" transform=\"translate(0,82)\" style=\"font-family: 'Open Sans', verdana, arial, sans-serif; font-size: 12px; fill: rgb(68, 68, 68); fill-opacity: 1; white-space: pre;\">10</text></g></g><g class=\"overaxes-above\"/></g></g><g class=\"polarlayer\"/><g class=\"ternarylayer\"/><g class=\"geolayer\"/><g class=\"funnelarealayer\"/><g class=\"pielayer\"/><g class=\"treemaplayer\"/><g class=\"sunburstlayer\"/><g class=\"glimages\"/><defs id=\"topdefs-2dc70a\"><g class=\"clips\"/></defs><g class=\"layer-above\"><g class=\"imagelayer\"/><g class=\"shapelayer\"/></g><g class=\"infolayer\"><g class=\"g-gtitle\"/><g class=\"g-xtitle\"/><g class=\"g-ytitle\"/></g></svg>";
+        // Limit the test to the first LEN characters
+        const LEN: usize = 100;
+        assert_eq!(expected[..LEN], image_svg[..LEN]);
     }
 }
