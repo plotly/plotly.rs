@@ -7,7 +7,8 @@ use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
 
 // Contour Plots
-fn simple_contour_plot() {
+// ANCHOR: simple_contour_plot
+fn simple_contour_plot(show: bool) -> Plot {
     let n = 200;
     let mut x = Vec::<f64>::new();
     let mut y = Vec::<f64>::new();
@@ -34,10 +35,15 @@ fn simple_contour_plot() {
 
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: simple_contour_plot
 
-fn colorscale_for_contour_plot() {
+// ANCHOR: colorscale_for_contour_plot
+fn colorscale_for_contour_plot(show: bool) -> Plot {
     let z = vec![
         vec![10.0, 10.625, 12.5, 15.625, 20.0],
         vec![5.625, 6.25, 8.125, 11.25, 15.625],
@@ -52,10 +58,15 @@ fn colorscale_for_contour_plot() {
     plot.set_layout(layout);
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: colorscale_for_contour_plot
 
-fn customizing_size_and_range_of_a_contour_plots_contours() {
+// ANCHOR: customizing_size_and_range_of_a_contour_plots_contours
+fn customizing_size_and_range_of_a_contour_plots_contours(show: bool) -> Plot {
     let z = vec![
         vec![10.0, 10.625, 12.5, 15.625, 20.0],
         vec![5.625, 6.25, 8.125, 11.25, 15.625],
@@ -73,10 +84,15 @@ fn customizing_size_and_range_of_a_contour_plots_contours() {
     plot.set_layout(layout);
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: customizing_size_and_range_of_a_contour_plots_contours
 
-fn customizing_spacing_between_x_and_y_ticks() {
+// ANCHOR: customizing_spacing_between_x_and_y_ticks
+fn customizing_spacing_between_x_and_y_ticks(show: bool) -> Plot {
     let z = vec![
         vec![10.0, 10.625, 12.5, 15.625, 20.0],
         vec![5.625, 6.25, 8.125, 11.25, 15.625],
@@ -96,20 +112,30 @@ fn customizing_spacing_between_x_and_y_ticks() {
     plot.set_layout(layout);
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: customizing_spacing_between_x_and_y_ticks
 
 // Heatmaps
-fn basic_heat_map() {
+// ANCHOR: basic_heat_map
+fn basic_heat_map(show: bool) -> Plot {
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
     let trace = HeatMap::new_z(z).zmin(1.0).zmax(60.0);
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
 }
+// ANCHOR_END: basic_heat_map
 
-fn customized_heat_map() {
+// ANCHOR: customized_heat_map
+fn customized_heat_map(show: bool) -> Plot {
     let x = (0..100).map(|x| x as f64).collect::<Vec<f64>>();
     let y = (0..100).map(|y| y as f64).collect::<Vec<f64>>();
     let z: Vec<Vec<f64>> = y
@@ -143,19 +169,38 @@ fn customized_heat_map() {
     plot.set_layout(layout);
     plot.add_trace(trace);
 
-    plot.show();
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: customized_heat_map
+
+fn write_example_to_html(plot: Plot, name: &str) {
+    std::fs::create_dir_all("./out").unwrap();
+    let html = plot.to_inline_html(Some(name));
+    std::fs::write(format!("./out/{}.html", name), html).unwrap();
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
     // Contour Plots
-    // simple_contour_plot();
-    // colorscale_for_contour_plot();
-    // customizing_size_and_range_of_a_contour_plots_contours();
-    // customizing_spacing_between_x_and_y_ticks();
+    write_example_to_html(simple_contour_plot(false), "simple_contour_plot");
+    write_example_to_html(
+        colorscale_for_contour_plot(false),
+        "colorscale_for_contour_plot",
+    );
+    write_example_to_html(
+        customizing_size_and_range_of_a_contour_plots_contours(false),
+        "customizing_size_and_range_of_a_contour_plots_contours",
+    );
+    write_example_to_html(
+        customizing_spacing_between_x_and_y_ticks(false),
+        "customizing_spacing_between_x_and_y_ticks",
+    );
 
     // Heatmaps
-    // basic_heat_map();
-    // customized_heat_map();
+    write_example_to_html(basic_heat_map(false), "basic_heat_map");
+    write_example_to_html(customized_heat_map(false), "customized_heat_map");
 }
