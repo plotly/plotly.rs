@@ -33,4 +33,4 @@ Contributions are always welcomed, no matter how large or small. Refer to the [c
 
 Plotly.rs is distributed under the terms of the MIT license.
 
-See [LICENSE-MIT](https://github.com/plotly/plotly.rs/tree/main/LICENSE-MIT), and [COPYRIGHT](https://github.com/plotly/plotly.rs/tree/main/COPYRIGHT) for details.
+See [LICENSE](https://github.com/plotly/plotly.rs/tree/main/LICENSE)

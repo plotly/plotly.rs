@@ -214,12 +214,19 @@ fn box_plot_that_displays_the_underlying_data(show: bool) -> Plot {
 
 // ANCHOR: horizontal_box_plot
 fn horizontal_box_plot(show: bool) -> Plot {
-    let trace1 = BoxPlot::new(vec![1, 2, 3, 4, 4, 4, 8, 9, 10]).name("Set 1");
-    let trace2 = BoxPlot::new(vec![2, 3, 3, 3, 3, 5, 6, 6, 7]).name("Set 2");
+    let x = vec![
+        "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 2",
+        "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2",
+    ];
+
+    let trace = BoxPlot::new_xy(
+        vec![1, 2, 3, 4, 4, 4, 8, 9, 10, 2, 3, 3, 3, 3, 5, 6, 6, 7],
+        x.clone(),
+    )
+    .orientation(Orientation::Horizontal);
 
     let mut plot = Plot::new();
-    plot.add_trace(trace1);
-    plot.add_trace(trace2);
+    plot.add_trace(trace);
 
     if show {
         plot.show();

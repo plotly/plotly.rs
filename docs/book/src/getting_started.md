@@ -83,7 +83,7 @@ plot.show_image(ImageFormat::PNG, 1280, 900);
 
 will display in the browser the rasterised plot; 1280 pixels wide and 900 pixels tall, in png format.
 
-Once a satisfactory result is achieved, and assuming the [`kaleido`](getting_started#saving-plots) feature is enabled, the plot can be saved using the following:
+Once a satisfactory result is achieved, and assuming the [`kaleido`](#saving-plots) feature is enabled, the plot can be saved using the following:
 
 ```rust
 plot.write_image("/home/user/plot_name.ext", ImageFormat::PNG, 1280, 900, 1.0);
