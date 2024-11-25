@@ -5,15 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.11.0] - 2024-11-x
 ### Changed
+- [[#251](https://github.com/plotly/plotly.rs/pull/251)] Expose image data as String with `to_base64` and `to_svg` using Kaleido
 - [[#245](https://github.com/plotly/plotly.rs/pull/245)] Change Contours size to be `f64` instead of `usize`
-
-## [0.10.1] - 2024-11-x
-### Added
-- [[#243](https://github.com/plotly/plotly.rs/pull/243)] Made `plotly_embed_js` embed all JS scripts when enabled. 
+- [[#243](https://github.com/plotly/plotly.rs/pull/243)] Made `plotly_embed_js` embed all JS scripts when enabled.
    Renamed `use_cdn_plotly` to `use_cdn_js`.
-- [[#239](https://github.com/plotly/plotly.rs/pull/239)] Add Categorical Axis Ordering and Axis Category Array.
 
 ### Fixed
+- [[#248]](https://github.com/plotly/plotly.rs/issues/248) Book recipes do not render graphs
+- [[#247]](https://github.com/plotly/plotly.rs/issues/247) Add function to export image (with Kaleido) as a b64 string
+- [[#246]](https://github.com/plotly/plotly.rs/pull/246) Expose pattern fill api for histograms and bar charts
+- [[#244](https://github.com/plotly/plotly.rs/pull/244)] Fix swapped x and y in the examples.
 - [[#242](https://github.com/plotly/plotly.rs/issues/242)] Disable request for tex-svg.js file
 - [[#237](https://github.com/plotly/plotly.rs/issues/237)] Add Categorical Axis ordering.
 
