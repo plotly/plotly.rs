@@ -122,6 +122,7 @@ impl Kaleido {
         Ok(p)
     }
 
+    /// Generate a static image from a Plotly graph and save it to a file
     pub fn save(
         &self,
         dst: &Path,
@@ -134,6 +135,44 @@ impl Kaleido {
         let mut dst = PathBuf::from(dst);
         dst.set_extension(format);
 
+        let image_data = self.convert(plotly_data, format, width, height, scale)?;
+        let data: Vec<u8> = match format {
+            "svg" | "eps" => image_data.as_bytes().to_vec(),
+            _ => general_purpose::STANDARD.decode(image_data).unwrap(),
+        };
+        let mut file = File::create(dst.as_path())?;
+        file.write_all(&data)?;
+        file.flush()?;
+
+        Ok(())
+    }
+
+    /// Generate a static image from a Plotly graph and return it as a String
+    /// The output may be base64 encoded or a plain text depending on the image
+    /// format provided as argument. SVG and EPS are returned in plain text
+    /// while JPEG, PNG, WEBP will be returned as a base64 encoded string.
+    pub fn image_to_string(
+        &self,
+        plotly_data: &Value,
+        format: &str,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        let image_data = self.convert(plotly_data, format, width, height, scale)?;
+        Ok(image_data)
+    }
+
+    /// Convert the Plotly graph to a static image using Kaleido and return the
+    /// result as a String
+    pub fn convert(
+        &self,
+        plotly_data: &Value,
+        format: &str,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let p = self.cmd_path.as_path();
         let p = p.to_str().unwrap();
         let p = String::from(p);
@@ -168,17 +207,16 @@ impl Kaleido {
         for line in output_lines.map_while(Result::ok) {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
-                let data: Vec<u8> = match format {
-                    "svg" | "eps" => image_data.as_bytes().to_vec(),
-                    _ => general_purpose::STANDARD.decode(image_data).unwrap(),
-                };
-                let mut file = File::create(dst.as_path())?;
-                file.write_all(&data)?;
-                file.flush()?;
+                // TODO: this should be refactored
+                // The assumption is that  KaleidoResult contains a single image.
+                // We should end the loop on the first valid one.
+                // If that is not the case, prior implementation would have returned the last
+                // valid image
+                return Ok(image_data);
             }
         }
 
-        Ok(())
+        Ok(String::default())
     }
 }
 
