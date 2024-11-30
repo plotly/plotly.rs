@@ -177,6 +177,7 @@ impl Kaleido {
         let p = p.to_str().unwrap();
         let p = String::from(p);
 
+        #[allow(clippy::zombie_processes)]
         let mut process = Command::new(p.as_str())
             .current_dir(self.cmd_path.parent().unwrap())
             .args([

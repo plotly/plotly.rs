@@ -6,5 +6,8 @@ edition = "2021"
 
 [dependencies]
 image = "0.25"
-ndarray = "0.16.0"
-plotly = { path = "../../plotly", features = ["plotly_image", "plotly_ndarray"] }
+ndarray = "0.16"
+plotly = { path = "../../plotly", features = [
+    "plotly_image",
+    "plotly_ndarray",
+] }

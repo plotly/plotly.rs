@@ -1,6 +1,3 @@
 [workspace]
-members = [
-    "plotly",
-    "plotly_derive",
-    "plotly_kaleido",
-]
+resolver = "2"
+members = ["plotly", "plotly_derive", "plotly_kaleido"]

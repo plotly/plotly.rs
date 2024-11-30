@@ -5,5 +5,5 @@ authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-itertools = "0.10.3"
+itertools = "0.10"
 plotly = { path = "../../plotly" }

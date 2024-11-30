@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.11.0] - 2024-11-x
+## [0.11.0] - 2024-12-06
 ### Changed
 - [[#251](https://github.com/plotly/plotly.rs/pull/251)] Expose image data as String with `to_base64` and `to_svg` using Kaleido
 - [[#245](https://github.com/plotly/plotly.rs/pull/245)] Change Contours size to be `f64` instead of `usize`
@@ -11,9 +11,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
    Renamed `use_cdn_plotly` to `use_cdn_js`.
 
 ### Fixed
-- [[#248]](https://github.com/plotly/plotly.rs/issues/248) Book recipes do not render graphs
-- [[#247]](https://github.com/plotly/plotly.rs/issues/247) Add function to export image (with Kaleido) as a b64 string
-- [[#246]](https://github.com/plotly/plotly.rs/pull/246) Expose pattern fill api for histograms and bar charts
+- [[#248](https://github.com/plotly/plotly.rs/issues/248)] Book recipes do not render graphs
+- [[#247](https://github.com/plotly/plotly.rs/issues/247)] Add function to export image (with Kaleido) as a b64 string
+- [[#246](https://github.com/plotly/plotly.rs/pull/246)] Expose pattern fill api for histograms and bar charts
 - [[#244](https://github.com/plotly/plotly.rs/pull/244)] Fix swapped x and y in the examples.
 - [[#242](https://github.com/plotly/plotly.rs/issues/242)] Disable request for tex-svg.js file
 - [[#237](https://github.com/plotly/plotly.rs/issues/237)] Add Categorical Axis ordering.
@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 - [[#230](https://github.com/plotly/plotly.rs/pull/230)] Make Bar chart `width` and `offset` use `f64` values.
 
-## [0.10.0] - 2024-09-06
+## [0.9.1] - 2024-09-06
 ### Added
 - [[#217](https://github.com/plotly/plotly.rs/pull/217)] Added show_html(filename) method to bypass situations where accessing default `/tmp` is not possible, e.g., with in SNAP Firefox
 - [[#227](https://github.com/plotly/plotly.rs/pull/227)] Switch from HTML template render from `askama` to `rinja`
