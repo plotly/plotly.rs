@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.1] - 2024-12-X
+### Changed
+-
+
+### Fixed
+- [[#175](https://github.com/plotly/plotly.rs/issues/175)] Put multiple subplots in the same html - added an example using `build_html` crate.
+- [[#228](https://github.com/plotly/plotly.rs/issues/228)] Redraw function seems to be broken - added example on generating responsive plots.
+
 ## [0.11.0] - 2024-12-06
 ### Changed
 - [[#251](https://github.com/plotly/plotly.rs/pull/251)] Expose image data as String with `to_base64` and `to_svg` using Kaleido
