@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu" dir="ltr">
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 
 
         <!-- Custom HTML head -->
-        
+
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
@@ -33,15 +33,17 @@
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    </head>
-    <body class="sidebar-visible no-js">
-    <div id="body-container">
+
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -63,19 +65,16 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
+            const html = document.documentElement;
             html.classList.remove('ayu')
             html.classList.add(theme);
-            var body = document.querySelector('body');
-            body.classList.remove('no-js')
-            body.classList.add('js');
+            html.classList.add("js");
         </script>
 
         <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var body = document.querySelector('body');
             var sidebar = null;
             var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
@@ -85,40 +84,20 @@
                 sidebar = 'hidden';
             }
             sidebar_toggle.checked = sidebar === 'visible';
-            body.classList.remove('sidebar-visible');
-            body.classList.add("sidebar-" + sidebar);
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/subplots/subplots.html" class="active"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
-            </div>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
-
-        <!-- Track and set sidebar scroll position -->
-        <script>
-            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
-            sidebarScrollbox.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
-                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
-                }
-            }, { passive: true });
-            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
-            sessionStorage.removeItem('sidebar-scroll');
-            if (sidebarScrollTop) {
-                // preserve sidebar scroll position when navigating via links within sidebar
-                sidebarScrollbox.scrollTop = sidebarScrollTop;
-            } else {
-                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
-                var activeSection = document.querySelector('#sidebar .active');
-                if (activeSection) {
-                    activeSection.scrollIntoView({ block: 'center' });
-                }
-            }
-        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
@@ -178,7 +157,7 @@
                     <main>
                         <h1 id="subplots"><a class="header" href="#subplots">Subplots</a></h1>
 <p>The following imports have been used to produce the plots below:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use plotly::common::{Font, Side, Title};
 use plotly::layout::{Axis, GridPattern, Layout, LayoutGrid, Legend, RowOrder};
@@ -186,9 +165,9 @@ use plotly::{Plot, Rgb, Scatter};
 <span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
 <h2 id="simple-subplot"><a class="header" href="#simple-subplot">Simple Subplot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn simple_subplot(show: bool) {
+</span>fn simple_subplot(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -206,32 +185,21 @@ use plotly::{Plot, Rgb, Scatter};
             .pattern(GridPattern::Independent),
     );
     plot.set_layout(layout);
-        if show {
+
+    if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("simple_subplot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="simple_subplot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("simple_subplot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2,3],"y":[4,5,6],"name":"trace1"};
-var trace_1 = {"type":"scatter","x":[20,30,40],"y":[50,60,70],"name":"trace2","xaxis":"x2","yaxis":"y2"};
-var data = [trace_0,trace_1];
-var layout = {"grid":{"rows":1,"columns":2,"pattern":"independent"}};
-        Plotly.newPlot('simple_subplot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("simple_subplot", {"data":[{"type":"scatter","name":"trace1","x":[1,2,3],"y":[4,5,6]},{"type":"scatter","name":"trace2","x":[20,30,40],"y":[50,60,70],"xaxis":"x2","yaxis":"y2"}],"layout":{"grid":{"rows":1,"columns":2,"pattern":"independent"}},"config":{}});
 </script>
 <h2 id="custom-sized-subplot"><a class="header" href="#custom-sized-subplot">Custom Sized Subplot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn custom_sized_subplot(show: bool) {
+</span>fn custom_sized_subplot(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -247,32 +215,21 @@ var layout = {"grid":{"rows":1,"columns":2,"pattern":"independent"}};
         .y_axis2(Axis::new().anchor("x2"))
         .x_axis2(Axis::new().domain(&amp;[0.8, 1.]));
     plot.set_layout(layout);
-        if show {
+
+    if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("custom_sized_subplot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="custom_sized_subplot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("custom_sized_subplot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2,3],"y":[4,5,6],"name":"trace1"};
-var trace_1 = {"type":"scatter","x":[20,30,40],"y":[50,60,70],"name":"trace2","xaxis":"x2","yaxis":"y2"};
-var data = [trace_0,trace_1];
-var layout = {"xaxis":{"domain":[0.0,0.7]},"xaxis2":{"domain":[0.8,1.0]},"yaxis2":{"anchor":"x2"}};
-        Plotly.newPlot('custom_sized_subplot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("custom_sized_subplot", {"data":[{"type":"scatter","name":"trace1","x":[1,2,3],"y":[4,5,6]},{"type":"scatter","name":"trace2","x":[20,30,40],"y":[50,60,70],"xaxis":"x2","yaxis":"y2"}],"layout":{"xaxis":{"domain":[0.0,0.7]},"xaxis2":{"domain":[0.8,1.0]},"yaxis2":{"anchor":"x2"}},"config":{}});
 </script>
 <h2 id="multiple-subplots"><a class="header" href="#multiple-subplots">Multiple Subplots</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn multiple_subplots(show: bool) {
+</span>fn multiple_subplots(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -298,34 +255,21 @@ var layout = {"xaxis":{"domain":[0.0,0.7]},"xaxis2":{"domain":[0.8,1.0]},"yaxis2
             .pattern(GridPattern::Independent),
     );
     plot.set_layout(layout);
-        if show {
+
+    if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("multiple_subplots"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="multiple_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("multiple_subplots")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2,3],"y":[4,5,6],"name":"trace1"};
-var trace_1 = {"type":"scatter","x":[20,30,40],"y":[50,60,70],"name":"trace2","xaxis":"x2","yaxis":"y2"};
-var trace_2 = {"type":"scatter","x":[300,400,500],"y":[600,700,800],"xaxis":"x3","yaxis":"y3"};
-var trace_3 = {"type":"scatter","x":[4000,5000,6000],"y":[7000,8000,9000],"xaxis":"x4","yaxis":"y4"};
-var data = [trace_0,trace_1,trace_2,trace_3];
-var layout = {"grid":{"rows":2,"columns":2,"pattern":"independent"}};
-        Plotly.newPlot('multiple_subplots', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("multiple_subplots", {"data":[{"type":"scatter","name":"trace1","x":[1,2,3],"y":[4,5,6]},{"type":"scatter","name":"trace2","x":[20,30,40],"y":[50,60,70],"xaxis":"x2","yaxis":"y2"},{"type":"scatter","x":[300,400,500],"y":[600,700,800],"xaxis":"x3","yaxis":"y3"},{"type":"scatter","x":[4000,5000,6000],"y":[7000,8000,9000],"xaxis":"x4","yaxis":"y4"}],"layout":{"grid":{"rows":2,"columns":2,"pattern":"independent"}},"config":{}});
 </script>
 <h2 id="stacked-subplots"><a class="header" href="#stacked-subplots">Stacked Subplots</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn stacked_subplots(show: bool) {
+</span>fn stacked_subplots(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -348,33 +292,21 @@ var layout = {"grid":{"rows":2,"columns":2,"pattern":"independent"}};
             .row_order(RowOrder::BottomToTop),
     );
     plot.set_layout(layout);
-        if show {
+
+    if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("stacked_subplots"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="stacked_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("stacked_subplots")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[0,1,2],"y":[10,11,12],"name":"trace1"};
-var trace_1 = {"type":"scatter","x":[2,3,4],"y":[100,110,120],"name":"trace2","xaxis":"x2","yaxis":"y2"};
-var trace_2 = {"type":"scatter","x":[3,4,5],"y":[1000,1100,1200],"xaxis":"x3","yaxis":"y3"};
-var data = [trace_0,trace_1,trace_2];
-var layout = {"grid":{"rows":3,"roworder":"bottom to top","columns":1,"pattern":"independent"}};
-        Plotly.newPlot('stacked_subplots', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("stacked_subplots", {"data":[{"type":"scatter","name":"trace1","x":[0,1,2],"y":[10,11,12]},{"type":"scatter","name":"trace2","x":[2,3,4],"y":[100,110,120],"xaxis":"x2","yaxis":"y2"},{"type":"scatter","x":[3,4,5],"y":[1000,1100,1200],"xaxis":"x3","yaxis":"y3"}],"layout":{"grid":{"rows":3,"roworder":"bottom to top","columns":1,"pattern":"independent"}},"config":{}});
 </script>
 <h2 id="stacked-subplots-with-shared-x-axis"><a class="header" href="#stacked-subplots-with-shared-x-axis">Stacked Subplots with Shared X Axis</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn stacked_subplots_with_shared_x_axis(show: bool) {
+</span>fn stacked_subplots_with_shared_x_axis(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -388,37 +320,25 @@ var layout = {"grid":{"rows":3,"roworder":"bottom to top","columns":1,"pattern":
 
     let layout = Layout::new()
         .y_axis(Axis::new().domain(&amp;[0., 0.33]))
-        .legend(Legend::new().trace_order("reversed"))
+        .legend(Legend::new().trace_order(TraceOrder::Reversed))
         .y_axis2(Axis::new().domain(&amp;[0.33, 0.66]))
         .y_axis3(Axis::new().domain(&amp;[0.66, 1.]));
     plot.set_layout(layout);
-        if show {
+
+    if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("stacked_subplots_with_shared_x_axis"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="stacked_subplots_with_shared_x_axis" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("stacked_subplots_with_shared_x_axis")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[0,1,2],"y":[10,11,12],"name":"trace1"};
-var trace_1 = {"type":"scatter","x":[2,3,4],"y":[100,110,120],"name":"trace2","yaxis":"y2"};
-var trace_2 = {"type":"scatter","x":[3,4,5],"y":[1000,1100,1200],"yaxis":"y3"};
-var data = [trace_0,trace_1,trace_2];
-var layout = {"legend":{"traceorder":"reversed"},"yaxis":{"domain":[0.0,0.33]},"yaxis2":{"domain":[0.33,0.66]},"yaxis3":{"domain":[0.66,1.0]}};
-        Plotly.newPlot('stacked_subplots_with_shared_x_axis', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("stacked_subplots_with_shared_x_axis", {"data":[{"type":"scatter","name":"trace1","x":[0,1,2],"y":[10,11,12]},{"type":"scatter","name":"trace2","x":[2,3,4],"y":[100,110,120],"yaxis":"y2"},{"type":"scatter","x":[3,4,5],"y":[1000,1100,1200],"yaxis":"y3"}],"layout":{"legend":{"traceorder":"reversed"},"yaxis":{"domain":[0.0,0.33]},"yaxis2":{"domain":[0.33,0.66]},"yaxis3":{"domain":[0.66,1.0]}},"config":{}});
 </script>
 <h2 id="multiple-custom-sized-subplots"><a class="header" href="#multiple-custom-sized-subplots">Multiple Custom Sized Subplots</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn multiple_custom_sized_subplots(show: bool) {
+</span>fn multiple_custom_sized_subplots(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2], vec![1, 2]).name("(1,1)");
     let trace2 = Scatter::new(vec![1, 2], vec![1, 2])
         .name("(1,2,1)")
@@ -440,7 +360,7 @@ var layout = {"legend":{"traceorder":"reversed"},"yaxis":{"domain":[0.0,0.33]},"
     plot.add_trace(trace4);
 
     let layout = Layout::new()
-        .title(Title::with_text("Multiple Custom Sized Subplots"))
+        .title("Multiple Custom Sized Subplots")
         .x_axis(Axis::new().domain(&amp;[0., 0.45]).anchor("y1"))
         .y_axis(Axis::new().domain(&amp;[0.5, 1.]).anchor("x1"))
         .x_axis2(Axis::new().domain(&amp;[0.55, 1.]).anchor("y2"))
@@ -450,29 +370,16 @@ var layout = {"legend":{"traceorder":"reversed"},"yaxis":{"domain":[0.0,0.33]},"
         .x_axis4(Axis::new().domain(&amp;[0., 1.]).anchor("y4"))
         .y_axis4(Axis::new().domain(&amp;[0., 0.45]).anchor("x4"));
     plot.set_layout(layout);
-        if show {
+
+    if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("multiple_custom_sized_subplots"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="multiple_custom_sized_subplots" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("multiple_custom_sized_subplots")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"(1,1)"};
-var trace_1 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"(1,2,1)","xaxis":"x2","yaxis":"y2"};
-var trace_2 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"(1,2,2)","xaxis":"x3","yaxis":"y3"};
-var trace_3 = {"type":"scatter","x":[1,2],"y":[1,2],"name":"{(2,1), (2,2)}","xaxis":"x4","yaxis":"y4"};
-var data = [trace_0,trace_1,trace_2,trace_3];
-var layout = {"title":{"text":"Multiple Custom Sized Subplots"},"xaxis":{"anchor":"y1","domain":[0.0,0.45]},"yaxis":{"anchor":"x1","domain":[0.5,1.0]},"xaxis2":{"anchor":"y2","domain":[0.55,1.0]},"yaxis2":{"anchor":"x2","domain":[0.8,1.0]},"xaxis3":{"anchor":"y3","domain":[0.55,1.0]},"yaxis3":{"anchor":"x3","domain":[0.5,0.75]},"xaxis4":{"anchor":"y4","domain":[0.0,1.0]},"yaxis4":{"anchor":"x4","domain":[0.0,0.45]}};
-        Plotly.newPlot('multiple_custom_sized_subplots', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("multiple_custom_sized_subplots", {"data":[{"type":"scatter","name":"(1,1)","x":[1,2],"y":[1,2]},{"type":"scatter","name":"(1,2,1)","x":[1,2],"y":[1,2],"xaxis":"x2","yaxis":"y2"},{"type":"scatter","name":"(1,2,2)","x":[1,2],"y":[1,2],"xaxis":"x3","yaxis":"y3"},{"type":"scatter","name":"{(2,1), (2,2)}","x":[1,2],"y":[1,2],"xaxis":"x4","yaxis":"y4"}],"layout":{"title":{"text":"Multiple Custom Sized Subplots"},"xaxis":{"anchor":"y1","domain":[0.0,0.45]},"yaxis":{"anchor":"x1","domain":[0.5,1.0]},"xaxis2":{"anchor":"y2","domain":[0.55,1.0]},"yaxis2":{"anchor":"x2","domain":[0.8,1.0]},"xaxis3":{"anchor":"y3","domain":[0.55,1.0]},"yaxis3":{"anchor":"x3","domain":[0.5,0.75]},"xaxis4":{"anchor":"y4","domain":[0.0,1.0]},"yaxis4":{"anchor":"x4","domain":[0.0,0.45]}},"config":{}});
 </script>
                     </main>
 

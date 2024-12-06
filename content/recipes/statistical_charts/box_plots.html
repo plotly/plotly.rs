@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu" dir="ltr">
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 
 
         <!-- Custom HTML head -->
-        
+
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
@@ -33,15 +33,17 @@
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    </head>
-    <body class="sidebar-visible no-js">
-    <div id="body-container">
+
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -63,19 +65,16 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
+            const html = document.documentElement;
             html.classList.remove('ayu')
             html.classList.add(theme);
-            var body = document.querySelector('body');
-            body.classList.remove('no-js')
-            body.classList.add('js');
+            html.classList.add("js");
         </script>
 
         <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var body = document.querySelector('body');
             var sidebar = null;
             var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
@@ -85,40 +84,20 @@
                 sidebar = 'hidden';
             }
             sidebar_toggle.checked = sidebar === 'visible';
-            body.classList.remove('sidebar-visible');
-            body.classList.add("sidebar-" + sidebar);
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/statistical_charts/error_bars.html"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/box_plots.html" class="active"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
-            </div>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
-
-        <!-- Track and set sidebar scroll position -->
-        <script>
-            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
-            sidebarScrollbox.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
-                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
-                }
-            }, { passive: true });
-            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
-            sessionStorage.removeItem('sidebar-scroll');
-            if (sidebarScrollTop) {
-                // preserve sidebar scroll position when navigating via links within sidebar
-                sidebarScrollbox.scrollTop = sidebarScrollTop;
-            } else {
-                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
-                var activeSection = document.querySelector('#sidebar .active');
-                if (activeSection) {
-                    activeSection.scrollIntoView({ block: 'center' });
-                }
-            }
-        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
@@ -178,9 +157,9 @@
                     <main>
                         <h1 id="box-plots"><a class="header" href="#box-plots">Box Plots</a></h1>
 <p>The following imports have been used to produce the plots below:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use itertools_num::linspace;
+</span>use ndarray::Array;
 use plotly::box_plot::{BoxMean, BoxPoints};
 use plotly::common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation, Title};
 use plotly::histogram::{Bins, Cumulative, HistFunc, HistNorm};
@@ -191,9 +170,9 @@ use rand_distr::{Distribution, Normal, Uniform};
 <span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
 <h2 id="basic-box-plot"><a class="header" href="#basic-box-plot">Basic Box Plot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn basic_box_plot(show: bool) {
+</span>fn basic_box_plot(show: bool) -&gt; Plot {
     let mut rng = rand::thread_rng();
     let uniform1 = Uniform::new(0.0, 1.0);
     let uniform2 = Uniform::new(1.0, 2.0);
@@ -212,96 +191,70 @@ use rand_distr::{Distribution, Normal, Uniform};
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("basic_box_plot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="basic_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("basic_box_plot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","y":[0.7441478716488275,0.29492977275975996,0.4661219145945985,0.7467745837130171,0.048981397036707675,0.6968833236522831,0.23603851583841862,0.8828492816581941,0.4275715709419532,0.826398133787096,0.3282497245688467,0.7801777043226172,0.6012063459926584,0.37920517970996026,0.5913412321671672,0.7821716575348987,0.759110819157113,0.2015123763655462,0.7070085984103462,0.1375916565735884,0.6874603871391909,0.23218384956472393,0.08335409861042553,0.17192708006127888,0.5421042498135138,0.20775053729576443,0.49439971622834955,0.9697569611658263,0.5286742361845109,0.726262119876002,0.7134314227947989,0.6391494487540905,0.7073177289633803,0.3134388763369511,0.6708494351284855,0.274662838247671,0.33846880142456026,0.12110210121537857,0.23523299409558973,0.28136662907779675,0.42770230415161414,0.8899546895988206,0.060835962260958665,0.6735681177445643,0.018346315116238188,0.7524678344212699,0.27045398306301016,0.6171004283217398,0.26744182757421164,0.8678205229567235]};
-var trace_1 = {"type":"box","y":[1.2721670212396667,1.1217517528058318,1.563229138987817,1.4699019059642213,1.3321623879720104,1.6825329904541326,1.2916982407639115,1.9965787515227265,1.1988073582763934,1.4878224754852114,1.1499841877655193,1.649420370804405,1.02650078649653,1.9900391713960166,1.1587963507021748,1.5931058656417048,1.3654127337027322,1.239395884164585,1.5781517576154735,1.8572881872572888,1.6395022739221277,1.2971957357393413,1.2429560408264473,1.5360205747905589,1.1635259416565347,1.4948990774938895,1.9391927298762046,1.0941812150629873,1.3999065267223414,1.8937317581189475,1.8026796767118602,1.3255622293347185,1.9188658460283456,1.406736275250495,1.225078499818978,1.552271752783139,1.0717862560536247,1.76737618176689,1.3300762834432949,1.485315034289464,1.698660403613416,1.8643748321993958,1.7330375575684676,1.5710003984966103,1.9531516449008532,1.8313600538379835,1.8966381805201866,1.0026964137630205,1.1896402604230165,1.3004257228484553]};
-var data = [trace_0,trace_1];
-var layout = {};
-        Plotly.newPlot('basic_box_plot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("basic_box_plot", {"data":[{"type":"box","y":[0.269920215538894,0.8446864760358104,0.15128861378252778,0.0555097247015881,0.022392695928918682,0.5596725286972191,0.6207591867434084,0.9628528285249958,0.3524397939191075,0.8371627657783545,0.3474265987529974,0.7808358179927577,0.19240928847904248,0.16897640387559054,0.06334920518441045,0.395523039035818,0.056008982982399313,0.6025698403170019,0.6182042054719861,0.9370569293366793,0.8424515315046,0.1219818839980471,0.6933514032162242,0.6787005886353301,0.9251570255059385,0.8756961856111973,0.20373332803030664,0.5500748440278529,0.7211576270180831,0.5567954932007351,0.13528019344380193,0.8868220719519087,0.8268681046214696,0.21931168211686125,0.32953626080667053,0.07913650007513517,0.3663614725554434,0.43965811828892054,0.5948051078440448,0.4230413662078536,0.6658115222037637,0.33758856723599107,0.11403746136175141,0.8721529313086562,0.7147773841350529,0.4134593199403378,0.390043236582019,0.5066055133965539,0.5973716246941618,0.9451792358062661]},{"type":"box","y":[1.8069005778580096,1.1277609858738007,1.4241982929070602,1.3459647963117334,1.9177582175095995,1.4761329891651405,1.9582824840686457,1.3949490376710894,1.1608054152172576,1.090039698459462,1.1819001634183395,1.326818863495433,1.250204873761737,1.5470296236733703,1.6458083937259866,1.1149087774229278,1.8781778798847755,1.7553558779921035,1.0696931510172372,1.4888112914871718,1.7437439215643813,1.1601756645904002,1.8791603997218311,1.7756470776792306,1.3993588708036189,1.470745761527212,1.1219727419912242,1.6049113201254297,1.3561429046868372,1.2645359302556842,1.1806568475768293,1.5807363113113466,1.1223128000356497,1.7027332277593388,1.6341558763598032,1.1013435239927298,1.3696188771356583,1.5491202763176284,1.5447001851855882,1.1876361118936427,1.2188218000048372,1.459628972221721,1.7902987227085163,1.853235214461831,1.5025291427434273,1.0930536823519983,1.8270451112474742,1.0655120873418615,1.905149805984409,1.9840215484853214]}],"layout":{},"config":{}});
 </script>
 <h2 id="box-plot-that-displays-the-underlying-data"><a class="header" href="#box-plot-that-displays-the-underlying-data">Box Plot that Displays the Underlying Data</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn box_plot_that_displays_the_underlying_data(show: bool) {
+</span>fn box_plot_that_displays_the_underlying_data(show: bool) -&gt; Plot {
     let trace1 = BoxPlot::new(vec![0, 1, 1, 2, 3, 5, 8, 13, 21])
         .box_points(BoxPoints::All)
         .jitter(0.3)
         .point_pos(-1.8);
     let mut plot = Plot::new();
     plot.add_trace(trace1);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("box_plot_that_displays_the_underlying_data"))
-    );
+    plot
 }
-
 <span class="boring">}</span></code></pre></pre>
 <div id="box_plot_that_displays_the_underlying_data" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("box_plot_that_displays_the_underlying_data")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","y":[0,1,1,2,3,5,8,13,21],"boxpoints":"all","pointpos":-1.8,"jitter":0.3};
-var data = [trace_0];
-var layout = {};
-        Plotly.newPlot('box_plot_that_displays_the_underlying_data', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("box_plot_that_displays_the_underlying_data", {"data":[{"type":"box","y":[0,1,1,2,3,5,8,13,21],"boxpoints":"all","pointpos":-1.8,"jitter":0.3}],"layout":{},"config":{}});
 </script>
 <h2 id="horizontal-box-plot"><a class="header" href="#horizontal-box-plot">Horizontal Box Plot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn horizontal_box_plot(show: bool) {
-    let trace1 = BoxPlot::new(vec![1, 2, 3, 4, 4, 4, 8, 9, 10]).name("Set 1");
-    let trace2 = BoxPlot::new(vec![2, 3, 3, 3, 3, 5, 6, 6, 7]).name("Set 2");
+</span>fn horizontal_box_plot(show: bool) -&gt; Plot {
+    let x = vec![
+        "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 2",
+        "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2",
+    ];
+
+    let trace = BoxPlot::new_xy(
+        vec![1, 2, 3, 4, 4, 4, 8, 9, 10, 2, 3, 3, 3, 3, 5, 6, 6, 7],
+        x.clone(),
+    )
+    .orientation(Orientation::Horizontal);
 
     let mut plot = Plot::new();
-    plot.add_trace(trace1);
-    plot.add_trace(trace2);
+    plot.add_trace(trace);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("horizontal_box_plot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="horizontal_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("horizontal_box_plot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","y":[1,2,3,4,4,4,8,9,10],"name":"Set 1"};
-var trace_1 = {"type":"box","y":[2,3,3,3,3,5,6,6,7],"name":"Set 2"};
-var data = [trace_0,trace_1];
-var layout = {};
-        Plotly.newPlot('horizontal_box_plot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("horizontal_box_plot", {"data":[{"type":"box","x":[1,2,3,4,4,4,8,9,10,2,3,3,3,3,5,6,6,7],"y":["Set 1","Set 1","Set 1","Set 1","Set 1","Set 1","Set 1","Set 1","Set 1","Set 2","Set 2","Set 2","Set 2","Set 2","Set 2","Set 2","Set 2","Set 2"],"orientation":"h"}],"layout":{},"config":{}});
 </script>
 <h2 id="grouped-box-plot"><a class="header" href="#grouped-box-plot">Grouped Box Plot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn grouped_box_plot(show: bool) {
+</span>fn grouped_box_plot(show: bool) -&gt; Plot {
     let x = vec![
         "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
         "day 2", "day 2",
@@ -326,41 +279,25 @@ var layout = {};
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .y_axis(
-            Axis::new()
-                .title(Title::with_text("normalized moisture"))
-                .zero_line(false),
-        )
+        .y_axis(Axis::new().title("normalized moisture").zero_line(false))
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("grouped_box_plot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="grouped_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("grouped_box_plot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","x":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"y":[0.2,0.2,0.6,1.0,0.5,0.4,0.2,0.7,0.9,0.1,0.5,0.3]};
-var trace_1 = {"type":"box","x":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"y":[0.6,0.7,0.3,0.6,0.0,0.5,0.7,0.9,0.5,0.8,0.7,0.2]};
-var trace_2 = {"type":"box","x":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"y":[0.1,0.3,0.1,0.9,0.6,0.6,0.9,1.0,0.3,0.6,0.8,0.5]};
-var data = [trace_0,trace_1,trace_2];
-var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},"boxmode":"group"};
-        Plotly.newPlot('grouped_box_plot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("grouped_box_plot", {"data":[{"type":"box","x":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"y":[0.2,0.2,0.6,1.0,0.5,0.4,0.2,0.7,0.9,0.1,0.5,0.3]},{"type":"box","x":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"y":[0.6,0.7,0.3,0.6,0.0,0.5,0.7,0.9,0.5,0.8,0.7,0.2]},{"type":"box","x":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"y":[0.1,0.3,0.1,0.9,0.6,0.6,0.9,1.0,0.3,0.6,0.8,0.5]}],"layout":{"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},"boxmode":"group"},"config":{}});
 </script>
 <h2 id="box-plot-styling-outliers"><a class="header" href="#box-plot-styling-outliers">Box Plot Styling Outliers</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn box_plot_styling_outliers(show: bool) {
+</span>fn box_plot_styling_outliers(show: bool) -&gt; Plot {
     let y = vec![
         0.75, 5.25, 5.5, 6.0, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93,
         9.2, 9.5, 10.0, 10.25, 11.5, 12.0, 16.0, 20.90, 22.3, 23.25,
@@ -388,12 +325,12 @@ var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},
                 ),
         )
         .box_points(BoxPoints::SuspectedOutliers);
-    let trace4 = BoxPlot::new(y.clone())
+    let trace4 = BoxPlot::new(y)
         .name("Whiskers and Outliers")
         .marker(Marker::new().color(Rgb::new(107, 174, 214)))
         .box_points(BoxPoints::Outliers);
 
-    let layout = Layout::new().title(Title::with_text("Box Plot Styling Outliers"));
+    let layout = Layout::new().title("Box Plot Styling Outliers");
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
@@ -401,34 +338,21 @@ var layout = {"yaxis":{"title":{"text":"normalized moisture"},"zeroline":false},
     plot.add_trace(trace2);
     plot.add_trace(trace3);
     plot.add_trace(trace4);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("box_plot_styling_outliers"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="box_plot_styling_outliers" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("box_plot_styling_outliers")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"All Points","marker":{"color":"rgb(7, 40, 89)"},"boxpoints":"all","pointpos":-1.8,"jitter":0.3};
-var trace_1 = {"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"Only Whiskers","marker":{"color":"rgb(9, 56, 125)"},"boxpoints":false};
-var trace_2 = {"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"Suspected Outlier","marker":{"line":{"outliercolor":"rgba(219, 64, 82, 1)","outlierwidth":2},"color":"rgb(8, 81, 156)","outliercolor":"rgba(219, 64, 82, 0.6)"},"boxpoints":"suspectedoutliers"};
-var trace_3 = {"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"Whiskers and Outliers","marker":{"color":"rgb(107, 174, 214)"},"boxpoints":"outliers"};
-var data = [trace_0,trace_1,trace_2,trace_3];
-var layout = {"title":{"text":"Box Plot Styling Outliers"}};
-        Plotly.newPlot('box_plot_styling_outliers', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("box_plot_styling_outliers", {"data":[{"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"All Points","marker":{"color":"rgb(7, 40, 89)"},"boxpoints":"all","pointpos":-1.8,"jitter":0.3},{"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"Only Whiskers","marker":{"color":"rgb(9, 56, 125)"},"boxpoints":false},{"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"Suspected Outlier","marker":{"line":{"outliercolor":"rgba(219, 64, 82, 1)","outlierwidth":2},"color":"rgb(8, 81, 156)","outliercolor":"rgba(219, 64, 82, 0.6)"},"boxpoints":"suspectedoutliers"},{"type":"box","y":[0.75,5.25,5.5,6.0,6.2,6.6,6.8,7.0,7.2,7.5,7.5,7.75,8.15,8.15,8.65,8.93,9.2,9.5,10.0,10.25,11.5,12.0,16.0,20.9,22.3,23.25],"name":"Whiskers and Outliers","marker":{"color":"rgb(107, 174, 214)"},"boxpoints":"outliers"}],"layout":{"title":{"text":"Box Plot Styling Outliers"}},"config":{}});
 </script>
 <h2 id="box-plot-styling-mean-and-standard-deviation"><a class="header" href="#box-plot-styling-mean-and-standard-deviation">Box Plot Styling Mean and Standard Deviation</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn box_plot_styling_mean_and_standard_deviation(show: bool) {
+</span>fn box_plot_styling_mean_and_standard_deviation(show: bool) -&gt; Plot {
     let y = vec![
         2.37, 2.16, 4.82, 1.73, 1.04, 0.23, 1.32, 2.91, 0.11, 4.51, 0.51, 3.75, 1.35, 2.98, 4.50,
         0.18, 4.66, 1.30, 2.06, 1.19,
@@ -438,42 +362,31 @@ var layout = {"title":{"text":"Box Plot Styling Outliers"}};
         .name("Only Mean")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::True);
-    let trace2 = BoxPlot::new(y.clone())
+    let trace2 = BoxPlot::new(y)
         .name("Mean and Standard Deviation")
         .marker(Marker::new().color(Rgb::new(8, 81, 156)))
         .box_mean(BoxMean::StandardDeviation);
-    let layout = Layout::new().title(Title::with_text("Box Plot Styling Mean and Standard Deviation"));
+    let layout = Layout::new().title("Box Plot Styling Mean and Standard Deviation");
 
     let mut plot = Plot::new();
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("box_plot_styling_mean_and_standard_deviation"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="box_plot_styling_mean_and_standard_deviation" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("box_plot_styling_mean_and_standard_deviation")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","y":[2.37,2.16,4.82,1.73,1.04,0.23,1.32,2.91,0.11,4.51,0.51,3.75,1.35,2.98,4.5,0.18,4.66,1.3,2.06,1.19],"name":"Only Mean","marker":{"color":"rgb(8, 81, 156)"},"boxmean":true};
-var trace_1 = {"type":"box","y":[2.37,2.16,4.82,1.73,1.04,0.23,1.32,2.91,0.11,4.51,0.51,3.75,1.35,2.98,4.5,0.18,4.66,1.3,2.06,1.19],"name":"Mean and Standard Deviation","marker":{"color":"rgb(8, 81, 156)"},"boxmean":"sd"};
-var data = [trace_0,trace_1];
-var layout = {"title":{"text":"Box Plot Styling Mean and Standard Deviation"}};
-        Plotly.newPlot('box_plot_styling_mean_and_standard_deviation', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("box_plot_styling_mean_and_standard_deviation", {"data":[{"type":"box","y":[2.37,2.16,4.82,1.73,1.04,0.23,1.32,2.91,0.11,4.51,0.51,3.75,1.35,2.98,4.5,0.18,4.66,1.3,2.06,1.19],"name":"Only Mean","marker":{"color":"rgb(8, 81, 156)"},"boxmean":true},{"type":"box","y":[2.37,2.16,4.82,1.73,1.04,0.23,1.32,2.91,0.11,4.51,0.51,3.75,1.35,2.98,4.5,0.18,4.66,1.3,2.06,1.19],"name":"Mean and Standard Deviation","marker":{"color":"rgb(8, 81, 156)"},"boxmean":"sd"}],"layout":{"title":{"text":"Box Plot Styling Mean and Standard Deviation"}},"config":{}});
 </script>
 <h2 id="grouped-horizontal-box-plot"><a class="header" href="#grouped-horizontal-box-plot">Grouped Horizontal Box Plot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn grouped_horizontal_box_plot(show: bool) {
+</span>fn grouped_horizontal_box_plot(show: bool) -&gt; Plot {
     let x = vec![
         "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
         "day 2", "day 2",
@@ -483,26 +396,26 @@ var layout = {"title":{"text":"Box Plot Styling Mean and Standard Deviation"}};
         vec![0.2, 0.2, 0.6, 1.0, 0.5, 0.4, 0.2, 0.7, 0.9, 0.1, 0.5, 0.3],
         x.clone(),
     )
-        .name("Kale")
-        .marker(Marker::new().color("3D9970"))
-        .box_mean(BoxMean::False)
-        .orientation(Orientation::Horizontal);
+    .name("Kale")
+    .marker(Marker::new().color("3D9970"))
+    .box_mean(BoxMean::False)
+    .orientation(Orientation::Horizontal);
     let trace2 = BoxPlot::new_xy(
         vec![0.6, 0.7, 0.3, 0.6, 0.0, 0.5, 0.7, 0.9, 0.5, 0.8, 0.7, 0.2],
         x.clone(),
     )
-        .name("Radishes")
-        .marker(Marker::new().color("FF4136"))
-        .box_mean(BoxMean::False)
-        .orientation(Orientation::Horizontal);
+    .name("Radishes")
+    .marker(Marker::new().color("FF4136"))
+    .box_mean(BoxMean::False)
+    .orientation(Orientation::Horizontal);
     let trace3 = BoxPlot::new_xy(
         vec![0.1, 0.3, 0.1, 0.9, 0.6, 0.6, 0.9, 1.0, 0.3, 0.6, 0.8, 0.5],
         x.clone(),
     )
-        .name("Carrots")
-        .marker(Marker::new().color("FF851B"))
-        .box_mean(BoxMean::False)
-        .orientation(Orientation::Horizontal);
+    .name("Carrots")
+    .marker(Marker::new().color("FF851B"))
+    .box_mean(BoxMean::False)
+    .orientation(Orientation::Horizontal);
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
@@ -510,42 +423,26 @@ var layout = {"title":{"text":"Box Plot Styling Mean and Standard Deviation"}};
     plot.add_trace(trace3);
 
     let layout = Layout::new()
-        .title(Title::with_text("Grouped Horizontal Box Plot"))
-        .x_axis(
-            Axis::new()
-                .title(Title::with_text("normalized moisture"))
-                .zero_line(false),
-        )
+        .title("Grouped Horizontal Box Plot")
+        .x_axis(Axis::new().title("normalized moisture").zero_line(false))
         .box_mode(BoxMode::Group);
 
     plot.set_layout(layout);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("grouped_horizontal_box_plot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="grouped_horizontal_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("grouped_horizontal_box_plot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","x":[0.2,0.2,0.6,1.0,0.5,0.4,0.2,0.7,0.9,0.1,0.5,0.3],"y":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"name":"Kale","orientation":"h","marker":{"color":"#3D9970"},"boxmean":false};
-var trace_1 = {"type":"box","x":[0.6,0.7,0.3,0.6,0.0,0.5,0.7,0.9,0.5,0.8,0.7,0.2],"y":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"name":"Radishes","orientation":"h","marker":{"color":"#FF4136"},"boxmean":false};
-var trace_2 = {"type":"box","x":[0.1,0.3,0.1,0.9,0.6,0.6,0.9,1.0,0.3,0.6,0.8,0.5],"y":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"name":"Carrots","orientation":"h","marker":{"color":"#FF851B"},"boxmean":false};
-var data = [trace_0,trace_1,trace_2];
-var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"text":"normalized moisture"},"zeroline":false},"boxmode":"group"};
-        Plotly.newPlot('grouped_horizontal_box_plot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("grouped_horizontal_box_plot", {"data":[{"type":"box","x":[0.2,0.2,0.6,1.0,0.5,0.4,0.2,0.7,0.9,0.1,0.5,0.3],"y":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"name":"Kale","orientation":"h","marker":{"color":"3D9970"},"boxmean":false},{"type":"box","x":[0.6,0.7,0.3,0.6,0.0,0.5,0.7,0.9,0.5,0.8,0.7,0.2],"y":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"name":"Radishes","orientation":"h","marker":{"color":"FF4136"},"boxmean":false},{"type":"box","x":[0.1,0.3,0.1,0.9,0.6,0.6,0.9,1.0,0.3,0.6,0.8,0.5],"y":["day 1","day 1","day 1","day 1","day 1","day 1","day 2","day 2","day 2","day 2","day 2","day 2"],"name":"Carrots","orientation":"h","marker":{"color":"FF851B"},"boxmean":false}],"layout":{"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"text":"normalized moisture"},"zeroline":false},"boxmode":"group"},"config":{}});
 </script>
 <h2 id="fully-styled-box-plot"><a class="header" href="#fully-styled-box-plot">Fully Styled Box Plot</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn fully_styled_box_plot(show: bool) {
+</span>fn fully_styled_box_plot(show: bool) -&gt; Plot {
     let rnd_sample = |num, mul| -&gt; Vec&lt;f64&gt; {
         let mut v: Vec&lt;f64&gt; = Vec::with_capacity(num);
         let mut rng = rand::thread_rng();
@@ -556,7 +453,7 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
         v
     };
 
-    let x_data = vec![
+    let x_data = [
         "Carmelo&lt;br&gt;Anthony",
         "Dwyane&lt;br&gt;Wade",
         "Deron&lt;br&gt;Williams",
@@ -581,9 +478,7 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
 
     let mut plot = Plot::new();
     let layout = Layout::new()
-        .title(Title::new(
-            "Points Scored by the Top 9 Scoring NBA Players in 2012",
-        ))
+        .title("Points Scored by the Top 9 Scoring NBA Players in 2012")
         .y_axis(
             Axis::new()
                 .auto_range(true)
@@ -611,34 +506,16 @@ var layout = {"title":{"text":"Grouped Horizontal Box Plot"},"xaxis":{"title":{"
             .line(Line::new().width(2.0));
         plot.add_trace(trace);
     }
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("fully_styled_box_plot"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="fully_styled_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("fully_styled_box_plot")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"box","y":[0.5935143400706155,4.615688052510336,4.610643779218757,4.326899697465021,5.791996440211489,5.7645813136221875,2.379309740455764,2.518892512042681,2.7170005554314858,6.749332668713226,9.887516912471852,7.265331505568813,9.276241954999879,2.7409115033588693,5.4827893935124905,6.730487208664757,7.315803838748041,6.635262284036139,8.510029791117919,1.5131595018808075,6.683931408320141,1.8627737223780794,8.581922639916007,6.103546367495152,8.037601252932179,3.2139064642272586,2.5283094581643595,7.334108118788832,4.154436990397037,0.7090342192515364],"name":"Carmelo<br>Anthony","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_1 = {"type":"box","y":[1.7682156360154444,1.3481642756056234,11.067450601796715,0.8390212895136706,17.81007577342902,8.867275131701655,5.1861707620898745,4.982030799963413,2.502066335634816,1.86704008685044,5.393878256082161,10.289689041577521,16.012961733409718,12.214584953641324,3.036630115450083,6.109565928573368,18.7686600511643,19.84627904911396,10.628152565923038,6.707715211777372,9.157214793414052,6.826525769227247,3.777044806485348,11.515508862157503,3.157129123204876,2.077107119369943,4.231345751088442,18.411202963919777,2.2695041615058464,10.194081796063292],"name":"Dwyane<br>Wade","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_2 = {"type":"box","y":[4.600159187088932,7.82640897029741,20.91787951911505,6.680225007889789,12.47920658322133,21.933550300433886,11.736786305701042,3.256540226369059,11.696711080110344,21.059349248641567,14.09919721434642,11.506666393283165,6.984433017814117,17.85761910585255,23.93520607297254,13.192223971374617,2.98774820111003,16.7138566510071,12.221874346581046,0.9756262175858066,3.736839522932478,21.832009943612668,23.858572747668795,15.745337711689944,14.149699255956483,3.32504560866399,3.7312420811217937,14.496257693175368,9.189445140771053,8.772654912876288],"name":"Deron<br>Williams","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_3 = {"type":"box","y":[25.998096585489048,15.126963647451026,36.84773298080245,6.613610374884296,12.819263495259001,18.882035591182813,14.294434159702911,27.81766344021814,29.803513119107876,24.726558362491133,8.590495578955384,8.956193685845477,21.883061258304288,12.618539958214008,35.766071234230246,11.820895107671285,17.195394709457766,32.591054065510775,6.741345112143184,28.792183317125648,4.750484341970367,0.1888076452979348,10.622387293384792,32.978368976316396,3.2845403571739062,13.020157777990597,17.81819131791309,33.9575857029105,8.055749655771463,5.234547997603309],"name":"Brook<br>Lopez","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_4 = {"type":"box","y":[37.86419109236146,28.67334964115528,14.278114019388093,32.856342722164825,3.6029435378641663,31.939963221331823,19.693458207544225,16.05278751279672,18.19005431039753,5.037437986931218,0.5811670501770905,28.260325499053017,24.959108894271694,37.807176168785276,17.47176192688627,34.21310692948772,10.680347278365577,11.45811245639474,44.34341599891414,5.704432902172767,38.02974359581067,20.669503032822483,7.279739943106072,29.667346060826915,39.034962407141734,38.93594749110978,16.50055507842856,29.85448361991831,32.50520500615463,25.96428912413287],"name":"Damian<br>Lillard","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_5 = {"type":"box","y":[23.52473273079021,15.535846175968867,21.642256106918655,9.805534747723442,11.45423945447009,4.1774563174907,24.14173423554371,8.816926269362932,3.6783276346627014,11.063089922453045,23.373177577382535,28.867111552974563,3.2028066984312287,28.245527568457554,4.108087447220711,18.026589110361765,5.087934662612518,26.281930175143614,0.18272104350828045,17.267658564680907,23.877431981335217,19.64111929133174,23.590825519348172,17.836126839933225,12.800313969514729,19.599188047188566,18.67540307168846,12.698178384583798,12.021748150465807,26.309622437764844],"name":"David<br>West","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_6 = {"type":"box","y":[17.363579920499205,6.313488277675843,10.127811573394485,4.458988287189167,5.344504506073746,5.025085846707871,6.203095285646305,18.287621123038065,12.287029935362712,12.358448278602738,2.2465721971568353,19.85977208959998,11.887600940009975,10.142686366102529,7.355801280233245,19.954039799940027,19.275910728719335,4.817997242054242,7.447650727661106,13.610926504320489,17.326994525575007,5.0491511255852695,13.635951845414374,10.673909207599426,4.4483952275310035,8.951918849752797,14.587171690874623,7.375207072527017,7.154812588986905,3.8426066382889124],"name":"Blake<br>Griffin","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_7 = {"type":"box","y":[12.696269138091786,3.1388374058942716,10.43834066900343,14.8750162969579,6.231546713506826,9.91489134208716,2.6314770277459676,1.8638235021202199,4.699377042200194,8.053452093454844,4.955769795427986,8.401639848880546,9.488148689964506,13.207029113369956,12.864568851051652,1.5437076789715765,10.96052789599658,6.7221086364779294,12.698966345959736,13.126920034768624,3.268666726526621,0.8946597857057514,2.461284421179357,6.694685907156051,11.624785830379814,12.275801086142268,1.860063571446492,5.472195387198278,2.1008185732950557,10.408437914744885],"name":"David<br>Lee","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var trace_8 = {"type":"box","y":[12.822358569594897,27.96667919443002,16.341979023526257,42.93093812351294,13.880322446590853,28.79177132403798,12.368060572100305,11.92650713913392,3.811740981234818,5.949472953544888,9.81924157743332,13.375200617305605,29.73176530206266,37.1208104066369,14.320994829379973,11.577271602539271,13.217529663037078,30.37313239470977,10.136308222862933,13.036833886020448,39.88506705548082,14.583860248422493,12.945813959282374,0.5617479276588344,25.048603342464297,28.843812822647955,16.157586660271324,38.981690000677624,21.92294775405139,14.91456000947055],"name":"Demar<br>Derozan","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5};
-var data = [trace_0,trace_1,trace_2,trace_3,trace_4,trace_5,trace_6,trace_7,trace_8];
-var layout = {"title":{"text":"Points Scored by the Top 9 Scoring NBA Players in 2012"},"showlegend":false,"margin":{"l":40,"r":30,"t":100,"b":80},"paper_bgcolor":"rgb(243, 243, 243)","plot_bgcolor":"rgb(243, 243, 243)","yaxis":{"auto_range":true,"dtick":5.0,"showgrid":true,"gridcolor":"rgb(255, 255, 255)","gridwidth":1,"zeroline":true,"zerolinecolor":"rgb(255, 255, 255)","zerolinewidth":2}};
-        Plotly.newPlot('fully_styled_box_plot', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("fully_styled_box_plot", {"data":[{"type":"box","y":[9.497002887436865,7.64851720147419,5.345823873474,4.002693968185844,5.815064230456897,0.06044925045729954,2.159697933644107,0.9851196442626842,8.804844959106262,1.9810170166317653,7.344394815747776,4.2821963886050245,8.694789829100236,1.0389490839284243,5.215977807024892,8.636533184761479,9.726289610217298,3.436375780134675,5.796626748668922,5.305728731073065,4.217044255967677,9.061837974931182,1.680357117820508,1.6488036018352425,4.488983387934278,6.619378664819733,1.9373684707091776,3.590701166386019,4.040045388043669,1.1299627396387302],"name":"Carmelo\u003cbr\u003eAnthony","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[14.93321121076379,16.74765805735526,7.775601505939047,10.071036681034787,16.130546129979983,2.7992480873185865,12.974419884137447,2.026394753635672,9.506606468507218,14.200861598785274,17.36780216392621,6.920222165377767,16.939163886496868,3.844845882372625,13.62934494863933,14.40321392468697,2.6433189200942087,8.350881778756879,11.306054792826345,10.373020938101698,19.32725712149174,19.719609170373854,2.3085781757433965,6.702125574871642,14.885591879816257,16.856390569400066,11.413182251194502,14.181742692848092,4.35672711796482,0.3089181740506053],"name":"Dwyane\u003cbr\u003eWade","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[19.00699657429541,9.53021957632848,12.029371757646029,18.230983312701454,19.267988112157564,23.03242220330297,2.415827159889444,13.101573044494769,16.32558211047129,15.474255593560443,18.925305798043674,19.88052998610969,15.325687806049293,13.93210368328241,9.545496555339255,21.242827559474236,17.942715111628978,0.4655634070083903,22.625806721805553,1.21053914524894,5.266100455591327,1.2954760214062389,11.283522855037308,22.281275300017985,7.480182717854284,22.81919510738594,9.833590818640591,17.700024456607665,5.555359858534631,21.046392500778026],"name":"Deron\u003cbr\u003eWilliams","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[31.578964429669377,25.341380913939197,29.143279592239875,7.883030519499519,36.095574018091064,21.971631831726803,27.320332040449067,13.072474651349859,22.89715188233683,1.3976357737263623,24.876083219490248,34.47379814644174,36.97363821622167,20.38873819820879,36.477103834099545,5.541676545583005,8.340121922764299,14.579049975086793,17.70192716561497,21.975372972367442,38.771314190283306,39.91876707055596,6.480880719021274,28.757653199495515,14.527829034951472,6.877596588429888,30.446868992346545,10.637031307993148,23.21511508966596,22.88347419339636],"name":"Brook\u003cbr\u003eLopez","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[28.972697169296755,10.930822447436427,31.215057731181584,38.92660108717228,20.351146775096687,36.196019169323094,12.857694122883798,38.57128551390028,5.382366730329581,31.77928909535523,31.418901268818857,33.37096332735432,0.9738623771589128,22.019282215202583,13.81855035801349,10.499506860137657,2.8096085714802967,31.078887523424314,40.1254058592407,17.852625259791907,5.003903539435393,24.677231790600306,22.700770009746805,27.207044328104658,3.685046595775648,34.70317680100858,21.064140696735368,37.429909151095046,27.306984224610222,11.895613991856596],"name":"Damian\u003cbr\u003eLillard","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[22.468632154614877,13.063303815916925,15.30259426556573,6.572252223218693,21.20590632395315,14.971904575327486,11.583979076538785,19.380234615394635,8.619976240484036,2.795963067411331,3.8751405529914784,12.371941102134764,21.64190212969166,10.380295007490625,24.52091684808741,3.8776568377351084,3.753379390807716,23.327577583050317,29.805558387742593,0.8542832520304233,3.100412714767393,4.577632330288452,6.419590200481573,20.67104801232962,26.992292366264163,28.785500910332114,14.571826975511044,7.996487671846884,17.32062272220243,10.530372065597078],"name":"David\u003cbr\u003eWest","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[6.219147182334908,0.20612426055496513,6.9934211445009975,0.49457222973172676,14.766711581728096,18.939147753885294,12.373812957279547,14.214325244822877,5.489815194650878,5.368107410251732,12.175087791099198,17.690377462091767,2.33712661302361,9.0332814845158,6.734174342255503,8.682436764926194,19.921414819484728,7.507219852181777,14.257090962357179,17.7150139778577,13.066719301836445,9.17351196438454,18.665323628892597,2.9500087012902476,14.359496567391457,17.952373804942138,15.048616342473068,5.413241235367581,11.658830661153448,11.388884361945601],"name":"Blake\u003cbr\u003eGriffin","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[14.56484554446983,1.3552142397420675,7.6371779575742815,1.5376371815853318,11.965944751714488,12.864196949269308,12.432263403537528,9.151944623484278,5.707931831471756,7.395571122268966,9.855197167478009,0.4482618609672673,3.287720574802427,11.471369935333112,9.146112688956755,11.282627657046094,13.108258756362861,12.239867070222052,12.108278134735714,0.4324522901330419,11.01519687620906,3.993818150591961,0.7918131386998328,13.575275233603643,10.27330503040843,10.194937318713825,13.304476943120262,5.922793092126066,6.079603005174007,5.092111171763374],"name":"David\u003cbr\u003eLee","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[20.219782401693223,24.686974507366855,27.575197395728086,39.711651244768476,22.448256485423023,30.469111695593284,2.3321402819783685,36.806509626620574,42.88432391925219,0.30857885359710147,11.698845136961564,30.56481810877887,29.881172561895816,39.364446318913025,17.842263717515134,18.05304757866294,4.98361722124745,18.162252955667075,37.12405010393964,38.98486841480514,4.803309566412917,18.176556743027614,25.3815152946664,26.628635760516957,41.283032376022994,14.127684344543866,1.3670143042453766,12.712331595898988,7.190725073089427,37.733660707944836],"name":"Demar\u003cbr\u003eDerozan","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5}],"layout":{"title":{"text":"Points Scored by the Top 9 Scoring NBA Players in 2012"},"showlegend":false,"margin":{"l":40,"r":30,"t":100,"b":80},"paper_bgcolor":"rgb(243, 243, 243)","plot_bgcolor":"rgb(243, 243, 243)","yaxis":{"autorange":true,"dtick":5.0,"showgrid":true,"gridcolor":"rgb(255, 255, 255)","gridwidth":1,"zeroline":true,"zerolinecolor":"rgb(255, 255, 255)","zerolinewidth":2}},"config":{}});
 </script>
                     </main>
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu" dir="ltr">
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 
 
         <!-- Custom HTML head -->
-        
+
         <meta name="description" content="Plotly.rs documentation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
@@ -33,15 +33,17 @@
 
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    </head>
-    <body class="sidebar-visible no-js">
-    <div id="body-container">
+
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "../../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -63,19 +65,16 @@
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
+            const html = document.documentElement;
             html.classList.remove('ayu')
             html.classList.add(theme);
-            var body = document.querySelector('body');
-            body.classList.remove('no-js')
-            body.classList.add('js');
+            html.classList.add("js");
         </script>
 
         <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var body = document.querySelector('body');
             var sidebar = null;
             var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
@@ -85,40 +84,20 @@
                 sidebar = 'hidden';
             }
             sidebar_toggle.checked = sidebar === 'visible';
-            body.classList.remove('sidebar-visible');
-            body.classList.add("sidebar-" + sidebar);
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../../plotly_rs.html"><strong aria-hidden="true">1.</strong> Plotly.rs</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../getting_started.html"><strong aria-hidden="true">1.1.</strong> Getting Started</a></li></ol></li><li class="chapter-item expanded "><a href="../../fundamentals.html"><strong aria-hidden="true">2.</strong> Fundamentals</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../fundamentals/jupyter_support.html"><strong aria-hidden="true">2.1.</strong> Jupyter Support</a></li><li class="chapter-item "><a href="../../fundamentals/ndarray_support.html"><strong aria-hidden="true">2.2.</strong> ndarray Support</a></li><li class="chapter-item "><a href="../../fundamentals/shapes.html"><strong aria-hidden="true">2.3.</strong> Shapes</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes.html"><strong aria-hidden="true">3.</strong> Recipes</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts.html"><strong aria-hidden="true">3.1.</strong> Basic Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/basic_charts/scatter_plots.html"><strong aria-hidden="true">3.1.1.</strong> Scatter Plots</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/line_charts.html"><strong aria-hidden="true">3.1.2.</strong> Line Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/bar_charts.html"><strong aria-hidden="true">3.1.3.</strong> Bar Charts</a></li><li class="chapter-item "><a href="../../recipes/basic_charts/sankey_diagrams.html"><strong aria-hidden="true">3.1.4.</strong> Sankey Diagrams</a></li></ol></li><li class="chapter-item expanded "><a href="../../recipes/statistical_charts.html"><strong aria-hidden="true">3.2.</strong> Statistical Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../recipes/statistical_charts/error_bars.html" class="active"><strong aria-hidden="true">3.2.1.</strong> Error Bars</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/box_plots.html"><strong aria-hidden="true">3.2.2.</strong> Box Plots</a></li><li class="chapter-item "><a href="../../recipes/statistical_charts/histograms.html"><strong aria-hidden="true">3.2.3.</strong> Histograms</a></li></ol></li><li class="chapter-item "><a href="../../recipes/scientific_charts.html"><strong aria-hidden="true">3.3.</strong> Scientific Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/scientific_charts/contour_plots.html"><strong aria-hidden="true">3.3.1.</strong> Contour Plots</a></li><li class="chapter-item "><a href="../../recipes/scientific_charts/heatmaps.html"><strong aria-hidden="true">3.3.2.</strong> Heatmaps</a></li></ol></li><li class="chapter-item "><a href="../../recipes/financial_charts.html"><strong aria-hidden="true">3.4.</strong> Financial Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/financial_charts/time_series_and_date_axes.html"><strong aria-hidden="true">3.4.1.</strong> Time Series and Date Axes</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/candlestick_charts.html"><strong aria-hidden="true">3.4.2.</strong> Candlestick Charts</a></li><li class="chapter-item "><a href="../../recipes/financial_charts/ohlc_charts.html"><strong aria-hidden="true">3.4.3.</strong> OHLC Charts</a></li></ol></li><li class="chapter-item "><a href="../../recipes/3dcharts.html"><strong aria-hidden="true">3.5.</strong> 3D Charts</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/3dcharts/3dcharts.html"><strong aria-hidden="true">3.5.1.</strong> Scatter 3D</a></li></ol></li><li class="chapter-item "><a href="../../recipes/subplots.html"><strong aria-hidden="true">3.6.</strong> Subplots</a><a class="toggle"><div>❱</div></a></li><li><ol class="section"><li class="chapter-item "><a href="../../recipes/subplots/subplots.html"><strong aria-hidden="true">3.6.1.</strong> Subplots</a></li><li class="chapter-item "><a href="../../recipes/subplots/multiple_axes.html"><strong aria-hidden="true">3.6.2.</strong> Multiple Axes</a></li></ol></li></ol></li></ol>
-            </div>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
-
-        <!-- Track and set sidebar scroll position -->
-        <script>
-            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
-            sidebarScrollbox.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
-                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
-                }
-            }, { passive: true });
-            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
-            sessionStorage.removeItem('sidebar-scroll');
-            if (sidebarScrollTop) {
-                // preserve sidebar scroll position when navigating via links within sidebar
-                sidebarScrollbox.scrollTop = sidebarScrollTop;
-            } else {
-                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
-                var activeSection = document.querySelector('#sidebar .active');
-                if (activeSection) {
-                    activeSection.scrollIntoView({ block: 'center' });
-                }
-            }
-        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
@@ -178,9 +157,9 @@
                     <main>
                         <h1 id="error-bars"><a class="header" href="#error-bars">Error Bars</a></h1>
 <p>The following imports have been used to produce the plots below:</p>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use itertools_num::linspace;
+</span>use ndarray::Array;
 use plotly::box_plot::{BoxMean, BoxPoints};
 use plotly::common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation, Title};
 use plotly::histogram::{Bins, Cumulative, HistFunc, HistNorm};
@@ -191,40 +170,30 @@ use rand_distr::{Distribution, Normal, Uniform};
 <span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
 <h2 id="basic-symmetric-error-bars"><a class="header" href="#basic-symmetric-error-bars">Basic Symmetric Error Bars</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn basic_symmetric_error_bars(show: bool) {
+</span>fn basic_symmetric_error_bars(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
         .name("trace1")
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1.0, 2.0, 3.0]));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("basic_symmetric_error_bars"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="basic_symmetric_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("basic_symmetric_error_bars")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[0,1,2],"y":[6,10,2],"name":"trace1","error_y":{"type":"data","array":[1.0,2.0,3.0]}};
-var data = [trace_0];
-var layout = {};
-        Plotly.newPlot('basic_symmetric_error_bars', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("basic_symmetric_error_bars", {"data":[{"type":"scatter","name":"trace1","x":[0,1,2],"y":[6,10,2],"error_y":{"type":"data","array":[1.0,2.0,3.0]}}],"layout":{},"config":{}});
 </script>
 <h2 id="asymmetric-error-bars"><a class="header" href="#asymmetric-error-bars">Asymmetric Error Bars</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn asymmetric_error_bars(show: bool) {
+</span>fn asymmetric_error_bars(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
         .name("trace1")
         .error_y(
@@ -235,59 +204,42 @@ var layout = {};
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
+
     if show {
         plot.show();
     }
-    println!("{}", plot.to_inline_html(Some("asymmetric_error_bars")));
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="asymmetric_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("asymmetric_error_bars")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2,3,4],"y":[2,1,3,4],"name":"trace1","error_y":{"type":"data","array":[0.1,0.2,0.1,0.1],"arrayminus":[0.2,0.4,1.0,0.2]}};
-var data = [trace_0];
-var layout = {};
-        Plotly.newPlot('asymmetric_error_bars', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("asymmetric_error_bars", {"data":[{"type":"scatter","name":"trace1","x":[1,2,3,4],"y":[2,1,3,4],"error_y":{"type":"data","array":[0.1,0.2,0.1,0.1],"arrayminus":[0.2,0.4,1.0,0.2]}}],"layout":{},"config":{}});
 </script>
 <h2 id="error-bars-as-a-percentage-of-the-y-value"><a class="header" href="#error-bars-as-a-percentage-of-the-y-value">Error Bars as a Percentage of the Y Value</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn error_bars_as_a_percentage_of_the_y_value(show: bool) {
+</span>fn error_bars_as_a_percentage_of_the_y_value(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2])
         .name("trace1")
         .error_y(ErrorData::new(ErrorType::Percent).value(50.).visible(true));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("error_bars_as_a_percentage_of_the_y_value"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="error_bars_as_a_percentage_of_the_y_value" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("error_bars_as_a_percentage_of_the_y_value")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[0,1,2],"y":[6,10,2],"name":"trace1","error_y":{"type":"percent","visible":true,"value":50.0}};
-var data = [trace_0];
-var layout = {};
-        Plotly.newPlot('error_bars_as_a_percentage_of_the_y_value', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("error_bars_as_a_percentage_of_the_y_value", {"data":[{"type":"scatter","name":"trace1","x":[0,1,2],"y":[6,10,2],"error_y":{"type":"percent","visible":true,"value":50.0}}],"layout":{},"config":{}});
 </script>
 <h2 id="asymmetric-error-bars-with-a-constant-offset"><a class="header" href="#asymmetric-error-bars-with-a-constant-offset">Asymmetric Error Bars with a Constant Offset</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn asymmetric_error_bars_with_a_constant_offset(show: bool) {
+</span>fn asymmetric_error_bars_with_a_constant_offset(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
         .name("trace1")
         .error_y(
@@ -299,60 +251,42 @@ var layout = {};
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
+
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("asymmetric_error_bars_with_a_constant_offset"))
-    );
+    plot
 }
-
 <span class="boring">}</span></code></pre></pre>
 <div id="asymmetric_error_bars_with_a_constant_offset" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("asymmetric_error_bars_with_a_constant_offset")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2,3,4],"y":[2,1,3,4],"name":"trace1","error_y":{"type":"percent","symmetric":false,"value":15.0,"valueminus":25.0}};
-var data = [trace_0];
-var layout = {};
-        Plotly.newPlot('asymmetric_error_bars_with_a_constant_offset', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("asymmetric_error_bars_with_a_constant_offset", {"data":[{"type":"scatter","name":"trace1","x":[1,2,3,4],"y":[2,1,3,4],"error_y":{"type":"percent","symmetric":false,"value":15.0,"valueminus":25.0}}],"layout":{},"config":{}});
 </script>
 <h2 id="horizontal-error-bars"><a class="header" href="#horizontal-error-bars">Horizontal Error Bars</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn horizontal_error_bars(show: bool) {
+</span>fn horizontal_error_bars(show: bool) -&gt; Plot {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![2, 1, 3, 4])
         .name("trace1")
         .error_x(ErrorData::new(ErrorType::Percent).value(10.));
 
     let mut plot = Plot::new();
     plot.add_trace(trace1);
+
     if show {
         plot.show();
     }
-    println!("{}", plot.to_inline_html(Some("horizontal_error_bars")));
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="horizontal_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("horizontal_error_bars")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[1,2,3,4],"y":[2,1,3,4],"name":"trace1","error_x":{"type":"percent","value":10.0}};
-var data = [trace_0];
-var layout = {};
-        Plotly.newPlot('horizontal_error_bars', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("horizontal_error_bars", {"data":[{"type":"scatter","name":"trace1","x":[1,2,3,4],"y":[2,1,3,4],"error_x":{"type":"percent","value":10.0}}],"layout":{},"config":{}});
 </script>
 <h2 id="bar-chart-with-error-bars"><a class="header" href="#bar-chart-with-error-bars">Bar Chart with Error Bars</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn bar_chart_with_error_bars(show: bool) {
+</span>fn bar_chart_with_error_bars(show: bool) -&gt; Plot {
     let trace_c = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![3, 6, 4])
         .error_y(ErrorData::new(ErrorType::Data).array(vec![1., 0.5, 1.5]));
     let trace_e = Bar::new(vec!["Trial 1", "Trial 2", "Trial 3"], vec![4, 7, 3])
@@ -368,27 +302,18 @@ var layout = {};
     if show {
         plot.show();
     }
-    println!("{}", plot.to_inline_html(Some("bar_chart_with_error_bars")));
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="bar_chart_with_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("bar_chart_with_error_bars")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"x":["Trial 1","Trial 2","Trial 3"],"y":[3,6,4],"type":"bar","error_y":{"type":"data","array":[1.0,0.5,1.5]}};
-var trace_1 = {"x":["Trial 1","Trial 2","Trial 3"],"y":[4,7,3],"type":"bar","error_y":{"type":"data","array":[0.5,1.0,2.0]}};
-var data = [trace_0,trace_1];
-var layout = {"barmode":"group"};
-        Plotly.newPlot('bar_chart_with_error_bars', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("bar_chart_with_error_bars", {"data":[{"type":"bar","x":["Trial 1","Trial 2","Trial 3"],"y":[3,6,4],"error_y":{"type":"data","array":[1.0,0.5,1.5]}},{"type":"bar","x":["Trial 1","Trial 2","Trial 3"],"y":[4,7,3],"error_y":{"type":"data","array":[0.5,1.0,2.0]}}],"layout":{"barmode":"group"},"config":{}});
 </script>
 <h2 id="colored-and-styled-error-bars"><a class="header" href="#colored-and-styled-error-bars">Colored and Styled Error Bars</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn colored_and_styled_error_bars(show: bool) {
-    let x_theo: Vec&lt;f64&gt; = linspace(-4., 4., 100).collect();
+</span>fn colored_and_styled_error_bars(show: bool) -&gt; Plot {
+    let x_theo: Vec&lt;f64&gt; = Array::linspace(-4., 4., 100).into_raw_vec_and_offset().0;
     let sincx: Vec&lt;f64&gt; = x_theo
         .iter()
         .map(|x| (x * std::f64::consts::PI).sin() / (*x * std::f64::consts::PI))
@@ -427,26 +352,13 @@ var layout = {"barmode":"group"};
     if show {
         plot.show();
     }
-    println!(
-        "{}",
-        plot.to_inline_html(Some("colored_and_styled_error_bars"))
-    );
+    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="colored_and_styled_error_bars" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("colored_and_styled_error_bars")) {
-        var d3 = Plotly.d3;
-        var image_element= d3.select('#image-export');
-        var trace_0 = {"type":"scatter","x":[-4.0,-3.919191919191919,-3.8383838383838382,-3.757575757575758,-3.676767676767677,-3.595959595959596,-3.515151515151515,-3.4343434343434343,-3.3535353535353534,-3.2727272727272725,-3.191919191919192,-3.111111111111111,-3.0303030303030303,-2.9494949494949494,-2.8686868686868685,-2.787878787878788,-2.7070707070707067,-2.6262626262626263,-2.5454545454545454,-2.4646464646464645,-2.3838383838383836,-2.3030303030303028,-2.2222222222222223,-2.141414141414141,-2.0606060606060606,-1.9797979797979797,-1.8989898989898988,-1.818181818181818,-1.737373737373737,-1.6565656565656566,-1.5757575757575757,-1.4949494949494948,-1.414141414141414,-1.333333333333333,-1.2525252525252522,-1.1717171717171713,-1.0909090909090908,-1.01010101010101,-0.9292929292929291,-0.8484848484848482,-0.7676767676767673,-0.6868686868686864,-0.606060606060606,-0.5252525252525251,-0.4444444444444442,-0.3636363636363633,-0.28282828282828243,-0.20202020202020154,-0.1212121212121211,-0.04040404040404022,0.040404040404040664,0.12121212121212199,0.20202020202020243,0.2828282828282829,0.3636363636363642,0.44444444444444464,0.525252525252526,0.6060606060606064,0.6868686868686869,0.7676767676767682,0.8484848484848486,0.92929292929293,1.0101010101010104,1.0909090909090917,1.1717171717171722,1.2525252525252526,1.333333333333334,1.4141414141414144,1.4949494949494957,1.5757575757575761,1.6565656565656575,1.737373737373738,1.8181818181818183,1.8989898989898997,1.9797979797979801,2.0606060606060614,2.141414141414142,2.2222222222222223,2.3030303030303036,2.383838383838384,2.4646464646464654,2.545454545454546,2.626262626262627,2.7070707070707076,2.787878787878788,2.8686868686868694,2.94949494949495,3.030303030303031,3.1111111111111116,3.191919191919193,3.2727272727272734,3.353535353535354,3.434343434343435,3.5151515151515156,3.595959595959597,3.6767676767676774,3.757575757575758,3.838383838383839,3.9191919191919196,4.0],"y":[-3.8981718325193755e-17,-0.020397798541945587,-0.04031937248783161,-0.05845762953942655,-0.07356352880377899,-0.08452676279573113,-0.09045110791884156,-0.09071966773486224,-0.08504567456412637,-0.07350522697104646,-0.056549288961486976,-0.03499341200182195,-0.009984901847327851,0.017051531611460852,0.04448730688801305,0.0705791505006865,0.0935693553283155,0.11179174825914784,0.12377748055647672,0.1283545583699417,0.12473517546144892,0.11258539596462419,0.09207254289585291,0.06388674049716098,0.02923438070194994,-0.010197232673846484,-0.05230324323402314,-0.09465022438883168,-0.13458693322243767,-0.16937168694961346,-0.19631016500519627,-0.21289670377041103,-0.2169517735088934,-0.20674833578317192,-0.18112018110459843,-0.13954612597107577,-0.08220506992725843,-0.009998321751610412,0.07546277218501142,0.17190410911627638,0.2764694381823275,0.3858309757531781,0.4963251200302811,0.6041070057159245,0.7053165984920191,0.796248356503686,0.8735162206555506,0.934205854303506,0.9760066301702228,0.9973168298474766,0.9973168298474766,0.9760066301702224,0.9342058543035054,0.8735162206555502,0.7962483565036851,0.7053165984920186,0.6041070057159234,0.49632512003028056,0.38583097575317754,0.2764694381823262,0.17190410911627585,0.07546277218501045,-0.009998321751610828,-0.08220506992725911,-0.13954612597107635,-0.18112018110459863,-0.2067483357831721,-0.2169517735088934,-0.2128967037704109,-0.1963101650051961,-0.16937168694961313,-0.13458693322243725,-0.09465022438883153,-0.0523032432340227,-0.010197232673846196,0.029234380701950335,0.06388674049716131,0.09207254289585291,0.11258539596462437,0.12473517546144898,0.1283545583699417,0.12377748055647667,0.11179174825914762,0.0935693553283152,0.0705791505006865,0.044487306888012675,0.01705153161146066,-0.009984901847328035,-0.034993412001822106,-0.056549288961487254,-0.07350522697104656,-0.08504567456412637,-0.09071966773486229,-0.09045110791884153,-0.084526762795731,-0.07356352880377891,-0.05845762953942655,-0.04031937248783147,-0.020397798541945445,-3.8981718325193755e-17],"name":"sinc(x)"};
-var trace_1 = {"type":"scatter","x":[-3.8,-3.03,-1.91,-1.46,-0.89,-0.24,-0.0,0.41,0.89,1.01,1.91,2.28,2.79,3.56],"y":[-0.02,0.04,-0.01,-0.27,0.36,0.75,1.03,0.65,0.28,0.02,-0.11,0.16,0.04,-0.15],"name":"measured","mode":"markers","marker":{"size":8,"color":"purple"},"error_x":{"type":"constant","value":0.2,"color":"purple","thickness":1.5,"width":3},"error_y":{"type":"constant","value":0.1,"color":"purple","thickness":1.5,"width":3}};
-var data = [trace_0,trace_1];
-var layout = {};
-        Plotly.newPlot('colored_and_styled_error_bars', data, layout, {"responsive": true});
-    };
+    Plotly.newPlot("colored_and_styled_error_bars", {"data":[{"type":"scatter","name":"sinc(x)","x":[-4.0,-3.919191919191919,-3.8383838383838382,-3.757575757575758,-3.676767676767677,-3.595959595959596,-3.515151515151515,-3.4343434343434343,-3.3535353535353534,-3.2727272727272725,-3.191919191919192,-3.111111111111111,-3.0303030303030303,-2.9494949494949494,-2.8686868686868685,-2.787878787878788,-2.7070707070707067,-2.6262626262626263,-2.5454545454545454,-2.4646464646464645,-2.3838383838383836,-2.3030303030303028,-2.2222222222222223,-2.141414141414141,-2.0606060606060606,-1.9797979797979797,-1.8989898989898988,-1.818181818181818,-1.737373737373737,-1.6565656565656566,-1.5757575757575757,-1.4949494949494948,-1.414141414141414,-1.333333333333333,-1.2525252525252522,-1.1717171717171713,-1.0909090909090908,-1.01010101010101,-0.9292929292929291,-0.8484848484848482,-0.7676767676767673,-0.6868686868686864,-0.606060606060606,-0.5252525252525251,-0.4444444444444442,-0.3636363636363633,-0.28282828282828243,-0.20202020202020154,-0.1212121212121211,-0.04040404040404022,0.040404040404040664,0.12121212121212199,0.20202020202020243,0.2828282828282829,0.3636363636363642,0.44444444444444464,0.525252525252526,0.6060606060606064,0.6868686868686869,0.7676767676767682,0.8484848484848486,0.92929292929293,1.0101010101010104,1.0909090909090917,1.1717171717171722,1.2525252525252526,1.333333333333334,1.4141414141414144,1.4949494949494957,1.5757575757575761,1.6565656565656575,1.737373737373738,1.8181818181818183,1.8989898989898997,1.9797979797979801,2.0606060606060614,2.141414141414142,2.2222222222222223,2.3030303030303036,2.383838383838384,2.4646464646464654,2.545454545454546,2.626262626262627,2.7070707070707076,2.787878787878788,2.8686868686868694,2.94949494949495,3.030303030303031,3.1111111111111116,3.191919191919193,3.2727272727272734,3.353535353535354,3.434343434343435,3.5151515151515156,3.595959595959597,3.6767676767676774,3.757575757575758,3.838383838383839,3.9191919191919196,4.0],"y":[-3.8981718325193755e-17,-0.020397798541945587,-0.04031937248783161,-0.05845762953942655,-0.07356352880377899,-0.08452676279573113,-0.09045110791884156,-0.09071966773486224,-0.08504567456412637,-0.07350522697104646,-0.056549288961486976,-0.03499341200182195,-0.009984901847327851,0.017051531611460852,0.04448730688801305,0.0705791505006865,0.0935693553283155,0.11179174825914784,0.12377748055647672,0.1283545583699417,0.12473517546144892,0.11258539596462419,0.09207254289585291,0.06388674049716098,0.02923438070194994,-0.010197232673846484,-0.05230324323402314,-0.09465022438883168,-0.13458693322243767,-0.16937168694961346,-0.19631016500519627,-0.21289670377041103,-0.2169517735088934,-0.20674833578317192,-0.18112018110459843,-0.13954612597107577,-0.08220506992725843,-0.009998321751610412,0.07546277218501142,0.17190410911627638,0.2764694381823275,0.3858309757531781,0.4963251200302811,0.6041070057159245,0.7053165984920191,0.796248356503686,0.8735162206555506,0.934205854303506,0.9760066301702228,0.9973168298474766,0.9973168298474766,0.9760066301702224,0.9342058543035054,0.8735162206555502,0.7962483565036851,0.7053165984920186,0.6041070057159234,0.49632512003028056,0.38583097575317754,0.2764694381823262,0.17190410911627585,0.07546277218501045,-0.009998321751610828,-0.08220506992725911,-0.13954612597107635,-0.18112018110459863,-0.2067483357831721,-0.2169517735088934,-0.2128967037704109,-0.1963101650051961,-0.16937168694961313,-0.13458693322243725,-0.09465022438883153,-0.0523032432340227,-0.010197232673846196,0.029234380701950335,0.06388674049716131,0.09207254289585291,0.11258539596462437,0.12473517546144898,0.1283545583699417,0.12377748055647667,0.11179174825914762,0.0935693553283152,0.0705791505006865,0.044487306888012675,0.01705153161146066,-0.009984901847328035,-0.034993412001822106,-0.056549288961487254,-0.07350522697104656,-0.08504567456412637,-0.09071966773486229,-0.09045110791884153,-0.084526762795731,-0.07356352880377891,-0.05845762953942655,-0.04031937248783147,-0.020397798541945445,-3.8981718325193755e-17]},{"type":"scatter","name":"measured","mode":"markers","x":[-3.8,-3.03,-1.91,-1.46,-0.89,-0.24,-0.0,0.41,0.89,1.01,1.91,2.28,2.79,3.56],"y":[-0.02,0.04,-0.01,-0.27,0.36,0.75,1.03,0.65,0.28,0.02,-0.11,0.16,0.04,-0.15],"marker":{"size":8,"color":"purple"},"error_x":{"type":"constant","value":0.2,"color":"purple","thickness":1.5,"width":3},"error_y":{"type":"constant","value":0.1,"color":"purple","thickness":1.5,"width":3}}],"layout":{},"config":{}});
 </script>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
