@@ -92,7 +92,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: [  # missing jupyter
+        example: # missing jupyter
+          [
           3d_charts,
           basic_charts,
           custom_controls,
@@ -103,7 +104,7 @@ jobs:
           ndarray,
           scientific_charts,
           shapes,
-          subplots
+            subplots,
         ]
     runs-on: ubuntu-latest
     steps:
@@ -124,4 +125,3 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
       - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build --target wasm32-unknown-unknown
-
