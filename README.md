@@ -108,8 +108,6 @@ plotly = { version = "0.11", features = ["kaleido"] }
 
 With this feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
 
-The Kaleido binary is downloaded for your system's architecture at compile time from the official Kaleido [release page](https://github.com/plotly/Kaleido/releases). This library currently supports `x86_64` on Linux and Windows, and both `x86_64` and `aarch64` on macOS.
-
 Exporting a simple plot looks like this:
 
 ```rust
@@ -121,6 +119,12 @@ plot.add_trace(trace);
 
 plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 ```
+
+### _Kaleido dependency_
+
+On your host, when building this project with the `kaleido` feature enabled the Kaleido binary is downloaded automatically for your system's architecture at compile time from the official Kaleido [release page](https://github.com/plotly/Kaleido/releases). This library currently supports `x86_64` on Linux and Windows, and both `x86_64` and `aarch64` on macOS.
+
+When building application for other targets that depend on this feature, the `Kaleido` binary will need to be installed manually on the target machine. Currently, the location where the binary is expected is hardcoded depending on the target OS. E.g., on Linux this defaults to `~/.config/kaleido`. This is defined in source code at [here](https://github.com/plotly/plotly.rs/blob/1405731b5121c1343b491e307222a21ef4becc5e/plotly_kaleido/src/lib.rs#L89)
 
 ## Usage Within a Wasm Environment
 
