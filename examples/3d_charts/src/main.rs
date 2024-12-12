@@ -172,9 +172,9 @@ fn mesh_3d_plot(show: bool) -> Plot {
         vec![0, 1, 2, 0],
         vec![0, 0, 1, 2],
         vec![0, 2, 0, 1],
-        vec![0, 0, 0, 1],
-        vec![1, 2, 3, 2],
-        vec![2, 3, 1, 3],
+        Some(vec![0, 0, 0, 1]),
+        Some(vec![1, 2, 3, 2]),
+        Some(vec![2, 3, 1, 3]),
     )
     .intensity(vec![0.0, 0.33, 0.66, 1.0])
     .color_scale(ColorScale::Palette(ColorScalePalette::Rainbow));
