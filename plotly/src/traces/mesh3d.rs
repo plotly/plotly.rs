@@ -389,17 +389,17 @@ where
         x: Vec<X>,
         y: Vec<Y>,
         z: Vec<Z>,
-        i: Vec<usize>,
-        j: Vec<usize>,
-        k: Vec<usize>,
+        i: Option<Vec<usize>>,
+        j: Option<Vec<usize>>,
+        k: Option<Vec<usize>>,
     ) -> Box<Self> {
         Box::new(Self {
             x: Some(x),
             y: Some(y),
             z: Some(z),
-            i: Some(i),
-            j: Some(j),
-            k: Some(k),
+            i,
+            j,
+            k,
             ..Default::default()
         })
     }
@@ -484,9 +484,9 @@ mod tests {
             vec![0.0, 1.0, 2.0],
             vec![3.0, 4.0, 5.0],
             vec![6.0, 7.0, 8.0],
-            vec![0],
-            vec![1],
-            vec![2],
+            Some(vec![0]),
+            Some(vec![1]),
+            Some(vec![2]),
         )
         .name("trace_name")
         .visible(Visible::True)
