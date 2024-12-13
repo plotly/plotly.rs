@@ -585,7 +585,6 @@ impl PartialEq for Plot {
 mod tests {
     use std::path::PathBuf;
 
-    use base64::{engine::general_purpose, Engine as _};
     use serde_json::{json, to_value};
 
     use super::*;
@@ -825,6 +824,8 @@ mod tests {
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_image_to_base64() {
+        use base64::engine::general_purpose;
+        use base64::Engine;
         let plot = create_test_plot();
 
         let image_base64 = plot.to_base64(ImageFormat::PNG, 200, 150, 1.0);

@@ -1,8 +1,12 @@
 [package]
 name = "kaleido"
 version = "0.1.0"
-authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
+authors = [
+    "Michael Freeborn <michaelfreeborn1@gmail.com>",
+    "Andrei Gherghescu andrei-ng@protonmail.com",
+]
 edition = "2021"
 
 [dependencies]
-plotly = { path = "../../plotly", features = ["kaleido"] }
+plotly = { path = "../../plotly", features = ["kaleido", "kaleido_fetch"] }
+# plotly = { path = "../../plotly", features = ["kaleido"] }
