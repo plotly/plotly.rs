@@ -20,9 +20,7 @@ When your contribution is ready for review, make a pull request with your change
 
 ## Code of Conduct
 
-In all forums, we follow the [Rust Code of Conduct]. For escalation or moderation issues please reach out to @andrei-ng or the Plotly official community at [community@plot.ly](mailto:community@plot.ly) instead of the Rust moderation team.
-
-[Rust Code of Conduct]: https://www.rust-lang.org/conduct.html
+The code of conduct is detailed in our [Code of Conduct](https://github.com/plotly/plotly.rs/tree/main/CODE_OF_CONDUCT.md). For escalation or moderation issues please reach out to one of the maintainers of this crate or the Plotly official community at [community@plot.ly](mailto:community@plot.ly).
 
 ## Attribution
 

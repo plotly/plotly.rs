@@ -44,6 +44,7 @@
     * [Usage Within a Wasm Environment](#usage-within-a-wasm-environment)
 * [Crate Feature Flags](#crate-feature-flags)
 * [Contributing](#contributing)
+* [Code of Conduct](#code-of-conduct)
 * [License](#license)
 
 # Introduction
@@ -124,7 +125,7 @@ plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 
 On your host, when building this project with the `kaleido` feature enabled the Kaleido binary is downloaded automatically for your system's architecture at compile time from the official Kaleido [release page](https://github.com/plotly/Kaleido/releases). This library currently supports `x86_64` on Linux and Windows, and both `x86_64` and `aarch64` on macOS.
 
-When building application for other targets that depend on this feature, the `Kaleido` binary will need to be installed manually on the target machine. Currently, the location where the binary is expected is hardcoded depending on the target OS. E.g., on Linux this defaults to `~/.config/kaleido`. This is defined in source code at [here](https://github.com/plotly/plotly.rs/blob/1405731b5121c1343b491e307222a21ef4becc5e/plotly_kaleido/src/lib.rs#L89)
+When building application for other targets that depend on this feature, the `Kaleido` binary will need to be installed manually on the target machine. Currently, the location where the binary is expected is hardcoded depending on the target OS. E.g., on Linux this defaults to `~/.config/kaleido`. This is defined in source code [here](https://github.com/plotly/plotly.rs/blob/1405731b5121c1343b491e307222a21ef4becc5e/plotly_kaleido/src/lib.rs#L89)
 
 ## Usage Within a Wasm Environment
 
@@ -225,8 +226,10 @@ Enables compilation for the `wasm32-unknown-unknown` target and provides access 
 
 * Pull requests are welcome, see the [contributing guide](https://github.com/plotly/plotly.rs/tree/main/CONTRIBUTING.md) for more information.
 
+# Code of Conduct
+
+See the [Code of Conduct](https://github.com/plotly/plotly.rs/tree/main/CODE_OF_CONDUCT.md) for more information.
+
 # License
 
-`Plotly.rs` is distributed under the terms of the MIT license.
-
-See [LICENSE-MIT](https://github.com/plotly/plotly.rs/tree/main/LICENSE-MIT), and [COPYRIGHT](https://github.com/plotly/plotly.rs/tree/main/COPYRIGHT) for details.
+`Plotly.rs` is distributed under the terms of the MIT license, see [LICENSE](https://github.com/plotly/plotly.rs/tree/main/LICENSE).
