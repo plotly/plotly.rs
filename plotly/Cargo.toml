@@ -15,7 +15,7 @@ exclude = ["target/*"]
 
 [features]
 kaleido = ["plotly_kaleido"]
-kaleido_fetch = ["plotly_kaleido/download"]
+kaleido_download = ["plotly_kaleido/download"]
 
 plotly_ndarray = ["ndarray"]
 plotly_image = ["image"]

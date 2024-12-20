@@ -87,7 +87,7 @@ impl Kaleido {
                 Some(compile_time_path) => compile_time_path.to_string(),
                 None => {
                     println!("{}: {}", Self::KALEIDO_PATH_ENV, runtime_env_err);
-                    println!("Use `kaleido_fetch` feature to automatically download, install and use Kaleido when targeting applications that run on the host machine.");
+                    println!("Use `kaleido_download` feature to automatically download, install and use Kaleido when targeting applications that run on the host machine.");
                     println!("Use `{}` environment variable when targeting applications intended to run on different machines. Manually install Kaleido on the target machine and point {} to the installation location.", Self::KALEIDO_PATH_ENV, Self::KALEIDO_PATH_ENV
                     );
                     std::process::exit(1);
@@ -227,22 +227,19 @@ impl Kaleido {
         let output_lines = BufReader::new(process.stdout.take().unwrap()).lines();
         for line in output_lines.map_while(Result::ok) {
             let res = KaleidoResult::from(line.as_str());
-            match res.result {
-                Some(image_data) => {
-                    // TODO: this should be refactored
-                    // The assumption is that  KaleidoResult contains a single image.
-                    // We should end the loop on the first valid one.
-                    // If that is not the case, prior implementation would have returned the last
-                    // valid image
-                    return Ok(image_data);
-                }
-                None => {
-                    println!("empty line from Kaleido stdout");
-                }
+            if let Some(image_data) = res.result {
+                // TODO: this should be refactored
+                // The assumption is that  KaleidoResult contains a single image.
+                // We should end the loop on the first valid one.
+                // If that is not the case, prior implementation would have returned the last
+                // valid image
+                return Ok(image_data);
             }
         }
 
-        // Don't eat up Kaleido/Chromiu erros but show them in the terminal
+        // Don't eat up Kaleido/Chromium errors but show them in the terminal
+        println!("Kaleido failed to generate static image for format: {format}.");
+        println!("Kaleido stderr output:");
         let stderr = process.stderr.take().unwrap();
         let stderr_lines = BufReader::new(stderr).lines();
         for line in stderr_lines {

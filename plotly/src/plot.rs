@@ -809,7 +809,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
