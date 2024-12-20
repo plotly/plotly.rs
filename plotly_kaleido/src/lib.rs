@@ -197,6 +197,8 @@ impl Kaleido {
                 "--disable-dev-shm-usage",
                 "--disable-software-rasterizer",
                 "--single-process",
+                "--disable-gpu",
+                "--no-sandbox",
             ])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -225,14 +227,27 @@ impl Kaleido {
         let output_lines = BufReader::new(process.stdout.take().unwrap()).lines();
         for line in output_lines.map_while(Result::ok) {
             let res = KaleidoResult::from(line.as_str());
-            if let Some(image_data) = res.result {
-                // TODO: this should be refactored
-                // The assumption is that  KaleidoResult contains a single image.
-                // We should end the loop on the first valid one.
-                // If that is not the case, prior implementation would have returned the last
-                // valid image
-                return Ok(image_data);
+            match res.result {
+                Some(image_data) => {
+                    // TODO: this should be refactored
+                    // The assumption is that  KaleidoResult contains a single image.
+                    // We should end the loop on the first valid one.
+                    // If that is not the case, prior implementation would have returned the last
+                    // valid image
+                    return Ok(image_data);
+                }
+                None => {
+                    println!("empty line from Kaleido stdout");
+                }
             }
+        }
+
+        // Don't eat up Kaleido/Chromiu erros but show them in the terminal
+        let stderr = process.stderr.take().unwrap();
+        let stderr_lines = BufReader::new(stderr).lines();
+        for line in stderr_lines {
+            let line = line.unwrap();
+            eprintln!("{}", line);
         }
 
         Ok(String::default())
@@ -297,7 +312,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_png() {
         let test_plot = create_test_plot();
@@ -309,7 +324,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_jpeg() {
         let test_plot = create_test_plot();
@@ -321,7 +336,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_webp() {
         let test_plot = create_test_plot();
@@ -333,7 +348,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_svg() {
         let test_plot = create_test_plot();
@@ -345,7 +360,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_pdf() {
         let test_plot = create_test_plot();

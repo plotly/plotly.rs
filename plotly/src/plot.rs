@@ -585,6 +585,7 @@ impl PartialEq for Plot {
 mod tests {
     use std::path::PathBuf;
 
+    use base64::{engine::general_purpose, Engine as _};
     use serde_json::{json, to_value};
 
     use super::*;
@@ -748,7 +749,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
@@ -760,7 +761,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
@@ -772,7 +773,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
@@ -796,7 +797,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
@@ -820,12 +821,10 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
     #[test]
+    #[cfg(not(target_os = "macos"))]
     #[cfg(feature = "kaleido")]
     fn test_image_to_base64() {
-        use base64::engine::general_purpose;
-        use base64::Engine;
         let plot = create_test_plot();
 
         let image_base64 = plot.to_base64(ImageFormat::PNG, 200, 150, 1.0);
@@ -850,8 +849,8 @@ mod tests {
         assert!(image_base64.is_empty());
     }
 
-    #[cfg(target_os = "linux")]
     #[test]
+    #[cfg(not(target_os = "macos"))]
     #[cfg(feature = "kaleido")]
     fn test_image_to_svg_string() {
         let plot = create_test_plot();

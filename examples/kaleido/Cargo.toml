@@ -9,4 +9,3 @@ edition = "2021"
 
 [dependencies]
 plotly = { path = "../../plotly", features = ["kaleido", "kaleido_fetch"] }
-# plotly = { path = "../../plotly", features = ["kaleido"] }

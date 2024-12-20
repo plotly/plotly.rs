@@ -141,7 +141,8 @@ fn main() -> Result<()> {
 
         extract_zip(&dst, &kaleido_zip_file)?;
     } else {
-        println!("'download' feature disabled. Kaleido binary won't be downloaded and must be installed manually.")
+        let msg = "'download' feature disabled. Please install Kaleido manually and make the environment variable 'KALEIDO_PATH' point to it.".to_string();
+        println!("cargo::warning={msg}");
     }
     Ok(())
 }
