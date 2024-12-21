@@ -40,7 +40,7 @@
 * [Introduction](#introduction)
 * [Basic Usage](#basic-usage)
     * [Exporting an Interactive Plot](#exporting-an-interactive-plot)
-    * [Exporting a Static Image](#exporting-a-static-image)
+    * [Exporting Static Images with Kaleido](#exporting-static-images-with-kaleido)
     * [Usage Within a Wasm Environment](#usage-within-a-wasm-environment)
 * [Crate Feature Flags](#crate-feature-flags)
 * [Contributing](#contributing)
@@ -96,10 +96,30 @@ If you only want to view the plot in the browser quickly, use the `Plot.show()` 
 plot.show(); // The default web browser will open, displaying an interactive plot
 ```
 
-## Exporting a Static Image
+## Exporting Static Images with Kaleido
 
-To save a plot as a static image, the `kaleido` feature is required:
+To save a plot as a static image, the `kaleido` feature is required as well as installing an **external dependency**.
 
+### Kaleido external dependency
+
+When developing applications for your host, enabling both `kaleido` and `kaleido_download` features will ensure that the `kaleido` binary is downloaded for your system's architecture at compile time. After download, it is unpacked into a specific path, e.g., on Linux this is `/home/USERNAME/.config/kaleido`. With these two features enabled, static images can be exported as described in the next section as long as the application run on the same host where where this crate was compiled on.
+
+When the applications developed with `plotly.rs` are intended for other targets or when the user wants to control where the `kaleido` binary is installed then Kaleido must be manually downloaded and installed. Setting the environment variable `KALEIDO_PATH=/path/installed/kaleido/` will ensure that applications that were built with the `kaleido` feature enabled can locate the `kaleido` executable and use it to generate static images.
+
+Kaleido binaries are available on Github [release page](https://github.com/plotly/Kaleido/releases). It currently supports Linux(`x86_64`), Windows(`x86_64`) and MacOS(`x86_64`/`aarch64`).
+
+## Exporting a Static Images
+
+Enable the `kaleido` feature and opt in for automatic downloading of the `kaleido` binaries by doing the following
+
+```toml
+# Cargo.toml
+
+[dependencies]
+plotly = { version = "0.11", features = ["kaleido", "kaleido_download"] }
+```
+
+Alternatively, enable only the `kaleido` feature and manually install Kaleido.
 ```toml
 # Cargo.toml
 
@@ -107,7 +127,7 @@ To save a plot as a static image, the `kaleido` feature is required:
 plotly = { version = "0.11", features = ["kaleido"] }
 ```
 
-With this feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
+With the feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
 
 Exporting a simple plot looks like this:
 
@@ -120,12 +140,6 @@ plot.add_trace(trace);
 
 plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 ```
-
-### _Kaleido dependency_
-
-On your host, when building this project with the `kaleido` feature enabled the Kaleido binary is downloaded automatically for your system's architecture at compile time from the official Kaleido [release page](https://github.com/plotly/Kaleido/releases). This library currently supports `x86_64` on Linux and Windows, and both `x86_64` and `aarch64` on macOS.
-
-When building application for other targets that depend on this feature, the `Kaleido` binary will need to be installed manually on the target machine. Currently, the location where the binary is expected is hardcoded depending on the target OS. E.g., on Linux this defaults to `~/.config/kaleido`. This is defined in source code [here](https://github.com/plotly/plotly.rs/blob/1405731b5121c1343b491e307222a21ef4becc5e/plotly_kaleido/src/lib.rs#L89)
 
 ## Usage Within a Wasm Environment
 
@@ -197,6 +211,13 @@ The following feature flags are available:
 ### `kaleido`
 
 Adds plot save functionality to the following formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
+
+Requires `Kaleido` to have been previously installed on the host machine. See the following feature flag and [Kaleido external dependency](#kaleido-external-dependency).
+
+### `kaleido_download`
+
+Enable download and install of Kaleido binary at build time from [Kaleido releases](https://github.com/plotly/Kaleido/releases/) on the host machine.
+See [Kaleido external dependency](#kaleido-external-dependency) for more details.
 
 ### `plotly_image`
 

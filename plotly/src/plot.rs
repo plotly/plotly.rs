@@ -749,7 +749,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_png() {
@@ -761,7 +761,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_jpeg() {
@@ -773,7 +773,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_svg() {
@@ -797,7 +797,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_pdf() {
@@ -809,7 +809,7 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
     fn test_save_to_webp() {
@@ -821,8 +821,8 @@ mod tests {
         assert!(!dst.exists());
     }
 
-    #[cfg(target_os = "linux")]
     #[test]
+    #[cfg(not(target_os = "macos"))]
     #[cfg(feature = "kaleido")]
     fn test_image_to_base64() {
         let plot = create_test_plot();
@@ -849,8 +849,8 @@ mod tests {
         assert!(image_base64.is_empty());
     }
 
-    #[cfg(target_os = "linux")]
     #[test]
+    #[cfg(not(target_os = "macos"))]
     #[cfg(feature = "kaleido")]
     fn test_image_to_svg_string() {
         let plot = create_test_plot();

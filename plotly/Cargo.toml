@@ -15,10 +15,12 @@ exclude = ["target/*"]
 
 [features]
 kaleido = ["plotly_kaleido"]
+kaleido_download = ["plotly_kaleido/download"]
+
 plotly_ndarray = ["ndarray"]
 plotly_image = ["image"]
-# Embed JavaScript into library and templates for offline use
 plotly_embed_js = []
+
 wasm = ["getrandom", "js-sys", "wasm-bindgen", "wasm-bindgen-futures"]
 with-axum = ["rinja/with-axum", "rinja_axum"]
 
@@ -48,6 +50,8 @@ image = "0.25"
 itertools = ">=0.10, <0.14"
 itertools-num = "0.1"
 ndarray = "0.16"
-plotly_kaleido = { version = "0.11", path = "../plotly_kaleido" }
+plotly_kaleido = { version = "0.11", path = "../plotly_kaleido", features = [
+    "download",
+] }
 rand_distr = "0.4"
 base64 = "0.22"

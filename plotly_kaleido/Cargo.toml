@@ -2,7 +2,10 @@
 name = "plotly_kaleido"
 version = "0.11.0"
 description = "Additional output format support for plotly using Kaleido"
-authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
+authors = [
+    "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
+    "Andrei Gherghescu andrei-ng@protonmail.com",
+]
 license = "MIT"
 readme = "README.md"
 workspace = ".."
@@ -14,12 +17,17 @@ keywords = ["plot", "chart", "plotly", "ndarray"]
 
 exclude = ["target/*", "kaleido/*", "examples/*"]
 
+[features]
+download = []
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-base64 = "0.22"
 dunce = "1.0"
-directories = ">=4, <6"
+base64 = "0.22"
+
+[dev-dependencies]
+plotly_kaleido = { version = "0.11", path = ".", features = ["download"] }
 
 [build-dependencies]
 zip = "2.1"

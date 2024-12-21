@@ -17,7 +17,6 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use base64::{engine::general_purpose, Engine as _};
-use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -77,49 +76,59 @@ pub struct Kaleido {
 }
 
 impl Kaleido {
+    const KALEIDO_PATH_ENV: &str = "KALEIDO_PATH";
+
     pub fn new() -> Kaleido {
-        let path = match Kaleido::binary_path() {
-            Ok(path) => path,
-            Err(msg) => panic!("{}", msg),
+        use std::env;
+
+        let path = match env::var(Self::KALEIDO_PATH_ENV) {
+            Ok(runtime_env) => runtime_env,
+            Err(runtime_env_err) => match option_env!("KALEIDO_COMPILE_TIME_DLD_PATH") {
+                Some(compile_time_path) => compile_time_path.to_string(),
+                None => {
+                    println!("{}: {}", Self::KALEIDO_PATH_ENV, runtime_env_err);
+                    println!("Use `kaleido_download` feature to automatically download, install and use Kaleido when targeting applications that run on the host machine.");
+                    println!("Use `{}` environment variable when targeting applications intended to run on different machines. Manually install Kaleido on the target machine and point {} to the installation location.", Self::KALEIDO_PATH_ENV, Self::KALEIDO_PATH_ENV
+                    );
+                    std::process::exit(1);
+                }
+            },
+        };
+
+        let path = match Kaleido::binary_path(&path) {
+            Ok(kaleido_path) => kaleido_path,
+            Err(msg) => panic!("Failed tu use Kaleido binary at {} due to {}", path, msg),
         };
 
         Kaleido { cmd_path: path }
     }
 
-    fn root_dir() -> Result<PathBuf, &'static str> {
-        let project_dirs = ProjectDirs::from("org", "plotly", "kaleido")
-            .expect("Could not create plotly_kaleido config directory.");
-        Ok(project_dirs.config_dir().into())
-    }
-
-    #[cfg(target_os = "linux")]
-    fn binary_path() -> Result<PathBuf, &'static str> {
-        let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").canonicalize().unwrap();
+    fn binary_path(dld_path: &str) -> Result<PathBuf, &'static str> {
+        let mut p = PathBuf::from(dld_path);
+        p = Self::os_binary_path(p);
         if !p.exists() {
             return Err("could not find kaleido executable in path");
         }
         Ok(p)
     }
 
-    #[cfg(target_os = "macos")]
-    fn binary_path() -> Result<PathBuf, &'static str> {
-        let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido").canonicalize().unwrap();
-        if !p.exists() {
-            return Err("could not find kaleido executable in path");
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    fn os_binary_path(path: PathBuf) -> PathBuf {
+        match path.join("kaleido").canonicalize() {
+            Ok(v) => v,
+            Err(e) => {
+                println!(
+                    "Failed to find Kaleido binary at '{}': {e}",
+                    path.to_string_lossy()
+                );
+                panic!("{e}");
+            }
         }
-        Ok(p)
     }
 
     #[cfg(target_os = "windows")]
-    fn binary_path() -> Result<PathBuf, &'static str> {
-        let mut p = Kaleido::root_dir()?;
-        p = p.join("kaleido.cmd");
-        if !p.exists() {
-            return Err("could not find kaleido executable in path");
-        }
-        Ok(p)
+    fn os_binary_path(path: PathBuf) -> PathBuf {
+        path.join("kaleido.cmd")
     }
 
     /// Generate a static image from a Plotly graph and save it to a file
@@ -188,12 +197,23 @@ impl Kaleido {
                 "--disable-dev-shm-usage",
                 "--disable-software-rasterizer",
                 "--single-process",
+                "--disable-gpu",
+                "--no-sandbox",
             ])
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .expect("failed to spawn Kaleido binary");
+            .unwrap_or_else(|_| {
+                panic!(
+                    "{}",
+                    format!(
+                        "failed to spawn Kaleido binary at {}",
+                        self.cmd_path.to_string_lossy()
+                    )
+                    .to_string()
+                )
+            });
 
         {
             let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
@@ -215,6 +235,16 @@ impl Kaleido {
                 // valid image
                 return Ok(image_data);
             }
+        }
+
+        // Don't eat up Kaleido/Chromium errors but show them in the terminal
+        println!("Kaleido failed to generate static image for format: {format}.");
+        println!("Kaleido stderr output:");
+        let stderr = process.stderr.take().unwrap();
+        let stderr_lines = BufReader::new(stderr).lines();
+        for line in stderr_lines {
+            let line = line.unwrap();
+            eprintln!("{}", line);
         }
 
         Ok(String::default())
@@ -279,7 +309,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_png() {
         let test_plot = create_test_plot();
@@ -291,7 +321,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_jpeg() {
         let test_plot = create_test_plot();
@@ -303,7 +333,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_webp() {
         let test_plot = create_test_plot();
@@ -315,7 +345,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_svg() {
         let test_plot = create_test_plot();
@@ -327,7 +357,7 @@ mod tests {
     }
 
     // This seems to fail unpredictably on MacOs.
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_save_pdf() {
         let test_plot = create_test_plot();
@@ -338,7 +368,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This doesn't work for some reason
+    // This generates empty eps files for some reason
     #[test]
     #[ignore]
     fn test_save_eps() {
