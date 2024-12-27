@@ -4,13 +4,16 @@ use ndarray::Array;
 use plotly::{
     color::{NamedColor, Rgb, Rgba},
     common::{
-        ColorScale, ColorScalePalette, DashType, Fill, Font, Line, LineShape, Marker, Mode,
-        Orientation, Pattern, PatternShape,
+        ColorScale, ColorScalePalette, DashType, Domain, Fill, Font, HoverInfo, Line, LineShape,
+        Marker, Mode, Orientation, Pattern, PatternShape,
     },
-    layout::{Axis, BarMode, CategoryOrder, Layout, Legend, TicksDirection, TraceOrder},
+    layout::{
+        Annotation, Axis, BarMode, CategoryOrder, Layout, LayoutGrid, Legend, TicksDirection,
+        TraceOrder,
+    },
     sankey::{Line as SankeyLine, Link, Node},
     traces::table::{Cells, Header},
-    Bar, Plot, Sankey, Scatter, ScatterPolar, Table,
+    Bar, Pie, Plot, Sankey, Scatter, ScatterPolar, Table,
 };
 use rand_distr::{Distribution, Normal, Uniform};
 
@@ -819,6 +822,124 @@ fn table_chart(show: bool) -> Plot {
 }
 // ANCHOR_END: table_chart
 
+// Pie Charts
+// ANCHOR: basic_pie_chart
+fn basic_pie_chart(show: bool) -> Plot {
+    let values = vec![2, 3, 5];
+    let labels = vec!["giraffes", "orangutans", "monkeys"];
+    let t = Pie::new(values).labels(labels);
+    let mut plot = Plot::new();
+    plot.add_trace(t);
+
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: basic_pie_chart
+
+// ANCHOR: pie_chart_text_control
+fn pie_chart_text_control(show: bool) -> Plot {
+    let values = vec![2, 3, 4, 4];
+    let labels = vec!["Wages", "Operating expenses", "Cost of sales", "Insurance"];
+    let t = Pie::new(values)
+        .labels(labels)
+        .automargin(true)
+        .show_legend(true)
+        .text_position(plotly::common::Position::Outside)
+        .name("Costs")
+        .text_info("label+percent");
+    let mut plot = Plot::new();
+    plot.add_trace(t);
+
+    let layout = Layout::new().height(700).width(700).show_legend(true);
+    plot.set_layout(layout);
+
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: pie_chart_text_control
+
+// ANCHOR: grouped_donout_pie_charts
+fn grouped_donout_pie_charts(show: bool) -> Plot {
+    let mut plot = Plot::new();
+
+    let values = vec![16, 15, 12, 6, 5, 4, 42];
+    let labels = vec![
+        "US",
+        "China",
+        "European Union",
+        "Russian Federation",
+        "Brazil",
+        "India",
+        "Rest of World",
+    ];
+    let t = Pie::new(values)
+        .labels(labels)
+        .name("GHG Emissions")
+        .hover_info(HoverInfo::All)
+        .text("GHG")
+        .hole(0.4)
+        .domain(Domain::new().column(0));
+    plot.add_trace(t);
+
+    let values = vec![27, 11, 25, 8, 1, 3, 25];
+    let labels = vec![
+        "US",
+        "China",
+        "European Union",
+        "Russian Federation",
+        "Brazil",
+        "India",
+        "Rest of World",
+    ];
+
+    let t = Pie::new(values)
+        .labels(labels)
+        .name("CO2 Emissions")
+        .hover_info(HoverInfo::All)
+        .text("CO2")
+        .text_position(plotly::common::Position::Inside)
+        .hole(0.4)
+        .domain(Domain::new().column(1));
+    plot.add_trace(t);
+
+    let layout = Layout::new()
+        .title("Global Emissions 1990-2011")
+        .height(400)
+        .width(600)
+        .annotations(vec![
+            Annotation::new()
+                .font(Font::new().size(20))
+                .show_arrow(false)
+                .text("GHG")
+                .x(0.17)
+                .y(0.5),
+            Annotation::new()
+                .font(Font::new().size(20))
+                .show_arrow(false)
+                .text("CO2")
+                .x(0.82)
+                .y(0.5),
+        ])
+        .show_legend(false)
+        .grid(
+            LayoutGrid::new()
+                .columns(2)
+                .rows(1)
+                .pattern(plotly::layout::GridPattern::Independent),
+        );
+    plot.set_layout(layout);
+
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: grouped_donout_pie_charts
+
 fn write_example_to_html(plot: Plot, name: &str) {
     std::fs::create_dir_all("./out").unwrap();
     let html = plot.to_inline_html(Some(name));
@@ -869,4 +990,12 @@ fn main() {
 
     // Sankey Diagrams
     write_example_to_html(basic_sankey_diagram(false), "basic_sankey_diagram");
+
+    // Pie Charts
+    write_example_to_html(basic_pie_chart(false), "basic_pie_chart");
+    write_example_to_html(pie_chart_text_control(false), "pie_chart_text_control");
+    write_example_to_html(
+        grouped_donout_pie_charts(false),
+        "grouped_donout_pie_charts",
+    );
 }
