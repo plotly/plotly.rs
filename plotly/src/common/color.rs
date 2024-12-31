@@ -1,23 +1,22 @@
-//! This module provides several user interfaces for describing a color to be
-//! used throughout the rest of the library. The easiest way of describing a
-//! colour is to use a `&str` or `String`, which is simply serialized as-is and
-//! passed on to the underlying `plotly.js` library. `plotly.js` supports [`CSS
-//! color formats`], and will fallback to some default color if the color string
-//! is malformed.
-//!
-//! For a more type-safe approach, the `RGB` or `RGBA` structs can be used to
-//! construct a valid color, which will then get serialized to an appropriate
-//! string representation. Cross-browser compatible [`predefined colors`] are
-//! supported via the `NamedColor` enum.
-//!
-//! The `Color` trait is public, and so can be implemented for custom colour
-//! types. The user can then implement a valid serialization function according
-//! to their own requirements. On the whole, that should be largely unnecessary
-//! given the functionality already provided within this module.
-//!
-//! [`CSS color formats`]: https://www.w3schools.com/cssref/css_colors_legal.asp
-//! [`predefined colors`]: https://www.w3schools.com/cssref/css_colors.asp
-
+/// This module provides several user interfaces for describing a color to be
+/// used throughout the rest of the library. The easiest way of describing a
+/// colour is to use a `&str` or `String`, which is simply serialized as-is and
+/// passed on to the underlying `plotly.js` library. `plotly.js` supports [`CSS
+/// color formats`], and will fallback to some default color if the color string
+/// is malformed.
+///
+/// For a more type-safe approach, the `RGB` or `RGBA` structs can be used to
+/// construct a valid color, which will then get serialized to an appropriate
+/// string representation. Cross-browser compatible [`predefined colors`] are
+/// supported via the `NamedColor` enum.
+///
+/// The `Color` trait is public, and so can be implemented for custom colour
+/// types. The user can then implement a valid serialization function according
+/// to their own requirements. On the whole, that should be largely unnecessary
+/// given the functionality already provided within this module.
+///
+/// [`CSS color formats`]: <https://www.w3schools.com/cssref/css_colors_legal.asp>
+/// [`predefined colors`]: <https://www.w3schools.com/cssref/css_colors.asp>
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use serde::Serialize;
@@ -116,7 +115,7 @@ impl Serialize for Rgba {
 
 /// Cross-browser compatible [`predefined colors`].
 ///
-/// [`predefined colors`]: https://www.w3schools.com/cssref/css_colors.asp
+/// [`predefined colors`]: <https://www.w3schools.com/cssref/css_colors.asp>
 #[derive(Debug, Clone, Copy, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum NamedColor {

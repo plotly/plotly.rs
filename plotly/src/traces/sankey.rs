@@ -332,7 +332,7 @@ where
     #[serde(rename = "textfont")]
     text_font: Option<Font>,
     /// Sets the value formatting rule using d3 formatting mini-languages which
-    /// are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
+    /// are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>.
     #[serde(rename = "valueformat")]
     value_format: Option<String>,
     /// Adds a unit to follow the value in the hover tooltip. Add a space if a

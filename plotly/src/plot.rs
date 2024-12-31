@@ -585,6 +585,7 @@ impl PartialEq for Plot {
 mod tests {
     use std::path::PathBuf;
 
+    #[cfg(feature = "kaleido")]
     use base64::{engine::general_purpose, Engine as _};
     use serde_json::{json, to_value};
 

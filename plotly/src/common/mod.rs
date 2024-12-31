@@ -153,10 +153,16 @@ pub enum ConstrainText {
 
 #[derive(Serialize, Clone, Debug)]
 pub enum Orientation {
+    #[serde(rename = "a")]
+    Auto,
     #[serde(rename = "v")]
     Vertical,
     #[serde(rename = "h")]
     Horizontal,
+    #[serde(rename = "r")]
+    Radial,
+    #[serde(rename = "t")]
+    Tangential,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -225,6 +231,7 @@ pub enum PlotType {
     Surface,
     DensityMapbox,
     Table,
+    Pie,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -273,6 +280,10 @@ pub enum Position {
     BottomCenter,
     #[serde(rename = "bottom right")]
     BottomRight,
+    #[serde(rename = "inside")]
+    Inside,
+    #[serde(rename = "outside")]
+    Outside,
 }
 
 #[derive(Serialize, Clone, Debug)]
