@@ -157,7 +157,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_table() {
+    fn serialize_table() {
         let columns = Header::new(vec![String::from("col1"), String::from("col2")]);
         let values = Cells::new(vec![vec![1, 2], vec![2, 3]]);
         let trace = Table::new(columns, values);

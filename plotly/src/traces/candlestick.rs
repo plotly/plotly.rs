@@ -124,7 +124,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_default_candlestick() {
+    fn default_candlestick() {
         let trace: Candlestick<i32, i32> = Candlestick::default();
         let expected = json!({"type": "candlestick"}).to_string();
 
@@ -132,7 +132,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_candlestick() {
+    fn serialize_candlestick() {
         let trace = Candlestick::new(
             vec!["2020-05-20", "2020-05-21"],
             vec![5, 6],

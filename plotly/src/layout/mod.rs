@@ -2081,21 +2081,21 @@ mod tests {
     use crate::common::ColorScalePalette;
 
     #[test]
-    fn test_serialize_uniform_text_mode() {
+    fn serialize_uniform_text_mode() {
         assert_eq!(to_value(UniformTextMode::False).unwrap(), json!(false));
         assert_eq!(to_value(UniformTextMode::Hide).unwrap(), json!("hide"));
         assert_eq!(to_value(UniformTextMode::Show).unwrap(), json!("show"));
     }
 
     #[test]
-    fn test_serialize_click_to_show() {
+    fn serialize_click_to_show() {
         assert_eq!(to_value(ClickToShow::False).unwrap(), json!(false));
         assert_eq!(to_value(ClickToShow::OnOff).unwrap(), json!("onoff"));
         assert_eq!(to_value(ClickToShow::OnOut).unwrap(), json!("onout"));
     }
 
     #[test]
-    fn test_serialize_hover_mode() {
+    fn serialize_hover_mode() {
         assert_eq!(to_value(HoverMode::X).unwrap(), json!("x"));
         assert_eq!(to_value(HoverMode::Y).unwrap(), json!("y"));
         assert_eq!(to_value(HoverMode::Closest).unwrap(), json!("closest"));
@@ -2106,7 +2106,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_axis_type() {
+    fn serialize_axis_type() {
         assert_eq!(to_value(AxisType::Default).unwrap(), json!("-"));
         assert_eq!(to_value(AxisType::Linear).unwrap(), json!("linear"));
         assert_eq!(to_value(AxisType::Log).unwrap(), json!("log"));
@@ -2116,14 +2116,14 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_axis_constrain() {
+    fn serialize_axis_constrain() {
         assert_eq!(to_value(AxisConstrain::Range).unwrap(), json!("range"));
         assert_eq!(to_value(AxisConstrain::Domain).unwrap(), json!("domain"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_constrain_direction() {
+    fn serialize_constrain_direction() {
         assert_eq!(to_value(ConstrainDirection::Left).unwrap(), json!("left"));
         assert_eq!(to_value(ConstrainDirection::Center).unwrap(), json!("center"));
         assert_eq!(to_value(ConstrainDirection::Right).unwrap(), json!("right"));
@@ -2134,27 +2134,27 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_range_mode() {
+    fn serialize_range_mode() {
         assert_eq!(to_value(RangeMode::Normal).unwrap(), json!("normal"));
         assert_eq!(to_value(RangeMode::ToZero).unwrap(), json!("tozero"));
         assert_eq!(to_value(RangeMode::NonNegative).unwrap(), json!("nonnegative"));
     }
 
     #[test]
-    fn test_serialize_ticks_direction() {
+    fn serialize_ticks_direction() {
         assert_eq!(to_value(TicksDirection::Outside).unwrap(), json!("outside"));
         assert_eq!(to_value(TicksDirection::Inside).unwrap(), json!("inside"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_ticks_position() {
+    fn serialize_ticks_position() {
         assert_eq!(to_value(TicksPosition::Labels).unwrap(), json!("labels"));
         assert_eq!(to_value(TicksPosition::Boundaries).unwrap(), json!("boundaries"));
     }
 
     #[test]
-    fn test_serialize_array_show() {
+    fn serialize_array_show() {
         assert_eq!(to_value(ArrayShow::All).unwrap(), json!("all"));
         assert_eq!(to_value(ArrayShow::First).unwrap(), json!("first"));
         assert_eq!(to_value(ArrayShow::Last).unwrap(), json!("last"));
@@ -2162,7 +2162,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_bar_mode() {
+    fn serialize_bar_mode() {
         assert_eq!(to_value(BarMode::Stack).unwrap(), json!("stack"));
         assert_eq!(to_value(BarMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(BarMode::Overlay).unwrap(), json!("overlay"));
@@ -2170,33 +2170,33 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_bar_norm() {
+    fn serialize_bar_norm() {
         assert_eq!(to_value(BarNorm::Empty).unwrap(), json!(""));
         assert_eq!(to_value(BarNorm::Fraction).unwrap(), json!("fraction"));
         assert_eq!(to_value(BarNorm::Percent).unwrap(), json!("percent"));
     }
 
     #[test]
-    fn test_serialize_box_mode() {
+    fn serialize_box_mode() {
         assert_eq!(to_value(BoxMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(BoxMode::Overlay).unwrap(), json!("overlay"));
     }
 
     #[test]
-    fn test_serialize_violin_mode() {
+    fn serialize_violin_mode() {
         assert_eq!(to_value(ViolinMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(ViolinMode::Overlay).unwrap(), json!("overlay"));
     }
 
     #[test]
-    fn test_serialize_waterfall_mode() {
+    fn serialize_waterfall_mode() {
         assert_eq!(to_value(WaterfallMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(WaterfallMode::Overlay).unwrap(), json!("overlay"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_trace_order() {
+    fn serialize_trace_order() {
         assert_eq!(to_value(TraceOrder::Reversed).unwrap(), json!("reversed"));
         assert_eq!(to_value(TraceOrder::Grouped).unwrap(), json!("grouped"));
         assert_eq!(to_value(TraceOrder::ReversedGrouped).unwrap(), json!("reversed+grouped"));
@@ -2204,14 +2204,14 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_item_sizing() {
+    fn serialize_item_sizing() {
         assert_eq!(to_value(ItemSizing::Trace).unwrap(), json!("trace"));
         assert_eq!(to_value(ItemSizing::Constant).unwrap(), json!("constant"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_item_click() {
+    fn serialize_item_click() {
         assert_eq!(to_value(ItemClick::Toggle).unwrap(), json!("toggle"));
         assert_eq!(to_value(ItemClick::ToggleOthers).unwrap(), json!("toggleothers"));
         assert_eq!(to_value(ItemClick::False).unwrap(), json!(false));
@@ -2219,13 +2219,13 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_group_click() {
+    fn serialize_group_click() {
         assert_eq!(to_value(GroupClick::ToggleItem).unwrap(), json!("toggleitem"));
         assert_eq!(to_value(GroupClick::ToggleGroup).unwrap(), json!("togglegroup"));
     }
 
     #[test]
-    fn test_serialize_legend() {
+    fn serialize_legend() {
         let legend = Legend::new()
             .background_color("#123123")
             .border_color("#321321")
@@ -2271,21 +2271,21 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_valign() {
+    fn serialize_valign() {
         assert_eq!(to_value(VAlign::Top).unwrap(), json!("top"));
         assert_eq!(to_value(VAlign::Middle).unwrap(), json!("middle"));
         assert_eq!(to_value(VAlign::Bottom).unwrap(), json!("bottom"));
     }
 
     #[test]
-    fn test_serialize_halign() {
+    fn serialize_halign() {
         assert_eq!(to_value(HAlign::Left).unwrap(), json!("left"));
         assert_eq!(to_value(HAlign::Center).unwrap(), json!("center"));
         assert_eq!(to_value(HAlign::Right).unwrap(), json!("right"));
     }
 
     #[test]
-    fn test_serialize_margin() {
+    fn serialize_margin() {
         let margin = Margin::new()
             .left(1)
             .right(2)
@@ -2306,7 +2306,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_layout_color_scale() {
+    fn serialize_layout_color_scale() {
         let layout_color_scale = LayoutColorScale::new()
             .sequential(ColorScale::Palette(ColorScalePalette::Greys))
             .sequential_minus(ColorScale::Palette(ColorScalePalette::Blues))
@@ -2321,14 +2321,14 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_slider_range_mode() {
+    fn serialize_slider_range_mode() {
         assert_eq!(to_value(SliderRangeMode::Auto).unwrap(), json!("auto"));
         assert_eq!(to_value(SliderRangeMode::Fixed).unwrap(), json!("fixed"));
         assert_eq!(to_value(SliderRangeMode::Match).unwrap(), json!("match"));
     }
 
     #[test]
-    fn test_serialize_range_slider_y_axis() {
+    fn serialize_range_slider_y_axis() {
         let range_slider_y_axis = RangeSliderYAxis::new()
             .range_mode(SliderRangeMode::Match)
             .range(vec![0.2]);
@@ -2341,7 +2341,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_range_slider() {
+    fn serialize_range_slider() {
         let range_slider = RangeSlider::new()
             .background_color("#123ABC")
             .border_color("#ABC123")
@@ -2367,7 +2367,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_selector_step() {
+    fn serialize_selector_step() {
         assert_eq!(to_value(SelectorStep::Month).unwrap(), json!("month"));
         assert_eq!(to_value(SelectorStep::Year).unwrap(), json!("year"));
         assert_eq!(to_value(SelectorStep::Day).unwrap(), json!("day"));
@@ -2378,14 +2378,14 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_step_mode() {
+    fn serialize_step_mode() {
         assert_eq!(to_value(StepMode::Backward).unwrap(), json!("backward"));
         assert_eq!(to_value(StepMode::ToDate).unwrap(), json!("todate"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_spike_mode() {
+    fn serialize_spike_mode() {
         assert_eq!(to_value(SpikeMode::ToAxis).unwrap(), json!("toaxis"));
         assert_eq!(to_value(SpikeMode::Across).unwrap(), json!("across"));
         assert_eq!(to_value(SpikeMode::Marker).unwrap(), json!("marker"));
@@ -2397,7 +2397,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_spike_snap() {
+    fn serialize_spike_snap() {
         assert_eq!(to_value(SpikeSnap::Data).unwrap(), json!("data"));
         assert_eq!(to_value(SpikeSnap::Cursor).unwrap(), json!("cursor"));
         assert_eq!(to_value(SpikeSnap::HoveredData).unwrap(), json!("hovered data"));
@@ -2405,7 +2405,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_category_order() {
+    fn serialize_category_order() {
         assert_eq!(to_value(CategoryOrder::Trace).unwrap(), json!("trace"));
         assert_eq!(to_value(CategoryOrder::CategoryAscending).unwrap(), json!("category ascending"));
         assert_eq!(to_value(CategoryOrder::CategoryDescending).unwrap(), json!("category descending"));
@@ -2427,7 +2427,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_selector_button() {
+    fn serialize_selector_button() {
         let selector_button = SelectorButton::new()
             .visible(false)
             .step(SelectorStep::Hour)
@@ -2451,7 +2451,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_range_selector() {
+    fn serialize_range_selector() {
         let range_selector = RangeSelector::new()
             .visible(true)
             .buttons(vec![SelectorButton::new()])
@@ -2483,7 +2483,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_color_axis() {
+    fn serialize_color_axis() {
         let color_axis = ColorAxis::new()
             .auto_color_scale(false)
             .cauto(true)
@@ -2511,7 +2511,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_axis() {
+    fn serialize_axis() {
         let axis = Axis::new()
             .visible(false)
             .color("#678123")
@@ -2652,21 +2652,21 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_row_order() {
+    fn serialize_row_order() {
         assert_eq!(to_value(RowOrder::TopToBottom).unwrap(), json!("top to bottom"));
         assert_eq!(to_value(RowOrder::BottomToTop).unwrap(), json!("bottom to top"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_grid_pattern() {
+    fn serialize_grid_pattern() {
         assert_eq!(to_value(GridPattern::Independent).unwrap(), json!("independent"));
         assert_eq!(to_value(GridPattern::Coupled).unwrap(), json!("coupled"));
     }
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_grid_x_side() {
+    fn serialize_grid_x_side() {
         assert_eq!(to_value(GridXSide::Bottom).unwrap(), json!("bottom"));
         assert_eq!(to_value(GridXSide::BottomPlot).unwrap(), json!("bottom plot"));
         assert_eq!(to_value(GridXSide::Top).unwrap(), json!("top"));
@@ -2675,7 +2675,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_grid_y_side() {
+    fn serialize_grid_y_side() {
         assert_eq!(to_value(GridYSide::Left).unwrap(), json!("left"));
         assert_eq!(to_value(GridYSide::LeftPlot).unwrap(), json!("left plot"));
         assert_eq!(to_value(GridYSide::Right).unwrap(), json!("right"));
@@ -2683,7 +2683,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_grid_domain() {
+    fn serialize_grid_domain() {
         let grid_domain = GridDomain::new().x(vec![0.0]).y(vec![1.0]);
         let expected = json!({
             "x": [0.0],
@@ -2694,7 +2694,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_layout_grid() {
+    fn serialize_layout_grid() {
         let layout_grid = LayoutGrid::new()
             .rows(224)
             .row_order(RowOrder::BottomToTop)
@@ -2728,7 +2728,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_uniform_text() {
+    fn serialize_uniform_text() {
         let uniform_text = UniformText::new().mode(UniformTextMode::Hide).min_size(5);
         let expected = json!({
             "mode": "hide",
@@ -2739,7 +2739,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_mode_bar() {
+    fn serialize_mode_bar() {
         let mode_bar = ModeBar::new()
             .orientation(Orientation::Horizontal)
             .background_color("#FFF000")
@@ -2756,7 +2756,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_shape_type() {
+    fn serialize_shape_type() {
         assert_eq!(to_value(ShapeType::Circle).unwrap(), json!("circle"));
         assert_eq!(to_value(ShapeType::Rect).unwrap(), json!("rect"));
         assert_eq!(to_value(ShapeType::Path).unwrap(), json!("path"));
@@ -2764,25 +2764,25 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_shape_layer() {
+    fn serialize_shape_layer() {
         assert_eq!(to_value(ShapeLayer::Below).unwrap(), json!("below"));
         assert_eq!(to_value(ShapeLayer::Above).unwrap(), json!("above"));
     }
 
     #[test]
-    fn test_serialize_shape_size_mode() {
+    fn serialize_shape_size_mode() {
         assert_eq!(to_value(ShapeSizeMode::Scaled).unwrap(), json!("scaled"));
         assert_eq!(to_value(ShapeSizeMode::Pixel).unwrap(), json!("pixel"));
     }
 
     #[test]
-    fn test_serialize_fill_rule() {
+    fn serialize_fill_rule() {
         assert_eq!(to_value(FillRule::EvenOdd).unwrap(), json!("evenodd"));
         assert_eq!(to_value(FillRule::NonZero).unwrap(), json!("nonzero"));
     }
 
     #[test]
-    fn test_serialize_shape_line() {
+    fn serialize_shape_line() {
         let shape_line = ShapeLine::new()
             .color("#000FFF")
             .width(100.)
@@ -2797,7 +2797,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_shape() {
+    fn serialize_shape() {
         let shape = Shape::new()
             .visible(false)
             .shape_type(ShapeType::Circle)
@@ -2850,7 +2850,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_draw_direction() {
+    fn serialize_draw_direction() {
         assert_eq!(to_value(DrawDirection::Ortho).unwrap(), json!("ortho"));
         assert_eq!(to_value(DrawDirection::Horizontal).unwrap(), json!("horizontal"));
         assert_eq!(to_value(DrawDirection::Vertical).unwrap(), json!("vertical"));
@@ -2858,7 +2858,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_new_shape() {
+    fn serialize_new_shape() {
         let new_shape = NewShape::new()
             .line(ShapeLine::new())
             .fill_color("#123ABC")
@@ -2880,7 +2880,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_active_shape() {
+    fn serialize_active_shape() {
         let active_shape = ActiveShape::new().fill_color("#123ABC").opacity(0.02);
 
         let expected = json!({
@@ -2892,7 +2892,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_arrow_side() {
+    fn serialize_arrow_side() {
         assert_eq!(to_value(ArrowSide::End).unwrap(), json!("end"));
         assert_eq!(to_value(ArrowSide::Start).unwrap(), json!("start"));
         assert_eq!(to_value(ArrowSide::StartEnd).unwrap(), json!("end+start"));
@@ -2900,7 +2900,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_annotation() {
+    fn serialize_annotation() {
         let annotation = Annotation::new()
             .align(HAlign::Center)
             .arrow_color("#464646")
@@ -2997,7 +2997,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_click_mode() {
+    fn serialize_click_mode() {
         assert_eq!(to_value(ClickMode::Event).unwrap(), json!("event"));
         assert_eq!(to_value(ClickMode::Select).unwrap(), json!("select"));
         assert_eq!(to_value(ClickMode::EventAndSelect).unwrap(), json!("event+select"));
@@ -3006,7 +3006,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_drag_mode() {
+    fn serialize_drag_mode() {
         assert_eq!(to_value(DragMode::Zoom).unwrap(), json!("zoom"));
         assert_eq!(to_value(DragMode::Pan).unwrap(), json!("pan"));
         assert_eq!(to_value(DragMode::Select).unwrap(), json!("select"));
@@ -3023,7 +3023,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_mapbox_style() {
+    fn serialize_mapbox_style() {
         assert_eq!(to_value(MapboxStyle::CartoDarkMatter).unwrap(), json!("carto-darkmatter"));
         assert_eq!(to_value(MapboxStyle::CartoPositron).unwrap(), json!("carto-positron"));
         assert_eq!(to_value(MapboxStyle::OpenStreetMap).unwrap(), json!("open-street-map"));
@@ -3041,7 +3041,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_select_direction() {
+    fn serialize_select_direction() {
         assert_eq!(to_value(SelectDirection::Horizontal).unwrap(), json!("h"));
         assert_eq!(to_value(SelectDirection::Vertical).unwrap(), json!("v"));
         assert_eq!(to_value(SelectDirection::Diagonal).unwrap(), json!("d"));
@@ -3049,7 +3049,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_layout_template() {
+    fn serialize_layout_template() {
         let layout_template = LayoutTemplate::new()
             .title("Title")
             .show_legend(false)
@@ -3183,7 +3183,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_template() {
+    fn serialize_template() {
         let template = Template::new().layout(LayoutTemplate::new());
         let expected = json!({"layout": {}});
 
@@ -3191,7 +3191,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_layout() {
+    fn serialize_layout() {
         let layout = Layout::new()
             .title("Title")
             .title(String::from("Title"))
@@ -3333,7 +3333,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_layout_scene() {
+    fn serialize_layout_scene() {
         let layout = Layout::new().scene(
             LayoutScene::new()
                 .x_axis(Axis::new())
@@ -3365,7 +3365,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_eye() {
+    fn serialize_eye() {
         let eye = Eye::new();
 
         assert_eq!(
@@ -3393,7 +3393,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_projection() {
+    fn serialize_projection() {
         let projection = Projection::new().projection_type(ProjectionType::default());
 
         let expected = json!({
@@ -3416,7 +3416,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_camera_center() {
+    fn serialize_camera_center() {
         let camera_center = CameraCenter::new();
 
         let expected = json!({
@@ -3443,7 +3443,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_aspect_ratio() {
+    fn serialize_aspect_ratio() {
         let aspect_ratio = AspectRatio::new();
 
         let expected = json!({
@@ -3470,7 +3470,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_aspect_mode() {
+    fn serialize_aspect_mode() {
         let aspect_mode = AspectMode::default();
 
         assert_eq!(to_value(aspect_mode).unwrap(), json!("auto"));
@@ -3485,7 +3485,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_up() {
+    fn serialize_up() {
         let up = Up::new();
 
         let expected = json!({

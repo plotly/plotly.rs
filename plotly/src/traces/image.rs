@@ -374,7 +374,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_pixel_color() {
+    fn serialize_pixel_color() {
         assert_eq!(
             to_value(PixelColor::Color3(255, 100, 150)).unwrap(),
             json!([255, 100, 150])
@@ -386,7 +386,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_color_model() {
+    fn serialize_color_model() {
         assert_eq!(to_value(ColorModel::RGB).unwrap(), json!("rgb"));
         assert_eq!(to_value(ColorModel::RGBA).unwrap(), json!("rgba"));
         assert_eq!(to_value(ColorModel::RGBA256).unwrap(), json!("rgba256"));
@@ -395,13 +395,13 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_z_smooth() {
+    fn serialize_z_smooth() {
         assert_eq!(to_value(ZSmooth::Fast).unwrap(), json!("fast"));
         assert_eq!(to_value(ZSmooth::False).unwrap(), json!(false));
     }
 
     #[test]
-    fn test_serialize_image() {
+    fn serialize_image() {
         let b = Rgba::new(0, 0, 0, 0.5);
         let w = Rgba::new(255, 255, 255, 1.0);
         let image = Image::new(vec![vec![b, w, b, w, b], vec![w, b, w, b, w]])

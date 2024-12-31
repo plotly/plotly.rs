@@ -290,13 +290,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_fill() {
+    fn serialize_fill() {
         assert_eq!(to_value(Fill::None).unwrap(), json!("none"));
         assert_eq!(to_value(Fill::ToSelf).unwrap(), json!("toself"));
     }
 
     #[test]
-    fn test_serialize_selection() {
+    fn serialize_selection() {
         let selection = Selection::new().color("#123456").opacity(0.5).size(6);
         let expected = json!({"marker": {"color": "#123456", "opacity": 0.5, "size": 6}});
 
@@ -304,7 +304,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatter_mapbox() {
+    fn serialize_scatter_mapbox() {
         let scatter_mapbox = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
             .name("name")
             .visible(Visible::True)

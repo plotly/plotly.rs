@@ -340,7 +340,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_default_scatter_polar() {
+    fn serialize_default_scatter_polar() {
         let trace = ScatterPolar::<u32, u32>::default();
         let expected = json!({"type": "scatterpolar"});
 
@@ -348,7 +348,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatter_polar() {
+    fn serialize_scatter_polar() {
         let trace = ScatterPolar::new(vec![0, 1], vec![2, 3])
             .clip_on_axis(true)
             .connect_gaps(false)

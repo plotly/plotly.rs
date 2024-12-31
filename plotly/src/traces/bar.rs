@@ -134,7 +134,7 @@ mod tests {
     use crate::common::ErrorType;
 
     #[test]
-    fn test_default_bar() {
+    fn default_bar() {
         let trace: Bar<i32, i32> = Bar::default();
         let expected = json!({"type": "bar"}).to_string();
 
@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_bar() {
+    fn serialize_bar() {
         let bar = Bar::new(vec![1, 2], vec![3, 4])
             .alignment_group("alignment_group")
             .clip_on_axis(true)

@@ -409,7 +409,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_group_norm() {
+    fn serialize_group_norm() {
         assert_eq!(to_value(GroupNorm::Default).unwrap(), json!(""));
         assert_eq!(to_value(GroupNorm::Fraction).unwrap(), json!("fraction"));
         assert_eq!(to_value(GroupNorm::Percent).unwrap(), json!("percent"));
@@ -417,13 +417,13 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_stack_gaps() {
+    fn serialize_stack_gaps() {
         assert_eq!(to_value(StackGaps::InferZero).unwrap(), json!("infer zero"));
         assert_eq!(to_value(StackGaps::Interpolate).unwrap(), json!("interpolate"));
     }
 
     #[test]
-    fn test_serialize_default_scatter() {
+    fn serialize_default_scatter() {
         let trace = Scatter::<u32, u32>::default();
         let expected = json!({"type": "scatter"});
 
@@ -431,7 +431,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatter() {
+    fn serialize_scatter() {
         use crate::common::ErrorType;
 
         let trace = Scatter::new(vec![0, 1], vec![2, 3])
