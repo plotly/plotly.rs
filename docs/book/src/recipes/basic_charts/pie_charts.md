@@ -20,6 +20,12 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 
 {{#include ../../../../../examples/basic_charts/out/basic_pie_chart.html}}
 
+```rust,no_run
+{{#include ../../../../../examples/basic_charts/src/main.rs:basic_pie_chart_labels}}
+```
+
+{{#include ../../../../../examples/basic_charts/out/basic_pie_chart_labels.html}}
+
 ## Grouped Pie Chart
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:grouped_donout_pie_charts}}

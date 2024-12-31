@@ -825,7 +825,7 @@ fn table_chart(show: bool) -> Plot {
 // Pie Charts
 // ANCHOR: basic_pie_chart
 fn basic_pie_chart(show: bool) -> Plot {
-    let values = vec![2, 3, 5];
+    let values = vec![2, 3, 4];
     let labels = vec!["giraffes", "orangutans", "monkeys"];
     let t = Pie::new(values).labels(labels);
     let mut plot = Plot::new();
@@ -837,6 +837,20 @@ fn basic_pie_chart(show: bool) -> Plot {
     plot
 }
 // ANCHOR_END: basic_pie_chart
+
+// ANCHOR: basic_pie_chart_labels
+fn basic_pie_chart_labels(show: bool) -> Plot {
+    let labels = ["giraffes", "giraffes", "orangutans", "monkeys"];
+    let t = Pie::<u32>::from_labels(&labels);
+    let mut plot = Plot::new();
+    plot.add_trace(t);
+
+    if show {
+        plot.show();
+    }
+    plot
+}
+// ANCHOR_END: basic_pie_chart_labels
 
 // ANCHOR: pie_chart_text_control
 fn pie_chart_text_control(show: bool) -> Plot {
@@ -993,6 +1007,7 @@ fn main() {
 
     // Pie Charts
     write_example_to_html(basic_pie_chart(false), "basic_pie_chart");
+    write_example_to_html(basic_pie_chart_labels(false), "basic_pie_chart_labels");
     write_example_to_html(pie_chart_text_control(false), "pie_chart_text_control");
     write_example_to_html(
         grouped_donout_pie_charts(false),
