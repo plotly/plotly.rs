@@ -3,11 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.11.1] - 2024-12-X
+## [0.12.0] - 2024-12-31
 ### Changed
--
+- [[#256](https://github.com/plotly/plotly.rs/pull/256)] Bump Cargo.toml edition to 2021
+- [[#261](https://github.com/plotly/plotly.rs/pull/261)] Updated code of conduct
 
 ### Fixed
+- [[#265](https://github.com/plotly/plotly.rs/pull/265)] Add Pie Chart trace
+- [[#216](https://github.com/plotly/plotly.rs/issues/216)] Opt out of downloading Kaleido binaries and allow users to set Kaleido path via environment variable
+- [[#259](https://github.com/plotly/plotly.rs/issues/259)] Mesh3d::new() has wrong signature
 - [[#175](https://github.com/plotly/plotly.rs/issues/175)] Put multiple subplots in the same html - added an example using `build_html` crate.
 - [[#228](https://github.com/plotly/plotly.rs/issues/228)] Redraw function seems to be broken - added example on generating responsive plots.
 
