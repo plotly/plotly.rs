@@ -78,15 +78,15 @@ where
     /// the first point. An underscore before or after “(x|y)other” will add
     /// a space on that side, only when this field is shown. Numbers are
     /// formatted using d3-format’s syntax %{variable:d3-format}, for example
-    /// “Price: %{y:$.2f}”.  https://github.com/d3/d3-format/tree/v1.4.5#d3-format for details on the formatting syntax.
-    ///  Dates are formatted using d3-time-format’s syntax
-    /// %{variable|d3-time-format}, for example “Day: %{2019-01-01|%A}”. https://github.com/d3/d3-time- format/tree/v2.2.3#locale_format for
+    /// “Price: %{y:$.2f}”.  <https://github.com/d3/d3-format/tree/v1.4.5#d3-format> for details on the formatting syntax.
+    /// Dates are formatted using d3-time-format’s syntax
+    /// %{variable|d3-time-format}, for example “Day: %{2019-01-01|%A}”. <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format> for
     /// details on the date formatting syntax. The variables available in
-    /// hovertemplate are the ones  emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event- data.
-    ///  Additionally, every attributes that can be specified per-point (the
+    /// hovertemplate are the ones  emitted as event data described at this link <https://plotly.com/javascript/plotlyjs-events/#event-data>.
+    /// Additionally, every attributes that can be specified per-point (the
     /// ones that are arrayOk: true) are available.  Finally, the template
     /// string has access to variables label, color, value, percent and text.
-    /// Anything contained in tag <extra> is displayed in the secondary box, for
+    /// Anything contained in tag \<extra\> is displayed in the secondary box, for
     /// example “<extra>{fullData.name}</extra>”. To hide the secondary box
     /// completely, use an empty tag <extra></extra>.
     #[serde(rename = "hovertemplate")]
@@ -144,8 +144,8 @@ where
     /// axis and colorbar title.text, annotation text rangeselector,
     /// updatemenues and sliders label text all support meta. To access the
     /// trace meta values in an attribute in the same trace, simply use
-    /// %{meta[i]} where i is the index or key of the meta item in question. To
-    /// access trace meta in layout attributes, use %{data[n[.meta[i]} where i
+    /// %{meta\[i\]} where i is the index or key of the meta item in question. To
+    /// access trace meta in layout attributes, use %{data[n[.meta\[i\]} where i
     /// is the index or key of the meta and n is the trace index.
     meta: Option<NumOrString>,
     /// Sets the trace name. The trace name appears as the legend item and on
@@ -186,9 +186,10 @@ where
     /// Template string used for rendering the information text that appear on
     /// points. Note that this will override textinfo. Variables are
     /// inserted using %{variable}, for example “y: %{y}”. Numbers are formatted
-    /// using d3-format’s syntax %{variable:d3-format},  for example “Price: %{y:$.2f}”. https://github.com/d3/d3-format/tree/v1.4.5#d3-format for details on the formatting syntax.
-    ///  Dates are formatted using d3-time-format’s syntax
-    /// %{variable|d3-time-format}, for example “Day: %{2019-01-01|%A}”. https://github.com/d3/d3-time- format/tree/v2.2.3#locale_format for details on the date formatting syntax.
+    /// using d3-format’s syntax %{variable:d3-format},  for example “Price: %{y:$.2f}”.
+    /// <https://github.com/d3/d3-format/tree/v1.4.5#d3-format> for details on the formatting syntax.
+    /// Dates are formatted using d3-time-format’s syntax %{variable|d3-time-format}, for example
+    /// “Day: %{2019-01-01|%A}”. <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format> for details on the date formatting syntax.
     /// Every attributes that can be specified per-point (the ones that are
     /// arrayOk: true) are available. Finally, the template string has
     /// access to variables label, color, value, percent and text.

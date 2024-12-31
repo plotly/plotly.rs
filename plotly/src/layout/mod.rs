@@ -929,7 +929,7 @@ pub struct Shape {
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
     /// Determines which regions of complex paths constitute the interior. For
-    /// more info please visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    /// more info please visit <https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule>
     #[serde(rename = "fillrule")]
     fill_rule: Option<FillRule>,
     /// Determines whether the shape could be activated for edit or not. Has no
@@ -994,7 +994,7 @@ pub struct NewShape {
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
     /// Determines the path's interior. For more info please
-    /// visit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    /// visit <https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule>
     #[serde(rename = "fillrule")]
     fill_rule: Option<FillRule>,
     /// Sets the opacity of new shapes. Number between or equal to 0 and 1.
@@ -1071,8 +1071,8 @@ pub struct Annotation {
     visible: Option<bool>,
     /// Sets the text associated with this annotation. Plotly uses a subset of
     /// HTML tags to do things like newline (<br>), bold (<b></b>), italics
-    /// (<i></i>), hyperlinks (<a href='...'></a>). Tags <em>, <sup>, <sub>
-    /// <span> are also supported.
+    /// (<i></i>), hyperlinks (<a href='...'></a>). Tags <em></em>, <sup></sup>, <sub></sub>
+    /// <span></span> are also supported.
     text: Option<String>,
     /// Sets the angle at which the `text` is drawn with respect to the
     /// horizontal.

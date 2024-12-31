@@ -212,7 +212,7 @@ impl Configuration {
     /// When set it determines base URL for the "Edit in Chart Studio"
     /// `show_edit_in_chart_studio`/`show_send_to_cloud` mode bar button and
     /// the show_link/send_data on-graph link. To enable sending your data to
-    /// Chart Studio Cloud, you need to set both `plotly_server_url` to "https://chart-studio.plotly.com" and
+    /// Chart Studio Cloud, you need to set both `plotly_server_url` to <https://chart-studio.plotly.com> and
     /// also set `showSendToCloud` to `true`.
     pub fn plotly_server_url(mut self, plotly_server_url: &str) -> Self {
         self.plotly_server_url = Some(plotly_server_url.to_string());

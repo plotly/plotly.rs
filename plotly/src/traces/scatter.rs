@@ -146,12 +146,12 @@ where
     /// inserted using %{variable}, for example "y: %{y}". Numbers are
     /// formatted using d3-format's syntax %{variable:d3-format}, for example
     /// "Price: %{y:$.2f}".
-    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format for details
+    /// <https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format> for details
     /// on the formatting syntax. Dates are formatted using d3-time-format's
-    /// syntax %{variable|d3-time-format}, for example "Day:
-    /// %{2019-01-01|%A}". https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format for details
+    /// syntax %{variable|d3-time-format}, for example "Day: %{2019-01-01|%A}".
+    /// <https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format> for details
     /// on the date formatting syntax. The variables available in
-    /// `hovertemplate` are the ones emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event-data.
+    /// `hovertemplate` are the ones emitted as event data described at this link <https://plotly.com/javascript/plotlyjs-events/#event-data>.
     /// Additionally, every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available. Anything contained in tag
     /// `<extra>` is displayed in the secondary box, for example
