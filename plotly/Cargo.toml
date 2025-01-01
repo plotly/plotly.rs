@@ -47,7 +47,7 @@ wasm-bindgen-futures = { version = "0.4", optional = true }
 [dev-dependencies]
 csv = "1.1"
 image = "0.25"
-itertools = ">=0.10, <0.14"
+itertools = ">=0.10, <0.15"
 itertools-num = "0.1"
 ndarray = "0.16"
 plotly_kaleido = { version = "0.11", path = "../plotly_kaleido", features = [
