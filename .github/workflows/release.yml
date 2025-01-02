@@ -1,4 +1,4 @@
-name: Deploy Releases
+name: Publish all
 
 on:
   push:

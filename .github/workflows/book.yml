@@ -34,11 +34,11 @@ jobs:
         run: |
             rm -rf content
             cp -r gh-pages/content .
-      - name: Deploy to GitHub Pages
+      - name: Trigger GitHub Pages Bot
         run: |
             git config --global user.name 'github-actions[bot]'
             git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-            
+
             git add content
             if [ "${{ github.ref_type }}" == "tag" ]; then
               git commit --allow-empty -m "update book for release ${{ github.ref }}"
