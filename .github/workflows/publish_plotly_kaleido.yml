@@ -1,0 +1,25 @@
+name: Deploy Plotly Kaleido
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  create-crates-io-release:
+    name: Deploy to crates.io
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+    - run: cargo login ${{ env.CRATES_IO_TOKEN }}
+      env:
+        CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+    - run: cargo publish --allow-dirty -p plotly_kaleido
+
+  create-gh-release:
+    name: Deploy to GH Releases
+    runs-on: ubuntu-latest
+    steps:
+      - uses: softprops/action-gh-release@v1
