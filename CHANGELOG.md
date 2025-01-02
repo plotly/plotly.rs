@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 - [[#265](https://github.com/plotly/plotly.rs/pull/265)] Add Pie Chart trace
+- [[#264](https://github.com/plotly/plotly.rs/issues/264)] Derive Deserialize on NamedColor, Rgb and Rgba
 - [[#216](https://github.com/plotly/plotly.rs/issues/216)] Opt out of downloading Kaleido binaries and allow users to set Kaleido path via environment variable
 - [[#259](https://github.com/plotly/plotly.rs/issues/259)] Mesh3d::new() has wrong signature
 - [[#175](https://github.com/plotly/plotly.rs/issues/175)] Put multiple subplots in the same html - added an example using `build_html` crate.
