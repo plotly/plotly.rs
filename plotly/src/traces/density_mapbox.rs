@@ -117,7 +117,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_density_mapbox() {
+    fn serialize_density_mapbox() {
         let density_mapbox = DensityMapbox::new(vec![45.5017], vec![-73.5673], vec![1.0])
             .name("name")
             .visible(Visible::True)

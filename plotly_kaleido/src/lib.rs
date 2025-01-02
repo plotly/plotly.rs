@@ -289,12 +289,12 @@ mod tests {
     }
 
     #[test]
-    fn test_can_find_kaleido_executable() {
+    fn can_find_kaleido_executable() {
         let _k = Kaleido::new();
     }
 
     #[test]
-    fn test_plot_data_to_json() {
+    fn plot_data_to_json() {
         let test_plot = create_test_plot();
         let kaleido_data = PlotData::new(&test_plot, "png", 400, 500, 1.);
         let expected = json!({
@@ -311,7 +311,7 @@ mod tests {
     // This seems to fail unpredictably on MacOs.
     #[cfg(not(target_os = "macos"))]
     #[test]
-    fn test_save_png() {
+    fn save_png() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.png");
@@ -323,7 +323,7 @@ mod tests {
     // This seems to fail unpredictably on MacOs.
     #[cfg(not(target_os = "macos"))]
     #[test]
-    fn test_save_jpeg() {
+    fn save_jpeg() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.jpeg");
@@ -335,7 +335,7 @@ mod tests {
     // This seems to fail unpredictably on MacOs.
     #[cfg(not(target_os = "macos"))]
     #[test]
-    fn test_save_webp() {
+    fn save_webp() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.webp");
@@ -347,7 +347,7 @@ mod tests {
     // This seems to fail unpredictably on MacOs.
     #[cfg(not(target_os = "macos"))]
     #[test]
-    fn test_save_svg() {
+    fn save_svg() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.svg");
@@ -359,7 +359,7 @@ mod tests {
     // This seems to fail unpredictably on MacOs.
     #[cfg(not(target_os = "macos"))]
     #[test]
-    fn test_save_pdf() {
+    fn save_pdf() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.pdf");
@@ -371,7 +371,7 @@ mod tests {
     // This generates empty eps files for some reason
     #[test]
     #[ignore]
-    fn test_save_eps() {
+    fn save_eps() {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");

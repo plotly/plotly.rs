@@ -249,7 +249,7 @@ mod tests {
     use crate::{common::Visible, Layout};
 
     #[test]
-    fn test_serialize_button_method() {
+    fn serialize_button_method() {
         assert_eq!(to_value(ButtonMethod::Restyle).unwrap(), json!("restyle"));
         assert_eq!(to_value(ButtonMethod::Relayout).unwrap(), json!("relayout"));
         assert_eq!(to_value(ButtonMethod::Animate).unwrap(), json!("animate"));
@@ -258,7 +258,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_button() {
+    fn serialize_button() {
         let button = Button::new()
             .args(json!([
                 { "visible": [true, false] },
@@ -290,7 +290,7 @@ mod tests {
     }
 
     #[test]
-    fn test_button_builder() {
+    fn button_builder() {
         let expected = json!({
             "args": [
                 { "visible": [true, false] },

@@ -600,7 +600,7 @@ mod tests {
     }
 
     #[test]
-    fn test_inline_plot() {
+    fn inline_plot() {
         let plot = create_test_plot();
         let inline_plot_data = plot.to_inline_html(Some("replace_this_with_the_div_id"));
         assert!(inline_plot_data.contains("replace_this_with_the_div_id"));
@@ -608,25 +608,25 @@ mod tests {
     }
 
     #[test]
-    fn test_jupyter_notebook_plot() {
+    fn jupyter_notebook_plot() {
         let plot = create_test_plot();
         plot.to_jupyter_notebook_html();
     }
 
     #[test]
-    fn test_notebook_display() {
+    fn notebook_display() {
         let plot = create_test_plot();
         plot.notebook_display();
     }
 
     #[test]
-    fn test_lab_display() {
+    fn lab_display() {
         let plot = create_test_plot();
         plot.lab_display();
     }
 
     #[test]
-    fn test_plot_serialize_simple() {
+    fn plot_serialize_simple() {
         let plot = create_test_plot();
         let expected = json!({
             "data": [
@@ -645,7 +645,7 @@ mod tests {
     }
 
     #[test]
-    fn test_plot_serialize_with_layout() {
+    fn plot_serialize_with_layout() {
         let mut plot = create_test_plot();
         let layout = Layout::new().title("Title");
         plot.set_layout(layout);
@@ -671,7 +671,7 @@ mod tests {
     }
 
     #[test]
-    fn test_data_to_json() {
+    fn data_to_json() {
         let plot = create_test_plot();
         let expected = json!([
             {
@@ -686,7 +686,7 @@ mod tests {
     }
 
     #[test]
-    fn test_empty_layout_to_json() {
+    fn empty_layout_to_json() {
         let plot = create_test_plot();
         let expected = json!({});
 
@@ -694,7 +694,7 @@ mod tests {
     }
 
     #[test]
-    fn test_layout_to_json() {
+    fn layout_to_json() {
         let mut plot = create_test_plot();
         let layout = Layout::new().title("TestTitle");
         plot.set_layout(layout);
@@ -707,7 +707,7 @@ mod tests {
     }
 
     #[test]
-    fn test_plot_eq() {
+    fn plot_eq() {
         let plot1 = create_test_plot();
         let plot2 = create_test_plot();
 
@@ -715,7 +715,7 @@ mod tests {
     }
 
     #[test]
-    fn test_plot_neq() {
+    fn plot_neq() {
         let plot1 = create_test_plot();
         let trace2 = Scatter::new(vec![10, 1, 2], vec![6, 10, 2]).name("trace2");
         let mut plot2 = Plot::new();
@@ -725,7 +725,7 @@ mod tests {
     }
 
     #[test]
-    fn test_plot_clone() {
+    fn plot_clone() {
         let plot1 = create_test_plot();
         let plot2 = plot1.clone();
 
@@ -735,13 +735,13 @@ mod tests {
     #[test]
     #[ignore] // Don't really want it to try and open a browser window every time we run a test.
     #[cfg(not(feature = "wasm"))]
-    fn test_show_image() {
+    fn show_image() {
         let plot = create_test_plot();
         plot.show_image(ImageFormat::PNG, 1024, 680);
     }
 
     #[test]
-    fn test_save_html() {
+    fn save_html() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.html");
         plot.write_html(&dst);
@@ -753,7 +753,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
-    fn test_save_to_png() {
+    fn save_to_png() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.png");
         plot.write_image(&dst, ImageFormat::PNG, 1024, 680, 1.0);
@@ -765,7 +765,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
-    fn test_save_to_jpeg() {
+    fn save_to_jpeg() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.jpeg");
         plot.write_image(&dst, ImageFormat::JPEG, 1024, 680, 1.0);
@@ -777,7 +777,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
-    fn test_save_to_svg() {
+    fn save_to_svg() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.svg");
         plot.write_image(&dst, ImageFormat::SVG, 1024, 680, 1.0);
@@ -789,7 +789,7 @@ mod tests {
     #[test]
     #[ignore] // This seems to fail unpredictably on MacOs.
     #[cfg(feature = "kaleido")]
-    fn test_save_to_eps() {
+    fn save_to_eps() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.eps");
         plot.write_image(&dst, ImageFormat::EPS, 1024, 680, 1.0);
@@ -801,7 +801,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
-    fn test_save_to_pdf() {
+    fn save_to_pdf() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.pdf");
         plot.write_image(&dst, ImageFormat::PDF, 1024, 680, 1.0);
@@ -813,7 +813,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     #[cfg(feature = "kaleido")]
-    fn test_save_to_webp() {
+    fn save_to_webp() {
         let plot = create_test_plot();
         let dst = PathBuf::from("example.webp");
         plot.write_image(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
@@ -825,7 +825,7 @@ mod tests {
     #[test]
     #[cfg(not(target_os = "macos"))]
     #[cfg(feature = "kaleido")]
-    fn test_image_to_base64() {
+    fn image_to_base64() {
         let plot = create_test_plot();
 
         let image_base64 = plot.to_base64(ImageFormat::PNG, 200, 150, 1.0);
@@ -844,7 +844,7 @@ mod tests {
 
     #[test]
     #[cfg(feature = "kaleido")]
-    fn test_image_to_base64_invalid_format() {
+    fn image_to_base64_invalid_format() {
         let plot = create_test_plot();
         let image_base64 = plot.to_base64(ImageFormat::EPS, 200, 150, 1.0);
         assert!(image_base64.is_empty());
@@ -853,7 +853,7 @@ mod tests {
     #[test]
     #[cfg(not(target_os = "macos"))]
     #[cfg(feature = "kaleido")]
-    fn test_image_to_svg_string() {
+    fn image_to_svg_string() {
         let plot = create_test_plot();
         let image_svg = plot.to_svg(200, 150, 1.0);
 

@@ -315,7 +315,7 @@ mod tests {
     use crate::common::ErrorType;
 
     #[test]
-    fn test_serialize_projection() {
+    fn serialize_projection() {
         let projection = Projection::new()
             .x(ProjectionCoord::new())
             .y(ProjectionCoord::new())
@@ -326,7 +326,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_projection_coord() {
+    fn serialize_projection_coord() {
         let projection_coord = ProjectionCoord::new().opacity(0.75).scale(5.0).show(false);
         let expected = json!({"opacity": 0.75, "scale": 5.0, "show": false});
 
@@ -334,7 +334,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_surface_axis() {
+    fn serialize_surface_axis() {
         assert_eq!(to_value(SurfaceAxis::MinusOne).unwrap(), json!("-1"));
         assert_eq!(to_value(SurfaceAxis::Zero).unwrap(), json!("0"));
         assert_eq!(to_value(SurfaceAxis::One).unwrap(), json!("1"));
@@ -342,7 +342,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_default_scatter3d() {
+    fn serialize_default_scatter3d() {
         let trace = Scatter3D::<f64, f64, f64>::default();
         let expected = json!({"type": "scatter3d"}).to_string();
 
@@ -350,7 +350,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatter3d() {
+    fn serialize_scatter3d() {
         let trace = Scatter3D::new(vec![0, 1], vec![2, 3], vec![4, 5])
             .connect_gaps(true)
             .custom_data(vec!["custom_data"])

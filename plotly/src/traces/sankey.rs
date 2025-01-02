@@ -372,7 +372,7 @@ mod tests {
     use crate::color::NamedColor;
 
     #[test]
-    fn test_serialize_default_sankey() {
+    fn serialize_default_sankey() {
         let trace = Sankey::<i32>::default();
         let expected = json!({"type": "sankey"});
 
@@ -380,7 +380,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_basic_sankey_trace() {
+    fn serialize_basic_sankey_trace() {
         // Mimic the plot here, minus the layout:
         // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
         let trace = Sankey::new()
@@ -431,7 +431,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_full_sankey_trace() {
+    fn serialize_full_sankey_trace() {
         let trace = Sankey::<i32>::new()
             .name("sankey")
             .visible(true)
@@ -474,7 +474,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_arrangement() {
+    fn serialize_arrangement() {
         assert_eq!(to_value(Arrangement::Snap).unwrap(), json!("snap"));
         assert_eq!(
             to_value(Arrangement::Perpendicular).unwrap(),
@@ -485,7 +485,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_line() {
+    fn serialize_line() {
         let line = Line::new()
             .color_array(vec![NamedColor::Black, NamedColor::Blue])
             .color(NamedColor::Black)
@@ -499,7 +499,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_node() {
+    fn serialize_node() {
         let node = Node::new()
             .color(NamedColor::Blue)
             .color_array(vec![NamedColor::Blue])
@@ -527,7 +527,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_link() {
+    fn serialize_link() {
         let link = Link::new()
             .color_array(vec![NamedColor::Blue])
             .color(NamedColor::Blue)

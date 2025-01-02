@@ -424,20 +424,20 @@ mod tests {
     use crate::common::ColorScalePalette;
 
     #[test]
-    fn test_serialize_intensity_mode() {
+    fn serialize_intensity_mode() {
         assert_eq!(to_value(IntensityMode::Vertex).unwrap(), json!("vertex"));
         assert_eq!(to_value(IntensityMode::Cell).unwrap(), json!("cell"));
     }
 
     #[test]
-    fn test_serialize_delaunay_axis() {
+    fn serialize_delaunay_axis() {
         assert_eq!(to_value(DelaunayAxis::X).unwrap(), json!("x"));
         assert_eq!(to_value(DelaunayAxis::Y).unwrap(), json!("y"));
         assert_eq!(to_value(DelaunayAxis::Z).unwrap(), json!("z"));
     }
 
     #[test]
-    fn test_serialize_contour() {
+    fn serialize_contour() {
         let contour = Contour::new().color("#123456").show(true).width(6);
         let expected = json!({"color": "#123456", "show": true, "width": 6});
 
@@ -445,7 +445,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_lighting() {
+    fn serialize_lighting() {
         let lighting = Lighting::new()
             .ambient(0.1)
             .diffuse(0.2)
@@ -468,7 +468,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_light_position() {
+    fn serialize_light_position() {
         let light_position = LightPosition::new()
             .x(vec![10.0])
             .y(vec![20.0])
@@ -479,7 +479,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_mesh3d() {
+    fn serialize_mesh3d() {
         let mesh3d = Mesh3D::new(
             vec![0.0, 1.0, 2.0],
             vec![3.0, 4.0, 5.0],

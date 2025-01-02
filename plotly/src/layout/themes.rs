@@ -166,7 +166,7 @@ mod tests {
     use crate::*;
 
     #[test]
-    fn test_plotly_default() {
+    fn plotly_default() {
         let template = &*DEFAULT;
         let layout = Layout::new().template(template);
         let mut plot = Plot::new();
@@ -178,7 +178,7 @@ mod tests {
     }
 
     #[test]
-    fn test_plotly_white() {
+    fn plotly_white() {
         let template = &*PLOTLY_WHITE;
         let layout = Layout::new().template(template);
         let mut plot = Plot::new();
@@ -191,7 +191,7 @@ mod tests {
     }
 
     #[test]
-    fn test_plotly_dark() {
+    fn plotly_dark() {
         let template = &*PLOTLY_DARK;
         let layout = Layout::new().template(template);
         let mut plot = Plot::new();

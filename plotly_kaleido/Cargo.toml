@@ -1,6 +1,6 @@
 [package]
 name = "plotly_kaleido"
-version = "0.11.0"
+version = "0.12.0"
 description = "Additional output format support for plotly using Kaleido"
 authors = [
     "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
@@ -27,7 +27,7 @@ dunce = "1.0"
 base64 = "0.22"
 
 [dev-dependencies]
-plotly_kaleido = { version = "0.11", path = ".", features = ["download"] }
+plotly_kaleido = { version = "0.12", path = ".", features = ["download"] }
 
 [build-dependencies]
 zip = "2.1"
