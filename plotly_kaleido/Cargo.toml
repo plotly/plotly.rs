@@ -27,7 +27,7 @@ dunce = "1.0"
 base64 = "0.22"
 
 [dev-dependencies]
-plotly_kaleido = { version = "0.12", path = ".", features = ["download"] }
+plotly_kaleido = { path = ".", features = ["download"] }
 
 [build-dependencies]
 zip = "2.1"
