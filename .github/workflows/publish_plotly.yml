@@ -17,9 +17,3 @@ jobs:
       env:
         CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
     - run: cargo publish --allow-dirty -p plotly
-
-  create-gh-release:
-    name: Deploy to GH Releases
-    runs-on: ubuntu-latest
-    steps:
-      - uses: softprops/action-gh-release@v1
