@@ -1,4 +1,4 @@
-name: Publish plotly
+name: Publish plotly-derive
 
 on:
   workflow_dispatch:
@@ -13,4 +13,4 @@ jobs:
     - run: cargo login ${{ env.CRATES_IO_TOKEN }}
       env:
         CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-    - run: cargo publish --allow-dirty -p plotly
+    - run: cargo publish --allow-dirty -p plotly_derive
