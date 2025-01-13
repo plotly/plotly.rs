@@ -31,4 +31,4 @@ plotly_kaleido = { path = ".", features = ["download"] }
 
 [build-dependencies]
 zip = "2.1"
-directories = ">=4, <6"
+directories = ">=4, <7"
