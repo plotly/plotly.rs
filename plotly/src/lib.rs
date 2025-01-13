@@ -31,7 +31,8 @@ pub use layout::Layout;
 pub use plot::{ImageFormat, Plot, Trace};
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
-    box_plot, contour, heat_map, histogram, image, mesh3d, sankey, scatter_mapbox, surface,
+    box_plot, contour, heat_map, histogram, image, mesh3d, sankey, scatter, scatter3d,
+    scatter_mapbox, surface,
 };
 // Bring the different trace types into the top-level scope
 pub use traces::{
