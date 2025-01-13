@@ -213,7 +213,7 @@ impl FieldType {
         // Not the best implementation but works in practice
 
         let (type_str_parts, types) = _type_str_parts(field_ty);
-        if type_str_parts.first().map_or(false, |t| t != "Option") {
+        if type_str_parts.first().is_some_and(|t| t != "Option") {
             return FieldType::NotOption;
         }
 
@@ -507,7 +507,7 @@ impl FieldReceiver {
                 attr.path()
                     .segments
                     .first()
-                    .map_or(false, |p| p.ident == name)
+                    .is_some_and(|p| p.ident == name)
             })
             .map(|attr| {
                 quote![
