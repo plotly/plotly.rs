@@ -29,7 +29,7 @@ rinja = { version = "0.3", features = ["serde_json"] }
 rinja_axum = { version = "0.3", optional = true }
 dyn-clone = "1"
 erased-serde = "0.4"
-getrandom = { version = "0.2", features = ["js"], optional = true }
+getrandom = { version = "0.3", features = ["js"], optional = true }
 image = { version = "0.25", optional = true }
 js-sys = { version = "0.3", optional = true }
 plotly_derive = { version = "0.12", path = "../plotly_derive" }
