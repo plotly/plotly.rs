@@ -3,8 +3,8 @@ use std::{fs::File, io::Write, path::Path};
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use rand::{
-    distributions::{Alphanumeric, DistString},
-    thread_rng,
+    distr::{Alphanumeric, SampleString},
+    rng,
 };
 use rinja::Template;
 use serde::Serialize;
@@ -254,7 +254,7 @@ impl Plot {
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
+        let mut plot_name = Alphanumeric.sample_string(&mut rng(), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{}", plot_name);
         temp.push(plot_name);
@@ -296,7 +296,7 @@ impl Plot {
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
+        let mut plot_name = Alphanumeric.sample_string(&mut rng(), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{}", plot_name);
         temp.push(plot_name);
@@ -354,13 +354,13 @@ impl Plot {
     pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
         let plot_div_id = match plot_div_id {
             Some(id) => id.to_string(),
-            None => Alphanumeric.sample_string(&mut thread_rng(), 20),
+            None => Alphanumeric.sample_string(&mut rng(), 20),
         };
         self.render_inline(&plot_div_id)
     }
 
     fn to_jupyter_notebook_html(&self) -> String {
-        let plot_div_id = Alphanumeric.sample_string(&mut thread_rng(), 20);
+        let plot_div_id = Alphanumeric.sample_string(&mut rng(), 20);
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot: self,

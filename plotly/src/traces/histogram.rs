@@ -220,7 +220,7 @@ where
     ///
     /// fn ndarray_to_traces() {
     ///     let n: usize = 1_250;
-    ///     let mut rng = rand::thread_rng();
+    ///     let mut rng = rand::rng();
     ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     ///     let mut ys: Array<f64, Ix2> = Array::zeros((n, 4));
     ///     let mut count = 0.;

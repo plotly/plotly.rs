@@ -51,5 +51,5 @@ itertools = ">=0.10, <0.15"
 itertools-num = "0.1"
 ndarray = "0.16"
 plotly_kaleido = { path = "../plotly_kaleido", features = ["download"] }
-rand_distr = "0.4"
+rand_distr = "0.5"
 base64 = "0.22"

@@ -121,14 +121,11 @@ fn write_html(html_data: &str) -> String {
     use std::env;
     use std::{fs::File, io::Write};
 
-    use rand::{
-        distributions::{Alphanumeric, DistString},
-        thread_rng,
-    };
+    use rand::distr::{Alphanumeric, SampleString};
 
     // Set up the temp file with a unique filename.
     let mut temp = env::temp_dir();
-    let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
+    let mut plot_name = Alphanumeric.sample_string(&mut rand::rng(), 22);
     plot_name.push_str(".html");
     plot_name = format!("plotly_{}", plot_name);
     temp.push(plot_name);

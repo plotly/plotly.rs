@@ -38,7 +38,7 @@ fn simple_scatter_plot(show: bool) -> Plot {
 // ANCHOR: line_and_scatter_plots
 fn line_and_scatter_plots(show: bool) -> Plot {
     let n: usize = 100;
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let random_x: Vec<f64> = Array::linspace(0., 1., n).into_raw_vec_and_offset().0;
     let random_y0: Vec<f64> = Normal::new(5., 1.)
         .unwrap()
@@ -273,8 +273,12 @@ fn colored_and_styled_scatter_plot(show: bool) -> Plot {
 // ANCHOR: large_data_sets
 fn large_data_sets(show: bool) -> Plot {
     let n: usize = 100_000;
-    let mut rng = rand::thread_rng();
-    let r: Vec<f64> = Uniform::new(0., 1.).sample_iter(&mut rng).take(n).collect();
+    let mut rng = rand::rng();
+    let r: Vec<f64> = Uniform::new(0., 1.)
+        .unwrap()
+        .sample_iter(&mut rng)
+        .take(n)
+        .collect();
     let theta: Vec<f64> = Normal::new(0., 2. * std::f64::consts::PI)
         .unwrap()
         .sample_iter(&mut rng)
