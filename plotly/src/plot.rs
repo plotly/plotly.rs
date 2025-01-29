@@ -534,10 +534,11 @@ impl Plot {
         serde_json::to_string(self).unwrap()
     }
 
-    #[cfg(feature = "wasm")]
+    #[cfg(target_family = "wasm")]
     /// Convert a `Plot` to a native Javasript `js_sys::Object`.
-    pub fn to_js_object(&self) -> js_sys::Object {
-        use wasm_bindgen::JsCast;
+    pub fn to_js_object(&self) -> wasm_bindgen_futures::js_sys::Object {
+        use wasm_bindgen_futures::js_sys;
+        use wasm_bindgen_futures::wasm_bindgen::JsCast;
         // The only reason this could fail is if to_json() produces structurally
         // incorrect JSON. That would be a bug, and would require fixing in the
         // to_json()/serialization methods, rather than here
@@ -734,7 +735,7 @@ mod tests {
 
     #[test]
     #[ignore] // Don't really want it to try and open a browser window every time we run a test.
-    #[cfg(not(feature = "wasm"))]
+    #[cfg(not(target_family = "wasm"))]
     fn show_image() {
         let plot = create_test_plot();
         plot.show_image(ImageFormat::PNG, 1024, 680);

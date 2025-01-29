@@ -37,12 +37,12 @@ jobs:
         with:
           components: clippy
           targets: wasm32-unknown-unknown
-      # lint the main library workspace excluding the wasm feature
-      - run: cargo clippy --features plotly_ndarray,plotly_image,kaleido -- -D warnings
-      # lint the plotly library with wasm enabled
-      - run: cargo clippy --package plotly --features wasm --target wasm32-unknown-unknown -- -D warnings
+      # lint the main library workspace for non-wasm target
+      - run: cargo clippy --all-features -- -D warnings
       # lint the non-wasm examples
       - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" -- -D warnings
+      # lint the plotly library for wasm target
+      - run: cargo clippy --package plotly --target wasm32-unknown-unknown -- -D warnings
       # lint the wasm examples
       - run: cd ${{ github.workspace }}/examples && cargo clippy --target wasm32-unknown-unknown --package "wasm*"
 
@@ -83,8 +83,6 @@ jobs:
         with:
           components: llvm-tools-preview
       - uses: taiki-e/install-action@cargo-llvm-cov
-      # we are skipping anything to do with wasm here
-      - run: cargo llvm-cov --workspace --features plotly_ndarray,plotly_image,kaleido --lcov --output-path lcov.info
       - uses: codecov/codecov-action@v3
 
   build_examples:
