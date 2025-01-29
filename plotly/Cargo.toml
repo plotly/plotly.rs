@@ -21,7 +21,6 @@ plotly_ndarray = ["ndarray"]
 plotly_image = ["image"]
 plotly_embed_js = []
 
-wasm = ["getrandom", "js-sys", "wasm-bindgen", "wasm-bindgen-futures"]
 with-axum = ["rinja/with-axum", "rinja_axum"]
 
 [dependencies]
@@ -29,9 +28,7 @@ rinja = { version = "0.3", features = ["serde_json"] }
 rinja_axum = { version = "0.3", optional = true }
 dyn-clone = "1"
 erased-serde = "0.4"
-getrandom = { version = "0.2", features = ["js"], optional = true }
 image = { version = "0.25", optional = true }
-js-sys = { version = "0.3", optional = true }
 plotly_derive = { version = "0.12", path = "../plotly_derive" }
 plotly_kaleido = { version = "0.12", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.16", optional = true }
@@ -41,8 +38,11 @@ serde_json = "1.0"
 serde_repr = "0.1"
 serde_with = ">=2, <4"
 rand = "0.9"
-wasm-bindgen = { version = "0.2", optional = true }
-wasm-bindgen-futures = { version = "0.4", optional = true }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
+wasm-bindgen-futures = { version = "0.4" }
+wasm-bindgen = { version = "0.2"}
 
 [dev-dependencies]
 csv = "1.1"

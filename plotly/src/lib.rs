@@ -6,9 +6,9 @@ extern crate rand;
 extern crate rinja;
 extern crate serde;
 
-#[cfg(all(feature = "kaleido", feature = "wasm"))]
+#[cfg(all(feature = "kaleido", target_family = "wasm"))]
 compile_error!(
-    r#"The "kaleido" and "wasm" features are mutually exclusive and cannot be activated at the same time. Please disable one or the other."#
+    r#"The "kaleido" feature is not available on "wasm" targets. Please compile without this feature for the wasm target family."#
 );
 
 #[cfg(feature = "plotly_ndarray")]
@@ -16,7 +16,7 @@ pub mod ndarray;
 #[cfg(feature = "plotly_ndarray")]
 pub use crate::ndarray::ArrayTraces;
 
-#[cfg(feature = "wasm")]
+#[cfg(target_family = "wasm")]
 pub mod bindings;
 
 pub mod common;
