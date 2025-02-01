@@ -170,9 +170,9 @@ fn colored_and_styled_error_bars(show: bool) -> Plot {
 // Box Plots
 // ANCHOR: basic_box_plot
 fn basic_box_plot(show: bool) -> Plot {
-    let mut rng = rand::thread_rng();
-    let uniform1 = Uniform::new(0.0, 1.0);
-    let uniform2 = Uniform::new(1.0, 2.0);
+    let mut rng = rand::rng();
+    let uniform1 = Uniform::new(0.0, 1.0).unwrap();
+    let uniform2 = Uniform::new(1.0, 2.0).unwrap();
     let n = 50;
 
     let mut y0 = Vec::with_capacity(n);
@@ -407,8 +407,8 @@ fn grouped_horizontal_box_plot(show: bool) -> Plot {
 fn fully_styled_box_plot(show: bool) -> Plot {
     let rnd_sample = |num, mul| -> Vec<f64> {
         let mut v: Vec<f64> = Vec::with_capacity(num);
-        let mut rng = rand::thread_rng();
-        let uniform = Uniform::new(0.0, mul);
+        let mut rng = rand::rng();
+        let uniform = Uniform::new(0.0, mul).unwrap();
         for _ in 0..num {
             v.push(uniform.sample(&mut rng));
         }
@@ -478,7 +478,7 @@ fn fully_styled_box_plot(show: bool) -> Plot {
 
 // Histograms
 fn sample_normal_distribution(n: usize, mean: f64, std_dev: f64) -> Vec<f64> {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let dist = Normal::new(mean, std_dev).unwrap();
     let mut v = Vec::<f64>::with_capacity(n);
     for _idx in 1..n {
@@ -488,8 +488,8 @@ fn sample_normal_distribution(n: usize, mean: f64, std_dev: f64) -> Vec<f64> {
 }
 
 fn sample_uniform_distribution(n: usize, lb: f64, ub: f64) -> Vec<f64> {
-    let mut rng = rand::thread_rng();
-    let dist = Uniform::new(lb, ub);
+    let mut rng = rand::rng();
+    let dist = Uniform::new(lb, ub).unwrap();
     let mut v = Vec::<f64>::with_capacity(n);
     for _idx in 1..n {
         v.push(dist.sample(&mut rng));

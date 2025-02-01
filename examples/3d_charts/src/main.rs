@@ -218,8 +218,8 @@ fn colorscale_plot(show: bool) -> Plot {
     let _color: Vec<usize> = (0..z.len()).collect();
     let _color: Vec<u8> = (0..z.len()).map(|x| x as u8).collect();
     let _color: Vec<i16> = {
-        let mut rng = rand::thread_rng();
-        (0..z.len()).map(|_| rng.gen_range(0..100)).collect()
+        let mut rng = rand::rng();
+        (0..z.len()).map(|_| rng.random_range(0..100)).collect()
     };
 
     let color_max = color.iter().fold(f64::MIN, |acc, x| acc.max(*x as f64));

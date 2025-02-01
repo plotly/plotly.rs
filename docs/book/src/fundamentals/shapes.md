@@ -12,7 +12,7 @@ use plotly::layout::{
     ShapeType,
 };
 use plotly::{Bar, color::NamedColor, Plot, Scatter};
-use rand::thread_rng;
+use rand::rng;
 use rand_distr::{Distribution, Normal};
 ```
 

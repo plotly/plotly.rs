@@ -9,7 +9,6 @@ use plotly::{
     },
     Bar, Plot, Scatter,
 };
-use rand::thread_rng;
 use rand_distr::{num_traits::Float, Distribution, Normal};
 
 // ANCHOR: filled_area_chart
@@ -433,7 +432,7 @@ fn circles_positioned_relative_to_the_axes(show: bool) -> Plot {
 
 // ANCHOR: highlighting_clusters_of_scatter_points_with_circle_shapes
 fn highlighting_clusters_of_scatter_points_with_circle_shapes(show: bool) -> Plot {
-    let mut rng = thread_rng();
+    let mut rng = rand::rng();
     let x0 = Normal::new(2., 0.45)
         .unwrap()
         .sample_iter(&mut rng)

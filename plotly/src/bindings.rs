@@ -2,8 +2,8 @@
 //! context, where it is assumed that a remote copy of the Javascript Plotly
 //! library is available, (i.e. via a CDN).
 
-use js_sys::Object;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::js_sys::Object;
 
 use crate::Plot;
 

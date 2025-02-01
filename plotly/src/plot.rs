@@ -3,8 +3,8 @@ use std::{fs::File, io::Write, path::Path};
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
 use rand::{
-    distributions::{Alphanumeric, DistString},
-    thread_rng,
+    distr::{Alphanumeric, SampleString},
+    rng,
 };
 use rinja::Template;
 use serde::Serialize;
@@ -254,7 +254,7 @@ impl Plot {
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
+        let mut plot_name = Alphanumeric.sample_string(&mut rng(), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{}", plot_name);
         temp.push(plot_name);
@@ -296,7 +296,7 @@ impl Plot {
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut thread_rng(), 22);
+        let mut plot_name = Alphanumeric.sample_string(&mut rng(), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{}", plot_name);
         temp.push(plot_name);
@@ -354,13 +354,13 @@ impl Plot {
     pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
         let plot_div_id = match plot_div_id {
             Some(id) => id.to_string(),
-            None => Alphanumeric.sample_string(&mut thread_rng(), 20),
+            None => Alphanumeric.sample_string(&mut rng(), 20),
         };
         self.render_inline(&plot_div_id)
     }
 
     fn to_jupyter_notebook_html(&self) -> String {
-        let plot_div_id = Alphanumeric.sample_string(&mut thread_rng(), 20);
+        let plot_div_id = Alphanumeric.sample_string(&mut rng(), 20);
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot: self,
@@ -534,10 +534,11 @@ impl Plot {
         serde_json::to_string(self).unwrap()
     }
 
-    #[cfg(feature = "wasm")]
+    #[cfg(target_family = "wasm")]
     /// Convert a `Plot` to a native Javasript `js_sys::Object`.
-    pub fn to_js_object(&self) -> js_sys::Object {
-        use wasm_bindgen::JsCast;
+    pub fn to_js_object(&self) -> wasm_bindgen_futures::js_sys::Object {
+        use wasm_bindgen_futures::js_sys;
+        use wasm_bindgen_futures::wasm_bindgen::JsCast;
         // The only reason this could fail is if to_json() produces structurally
         // incorrect JSON. That would be a bug, and would require fixing in the
         // to_json()/serialization methods, rather than here
@@ -734,7 +735,7 @@ mod tests {
 
     #[test]
     #[ignore] // Don't really want it to try and open a browser window every time we run a test.
-    #[cfg(not(feature = "wasm"))]
+    #[cfg(not(target_family = "wasm"))]
     fn show_image() {
         let plot = create_test_plot();
         plot.show_image(ImageFormat::PNG, 1024, 680);
