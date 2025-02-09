@@ -10,6 +10,7 @@
 //! Note that [plotly/Kaleido](https://github.com/plotly/Kaleido) is still in pre-release and as such the `kaleido`
 //! feature should be considered in pre-release mode as well.
 
+#![cfg(not(target_family = "wasm"))]
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
