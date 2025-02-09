@@ -102,7 +102,7 @@ To save a plot as a static image, the `kaleido` feature is required as well as i
 
 ### Kaleido external dependency
 
-When developing applications for your host, enabling both `kaleido` and `kaleido_download` features will ensure that the `kaleido` binary is downloaded for your system's architecture at compile time. After download, it is unpacked into a specific path, e.g., on Linux this is `/home/USERNAME/.config/kaleido`. With these two features enabled, static images can be exported as described in the next section as long as the application run on the same host where where this crate was compiled on.
+When developing applications for your host, enabling both `kaleido` and `kaleido_download` features will ensure that the `kaleido` binary is downloaded for your system's architecture at compile time. After download, it is unpacked into a specific path, e.g., on Linux this is `/home/USERNAME/.config/kaleido`. With these two features enabled, static images can be exported as described in the next section as long as the application runs on the same machine where it has been compiled on.
 
 When the applications developed with `plotly.rs` are intended for other targets or when the user wants to control where the `kaleido` binary is installed then Kaleido must be manually downloaded and installed. Setting the environment variable `KALEIDO_PATH=/path/installed/kaleido/` will ensure that applications that were built with the `kaleido` feature enabled can locate the `kaleido` executable and use it to generate static images.
 
@@ -143,14 +143,7 @@ plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 
 ## Usage Within a Wasm Environment
 
-Using `Plotly.rs` in a Wasm-based frontend framework is possible by enabling the `wasm` feature:
-
-```toml
-# Cargo.toml
-
-[dependencies]
-plotly = { version = "0.12", features = ["wasm"] }
-```
+`Plotly.rs` can be used with a Wasm-based frontend framework. The needed dependencies are automatically enabled on `wasm32` targets. Note that the `kaleido` feature is not supported in Wasm enviroments and will throw a compilation error if enabled. 
 
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
 
