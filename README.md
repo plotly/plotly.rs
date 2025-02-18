@@ -182,11 +182,10 @@ pub fn plot_component() -> Html {
     });
 
 
-        use_effect_with_deps(move |_| {
-            p.run();
-            || ()
-        }, (),
-    );
+    use_effect_with((), move |_| {
+        p.run();
+        || ()
+    });
 
 
     html! {
