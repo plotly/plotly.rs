@@ -15,7 +15,7 @@ use crate::{Configuration, Layout};
 #[template(path = "plot.html", escape = "none")]
 struct PlotTemplate<'a> {
     plot: &'a Plot,
-    js_scripts: String,
+    js_scripts: &'a str,
 }
 
 #[derive(Template)]
@@ -24,7 +24,7 @@ struct PlotTemplate<'a> {
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
     format: ImageFormat,
-    js_scripts: String,
+    js_scripts: &'a str,
     width: usize,
     height: usize,
 }
@@ -466,7 +466,7 @@ impl Plot {
     fn render(&self) -> String {
         let tmpl = PlotTemplate {
             plot: self,
-            js_scripts: self.js_scripts.clone(),
+            js_scripts: &self.js_scripts,
         };
         tmpl.render().unwrap()
     }
@@ -476,7 +476,7 @@ impl Plot {
         let tmpl = StaticPlotTemplate {
             plot: self,
             format,
-            js_scripts: self.js_scripts.clone(),
+            js_scripts: &self.js_scripts,
             width,
             height,
         };
