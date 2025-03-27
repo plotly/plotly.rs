@@ -2,8 +2,8 @@
 //!
 //! A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 #![recursion_limit = "256"] // lets us use a large serde_json::json! macro for testing crate::layout::Axis
+extern crate askama;
 extern crate rand;
-extern crate rinja;
 extern crate serde;
 
 #[cfg(all(feature = "kaleido", target_family = "wasm"))]

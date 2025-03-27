@@ -21,11 +21,8 @@ plotly_ndarray = ["ndarray"]
 plotly_image = ["image"]
 plotly_embed_js = []
 
-with-axum = ["rinja/with-axum", "rinja_axum"]
-
 [dependencies]
-rinja = { version = "0.3", features = ["serde_json"] }
-rinja_axum = { version = "0.3", optional = true }
+askama = { version = "0.13.0", features = ["serde_json"] }
 dyn-clone = "1"
 erased-serde = "0.4"
 image = { version = "0.25", optional = true }

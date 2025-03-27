@@ -3,9 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.13.0] - 2025-02-xx
+## [0.13.0] - 2025-03-xx
 ### Changed
 - [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put evrything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
+- [[#281]((https://github.com/plotly/plotly.rs/pull/xxx))] Update to askama 0.13.0
 
 ## [0.12.1] - 2025-01-02
 ### Fixed
