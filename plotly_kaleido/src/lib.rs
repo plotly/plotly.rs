@@ -183,12 +183,10 @@ impl Kaleido {
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
-        let p = self.cmd_path.as_path();
-        let p = p.to_str().unwrap();
-        let p = String::from(p);
+        let p = self.cmd_path.to_str().unwrap();
 
         #[allow(clippy::zombie_processes)]
-        let mut process = Command::new(p.as_str())
+        let mut process = Command::new(p)
             .current_dir(self.cmd_path.parent().unwrap())
             .args([
                 "plotly",
