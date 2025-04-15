@@ -146,9 +146,9 @@ impl Kaleido {
         dst.set_extension(format);
 
         let image_data = self.convert(plotly_data, format, width, height, scale)?;
-        let data: Vec<u8> = match format {
-            "svg" | "eps" => image_data.as_bytes().to_vec(),
-            _ => general_purpose::STANDARD.decode(image_data).unwrap(),
+        let data = match format {
+            "svg" | "eps" => image_data.as_bytes(),
+            _ => &general_purpose::STANDARD.decode(image_data).unwrap(),
         };
         let mut file = File::create(dst.as_path())?;
         file.write_all(&data)?;
