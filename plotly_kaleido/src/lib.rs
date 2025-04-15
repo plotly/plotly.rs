@@ -151,7 +151,7 @@ impl Kaleido {
             _ => &general_purpose::STANDARD.decode(image_data).unwrap(),
         };
         let mut file = File::create(dst.as_path())?;
-        file.write_all(&data)?;
+        file.write_all(data)?;
         file.flush()?;
 
         Ok(())
