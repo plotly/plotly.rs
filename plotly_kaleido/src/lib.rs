@@ -146,12 +146,12 @@ impl Kaleido {
         dst.set_extension(format);
 
         let image_data = self.convert(plotly_data, format, width, height, scale)?;
-        let data: Vec<u8> = match format {
-            "svg" | "eps" => image_data.as_bytes().to_vec(),
-            _ => general_purpose::STANDARD.decode(image_data).unwrap(),
+        let data = match format {
+            "svg" | "eps" => image_data.as_bytes(),
+            _ => &general_purpose::STANDARD.decode(image_data).unwrap(),
         };
         let mut file = File::create(dst.as_path())?;
-        file.write_all(&data)?;
+        file.write_all(data)?;
         file.flush()?;
 
         Ok(())
@@ -183,12 +183,10 @@ impl Kaleido {
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
-        let p = self.cmd_path.as_path();
-        let p = p.to_str().unwrap();
-        let p = String::from(p);
+        let p = self.cmd_path.to_str().unwrap();
 
         #[allow(clippy::zombie_processes)]
-        let mut process = Command::new(p.as_str())
+        let mut process = Command::new(p)
             .current_dir(self.cmd_path.parent().unwrap())
             .args([
                 "plotly",
