@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put evrything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
 - [[#281]((https://github.com/plotly/plotly.rs/pull/xxx))] Update to askama 0.13.0
 
+### Fixed
+- [[#284](https://github.com/plotly/plotly.rs/pull/284)]  Allow plotly package to be compiled for android 
+
 ## [0.12.1] - 2025-01-02
 ### Fixed
 - [[#269](https://github.com/plotly/plotly.rs/pull/269)] Fix publishing to crates.io issue
