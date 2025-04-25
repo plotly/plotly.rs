@@ -1,0 +1,12 @@
+[package]
+name = "wasm-yew-callback-minimal"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+plotly = { path = "../../plotly" }
+yew = "0.21"
+yew-hooks = "0.3"
+log = "0.4"
+wasm-logger = "0.2"
+web-sys = { version = "0.3.77"}
