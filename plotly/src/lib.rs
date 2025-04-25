@@ -19,6 +19,9 @@ pub use crate::ndarray::ArrayTraces;
 #[cfg(target_family = "wasm")]
 pub mod bindings;
 
+#[cfg(target_family = "wasm")]
+pub mod callbacks;
+
 pub mod common;
 pub mod configuration;
 pub mod layout;
