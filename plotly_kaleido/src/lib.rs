@@ -300,6 +300,7 @@ mod tests {
         .unwrap()
     }
 
+    #[cfg(target_os = "macos")]
     fn create_test_surface() -> Value {
         to_value(json!({
             "data": [
