@@ -584,10 +584,8 @@ impl PartialEq for Plot {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
-
-
     use serde_json::{json, to_value};
+    use std::path::PathBuf;
 
     use super::*;
     use crate::Scatter;

@@ -224,11 +224,9 @@ impl Kaleido {
                         "failed to spawn Kaleido binary at {}",
                         self.cmd_path.to_string_lossy()
                     )
-                        .to_string()
+                    .to_string()
                 )
             });
-
-
         {
             let plot_data = PlotData::new(plotly_data, format, width, height, scale).to_json();
             let mut process_stdin = process.stdin.take().unwrap();
@@ -339,7 +337,7 @@ mod tests {
             ],
             "layout": {}
         }))
-            .unwrap()
+        .unwrap()
     }
 
     #[test]
@@ -449,7 +447,6 @@ mod tests {
         assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
-    
     #[cfg(target_os = "macos")]
     #[test]
     fn save_surface_jpeg() {
@@ -464,7 +461,6 @@ mod tests {
         assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
-    
     #[cfg(target_os = "macos")]
     #[test]
     fn save_surface_webp() {
@@ -479,7 +475,6 @@ mod tests {
         assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
-    
     #[cfg(target_os = "macos")]
     #[test]
     fn save_surface_svg() {
@@ -494,7 +489,6 @@ mod tests {
         assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
-    
     #[cfg(target_os = "macos")]
     #[test]
     fn save_surface_pdf() {
