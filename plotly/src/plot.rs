@@ -584,13 +584,14 @@ impl PartialEq for Plot {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::Scatter;
+    use std::path::PathBuf;
 
     use serde_json::{json, to_value};
-    use std::path::PathBuf;
     #[cfg(not(target_os = "macos"))]
     use {base64::engine::general_purpose, base64::Engine};
+
+    use super::*;
+    use crate::Scatter;
 
     fn create_test_plot() -> Plot {
         let trace1 = Scatter::new(vec![0, 1, 2], vec![6, 10, 2]).name("trace1");
