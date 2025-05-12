@@ -115,7 +115,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: [wasm-yew-minimal]
+        example: [wasm-yew-minimal, wasm-yew-callback-minimal]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

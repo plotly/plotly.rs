@@ -1,5 +1,5 @@
 use plotly::callbacks::ClickEvent;
-use plotly::{Histogram, Plot, Scatter, common::Mode};
+use plotly::{Histogram, Plot, Scatter, common::Mode, histogram::Bins};
 use web_sys::js_sys::Math;
 use yew::prelude::*;
 
@@ -23,14 +23,18 @@ pub fn plot_component() -> Html {
         let id = "plot-div";
         let mut fig = Plot::new();
         let xs: Vec<f64> = (0..50).map(|i| i as f64).collect();
-        let ys: Vec<f64> = xs.iter().map(|x| x.sin()).collect();
+        let ys: Vec<f64> = xs.iter().map(|x| x.sin() * 5.0).collect();
         fig.add_trace(
             Scatter::new(xs.clone(), ys.clone())
                 .mode(Mode::Markers)
-                .name("Sine markers"),
+                .name("Sine Wave Markers"),
         );
-        let random_values: Vec<f64> = (0..100).map(|_| Math::random()).collect();
-        fig.add_trace(Histogram::new(random_values).name("Random histogram"));
+        let random_values: Vec<f64> = (0..500).map(|_| Math::random() * 100.0).collect();
+        fig.add_trace(
+            Histogram::new(random_values)
+                .name("Random Data Histogram")
+                .x_bins(Bins::new(-1.0, 30.0, 5.0)),
+        );
         let layout = plotly::Layout::new().title("Click Event Callback Example in Yew");
         fig.set_layout(layout);
         async move {
