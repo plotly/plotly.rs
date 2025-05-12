@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
-use web_sys::{js_sys::Function, window, HtmlElement};
+use web_sys::{js_sys::Function, HtmlElement};
 
 /// Provides utilities for binding Plotly.js click events to Rust closures
 /// via `wasm-bindgen`.  
@@ -61,20 +61,23 @@ pub fn bind_click<F>(div_id: &str, mut cb: F)
 where
     F: 'static + FnMut(ClickEvent),
 {
-    let plot_div: PlotlyDiv = window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .get_element_by_id(div_id)
-        .unwrap()
-        .unchecked_into();
     let closure = Closure::wrap(Box::new(move |event: JsValue| {
         let event: ClickEvent =
-            serde_wasm_bindgen::from_value(event).expect("\n Couldn't serialize the event \n");
+            serde_wasm_bindgen::from_value(event).expect("Could not serialize the event");
         cb(event);
     }) as Box<dyn FnMut(JsValue)>);
+
+    let plot_div: PlotlyDiv = get_div(div_id).expect("Could not get Div element by Id");
     plot_div.on("plotly_click", closure.as_ref().unchecked_ref());
     closure.forget();
+}
+
+fn get_div(tag: &str) -> Option<PlotlyDiv> {
+    web_sys::window()?
+        .document()?
+        .get_element_by_id(tag)?
+        .dyn_into()
+        .ok()
 }
 
 /// Represents a single point from a Plotly click event.
