@@ -185,20 +185,8 @@ impl Kaleido {
     ) -> Result<String, Box<dyn std::error::Error>> {
         let p = self.cmd_path.to_str().unwrap();
 
-        #[cfg(not(target_os = "macos"))]
-        let cmd_args = vec![
-            "plotly",
-            "--disable-gpu",
-            "--allow-file-access-from-files",
-            "--disable-breakpad",
-            "--disable-dev-shm-usage",
-            "--disable-software-rasterizer",
-            "--single-process",
-            "--no-sandbox",
-        ];
-
-        // Add Kaleido issue #323
-        #[cfg(target_os = "macos")]
+        // Removed flag 'disable-gpu' as it causes issues on MacOS and other platforms
+        // see Kaleido issue #323
         let cmd_args = vec![
             "plotly",
             "--allow-file-access-from-files",
@@ -274,36 +262,6 @@ mod tests {
     fn create_test_plot() -> Value {
         to_value(json!({
             "data": [
-                {
-                    "type": "scatter",
-                    "x": [1, 2, 3, 4],
-                    "y": [10, 15, 13, 17],
-                    "name": "trace1",
-                    "mode": "markers"
-                },
-                {
-                    "type": "scatter",
-                    "x": [2, 3, 4, 5],
-                    "y": [16, 5, 11, 9],
-                    "name": "trace2",
-                    "mode": "lines"
-                },
-                {
-                    "type": "scatter",
-                    "x": [1, 2, 3, 4],
-                    "y": [12, 9, 15, 12],
-                    "name": "trace3",
-                }
-            ],
-            "layout": {}
-        }))
-        .unwrap()
-    }
-
-    #[cfg(target_os = "macos")]
-    fn create_test_surface() -> Value {
-        to_value(json!({
-            "data": [
               {
                 "name": "Surface",
                 "type": "surface",
@@ -361,8 +319,7 @@ mod tests {
         assert_eq!(to_value(kaleido_data).unwrap(), expected);
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
+    // For MacOS failures, see issue #241 and upstream https://github.com/plotly/Kaleido/issues/323 is resolved
     #[test]
     fn save_png() {
         let test_plot = create_test_plot();
@@ -370,11 +327,13 @@ mod tests {
         let dst = PathBuf::from("example.png");
         let r = k.save(dst.as_path(), &test_plot, "png", 1200, 900, 4.5);
         assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_jpeg() {
         let test_plot = create_test_plot();
@@ -382,11 +341,13 @@ mod tests {
         let dst = PathBuf::from("example.jpeg");
         let r = k.save(dst.as_path(), &test_plot, "jpeg", 1200, 900, 4.5);
         assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_webp() {
         let test_plot = create_test_plot();
@@ -394,11 +355,13 @@ mod tests {
         let dst = PathBuf::from("example.webp");
         let r = k.save(dst.as_path(), &test_plot, "webp", 1200, 900, 4.5);
         assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_svg() {
         let test_plot = create_test_plot();
@@ -406,11 +369,13 @@ mod tests {
         let dst = PathBuf::from("example.svg");
         let r = k.save(dst.as_path(), &test_plot, "svg", 1200, 900, 4.5);
         assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_pdf() {
         let test_plot = create_test_plot();
@@ -418,10 +383,14 @@ mod tests {
         let dst = PathBuf::from("example.pdf");
         let r = k.save(dst.as_path(), &test_plot, "pdf", 1200, 900, 4.5);
         assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This generates empty eps files for some reason
+    // Kaleido generates empty eps files
     #[test]
     #[ignore]
     fn save_eps() {
@@ -430,78 +399,6 @@ mod tests {
         let dst = PathBuf::from("example.eps");
         let r = k.save(dst.as_path(), &test_plot, "eps", 1200, 900, 4.5);
         assert!(r.is_ok());
-        assert!(std::fs::remove_file(dst.as_path()).is_ok());
-    }
-
-    // Issue #241 workaround until https://github.com/plotly/Kaleido/issues/323 is resolved
-    #[cfg(target_os = "macos")]
-    #[test]
-    fn save_surface_png() {
-        let test_plot = create_test_surface();
-        let k = Kaleido::new();
-        let dst = PathBuf::from("example.png");
-        let r = k.save(dst.as_path(), &test_plot, "png", 1200, 900, 4.5);
-        assert!(r.is_ok());
-        assert!(dst.exists());
-        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-        let file_size = metadata.len();
-        assert!(file_size > 0,);
-        assert!(std::fs::remove_file(dst.as_path()).is_ok());
-    }
-    #[cfg(target_os = "macos")]
-    #[test]
-    fn save_surface_jpeg() {
-        let test_plot = create_test_surface();
-        let k = Kaleido::new();
-        let dst = PathBuf::from("example.jpeg");
-        let r = k.save(dst.as_path(), &test_plot, "jpeg", 1200, 900, 4.5);
-        assert!(r.is_ok());
-        assert!(dst.exists());
-        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-        let file_size = metadata.len();
-        assert!(file_size > 0,);
-        assert!(std::fs::remove_file(dst.as_path()).is_ok());
-    }
-    #[cfg(target_os = "macos")]
-    #[test]
-    fn save_surface_webp() {
-        let test_plot = create_test_surface();
-        let k = Kaleido::new();
-        let dst = PathBuf::from("example.webp");
-        let r = k.save(dst.as_path(), &test_plot, "webp", 1200, 900, 4.5);
-        assert!(r.is_ok());
-        assert!(dst.exists());
-        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-        let file_size = metadata.len();
-        assert!(file_size > 0,);
-        assert!(std::fs::remove_file(dst.as_path()).is_ok());
-    }
-    #[cfg(target_os = "macos")]
-    #[test]
-    fn save_surface_svg() {
-        let test_plot = create_test_surface();
-        let k = Kaleido::new();
-        let dst = PathBuf::from("example.svg");
-        let r = k.save(dst.as_path(), &test_plot, "svg", 1200, 900, 4.5);
-        assert!(r.is_ok());
-        assert!(dst.exists());
-        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-        let file_size = metadata.len();
-        assert!(file_size > 0,);
-        assert!(std::fs::remove_file(dst.as_path()).is_ok());
-    }
-    #[cfg(target_os = "macos")]
-    #[test]
-    fn save_surface_pdf() {
-        let test_plot = create_test_surface();
-        let k = Kaleido::new();
-        let dst = PathBuf::from("example.pdf");
-        let r = k.save(dst.as_path(), &test_plot, "pdf", 1200, 900, 4.5);
-        assert!(r.is_ok());
-        assert!(dst.exists());
-        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-        let file_size = metadata.len();
-        assert!(file_size > 0,);
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 }

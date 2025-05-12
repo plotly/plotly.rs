@@ -587,7 +587,7 @@ mod tests {
     use std::path::PathBuf;
 
     use serde_json::{json, to_value};
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(feature = "kaleido")]
     use {base64::engine::general_purpose, base64::Engine};
 
     use super::*;

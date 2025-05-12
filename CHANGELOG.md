@@ -3,10 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.13.0] - 2025-03-xx
+## [0.13.0] - 2025-xx-xx
 ### Changed
 - [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put evrything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
 - [[#281]((https://github.com/plotly/plotly.rs/pull/xxx))] Update to askama 0.13.0
+- [[#289]](https://github.com/plotly/plotly.rs/pull/289) Fixes Kaleido static export for MacOS targets by removing `--disable-gpu` flag for MacOS 
+- [[#290]](https://github.com/plotly/plotly.rs/pull/289) Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
 
 ### Fixed
 - [[#284](https://github.com/plotly/plotly.rs/pull/284)]  Allow plotly package to be compiled for android 
