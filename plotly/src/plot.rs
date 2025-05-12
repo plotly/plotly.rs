@@ -586,9 +586,9 @@ impl PartialEq for Plot {
 mod tests {
     use std::path::PathBuf;
 
-    #[cfg(feature = "kaleido")]
-    use base64::{engine::general_purpose, Engine as _};
     use serde_json::{json, to_value};
+    #[cfg(not(target_os = "macos"))]
+    use {base64::engine::general_purpose, base64::Engine};
 
     use super::*;
     use crate::Scatter;
@@ -865,5 +865,32 @@ mod tests {
         // seem to contain uniquely generated IDs
         const LEN: usize = 10;
         assert_eq!(expected[..LEN], image_svg[..LEN]);
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    #[cfg(feature = "kaleido")]
+    fn save_surface_to_png() {
+        use crate::Surface;
+        let mut plot = Plot::new();
+        let z_matrix = vec![
+            vec![1.0, 2.0, 3.0],
+            vec![4.0, 5.0, 6.0],
+            vec![7.0, 8.0, 9.0],
+        ];
+        let x_unique = vec![1.0, 2.0, 3.0];
+        let y_unique = vec![4.0, 5.0, 6.0];
+        let surface = Surface::new(z_matrix)
+            .x(x_unique)
+            .y(y_unique)
+            .name("Surface");
+
+        plot.add_trace(surface);
+        let dst = PathBuf::from("example.png");
+        plot.write_image("example.png", ImageFormat::PNG, 800, 600, 1.0);
+        assert!(dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
+        assert!(!plot.to_base64(ImageFormat::PNG, 1024, 680, 1.0).is_empty());
     }
 }
