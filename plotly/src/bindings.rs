@@ -25,7 +25,6 @@ extern "C" {
 pub async fn new_plot(id: &str, plot: &Plot) {
     let plot_obj = &plot.to_js_object();
 
-    
     // This will only fail if the Rust Plotly library has produced
     // plotly-incompatible JSON. An error here should have been handled by the
     // library, rather than down here.

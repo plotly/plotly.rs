@@ -1,12 +1,10 @@
-use plotly::{Plot,common::Mode, Scatter,Histogram};
-use plotly::callbacks::{ClickEvent};
+use plotly::callbacks::ClickEvent;
+use plotly::{Histogram, Plot, Scatter, common::Mode};
 use web_sys::js_sys::Math;
 use yew::prelude::*;
 
-
 #[function_component(App)]
 pub fn plot_component() -> Html {
-
     let x = use_state(|| None::<f64>);
     let y = use_state(|| None::<f64>);
     let point_numbers = use_state(|| None::<Vec<usize>>);
@@ -29,15 +27,10 @@ pub fn plot_component() -> Html {
         fig.add_trace(
             Scatter::new(xs.clone(), ys.clone())
                 .mode(Mode::Markers)
-                .name("Sine markers")
+                .name("Sine markers"),
         );
-        let random_values: Vec<f64> = (0..100)
-            .map(|_| Math::random())
-            .collect();
-        fig.add_trace(
-            Histogram::new(random_values)
-                .name("Random histogram")
-        );
+        let random_values: Vec<f64> = (0..100).map(|_| Math::random()).collect();
+        fig.add_trace(Histogram::new(random_values).name("Random histogram"));
         let layout = plotly::Layout::new().title("Click Event Callback Example in Yew");
         fig.set_layout(layout);
         async move {
