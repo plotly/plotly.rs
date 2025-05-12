@@ -190,13 +190,11 @@ impl Kaleido {
             .current_dir(self.cmd_path.parent().unwrap())
             .args([
                 "plotly",
-                "--disable-gpu",
                 "--allow-file-access-from-files",
                 "--disable-breakpad",
                 "--disable-dev-shm-usage",
                 "--disable-software-rasterizer",
                 "--single-process",
-                "--disable-gpu",
                 "--no-sandbox",
             ])
             .stdin(Stdio::piped())
@@ -307,8 +305,6 @@ mod tests {
         assert_eq!(to_value(kaleido_data).unwrap(), expected);
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_png() {
         let test_plot = create_test_plot();
@@ -319,8 +315,6 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_jpeg() {
         let test_plot = create_test_plot();
@@ -331,8 +325,6 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_webp() {
         let test_plot = create_test_plot();
@@ -343,8 +335,6 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_svg() {
         let test_plot = create_test_plot();
@@ -355,8 +345,6 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    // This seems to fail unpredictably on MacOs.
-    #[cfg(not(target_os = "macos"))]
     #[test]
     fn save_pdf() {
         let test_plot = create_test_plot();
