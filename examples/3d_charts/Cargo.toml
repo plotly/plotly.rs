@@ -7,4 +7,5 @@ edition = "2021"
 [dependencies]
 ndarray = "0.16"
 rand = "0.9"
-plotly = { path = "../../plotly" }
+#plotly = { path = "../../plotly", features = ["plotly_embed_js"] }
+plotly = { path = "../../plotly"}
