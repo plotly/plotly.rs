@@ -1,6 +1,6 @@
 use anyhow::Context;
+use anyhow::Error;
 use anyhow::Result;
-use askama::Template;
 use plotly::ImageFormat;
 use plotly::Plot;
 use std::fs::File;
@@ -8,6 +8,7 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use tokio::runtime::Runtime;
 
 use base64::{engine::general_purpose, Engine as _};
 use rand::{
@@ -16,6 +17,12 @@ use rand::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+
+#[cfg(not(test))]
+use log::{error, info, warn};
+
+#[cfg(test)]
+use std::{println as info, println as warn, println as error};
 
 #[derive(Serialize)]
 struct PlotData<'a> {
@@ -71,7 +78,7 @@ impl PlotlyStatic {
         let image_data = self.export(plot, &format, width, height, scale)?;
         let data = match format {
             ImageFormat::EPS | ImageFormat::SVG => image_data.as_bytes(),
-            _ => &general_purpose::STANDARD.decode(image_data).unwrap(),
+            _ => &general_purpose::STANDARD.decode(image_data)?,
         };
         let mut file = File::create(dst.as_path())?;
         file.write_all(data)?;
@@ -106,15 +113,16 @@ impl PlotlyStatic {
         height: usize,
         _scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
-        use tokio::runtime::Runtime;
+        info!("Generate plotly html file");
         let file = self.generate_static_html_plot(plot, format, width, height)?;
-        dbg!(&file);
-
-        let s = Runtime::new()
-            .expect("Failed to create Tokio runtime")
-            .block_on(self.extract(&file, format))?;
-        dbg!(&s);
-        Ok(s)
+        info!("Extract static plot using WebDriver");
+        match Runtime::new()?.block_on(self.extract(&file, format)) {
+            Ok(data) => Ok(data),
+            Err(e) => {
+                error!("Failed to extract static image. Cause: {e}");
+                Err(e.into())
+            }
+        }
     }
 
     fn generate_static_html_plot(
@@ -146,56 +154,61 @@ impl PlotlyStatic {
     }
 
     async fn extract(&self, file_path: &PathBuf, format: &ImageFormat) -> Result<String> {
-        use fantoccini::{ClientBuilder, Locator};
+        use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
         use std::time::Duration;
         use tokio::time::sleep;
-        let client = ClientBuilder::native()
-            // .capabilities(cap)
-            .connect("http://localhost:4444")
-            .await?;
 
-        // Go to the Rust website.
-        // client.goto("https://www.rust-lang.org/").await?;
+        let cap: Capabilities = serde_json::from_str(
+            r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#,
+        )?;
+
+        let client = ClientBuilder::native()
+            .capabilities(cap)
+            .connect("http://localhost:4444")
+            .await
+            .with_context(|| "WebDriver session errror")?;
+
+        // Open generate static plotly html file
         let url = format!("file:{}", file_path.display());
         client.goto(&url).await?;
 
-        // Let the user marvel at what we achieved.
-        // Then close the browser window.
-        println!("here");
-        // Extract image URLs
-
-        // find the source for the Wikipedia globe
+        // Find the location where the plotly static image is stored by XPath of the StaticTemplate
         let img = client.find(Locator::XPath(r#"/html/body/div/img"#)).await?;
-        dbg!(&img);
-        let mut src = None;
-        while src.is_none() {
-            println!("trying to get the output returned by PlotlyJS in the 'src' attribute");
-            src = img.attr("src").await?; //.expect("image should have a src");
-                                          // now build a raw HTTP client request (which also has all current cookies)
+        let src = loop {
+            let src = img.attr("src").await?;
             if src.is_none() {
-                println!("No response or no data; trying again in 100 msec");
+                info!("Waiting 100 msec for PlotlyJS valid image data in 'src' attribute");
                 sleep(Duration::from_millis(100)).await;
+            } else {
+                client.close().await?;
+                break src.unwrap();
             }
+        };
 
-            // sshould stop after a number of retries
+        match src.split_once(";") {
+            Some((type_info, encoded_data)) => {
+                Self::extract_type_info(type_info, format);
+                Self::extract_encoded_data(encoded_data)
+                    .ok_or(Error::msg("No valid image data found in 'src' attribute"))
+            }
+            None => Err(Error::msg("'src' attribute has invalid base64 data")),
         }
-        println!("Found data!!!");
-        println!("Decoding!!!");
-        // dbg!(&src);
-        let src = src.unwrap();
-        // let raw = img.client().raw_client_for(http::Method::GET, &src).await?;
+    }
 
-        let bytes = src.split_once(";");
+    fn extract_type_info(type_info: &str, format: &ImageFormat) {
+        let val = type_info.split_once("/").map(|d| d.1.to_string());
+        match val {
+            Some(ext) => {
+                if format.to_string() != ext {
+                    error!("Requested ImageFormat '{}', got '{}'", format, ext);
+                }
+            }
+            None => warn!("Failed to extract static Image Format from 'src' attribute"),
+        }
+    }
 
-        let t = bytes.unwrap().0;
-        let d = bytes.unwrap().1;
-        let dd = d.split_once(",");
-        let b = dd.unwrap().0;
-        // dbg!(b);
-        let dd = dd.unwrap().1;
-        dbg!(dd);
-        client.close().await?;
-        Ok(dd.to_string())
+    fn extract_encoded_data(data: &str) -> Option<String> {
+        data.split_once(",").map(|d| d.1.to_string())
     }
 }
 #[cfg(test)]
@@ -285,8 +298,10 @@ mod tests {
 
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.png");
-        let r = k.save(dst.as_path(), &plot, &ImageFormat::PNG, 1200, 900, 4.5);
-        assert!(r.is_ok());
+        k.save(dst.as_path(), &plot, &ImageFormat::PNG, 1200, 900, 4.5)
+            .unwrap();
+        // dbg!(&r);
+        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
