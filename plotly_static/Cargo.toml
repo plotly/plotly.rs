@@ -16,6 +16,7 @@ exclude = ["target/*"]
 download = []
 
 [dependencies]
+log = "0.4.27"
 serde = { version = "1.0", features = ["derive"] }
 plotly = { path = "../plotly" }
 rand = "0.9"
