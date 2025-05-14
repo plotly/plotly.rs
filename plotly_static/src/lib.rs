@@ -8,6 +8,11 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::mpsc;
+use std::sync::mpsc::Receiver;
+use std::sync::mpsc::TryRecvError;
+use std::thread;
+use std::time::Duration;
 use tokio::runtime::Runtime;
 
 use base64::{engine::general_purpose, Engine as _};
@@ -19,10 +24,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[cfg(not(test))]
-use log::{error, info, warn};
+use log::{debug, error, info, warn};
 
 #[cfg(test)]
-use std::{println as info, println as warn, println as error};
+use std::{println as info, println as warn, println as error, println as debug};
 
 #[derive(Serialize)]
 struct PlotData<'a> {
@@ -116,13 +121,17 @@ impl PlotlyStatic {
         info!("Generate plotly html file");
         let file = self.generate_static_html_plot(plot, format, width, height)?;
         info!("Extract static plot using WebDriver");
-        match Runtime::new()?.block_on(self.extract(&file, format)) {
+        let (tx, rx) = mpsc::channel();
+        Self::launch_gekodriver(tx);
+        let r = match Runtime::new()?.block_on(self.extract(&file, format)) {
             Ok(data) => Ok(data),
             Err(e) => {
                 error!("Failed to extract static image. Cause: {e}");
                 Err(e.into())
             }
-        }
+        };
+        Self::kill_gecko(rx);
+        r
     }
 
     fn generate_static_html_plot(
@@ -158,12 +167,12 @@ impl PlotlyStatic {
         use std::time::Duration;
         use tokio::time::sleep;
 
-        let cap: Capabilities = serde_json::from_str(
-            r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#,
-        )?;
+        // let cap: Capabilities = serde_json::from_str(
+        //     r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#,
+        // )?;
 
         let client = ClientBuilder::native()
-            .capabilities(cap)
+            // .capabilities(cap)
             .connect("http://localhost:4444")
             .await
             .with_context(|| "WebDriver session errror")?;
@@ -210,7 +219,42 @@ impl PlotlyStatic {
     fn extract_encoded_data(data: &str) -> Option<String> {
         data.split_once(",").map(|d| d.1.to_string())
     }
+
+    fn launch_gekodriver(tx: mpsc::Sender<u32>) {
+        info!("Spawning geckodriver");
+        let _ = thread::spawn(move || {
+            let mut child = Command::new("geckodriver")
+                .current_dir(PathBuf::from("/home/andrei/.cargo/bin"))
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .expect("Webdriver failed to spawn");
+
+            tx.send(child.id()).unwrap();
+            child.wait().expect("WebDriver command not running");
+
+            let stderr = child.stderr.take().unwrap();
+            let stderr_lines = BufReader::new(stderr).lines();
+            for line in stderr_lines {
+                let line = line.unwrap();
+                debug!("{}", line);
+            }
+        });
+    }
+    fn kill_gecko(rx: Receiver<u32>) {
+        match rx.try_recv() {
+            Ok(id) => {
+                info!("Stopping WebDriver.");
+                let mut kill = Command::new("kill").arg(id.to_string()).spawn().unwrap();
+                kill.wait().unwrap();
+            }
+            Err(TryRecvError::Disconnected) => {}
+            Err(TryRecvError::Empty) => {}
+        }
+    }
 }
+
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
