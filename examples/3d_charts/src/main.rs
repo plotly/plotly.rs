@@ -132,10 +132,11 @@ fn simple_line3d_plot(show: bool) -> Plot {
     let trace = Scatter3D::new(t, y, z).mode(Mode::Lines);
     let mut plot = Plot::new();
     plot.add_trace(trace);
+    plot.show_image(plotly::ImageFormat::PNG, 1280, 900);
 
-    if show {
-        plot.show();
-    }
+    // if show {
+    //     plot.show();
+    // }
     plot
 }
 // ANCHOR_END: simple_line3d_plot
