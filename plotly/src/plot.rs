@@ -8,6 +8,7 @@ use rand::{
     rng,
 };
 use serde::Serialize;
+use serde_json::Value;
 
 use crate::{Configuration, Layout};
 
@@ -23,6 +24,17 @@ struct PlotTemplate<'a> {
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
+    format: ImageFormat,
+    js_scripts: &'a str,
+    width: usize,
+    height: usize,
+}
+
+#[derive(Template)]
+#[template(path = "static_plot2.html", escape = "none")]
+#[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
+struct StaticPlotTemplate2<'a> {
+    plot: &'a Value,
     format: ImageFormat,
     js_scripts: &'a str,
     width: usize,
@@ -66,7 +78,7 @@ See https://plotly.github.io/plotly.rs/content/getting_started.html for further 
 "#;
 
 /// Image format for static image export.
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub enum ImageFormat {
     PNG,
     JPEG,
@@ -292,7 +304,7 @@ impl Plot {
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
-        let rendered = self.render_static(format, width, height);
+        let rendered = self.render_static(&format, width, height);
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
@@ -472,11 +484,28 @@ impl Plot {
     }
 
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-    fn render_static(&self, format: ImageFormat, width: usize, height: usize) -> String {
+    pub fn render_static(&self, format: &ImageFormat, width: usize, height: usize) -> String {
         let tmpl = StaticPlotTemplate {
             plot: self,
-            format,
+            format: format.clone(),
             js_scripts: &self.js_scripts,
+            width,
+            height,
+        };
+        tmpl.render().unwrap()
+    }
+
+    #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
+    pub fn render_static2(
+        data: &serde_json::Value,
+        format: &ImageFormat,
+        width: usize,
+        height: usize,
+    ) -> String {
+        let tmpl = StaticPlotTemplate2 {
+            plot: &data,
+            format: format.clone(),
+            js_scripts: &Self::js_scripts(),
             width,
             height,
         };
