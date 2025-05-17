@@ -6,9 +6,10 @@ use plotly::ImageFormat;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
-use std::process::{Command, ExitStatus, Stdio};
+use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
+use tokio::runtime::Runtime;
 
 #[cfg(test)]
 use std::{println as info, println as warn, println as error, println as debug};
@@ -28,19 +29,59 @@ const DRIVER_ARGS: &str =
     r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
 const WEBDRIVER_PORT: u32 = 4444;
+const WEBDRIVER_URL: &str = "http://localhost";
+
+pub(crate) struct StaticExporterBuilder {
+    port: u32,
+    url: String,
+    launch_webdriver: bool,
+}
+
+impl StaticExporterBuilder {
+    pub fn new() -> Self {
+        Self {
+            port: WEBDRIVER_PORT,
+            url: WEBDRIVER_URL.to_string(),
+            launch_webdriver: true,
+        }
+    }
+
+    pub fn webdriver_port(mut self, port: u32) -> Self {
+        self.port = port;
+        self
+    }
+
+    pub fn launch_webdriver(mut self, yes: bool) -> Self {
+        self.launch_webdriver = yes;
+        self
+    }
+
+    pub fn webdriver_url(mut self, url: &str) -> Self {
+        self.url = url.to_string();
+        self
+    }
+
+    pub fn build(&self) -> Result<StaticExporter> {
+        let mut exp = StaticExporter::new()?;
+        if self.launch_webdriver {
+            exp.spawn_instance();
+        }
+        Ok(exp)
+    }
+}
 
 #[derive(Debug)]
-struct InstanceInner {
+struct ExporterInner {
     driver_path: PathBuf,
     process_id: Option<u32>,
 }
 
-pub(crate) struct Instance {
-    inner: Arc<Mutex<InstanceInner>>,
+pub(crate) struct StaticExporter {
+    inner: Arc<Mutex<ExporterInner>>,
 }
 
-impl Instance {
-    pub fn new() -> Result<Self> {
+impl StaticExporter {
+    fn new() -> Result<Self> {
         use std::env;
 
         let path = match env::var(WEBDRIVER_PATH_ENV) {
@@ -60,14 +101,14 @@ impl Instance {
             .with_context(|| format!("Failed tu use WebDriver binary at {path}"))?;
 
         Ok(Self {
-            inner: Arc::new(Mutex::new(InstanceInner {
+            inner: Arc::new(Mutex::new(ExporterInner {
                 driver_path: full_path, // PathBuf::from(path),
                 process_id: None,
             })),
         })
     }
 
-    pub fn start(&mut self) {
+    fn spawn_instance(&mut self) {
         info!("Spawning {WEBDRIVER_APP}");
         let local_self = self.inner.clone();
 
@@ -125,55 +166,19 @@ impl Instance {
         Ok(())
     }
 
-    fn full_path(dld_path: &str) -> Result<PathBuf> {
-        let mut p = PathBuf::from(dld_path);
-        p = Self::os_binary_path(p)?;
-        if !p.exists() {
-            Err(anyhow!(
-                "'{WEBDRIVER_APP}' executable not found in provided path: '{}'",
-                p.display()
-            ))
-        } else {
-            Ok(p)
-        }
+    pub fn static_export(&self, file: &PathBuf, format: &ImageFormat) -> Result<String> {
+        Runtime::new()?
+            .block_on(Self::extract(&file, format))
+            .with_context(|| "Failed to extract static image from browser session")
     }
 
-    #[cfg(any(target_os = "linux", target_os = "macos"))]
-    fn os_binary_path(path: PathBuf) -> Result<PathBuf> {
-        match path.join(WEBDRIVER_APP).canonicalize() {
-            Ok(v) => Ok(v),
-            Err(e) => Err(anyhow!(
-                "No {WEBDRIVER_APP} found at '{}': {e}",
-                path.display()
-            )),
-        }
-    }
-
-    #[cfg(target_os = "windows")]
-    fn os_binary_path(path: PathBuf) -> PathBuf {
-        let app = format!("{WEBDRIVER_APP}.exe");
-        path.join(app)
-    }
-}
-
-impl Drop for Instance {
-    fn drop(&mut self) {
-        if let Err(e) = self.stop() {
-            error!("Failed to release WebDriver process: {e}");
-        }
-    }
-}
-
-pub(crate) struct StaticExport {}
-
-impl StaticExport {
     pub async fn extract(file_path: &PathBuf, format: &ImageFormat) -> Result<String> {
         use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
         use std::time::Duration;
         use tokio::time::sleep;
 
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
-        let webdriver_url = format!("http://localhost:{WEBDRIVER_PORT}");
+        let webdriver_url = format!("{WEBDRIVER_URL}:{WEBDRIVER_PORT}");
 
         let client = ClientBuilder::native()
             .capabilities(cap)
@@ -193,8 +198,8 @@ impl StaticExport {
         let src = loop {
             let src = img.attr("src").await?;
             if src.is_none() {
-                info!("Waiting 100 msec for PlotlyJS valid image data in 'src' attribute");
-                sleep(Duration::from_millis(100)).await;
+                info!("Waiting 50 msec for PlotlyJS valid image data in 'src' attribute");
+                sleep(Duration::from_millis(50)).await;
             } else {
                 break src.unwrap();
             }
@@ -247,5 +252,43 @@ impl StaticExport {
 
     fn extract_encoded_data(data: &str) -> Option<String> {
         data.split_once(",").map(|d| d.1.to_string())
+    }
+
+    fn full_path(path: &str) -> Result<PathBuf> {
+        let mut p = PathBuf::from(path);
+        p = Self::os_binary_path(p)?;
+        if !p.exists() {
+            Err(anyhow!(
+                "'{WEBDRIVER_APP}' executable not found in provided path: '{}'",
+                p.display()
+            ))
+        } else {
+            Ok(p)
+        }
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    fn os_binary_path(path: PathBuf) -> Result<PathBuf> {
+        match path.join(WEBDRIVER_APP).canonicalize() {
+            Ok(v) => Ok(v),
+            Err(e) => Err(anyhow!(
+                "No {WEBDRIVER_APP} found at '{}': {e}",
+                path.display()
+            )),
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    fn os_binary_path(path: PathBuf) -> PathBuf {
+        let app = format!("{WEBDRIVER_APP}.exe");
+        path.join(app)
+    }
+}
+
+impl Drop for StaticExporter {
+    fn drop(&mut self) {
+        if let Err(e) = self.stop() {
+            error!("Failed to release WebDriver process: {e}");
+        }
     }
 }
