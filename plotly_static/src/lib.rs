@@ -54,10 +54,7 @@ impl<'a> PlotData<'a> {
 }
 
 #[derive(Default)]
-pub struct PlotlyStatic {
-    cmd_path: PathBuf,
-    // webdriver_process_id:
-}
+pub struct PlotlyStatic {}
 
 impl PlotlyStatic {
     pub fn new() -> Self {
@@ -123,7 +120,6 @@ impl PlotlyStatic {
         let data = Runtime::new()?
             .block_on(StaticExport::extract(&file, format))
             .with_context(|| "Failed to extract static image from browser session")?;
-        wd.stop()?;
         Ok(data)
     }
 
@@ -241,7 +237,7 @@ mod tests {
     use ndarray::Array;
 
     #[test]
-    #[ignore]
+    // #[ignore]
     fn save_png() {
         let test_plot = create_test_plot();
 
@@ -249,8 +245,6 @@ mod tests {
         let dst = PathBuf::from("example.png");
         k.save(dst.as_path(), &test_plot, &ImageFormat::PNG, 1200, 900, 4.5)
             .unwrap();
-        // dbg!(&r);
-        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
@@ -259,19 +253,20 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    // #[ignore]
     fn save_jpeg() {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.jpeg");
-        let r = k.save(
+        k.save(
             dst.as_path(),
             &test_plot,
             &ImageFormat::JPEG,
             1200,
             900,
             4.5,
-        );
+        )
+        .unwrap();
         // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -286,16 +281,15 @@ mod tests {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.webp");
-        let r = k
-            .save(
-                dst.as_path(),
-                &test_plot,
-                &ImageFormat::WEBP,
-                1200,
-                900,
-                4.5,
-            )
-            .unwrap();
+        k.save(
+            dst.as_path(),
+            &test_plot,
+            &ImageFormat::WEBP,
+            1200,
+            900,
+            4.5,
+        )
+        .unwrap();
         // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -310,8 +304,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.svg");
-        let r = k
-            .save(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
+        k.save(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
             .unwrap();
         // assert!(r.is_ok());
         assert!(dst.exists());
@@ -327,8 +320,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.pdf");
-        let r = k
-            .save(dst.as_path(), &test_plot, &ImageFormat::PDF, 1200, 900, 4.5)
+        k.save(dst.as_path(), &test_plot, &ImageFormat::PDF, 1200, 900, 4.5)
             .unwrap();
         // assert!(r.is_ok());
         assert!(dst.exists());
@@ -344,8 +336,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.eps");
-        let r = k
-            .save(dst.as_path(), &test_plot, &ImageFormat::EPS, 1200, 900, 4.5)
+        k.save(dst.as_path(), &test_plot, &ImageFormat::EPS, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         // assert!(r.is_ok());
