@@ -1,3 +1,4 @@
+use anyhow::Context;
 use anyhow::{anyhow, Result};
 #[cfg(not(test))]
 use log::{debug, error, info, warn};
@@ -35,7 +36,7 @@ pub(crate) struct Instance {
 }
 
 impl Instance {
-    pub fn new() -> Self {
+    pub fn new() -> Result<Self> {
         use std::env;
 
         let path = match env::var(WEBDRIVER_PATH_ENV) {
@@ -44,54 +45,22 @@ impl Instance {
                 Some(compile_time_path) => compile_time_path.to_string(),
                 None => {
                     debug!("{WEBDRIVER_PATH_ENV}: {runtime_env_err}");
-                    info!("Use the `download` feature to automatically download, install and use the selected WebDriver for supported platforms");
-                    info!("Use `{WEBDRIVER_PATH_ENV}` environment variable for applications intended to run on different machines. Manually install the desired WebDriver on the target machine and point {WEBDRIVER_PATH_ENV} to the installation location.");
-                    std::process::exit(1);
+                    info!("Use the `download` feature to automatically download, install and use the the chosen WebDriver for supported platforms");
+                    info!("Use `{WEBDRIVER_PATH_ENV}` environment variable for applications intended to run on different machines. Manually install the desired WebDriver on the target machine and point {WEBDRIVER_PATH_ENV} to the installation path.");
+                    return Err(anyhow!("WebDriver binary not available"));
                 }
             },
         };
 
-        let path = match Self::driver_path(&path) {
-            Ok(driver_path) => driver_path,
-            Err(msg) => panic!("Failed tu use Kaleido binary at {} due to {}", path, msg),
-        };
+        Self::validate_path(&path)
+            .with_context(|| format!("Failed tu use WebDriver binary at {path}"))?;
 
-        Self {
+        Ok(Self {
             inner: Arc::new(Mutex::new(InstanceInner {
-                driver_path: path,
+                driver_path: PathBuf::from(path),
                 process_id: None,
             })),
-        }
-    }
-
-    fn driver_path(dld_path: &str) -> Result<PathBuf> {
-        let mut p = PathBuf::from(dld_path);
-        p = Self::os_binary_path(p)?;
-        if !p.exists() {
-            Err(anyhow!(
-                "could not find {WEBDRIVER_APP} executable in path: '{}'",
-                p.display()
-            ))
-        } else {
-            Ok(p)
-        }
-    }
-
-    #[cfg(any(target_os = "linux", target_os = "macos"))]
-    fn os_binary_path(path: PathBuf) -> Result<PathBuf> {
-        match path.join(WEBDRIVER_APP).canonicalize() {
-            Ok(v) => Ok(v),
-            Err(e) => Err(anyhow!(
-                "No {WEBDRIVER_APP} found at '{}': {e}",
-                path.display()
-            )),
-        }
-    }
-
-    #[cfg(target_os = "windows")]
-    fn os_binary_path(path: PathBuf) -> PathBuf {
-        let app = format!("{WEBDRIVER_APP}.exe");
-        path.join(app)
+        })
     }
 
     pub fn start(&mut self) {
@@ -108,9 +77,8 @@ impl Instance {
             };
 
             let mut command = Command::new(WEBDRIVER_APP);
-            dbg!(&inner.driver_path);
             command
-                .current_dir(PathBuf::from(inner.driver_path.parent().unwrap()))
+                .current_dir(PathBuf::from(inner.driver_path.clone()))
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped());
@@ -150,5 +118,35 @@ impl Instance {
             kill.wait()?;
         }
         Ok(())
+    }
+
+    fn validate_path(dld_path: &str) -> Result<()> {
+        let mut p = PathBuf::from(dld_path);
+        p = Self::os_binary_path(p)?;
+        if !p.exists() {
+            Err(anyhow!(
+                "'{WEBDRIVER_APP}' executable not found in provided path: '{}'",
+                p.display()
+            ))
+        } else {
+            Ok(())
+        }
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    fn os_binary_path(path: PathBuf) -> Result<PathBuf> {
+        match path.join(WEBDRIVER_APP).canonicalize() {
+            Ok(v) => Ok(v),
+            Err(e) => Err(anyhow!(
+                "No {WEBDRIVER_APP} found at '{}': {e}",
+                path.display()
+            )),
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    fn os_binary_path(path: PathBuf) -> PathBuf {
+        let app = format!("{WEBDRIVER_APP}.exe");
+        path.join(app)
     }
 }
