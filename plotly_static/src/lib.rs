@@ -125,7 +125,7 @@ impl PlotlyStatic {
         let file = self.generate_static_html_plot(plot, format, width, height)?;
         info!("Extract static plot using WebDriver");
         // let (tx, rx) = mpsc::channel();
-        let mut wd = webdriver::Instance::new();
+        let mut wd = webdriver::Instance::new()?;
 
         wd.start();
 
