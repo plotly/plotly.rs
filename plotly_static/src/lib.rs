@@ -29,6 +29,8 @@ use log::{debug, error, info, warn};
 #[cfg(test)]
 use std::{println as info, println as warn, println as error, println as debug};
 
+mod webdriver;
+
 #[derive(Serialize)]
 struct PlotData<'a> {
     // TODO: as with `data`, it would be much better if this were a plotly::ImageFormat, but
@@ -61,6 +63,7 @@ impl<'a> PlotData<'a> {
 #[derive(Default)]
 pub struct PlotlyStatic {
     cmd_path: PathBuf,
+    // webdriver_process_id:
 }
 
 impl PlotlyStatic {
@@ -121,8 +124,12 @@ impl PlotlyStatic {
         info!("Generate plotly html file");
         let file = self.generate_static_html_plot(plot, format, width, height)?;
         info!("Extract static plot using WebDriver");
-        let (tx, rx) = mpsc::channel();
-        Self::launch_gekodriver(tx);
+        // let (tx, rx) = mpsc::channel();
+        let mut wd = webdriver::Instance::new();
+
+        wd.start();
+
+        // Self::launch_gekodriver(tx);
         let r = match Runtime::new()?.block_on(self.extract(&file, format)) {
             Ok(data) => Ok(data),
             Err(e) => {
@@ -130,7 +137,8 @@ impl PlotlyStatic {
                 Err(e.into())
             }
         };
-        Self::kill_gecko(rx);
+        // Self::kill_gecko(rx);
+        wd.stop()?;
         r
     }
 

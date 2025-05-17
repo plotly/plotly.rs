@@ -13,7 +13,10 @@ keywords = ["plot", "static", "image", "export", "chart", "plotly", "ndarray"]
 exclude = ["target/*"]
 
 [features]
+default = ["geckodriver"]
 download = []
+geckodriver = []
+chromedriver = []
 
 [dependencies]
 log = "0.4.27"
@@ -26,6 +29,7 @@ fantoccini = "0.21.5"
 tokio = { version = "1", features = ["full"] }
 askama = { version = "0.14.0", features = ["serde_json"] }
 anyhow = "1.0.98"
+shared_child = "1.0.2"
 
 [dev-dependencies]
 plotly_static = { path = ".", features = ["download"] }
