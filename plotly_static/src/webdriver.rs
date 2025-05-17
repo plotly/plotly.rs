@@ -6,7 +6,7 @@ use plotly::ImageFormat;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
-use std::process::{Command, Stdio};
+use std::process::{Command, ExitStatus, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
 
@@ -81,8 +81,6 @@ impl Instance {
             };
 
             let mut command = Command::new(inner.driver_path.clone());
-            dbg!(&WEBDRIVER_APP);
-            dbg!(&inner);
             command
                 .arg(format!("--port={WEBDRIVER_PORT}"))
                 .stdin(Stdio::piped())
@@ -102,7 +100,8 @@ impl Instance {
             drop(inner);
 
             match child.wait() {
-                Ok(_) => {
+                Ok(c) => {
+                    info!("Terminated with ExitStatus: {c}");
                     let stderr = child.stderr.take().unwrap();
                     let stderr_lines = BufReader::new(stderr).lines();
                     for line in stderr_lines {
@@ -157,6 +156,14 @@ impl Instance {
     }
 }
 
+impl Drop for Instance {
+    fn drop(&mut self) {
+        if let Err(e) = self.stop() {
+            error!("Failed to release WebDriver process: {e}");
+        }
+    }
+}
+
 pub(crate) struct StaticExport {}
 
 impl StaticExport {
@@ -167,13 +174,15 @@ impl StaticExport {
 
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
         let webdriver_url = format!("http://localhost:{WEBDRIVER_PORT}");
-        // dbg!(&webdriver_url);
 
         let client = ClientBuilder::native()
             .capabilities(cap)
             .connect(&webdriver_url)
             .await
             .with_context(|| "WebDriver session errror")?;
+
+        // client.persist().await?;
+        // dbg!(client.session_id().await?);
 
         // Open generate static plotly html file
         let url = format!("file:{}", file_path.display());
@@ -187,13 +196,34 @@ impl StaticExport {
                 info!("Waiting 100 msec for PlotlyJS valid image data in 'src' attribute");
                 sleep(Duration::from_millis(100)).await;
             } else {
-                client.close().await?;
                 break src.unwrap();
             }
         };
+        // client.close_window().await?;
+        client.close().await?;
 
-        dbg!(&src);
-        match src.split_once(";") {
+        match format {
+            ImageFormat::SVG => Self::extract_plain(&src, format),
+            ImageFormat::PNG | ImageFormat::JPEG => Self::extract_encoded(&src, format),
+            _ => return Err(anyhow!("Not implemented for {format}")),
+        }
+    }
+
+    fn extract_plain(payload: &str, format: &ImageFormat) -> Result<String> {
+        use percent_encoding::percent_decode;
+
+        match payload.split_once(",") {
+            Some((type_info, data)) => {
+                Self::extract_type_info(type_info, format);
+                let decoded = percent_decode(data.as_bytes()).decode_utf8()?;
+                Ok(decoded.to_string())
+            }
+            None => Err(anyhow!("'src' attribute has invalid {format} data")),
+        }
+    }
+
+    fn extract_encoded(payload: &str, format: &ImageFormat) -> Result<String> {
+        match payload.split_once(";") {
             Some((type_info, encoded_data)) => {
                 Self::extract_type_info(type_info, format);
                 Self::extract_encoded_data(encoded_data)
@@ -207,7 +237,7 @@ impl StaticExport {
         let val = type_info.split_once("/").map(|d| d.1.to_string());
         match val {
             Some(ext) => {
-                if format.to_string() != ext {
+                if !ext.contains(&format.to_string()) {
                     error!("Requested ImageFormat '{}', got '{}'", format, ext);
                 }
             }
