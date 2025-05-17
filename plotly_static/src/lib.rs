@@ -5,8 +5,6 @@ use plotly::Plot;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use tokio::runtime::Runtime;
-use webdriver::StaticExport;
 
 use base64::{engine::general_purpose, Engine as _};
 use rand::{
@@ -114,12 +112,11 @@ impl PlotlyStatic {
         info!("Generate plotly html file");
         let file = self.generate_static_html_plot(plot, format, width, height)?;
         info!("Extract static plot using WebDriver");
-        let mut wd = webdriver::Instance::new()?;
+        let wd = webdriver::StaticExporterBuilder::new()
+            .launch_webdriver(true)
+            .build()?;
 
-        wd.start();
-        let data = Runtime::new()?
-            .block_on(StaticExport::extract(&file, format))
-            .with_context(|| "Failed to extract static image from browser session")?;
+        let data = wd.static_export(&file, format)?;
         Ok(data)
     }
 
