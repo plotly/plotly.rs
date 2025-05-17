@@ -2,6 +2,7 @@ use anyhow::Context;
 use anyhow::{anyhow, Result};
 #[cfg(not(test))]
 use log::{debug, error, info, warn};
+use plotly::ImageFormat;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
@@ -12,20 +13,23 @@ use std::thread;
 #[cfg(test)]
 use std::{println as info, println as warn, println as error, println as debug};
 
-const CHROME_DRIVER_ARGS: &str =
-    r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
-
-const FIREFOX_DRIVER_ARGS: &str =
-    r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
-
 const WEBDRIVER_PATH_ENV: &str = "WEBDRIVER_PATH";
 
 #[cfg(feature = "geckodriver")]
 const WEBDRIVER_APP: &str = "geckodriver";
+#[cfg(feature = "geckodriver")]
+const DRIVER_ARGS: &str =
+    r#"{"browserName":"firefox","moz:firefoxOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
 #[cfg(feature = "chromedriver")]
 const WEBDRIVER_APP: &str = "chromedriver";
+#[cfg(feature = "chromedriver")]
+const DRIVER_ARGS: &str =
+    r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
+const WEBDRIVER_PORT: u32 = 4444;
+
+#[derive(Debug)]
 struct InstanceInner {
     driver_path: PathBuf,
     process_id: Option<u32>,
@@ -52,12 +56,12 @@ impl Instance {
             },
         };
 
-        Self::validate_path(&path)
+        let full_path = Self::full_path(&path)
             .with_context(|| format!("Failed tu use WebDriver binary at {path}"))?;
 
         Ok(Self {
             inner: Arc::new(Mutex::new(InstanceInner {
-                driver_path: PathBuf::from(path),
+                driver_path: full_path, // PathBuf::from(path),
                 process_id: None,
             })),
         })
@@ -76,9 +80,11 @@ impl Instance {
                 }
             };
 
-            let mut command = Command::new(WEBDRIVER_APP);
+            let mut command = Command::new(inner.driver_path.clone());
+            dbg!(&WEBDRIVER_APP);
+            dbg!(&inner);
             command
-                .current_dir(PathBuf::from(inner.driver_path.clone()))
+                .arg(format!("--port={WEBDRIVER_PORT}"))
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped());
@@ -105,7 +111,7 @@ impl Instance {
                     }
                 }
                 Err(e) => {
-                    error!("Failed to spawn '{WEBDRIVER_APP}': {e}");
+                    error!("Failed waiting on '{WEBDRIVER_APP}': {e}");
                 }
             };
         });
@@ -120,7 +126,7 @@ impl Instance {
         Ok(())
     }
 
-    fn validate_path(dld_path: &str) -> Result<()> {
+    fn full_path(dld_path: &str) -> Result<PathBuf> {
         let mut p = PathBuf::from(dld_path);
         p = Self::os_binary_path(p)?;
         if !p.exists() {
@@ -129,7 +135,7 @@ impl Instance {
                 p.display()
             ))
         } else {
-            Ok(())
+            Ok(p)
         }
     }
 
@@ -148,5 +154,68 @@ impl Instance {
     fn os_binary_path(path: PathBuf) -> PathBuf {
         let app = format!("{WEBDRIVER_APP}.exe");
         path.join(app)
+    }
+}
+
+pub(crate) struct StaticExport {}
+
+impl StaticExport {
+    pub async fn extract(file_path: &PathBuf, format: &ImageFormat) -> Result<String> {
+        use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
+        use std::time::Duration;
+        use tokio::time::sleep;
+
+        let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
+        let webdriver_url = format!("http://localhost:{WEBDRIVER_PORT}");
+        // dbg!(&webdriver_url);
+
+        let client = ClientBuilder::native()
+            .capabilities(cap)
+            .connect(&webdriver_url)
+            .await
+            .with_context(|| "WebDriver session errror")?;
+
+        // Open generate static plotly html file
+        let url = format!("file:{}", file_path.display());
+        client.goto(&url).await?;
+
+        // Find the location where the plotly static image is stored by XPath of the StaticTemplate
+        let img = client.find(Locator::XPath(r#"/html/body/div/img"#)).await?;
+        let src = loop {
+            let src = img.attr("src").await?;
+            if src.is_none() {
+                info!("Waiting 100 msec for PlotlyJS valid image data in 'src' attribute");
+                sleep(Duration::from_millis(100)).await;
+            } else {
+                client.close().await?;
+                break src.unwrap();
+            }
+        };
+
+        dbg!(&src);
+        match src.split_once(";") {
+            Some((type_info, encoded_data)) => {
+                Self::extract_type_info(type_info, format);
+                Self::extract_encoded_data(encoded_data)
+                    .ok_or(anyhow!("No valid image data found in 'src' attribute"))
+            }
+            None => Err(anyhow!("'src' attribute has invalid base64 data")),
+        }
+    }
+
+    fn extract_type_info(type_info: &str, format: &ImageFormat) {
+        let val = type_info.split_once("/").map(|d| d.1.to_string());
+        match val {
+            Some(ext) => {
+                if format.to_string() != ext {
+                    error!("Requested ImageFormat '{}', got '{}'", format, ext);
+                }
+            }
+            None => warn!("Failed to extract static Image Format from 'src' attribute"),
+        }
+    }
+
+    fn extract_encoded_data(data: &str) -> Option<String> {
+        data.split_once(",").map(|d| d.1.to_string())
     }
 }

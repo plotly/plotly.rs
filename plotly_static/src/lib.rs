@@ -1,19 +1,12 @@
 use anyhow::Context;
-use anyhow::Error;
 use anyhow::Result;
 use plotly::ImageFormat;
 use plotly::Plot;
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::BufReader;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
-use std::sync::mpsc;
-use std::sync::mpsc::Receiver;
-use std::sync::mpsc::TryRecvError;
-use std::thread;
-use std::time::Duration;
 use tokio::runtime::Runtime;
+use webdriver::StaticExport;
 
 use base64::{engine::general_purpose, Engine as _};
 use rand::{
@@ -120,26 +113,18 @@ impl PlotlyStatic {
         width: usize,
         height: usize,
         _scale: f64,
-    ) -> Result<String, Box<dyn std::error::Error>> {
+    ) -> Result<String> {
         info!("Generate plotly html file");
         let file = self.generate_static_html_plot(plot, format, width, height)?;
         info!("Extract static plot using WebDriver");
-        // let (tx, rx) = mpsc::channel();
         let mut wd = webdriver::Instance::new()?;
 
         wd.start();
-
-        // Self::launch_gekodriver(tx);
-        let r = match Runtime::new()?.block_on(self.extract(&file, format)) {
-            Ok(data) => Ok(data),
-            Err(e) => {
-                error!("Failed to extract static image. Cause: {e}");
-                Err(e.into())
-            }
-        };
-        // Self::kill_gecko(rx);
+        let data = Runtime::new()?
+            .block_on(StaticExport::extract(&file, format))
+            .with_context(|| "Failed to extract static image from browser session")?;
         wd.stop()?;
-        r
+        Ok(data)
     }
 
     fn generate_static_html_plot(
@@ -169,98 +154,6 @@ impl PlotlyStatic {
         file.flush()?;
         Ok(tmp_path)
     }
-
-    async fn extract(&self, file_path: &PathBuf, format: &ImageFormat) -> Result<String> {
-        use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
-        use std::time::Duration;
-        use tokio::time::sleep;
-
-        // let cap: Capabilities = serde_json::from_str(
-        //     r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#,
-        // )?;
-
-        let client = ClientBuilder::native()
-            // .capabilities(cap)
-            .connect("http://localhost:4444")
-            .await
-            .with_context(|| "WebDriver session errror")?;
-
-        // Open generate static plotly html file
-        let url = format!("file:{}", file_path.display());
-        client.goto(&url).await?;
-
-        // Find the location where the plotly static image is stored by XPath of the StaticTemplate
-        let img = client.find(Locator::XPath(r#"/html/body/div/img"#)).await?;
-        let src = loop {
-            let src = img.attr("src").await?;
-            if src.is_none() {
-                info!("Waiting 100 msec for PlotlyJS valid image data in 'src' attribute");
-                sleep(Duration::from_millis(100)).await;
-            } else {
-                client.close().await?;
-                break src.unwrap();
-            }
-        };
-
-        match src.split_once(";") {
-            Some((type_info, encoded_data)) => {
-                Self::extract_type_info(type_info, format);
-                Self::extract_encoded_data(encoded_data)
-                    .ok_or(Error::msg("No valid image data found in 'src' attribute"))
-            }
-            None => Err(Error::msg("'src' attribute has invalid base64 data")),
-        }
-    }
-
-    fn extract_type_info(type_info: &str, format: &ImageFormat) {
-        let val = type_info.split_once("/").map(|d| d.1.to_string());
-        match val {
-            Some(ext) => {
-                if format.to_string() != ext {
-                    error!("Requested ImageFormat '{}', got '{}'", format, ext);
-                }
-            }
-            None => warn!("Failed to extract static Image Format from 'src' attribute"),
-        }
-    }
-
-    fn extract_encoded_data(data: &str) -> Option<String> {
-        data.split_once(",").map(|d| d.1.to_string())
-    }
-
-    fn launch_gekodriver(tx: mpsc::Sender<u32>) {
-        info!("Spawning geckodriver");
-        let _ = thread::spawn(move || {
-            let mut child = Command::new("geckodriver")
-                .current_dir(PathBuf::from("/home/andrei/.cargo/bin"))
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-                .expect("Webdriver failed to spawn");
-
-            tx.send(child.id()).unwrap();
-            child.wait().expect("WebDriver command not running");
-
-            let stderr = child.stderr.take().unwrap();
-            let stderr_lines = BufReader::new(stderr).lines();
-            for line in stderr_lines {
-                let line = line.unwrap();
-                debug!("{}", line);
-            }
-        });
-    }
-    fn kill_gecko(rx: Receiver<u32>) {
-        match rx.try_recv() {
-            Ok(id) => {
-                info!("Stopping WebDriver.");
-                let mut kill = Command::new("kill").arg(id.to_string()).spawn().unwrap();
-                kill.wait().unwrap();
-            }
-            Err(TryRecvError::Disconnected) => {}
-            Err(TryRecvError::Empty) => {}
-        }
-    }
 }
 
 #[cfg(test)]
@@ -271,7 +164,7 @@ mod tests {
 
     use super::*;
 
-    fn create_test_plot() -> Value {
+    fn create_test_plot_as_json() -> Value {
         to_value(json!({
             "data": [
               {
@@ -311,6 +204,18 @@ mod tests {
         .unwrap()
     }
 
+    fn create_test_plot() -> Plot {
+        let n: usize = 100;
+        let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
+        let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
+        let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
+
+        let trace = plotly::Scatter3D::new(t, y, z).mode(plotly::common::Mode::Lines);
+        let mut plot = Plot::new();
+        plot.add_trace(trace);
+        plot
+    }
+
     /*
     fn can_find_kaleido_executable() {
         let _k = PlotlyStatic::new();
@@ -336,21 +241,13 @@ mod tests {
     use ndarray::Array;
 
     #[test]
+    #[ignore]
     fn save_png() {
-        // let test_plot = create_test_plot();
-
-        let n: usize = 100;
-        let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
-        let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
-        let z: Vec<f64> = t.iter().map(|x| x.cos()).collect();
-
-        let trace = plotly::Scatter3D::new(t, y, z).mode(plotly::common::Mode::Lines);
-        let mut plot = Plot::new();
-        plot.add_trace(trace);
+        let test_plot = create_test_plot();
 
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.png");
-        k.save(dst.as_path(), &plot, &ImageFormat::PNG, 1200, 900, 4.5)
+        k.save(dst.as_path(), &test_plot, &ImageFormat::PNG, 1200, 900, 4.5)
             .unwrap();
         // dbg!(&r);
         // assert!(r.is_ok());
@@ -361,73 +258,100 @@ mod tests {
         // assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
-    /*
-       #[test]
-       fn save_jpeg() {
-           let test_plot = create_test_plot();
-           let k = PlotlyStatic::new();
-           let dst = PathBuf::from("example.jpeg");
-           let r = k.save(dst.as_path(), &test_plot, "jpeg", 1200, 900, 4.5);
-           assert!(r.is_ok());
-           assert!(dst.exists());
-           let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-           let file_size = metadata.len();
-           assert!(file_size > 0,);
-           assert!(std::fs::remove_file(dst.as_path()).is_ok());
-       }
+    #[test]
+    #[ignore]
+    fn save_jpeg() {
+        let test_plot = create_test_plot();
+        let k = PlotlyStatic::new();
+        let dst = PathBuf::from("example.jpeg");
+        let r = k.save(
+            dst.as_path(),
+            &test_plot,
+            &ImageFormat::JPEG,
+            1200,
+            900,
+            4.5,
+        );
+        // assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+    }
 
-       #[test]
-       fn save_webp() {
-           let test_plot = create_test_plot();
-           let k = PlotlyStatic::new();
-           let dst = PathBuf::from("example.webp");
-           let r = k.save(dst.as_path(), &test_plot, "webp", 1200, 900, 4.5);
-           assert!(r.is_ok());
-           assert!(dst.exists());
-           let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-           let file_size = metadata.len();
-           assert!(file_size > 0,);
-           assert!(std::fs::remove_file(dst.as_path()).is_ok());
-       }
+    #[test]
+    #[ignore]
+    fn save_webp() {
+        let test_plot = create_test_plot();
+        let k = PlotlyStatic::new();
+        let dst = PathBuf::from("example.webp");
+        let r = k
+            .save(
+                dst.as_path(),
+                &test_plot,
+                &ImageFormat::WEBP,
+                1200,
+                900,
+                4.5,
+            )
+            .unwrap();
+        // assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+    }
 
-       #[test]
-       fn save_svg() {
-           let test_plot = create_test_plot();
-           let k = PlotlyStatic::new();
-           let dst = PathBuf::from("example.svg");
-           let r = k.save(dst.as_path(), &test_plot, "svg", 1200, 900, 4.5);
-           assert!(r.is_ok());
-           assert!(dst.exists());
-           let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-           let file_size = metadata.len();
-           assert!(file_size > 0,);
-           assert!(std::fs::remove_file(dst.as_path()).is_ok());
-       }
+    #[test]
+    // #[ignore]
+    fn save_svg() {
+        let test_plot = create_test_plot();
+        let k = PlotlyStatic::new();
+        let dst = PathBuf::from("example.svg");
+        let r = k
+            .save(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
+            .unwrap();
+        // assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+    }
 
-       #[test]
-       fn save_pdf() {
-           let test_plot = create_test_plot();
-           let k = PlotlyStatic::new();
-           let dst = PathBuf::from("example.pdf");
-           let r = k.save(dst.as_path(), &test_plot, "pdf", 1200, 900, 4.5);
-           assert!(r.is_ok());
-           assert!(dst.exists());
-           let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-           let file_size = metadata.len();
-           assert!(file_size > 0,);
-           assert!(std::fs::remove_file(dst.as_path()).is_ok());
-       }
+    #[test]
+    #[ignore]
+    fn save_pdf() {
+        let test_plot = create_test_plot();
+        let k = PlotlyStatic::new();
+        let dst = PathBuf::from("example.pdf");
+        let r = k
+            .save(dst.as_path(), &test_plot, &ImageFormat::PDF, 1200, 900, 4.5)
+            .unwrap();
+        // assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+    }
 
-    // Kaleido generates empty eps files
     #[test]
     #[ignore]
     fn save_eps() {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.eps");
-        let r = k.save(dst.as_path(), &test_plot, "eps", 1200, 900, 4.5);
-        assert!(r.is_ok());
-        assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        let r = k
+            .save(dst.as_path(), &test_plot, &ImageFormat::EPS, 1200, 900, 4.5)
+            .unwrap();
+        assert!(dst.exists());
+        // assert!(r.is_ok());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
-    */
 }
