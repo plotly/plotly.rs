@@ -1,10 +1,12 @@
 use anyhow::{anyhow, Context, Result};
+use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
 use plotly::ImageFormat;
 use plotly::Plot;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use tokio::runtime::Runtime;
+use std::time::Duration;
+use tokio::{runtime::Runtime, time::sleep};
 use webdriver::WebDriver;
 
 use base64::{engine::general_purpose, Engine as _};
@@ -68,7 +70,6 @@ impl StaticlyBuilder {
             webdriver_port: self.webdriver_port,
             webdriver_url: self.webdriver_url.to_string(),
             webdriver: wd,
-            browser_client: None,
         })
     }
 }
@@ -77,7 +78,6 @@ pub struct Staticly {
     webdriver_port: u32,
     webdriver_url: String,
     webdriver: WebDriver,
-    browser_client: Option<fantoccini::Client>,
 }
 
 impl Staticly {
@@ -174,37 +174,20 @@ impl Staticly {
     }
 
     pub async fn extract(&mut self, file_path: &PathBuf, format: &ImageFormat) -> Result<String> {
-        use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
-        use std::time::Duration;
-        use tokio::time::sleep;
-
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
         let webdriver_url = format!("{}:{}", self.webdriver_url, self.webdriver_port,);
 
-        let client = match &self.browser_client {
-            Some(c) => {
-                info!("reuse");
-                c.clone()
-            }
-            None => {
-                info!("first time");
-                let client = ClientBuilder::native()
-                    .capabilities(cap)
-                    .connect(&webdriver_url)
-                    .await
-                    .with_context(|| "WebDriver session errror")?;
-                self.browser_client = Some(client.clone());
-                client
-            }
-        };
+        let client = ClientBuilder::native()
+            .capabilities(cap)
+            .connect(&webdriver_url)
+            .await
+            .with_context(|| "WebDriver session errror")?;
 
         // client.persist().await?;
         // dbg!(client.session_id().await?);
-        info!("here1");
         // Open generate static plotly html file
         let url = format!("file:{}", file_path.display());
         client.goto(&url).await?;
-        info!("here2");
 
         // Find the location where the plotly static image is stored by XPath of the StaticTemplate
         let img = client.find(Locator::XPath(r#"/html/body/div/img"#)).await?;
@@ -331,11 +314,10 @@ mod tests {
     }
 
     #[test]
-    // #[ignore]
     fn save_jpeg() {
         let test_plot = create_test_plot();
         let mut ps = StaticlyBuilder::default()
-            .spawn_webdriver(false)
+            .spawn_webdriver(true)
             .webdriver_port(4445)
             .build()
             .unwrap();
@@ -355,6 +337,18 @@ mod tests {
         let file_size = metadata.len();
         assert!(file_size > 0,);
         //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+    }
+
+    #[test]
+    fn save_jpeg_sequentially() {
+        let test_plot = create_test_plot();
+        let mut ps = StaticlyBuilder::default()
+            .spawn_webdriver(false)
+            .webdriver_port(4446)
+            .build()
+            .unwrap();
+
+        let dst = PathBuf::from("example.jpeg");
         ps.save(
             dst.as_path(),
             &test_plot,
@@ -364,6 +358,28 @@ mod tests {
             4.5,
         )
         .unwrap();
+        // assert!(r.is_ok());
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        let dst = PathBuf::from("example2.jpeg");
+        ps.save(
+            dst.as_path(),
+            &test_plot,
+            &ImageFormat::JPEG,
+            1200,
+            900,
+            4.5,
+        )
+        .unwrap();
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -395,7 +411,7 @@ mod tests {
         let test_plot = create_test_plot();
         let mut ps = StaticlyBuilder::default()
             .spawn_webdriver(true)
-            .webdriver_port(4446)
+            .webdriver_port(4447)
             .build()
             .unwrap();
         let dst = PathBuf::from("example.svg");
