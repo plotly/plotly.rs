@@ -2,14 +2,12 @@ use anyhow::Context;
 use anyhow::{anyhow, Result};
 #[cfg(not(test))]
 use log::{debug, error, info, warn};
-use plotly::ImageFormat;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
-use tokio::runtime::Runtime;
 
 #[cfg(test)]
 use std::{println as info, println as warn, println as error, println as debug};
@@ -18,15 +16,9 @@ const WEBDRIVER_PATH_ENV: &str = "WEBDRIVER_PATH";
 
 #[cfg(feature = "geckodriver")]
 const WEBDRIVER_APP: &str = "geckodriver";
-#[cfg(feature = "geckodriver")]
-const DRIVER_ARGS: &str =
-    r#"{"browserName":"firefox","moz:firefoxOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
 #[cfg(feature = "chromedriver")]
 const WEBDRIVER_APP: &str = "chromedriver";
-#[cfg(feature = "chromedriver")]
-const DRIVER_ARGS: &str =
-    r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
 pub(crate) const WEBDRIVER_PORT: u32 = 4444;
 pub(crate) const WEBDRIVER_URL: &str = "http://localhost";
@@ -36,7 +28,7 @@ struct WdInner {
     webdriver_port: u32,
     webdriver_url: String,
     driver_path: PathBuf,
-    process_id: Option<u32>,
+    webdriver_process_id: Option<u32>,
 }
 
 pub struct WebDriver {
@@ -67,13 +59,13 @@ impl WebDriver {
             inner: Arc::new(Mutex::new(WdInner {
                 webdriver_port: port,
                 webdriver_url: url.to_string(),
-                driver_path: full_path, // PathBuf::from(path),
-                process_id: None,
+                driver_path: full_path,
+                webdriver_process_id: None,
             })),
         })
     }
 
-    pub(crate) fn spawn_instance(&mut self) {
+    pub(crate) fn spawn_webdriver(&mut self) {
         info!("Spawning {WEBDRIVER_APP}");
         let local_self = self.inner.clone();
 
@@ -95,7 +87,7 @@ impl WebDriver {
 
             let mut child = match command.spawn() {
                 Ok(c) => {
-                    inner.process_id = Some(c.id());
+                    inner.webdriver_process_id = Some(c.id());
                     c
                 }
                 Err(e) => {
@@ -123,107 +115,12 @@ impl WebDriver {
     }
 
     pub fn stop(&mut self) -> Result<()> {
-        if let Some(id) = self.inner.lock().unwrap().process_id {
+        if let Some(id) = self.inner.lock().unwrap().webdriver_process_id {
             info!("Stopping '{WEBDRIVER_APP}'");
             let mut kill = Command::new("kill").arg(id.to_string()).spawn()?;
             kill.wait()?;
         }
         Ok(())
-    }
-
-    pub fn static_export(&self, file: &PathBuf, format: &ImageFormat) -> Result<String> {
-        let local = self.inner.lock().unwrap();
-        let port = local.webdriver_port;
-        drop(local);
-        Runtime::new()?
-            .block_on(Self::extract(port, &file, format))
-            .with_context(|| "Failed to extract static image from browser session")
-    }
-
-    pub async fn extract(
-        webdriver_port: u32,
-        file_path: &PathBuf,
-        format: &ImageFormat,
-    ) -> Result<String> {
-        use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
-        use std::time::Duration;
-        use tokio::time::sleep;
-
-        let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
-        let webdriver_url = format!("{WEBDRIVER_URL}:{webdriver_port}");
-
-        let client = ClientBuilder::native()
-            .capabilities(cap)
-            .connect(&webdriver_url)
-            .await
-            .with_context(|| "WebDriver session errror")?;
-
-        // client.persist().await?;
-        // dbg!(client.session_id().await?);
-
-        // Open generate static plotly html file
-        let url = format!("file:{}", file_path.display());
-        client.goto(&url).await?;
-
-        // Find the location where the plotly static image is stored by XPath of the StaticTemplate
-        let img = client.find(Locator::XPath(r#"/html/body/div/img"#)).await?;
-        let src = loop {
-            let src = img.attr("src").await?;
-            if src.is_none() {
-                info!("Waiting 50 msec for PlotlyJS valid image data in 'src' attribute");
-                sleep(Duration::from_millis(50)).await;
-            } else {
-                break src.unwrap();
-            }
-        };
-        // client.close_window().await?;
-        client.close().await?;
-
-        match format {
-            ImageFormat::SVG => Self::extract_plain(&src, format),
-            ImageFormat::PNG | ImageFormat::JPEG => Self::extract_encoded(&src, format),
-            _ => return Err(anyhow!("Not implemented for {format}")),
-        }
-    }
-
-    fn extract_plain(payload: &str, format: &ImageFormat) -> Result<String> {
-        use percent_encoding::percent_decode;
-
-        match payload.split_once(",") {
-            Some((type_info, data)) => {
-                Self::extract_type_info(type_info, format);
-                let decoded = percent_decode(data.as_bytes()).decode_utf8()?;
-                Ok(decoded.to_string())
-            }
-            None => Err(anyhow!("'src' attribute has invalid {format} data")),
-        }
-    }
-
-    fn extract_encoded(payload: &str, format: &ImageFormat) -> Result<String> {
-        match payload.split_once(";") {
-            Some((type_info, encoded_data)) => {
-                Self::extract_type_info(type_info, format);
-                Self::extract_encoded_data(encoded_data)
-                    .ok_or(anyhow!("No valid image data found in 'src' attribute"))
-            }
-            None => Err(anyhow!("'src' attribute has invalid base64 data")),
-        }
-    }
-
-    fn extract_type_info(type_info: &str, format: &ImageFormat) {
-        let val = type_info.split_once("/").map(|d| d.1.to_string());
-        match val {
-            Some(ext) => {
-                if !ext.contains(&format.to_string()) {
-                    error!("Requested ImageFormat '{}', got '{}'", format, ext);
-                }
-            }
-            None => warn!("Failed to extract static Image Format from 'src' attribute"),
-        }
-    }
-
-    fn extract_encoded_data(data: &str) -> Option<String> {
-        data.split_once(",").map(|d| d.1.to_string())
     }
 
     fn full_path(path: &str) -> Result<PathBuf> {

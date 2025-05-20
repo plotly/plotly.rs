@@ -14,5 +14,7 @@
 
 - [ ] most probably will have to fix the circular dependency
 
+- [ ] write a nice parser using json serialize/deserialize for capabilities, like you found on the othe rrepo
+
 Other esoteric issues;
  - added `percent-encoding = "2.3.1"` because the SVG, when saved via extracting the data from the src element contains URL-encoded data. I am using that package to decode  the url encodings to text  
