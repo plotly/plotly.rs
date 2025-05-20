@@ -28,61 +28,23 @@ const WEBDRIVER_APP: &str = "chromedriver";
 const DRIVER_ARGS: &str =
     r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
-const WEBDRIVER_PORT: u32 = 4444;
-const WEBDRIVER_URL: &str = "http://localhost";
-
-pub(crate) struct StaticExporterBuilder {
-    port: u32,
-    url: String,
-    launch_webdriver: bool,
-}
-
-impl StaticExporterBuilder {
-    pub fn new() -> Self {
-        Self {
-            port: WEBDRIVER_PORT,
-            url: WEBDRIVER_URL.to_string(),
-            launch_webdriver: true,
-        }
-    }
-
-    pub fn webdriver_port(mut self, port: u32) -> Self {
-        self.port = port;
-        self
-    }
-
-    pub fn launch_webdriver(mut self, yes: bool) -> Self {
-        self.launch_webdriver = yes;
-        self
-    }
-
-    pub fn webdriver_url(mut self, url: &str) -> Self {
-        self.url = url.to_string();
-        self
-    }
-
-    pub fn build(&self) -> Result<StaticExporter> {
-        let mut exp = StaticExporter::new(self.port)?;
-        if self.launch_webdriver {
-            exp.spawn_instance();
-        }
-        Ok(exp)
-    }
-}
+pub(crate) const WEBDRIVER_PORT: u32 = 4444;
+pub(crate) const WEBDRIVER_URL: &str = "http://localhost";
 
 #[derive(Debug)]
-struct ExporterInner {
+struct WdInner {
     webdriver_port: u32,
+    webdriver_url: String,
     driver_path: PathBuf,
     process_id: Option<u32>,
 }
 
-pub struct StaticExporter {
-    inner: Arc<Mutex<ExporterInner>>,
+pub struct WebDriver {
+    inner: Arc<Mutex<WdInner>>,
 }
 
-impl StaticExporter {
-    fn new(port: u32) -> Result<Self> {
+impl WebDriver {
+    pub(crate) fn new(port: u32, url: &str) -> Result<Self> {
         use std::env;
 
         let path = match env::var(WEBDRIVER_PATH_ENV) {
@@ -102,15 +64,16 @@ impl StaticExporter {
             .with_context(|| format!("Failed tu use WebDriver binary at {path}"))?;
 
         Ok(Self {
-            inner: Arc::new(Mutex::new(ExporterInner {
+            inner: Arc::new(Mutex::new(WdInner {
                 webdriver_port: port,
+                webdriver_url: url.to_string(),
                 driver_path: full_path, // PathBuf::from(path),
                 process_id: None,
             })),
         })
     }
 
-    fn spawn_instance(&mut self) {
+    pub(crate) fn spawn_instance(&mut self) {
         info!("Spawning {WEBDRIVER_APP}");
         let local_self = self.inner.clone();
 
@@ -294,7 +257,7 @@ impl StaticExporter {
     }
 }
 
-impl Drop for StaticExporter {
+impl Drop for WebDriver {
     fn drop(&mut self) {
         if let Err(e) = self.stop() {
             error!("Failed to release WebDriver process: {e}");

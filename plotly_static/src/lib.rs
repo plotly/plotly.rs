@@ -5,7 +5,7 @@ use plotly::Plot;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use webdriver::StaticExporter;
+use webdriver::WebDriver;
 
 use base64::{engine::general_purpose, Engine as _};
 use rand::{
@@ -51,15 +51,51 @@ impl<'a> PlotData<'a> {
         serde_json::to_string(self).unwrap()
     }
 }
+pub struct StaticlyBuilder {
+    webdriver_port: u32,
+    webdriver_url: String,
+    spawn_webdriver: bool,
+}
 
-#[derive(Default)]
-pub struct PlotlyStatic {}
-
-impl PlotlyStatic {
-    pub fn new() -> Self {
-        Self::default()
+impl Default for StaticlyBuilder {
+    fn default() -> Self {
+        Self {
+            webdriver_port: webdriver::WEBDRIVER_PORT,
+            webdriver_url: webdriver::WEBDRIVER_URL.to_string(),
+            spawn_webdriver: true,
+        }
+    }
+}
+impl StaticlyBuilder {
+    pub fn webdriver_port(mut self, port: u32) -> Self {
+        self.webdriver_port = port;
+        self
     }
 
+    pub fn webdriver_url(mut self, url: &str) -> Self {
+        self.webdriver_url = url.to_string();
+        self
+    }
+
+    pub fn spawn_webdriver(mut self, yes: bool) -> Self {
+        self.spawn_webdriver = yes;
+        self
+    }
+
+    pub fn build(&self) -> Result<Staticly> {
+        let mut wd = WebDriver::new(self.webdriver_port, &self.webdriver_url)?;
+        if self.spawn_webdriver {
+            wd.spawn_instance();
+        }
+        Ok(Staticly { webdriver: wd })
+    }
+}
+
+pub struct Staticly {
+    webdriver: WebDriver,
+}
+
+impl Staticly {
     /// Generate a static image from a Plotly graph and save it to a file
     pub fn save(
         &self,
@@ -88,7 +124,7 @@ impl PlotlyStatic {
     /// Generate a static image from a Plotly graph and save it to a file
     pub fn save2(
         &self,
-        exporter: StaticExporter,
+        exporter: WebDriver,
         dst: &Path,
         plot: &Plot,
         format: &ImageFormat,
@@ -131,7 +167,7 @@ impl PlotlyStatic {
     /// result as a String
     pub fn export2(
         &self,
-        exporter: StaticExporter,
+        exporter: WebDriver,
         plot: &Plot,
         format: &ImageFormat,
         width: usize,
@@ -158,11 +194,7 @@ impl PlotlyStatic {
         info!("Generate plotly html file");
         let file = self.generate_static_html_plot(plot, format, width, height)?;
         info!("Extract static plot using WebDriver");
-        let wd = webdriver::StaticExporterBuilder::new()
-            .launch_webdriver(true)
-            .build()?;
-
-        let data = wd.static_export(&file, format)?;
+        let data = self.webdriver.static_export(&file, format)?;
         Ok(data)
     }
 
@@ -284,23 +316,14 @@ mod tests {
     fn save_png() {
         let test_plot = create_test_plot();
 
-        let k = PlotlyStatic::new();
-        let dst = PathBuf::from("example.png");
-        let wd = webdriver::StaticExporterBuilder::new()
-            .launch_webdriver(true)
-            .webdriver_port(4445)
+        let ps = StaticlyBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(4444)
             .build()
             .unwrap();
-        k.save2(
-            wd,
-            dst.as_path(),
-            &test_plot,
-            &ImageFormat::PNG,
-            1200,
-            900,
-            4.5,
-        )
-        .unwrap();
+        let dst = PathBuf::from("example.png");
+        ps.save(dst.as_path(), &test_plot, &ImageFormat::PNG, 1200, 900, 4.5)
+            .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
@@ -312,15 +335,13 @@ mod tests {
     // #[ignore]
     fn save_jpeg() {
         let test_plot = create_test_plot();
-        let k = PlotlyStatic::new();
-        let dst = PathBuf::from("example.jpeg");
-        let wd = webdriver::StaticExporterBuilder::new()
-            .launch_webdriver(true)
-            .webdriver_port(4446)
+        let ps = StaticlyBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(4445)
             .build()
             .unwrap();
-        k.save2(
-            wd,
+        let dst = PathBuf::from("example.jpeg");
+        ps.save(
             dst.as_path(),
             &test_plot,
             &ImageFormat::JPEG,
@@ -341,7 +362,7 @@ mod tests {
     #[ignore]
     fn save_webp() {
         let test_plot = create_test_plot();
-        let k = PlotlyStatic::new();
+        let k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.webp");
         k.save(
             dst.as_path(),
@@ -364,9 +385,13 @@ mod tests {
     // #[ignore]
     fn save_svg() {
         let test_plot = create_test_plot();
-        let k = PlotlyStatic::new();
+        let ps = StaticlyBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(4446)
+            .build()
+            .unwrap();
         let dst = PathBuf::from("example.svg");
-        k.save(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
+        ps.save(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
             .unwrap();
         // assert!(r.is_ok());
         assert!(dst.exists());
@@ -380,7 +405,7 @@ mod tests {
     #[ignore]
     fn save_pdf() {
         let test_plot = create_test_plot();
-        let k = PlotlyStatic::new();
+        let k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.pdf");
         k.save(dst.as_path(), &test_plot, &ImageFormat::PDF, 1200, 900, 4.5)
             .unwrap();
@@ -396,7 +421,7 @@ mod tests {
     #[ignore]
     fn save_eps() {
         let test_plot = create_test_plot();
-        let k = PlotlyStatic::new();
+        let k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.eps");
         k.save(dst.as_path(), &test_plot, &ImageFormat::EPS, 1200, 900, 4.5)
             .unwrap();
