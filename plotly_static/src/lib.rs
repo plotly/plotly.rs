@@ -5,6 +5,7 @@ use plotly::Plot;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
+use webdriver::StaticExporter;
 
 use base64::{engine::general_purpose, Engine as _};
 use rand::{
@@ -58,6 +59,7 @@ impl PlotlyStatic {
     pub fn new() -> Self {
         Self::default()
     }
+
     /// Generate a static image from a Plotly graph and save it to a file
     pub fn save(
         &self,
@@ -83,6 +85,32 @@ impl PlotlyStatic {
         Ok(())
     }
 
+    /// Generate a static image from a Plotly graph and save it to a file
+    pub fn save2(
+        &self,
+        exporter: StaticExporter,
+        dst: &Path,
+        plot: &Plot,
+        format: &ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut dst = PathBuf::from(dst);
+        dst.set_extension(format.to_string());
+
+        let image_data = self.export2(exporter, plot, &format, width, height, scale)?;
+        let data = match format {
+            ImageFormat::EPS | ImageFormat::SVG => image_data.as_bytes(),
+            _ => &general_purpose::STANDARD.decode(image_data)?,
+        };
+        let mut file = File::create(dst.as_path())?;
+        file.write_all(data)?;
+        file.flush()?;
+
+        Ok(())
+    }
+
     /// Generate a static image from a Plotly graph and return it as a String
     /// The output may be base64 encoded or a plain text depending on the image
     /// format provided as argument. SVG and EPS are returned in plain text
@@ -97,6 +125,24 @@ impl PlotlyStatic {
     ) -> Result<String, Box<dyn std::error::Error>> {
         let image_data = self.export(plot, format, width, height, scale)?;
         Ok(image_data)
+    }
+
+    /// Convert the Plotly graph to a static image using Kaleido and return the
+    /// result as a String
+    pub fn export2(
+        &self,
+        exporter: StaticExporter,
+        plot: &Plot,
+        format: &ImageFormat,
+        width: usize,
+        height: usize,
+        _scale: f64,
+    ) -> Result<String> {
+        info!("Generate plotly html file");
+        let file = self.generate_static_html_plot(plot, format, width, height)?;
+        info!("Extract static plot using WebDriver");
+        let data = exporter.static_export(&file, format)?;
+        Ok(data)
     }
 
     /// Convert the Plotly graph to a static image using Kaleido and return the
@@ -240,8 +286,21 @@ mod tests {
 
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.png");
-        k.save(dst.as_path(), &test_plot, &ImageFormat::PNG, 1200, 900, 4.5)
+        let wd = webdriver::StaticExporterBuilder::new()
+            .launch_webdriver(true)
+            .webdriver_port(4445)
+            .build()
             .unwrap();
+        k.save2(
+            wd,
+            dst.as_path(),
+            &test_plot,
+            &ImageFormat::PNG,
+            1200,
+            900,
+            4.5,
+        )
+        .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
@@ -255,7 +314,13 @@ mod tests {
         let test_plot = create_test_plot();
         let k = PlotlyStatic::new();
         let dst = PathBuf::from("example.jpeg");
-        k.save(
+        let wd = webdriver::StaticExporterBuilder::new()
+            .launch_webdriver(true)
+            .webdriver_port(4446)
+            .build()
+            .unwrap();
+        k.save2(
+            wd,
             dst.as_path(),
             &test_plot,
             &ImageFormat::JPEG,

@@ -62,7 +62,7 @@ impl StaticExporterBuilder {
     }
 
     pub fn build(&self) -> Result<StaticExporter> {
-        let mut exp = StaticExporter::new()?;
+        let mut exp = StaticExporter::new(self.port)?;
         if self.launch_webdriver {
             exp.spawn_instance();
         }
@@ -72,16 +72,17 @@ impl StaticExporterBuilder {
 
 #[derive(Debug)]
 struct ExporterInner {
+    webdriver_port: u32,
     driver_path: PathBuf,
     process_id: Option<u32>,
 }
 
-pub(crate) struct StaticExporter {
+pub struct StaticExporter {
     inner: Arc<Mutex<ExporterInner>>,
 }
 
 impl StaticExporter {
-    fn new() -> Result<Self> {
+    fn new(port: u32) -> Result<Self> {
         use std::env;
 
         let path = match env::var(WEBDRIVER_PATH_ENV) {
@@ -102,6 +103,7 @@ impl StaticExporter {
 
         Ok(Self {
             inner: Arc::new(Mutex::new(ExporterInner {
+                webdriver_port: port,
                 driver_path: full_path, // PathBuf::from(path),
                 process_id: None,
             })),
@@ -123,7 +125,7 @@ impl StaticExporter {
 
             let mut command = Command::new(inner.driver_path.clone());
             command
-                .arg(format!("--port={WEBDRIVER_PORT}"))
+                .arg(format!("--port={}", inner.webdriver_port))
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .stderr(Stdio::piped());
@@ -167,18 +169,25 @@ impl StaticExporter {
     }
 
     pub fn static_export(&self, file: &PathBuf, format: &ImageFormat) -> Result<String> {
+        let local = self.inner.lock().unwrap();
+        let port = local.webdriver_port;
+        drop(local);
         Runtime::new()?
-            .block_on(Self::extract(&file, format))
+            .block_on(Self::extract(port, &file, format))
             .with_context(|| "Failed to extract static image from browser session")
     }
 
-    pub async fn extract(file_path: &PathBuf, format: &ImageFormat) -> Result<String> {
+    pub async fn extract(
+        webdriver_port: u32,
+        file_path: &PathBuf,
+        format: &ImageFormat,
+    ) -> Result<String> {
         use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
         use std::time::Duration;
         use tokio::time::sleep;
 
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
-        let webdriver_url = format!("{WEBDRIVER_URL}:{WEBDRIVER_PORT}");
+        let webdriver_url = format!("{WEBDRIVER_URL}:{webdriver_port}");
 
         let client = ClientBuilder::native()
             .capabilities(cap)
