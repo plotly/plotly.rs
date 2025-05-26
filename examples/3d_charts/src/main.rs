@@ -135,8 +135,8 @@ fn simple_line3d_plot(show: bool) -> Plot {
     plot.show_image(plotly::ImageFormat::PNG, 1280, 900);
     // plot.show_image(plotly::ImageFormat::EPS, 1280, 900);
     // plot.show_image(plotly::ImageFormat::PDF, 1280, 900);
-    plot.show_image(plotly::ImageFormat::SVG, 1280, 900);
-    plot.show_image(plotly::ImageFormat::JPEG, 1280, 900);
+    // plot.show_image(plotly::ImageFormat::SVG, 1280, 900);
+    // plot.show_image(plotly::ImageFormat::JPEG, 1280, 900);
 
     // if show {
     //     plot.show();
