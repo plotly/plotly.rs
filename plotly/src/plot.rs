@@ -8,6 +8,7 @@ use rand::{
     rng,
 };
 use serde::Serialize;
+use serde_json::Value;
 
 use crate::{Configuration, Layout};
 
@@ -23,6 +24,17 @@ struct PlotTemplate<'a> {
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
+    format: ImageFormat,
+    js_scripts: &'a str,
+    width: usize,
+    height: usize,
+}
+
+#[derive(Template)]
+#[template(path = "static_plot2.html", escape = "none")]
+#[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
+struct StaticPlotTemplate2<'a> {
+    plot: &'a Value,
     format: ImageFormat,
     js_scripts: &'a str,
     width: usize,
@@ -292,7 +304,7 @@ impl Plot {
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
-        let rendered = self.render_static(&format, width, height);
+        let rendered = self.render_static2(&format, width, height);
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
@@ -475,6 +487,22 @@ impl Plot {
     pub fn render_static(&self, format: &ImageFormat, width: usize, height: usize) -> String {
         let tmpl = StaticPlotTemplate {
             plot: self,
+            format: format.clone(),
+            js_scripts: &self.js_scripts,
+            width,
+            height,
+        };
+        tmpl.render().unwrap()
+    }
+
+    #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
+    pub fn render_static2(&self, format: &ImageFormat, width: usize, height: usize) -> String {
+        use serde_json::to_value;
+
+        let value = to_value(self).unwrap();
+        dbg!(&value);
+        let tmpl = StaticPlotTemplate2 {
+            plot: &value,
             format: format.clone(),
             js_scripts: &self.js_scripts,
             width,
