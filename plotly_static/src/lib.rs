@@ -80,9 +80,17 @@ pub struct Staticly {
     webdriver: WebDriver,
 }
 
+impl Drop for Staticly {
+    fn drop(&mut self) {
+        if let Err(e) = self.webdriver.stop() {
+            error!("Failed to release WebDriver process: {e}");
+        }
+    }
+}
+
 impl Staticly {
     /// Generate a static image from a Plotly graph and save it to a file
-    pub fn save(
+    pub fn write_fig(
         &mut self,
         dst: &Path,
         plot: &Plot,
@@ -110,7 +118,7 @@ impl Staticly {
     /// The output may be base64 encoded or a plain text depending on the image
     /// format provided as argument. SVG and EPS are returned in plain text
     /// while JPEG, PNG, WEBP will be returned as a base64 encoded string.
-    pub fn image_to_string(
+    pub fn write_to_string(
         &mut self,
         plot: &Plot,
         format: &ImageFormat,
@@ -124,7 +132,7 @@ impl Staticly {
 
     /// Convert the Plotly graph to a static image using Kaleido and return the
     /// result as a String
-    pub fn export(
+    pub(crate) fn export(
         &mut self,
         plot: &Plot,
         format: &ImageFormat,
@@ -304,13 +312,13 @@ mod tests {
             .build()
             .unwrap();
         let dst = PathBuf::from("example.png");
-        ps.save(dst.as_path(), &test_plot, &ImageFormat::PNG, 1200, 900, 4.5)
+        ps.write_fig(dst.as_path(), &test_plot, &ImageFormat::PNG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -322,7 +330,7 @@ mod tests {
             .build()
             .unwrap();
         let dst = PathBuf::from("example.jpeg");
-        ps.save(
+        ps.write_fig(
             dst.as_path(),
             &test_plot,
             &ImageFormat::JPEG,
@@ -331,25 +339,24 @@ mod tests {
             4.5,
         )
         .unwrap();
-        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
     fn save_jpeg_sequentially() {
         let test_plot = create_test_plot();
         let mut ps = StaticlyBuilder::default()
-            .spawn_webdriver(false)
+            .spawn_webdriver(true)
             .webdriver_port(4446)
             .build()
             .unwrap();
 
         let dst = PathBuf::from("example.jpeg");
-        ps.save(
+        ps.write_fig(
             dst.as_path(),
             &test_plot,
             &ImageFormat::JPEG,
@@ -358,15 +365,14 @@ mod tests {
             4.5,
         )
         .unwrap();
-        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
 
         let dst = PathBuf::from("example2.jpeg");
-        ps.save(
+        ps.write_fig(
             dst.as_path(),
             &test_plot,
             &ImageFormat::JPEG,
@@ -379,7 +385,7 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -388,7 +394,7 @@ mod tests {
         let test_plot = create_test_plot();
         let mut k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.webp");
-        k.save(
+        k.write_fig(
             dst.as_path(),
             &test_plot,
             &ImageFormat::WEBP,
@@ -397,12 +403,11 @@ mod tests {
             4.5,
         )
         .unwrap();
-        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -415,14 +420,13 @@ mod tests {
             .build()
             .unwrap();
         let dst = PathBuf::from("example.svg");
-        ps.save(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
+        ps.write_fig(dst.as_path(), &test_plot, &ImageFormat::SVG, 1200, 900, 4.5)
             .unwrap();
-        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -431,14 +435,13 @@ mod tests {
         let test_plot = create_test_plot();
         let mut k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.pdf");
-        k.save(dst.as_path(), &test_plot, &ImageFormat::PDF, 1200, 900, 4.5)
+        k.write_fig(dst.as_path(), &test_plot, &ImageFormat::PDF, 1200, 900, 4.5)
             .unwrap();
-        // assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        //    assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -447,13 +450,12 @@ mod tests {
         let test_plot = create_test_plot();
         let mut k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.eps");
-        k.save(dst.as_path(), &test_plot, &ImageFormat::EPS, 1200, 900, 4.5)
+        k.write_fig(dst.as_path(), &test_plot, &ImageFormat::EPS, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
-        // assert!(r.is_ok());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 }
