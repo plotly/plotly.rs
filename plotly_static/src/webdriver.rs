@@ -153,11 +153,3 @@ impl WebDriver {
         path.join(app)
     }
 }
-
-impl Drop for WebDriver {
-    fn drop(&mut self) {
-        if let Err(e) = self.stop() {
-            error!("Failed to release WebDriver process: {e}");
-        }
-    }
-}
