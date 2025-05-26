@@ -7,6 +7,7 @@ use crate::{
     common::{
         Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
     },
+    private::NumOrStringCollection,
     Trace,
 };
 
@@ -71,6 +72,11 @@ where
     color_scale: Option<ColorScale>,
     #[serde(rename = "connectgaps")]
     connect_gaps: Option<bool>,
+    /// Assigns extra data each datum. This may be useful when listening to
+    /// hover, click and selection events. Note that, "scatter" traces also
+    /// appends customdata items in the markers DOM elements
+    #[serde(rename = "customdata")]
+    custom_data: Option<NumOrStringCollection>,
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
     #[serde(rename = "hoverlabel")]
