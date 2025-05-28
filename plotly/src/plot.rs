@@ -78,7 +78,7 @@ See https://plotly.github.io/plotly.rs/content/getting_started.html for further 
 "#;
 
 /// Image format for static image export.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub enum ImageFormat {
     PNG,
     JPEG,
@@ -304,7 +304,7 @@ impl Plot {
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
-        let rendered = self.render_static2(&format, width, height);
+        let rendered = self.render_static(&format, width, height);
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
@@ -496,15 +496,16 @@ impl Plot {
     }
 
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-    pub fn render_static2(&self, format: &ImageFormat, width: usize, height: usize) -> String {
-        use serde_json::to_value;
-
-        let value = to_value(self).unwrap();
-        dbg!(&value);
+    pub fn render_static2(
+        data: &serde_json::Value,
+        format: &ImageFormat,
+        width: usize,
+        height: usize,
+    ) -> String {
         let tmpl = StaticPlotTemplate2 {
-            plot: &value,
+            plot: &data,
             format: format.clone(),
-            js_scripts: &self.js_scripts,
+            js_scripts: &Self::js_scripts(),
             width,
             height,
         };
