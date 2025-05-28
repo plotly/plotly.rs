@@ -1,26 +1,19 @@
 use anyhow::{anyhow, Context, Result};
 use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
-use plotly::ImageFormat;
-use plotly::Plot;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use std::time::Duration;
-use tokio::{runtime::Runtime, time::sleep};
+use tokio::runtime::Runtime;
 use webdriver::WebDriver;
 
 use base64::{engine::general_purpose, Engine as _};
-use rand::{
-    distr::{Alphanumeric, SampleString},
-    rng,
-};
 
 #[cfg(not(test))]
-use log::{debug, error, info, warn};
+use log::{error, info, warn};
 
 #[cfg(test)]
-use std::{println as info, println as warn, println as error, println as debug};
+use std::{println as info, println as warn, println as error};
 
 #[cfg(feature = "geckodriver")]
 const DRIVER_ARGS: &str =
@@ -29,12 +22,40 @@ const DRIVER_ARGS: &str =
 const DRIVER_ARGS: &str =
     r#"{"browserName":"chrome","goog:chromeOptions":{"args":["--headless", "--disable-gpu"]}}"#;
 
+mod template;
 mod webdriver;
 
-// TODO: as with `data`, it would be much better if this were a plotly::ImageFormat, but
-// problems with cyclic dependencies.
-// TODO: it would be great if this could be a plotly::Plot, but with the current workspace set
-// up, that would be a cyclic dependency.
+/// Image format for static image export.
+#[derive(Debug, Clone, Serialize)]
+pub enum ImageFormat {
+    PNG,
+    JPEG,
+    WEBP,
+    SVG,
+    PDF,
+    EPS,
+}
+
+impl std::fmt::Display for ImageFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::PNG => "png",
+                Self::JPEG => "jpeg",
+                Self::WEBP => "webp",
+                Self::SVG => "svg",
+                Self::PDF => "pdf",
+                Self::EPS => "eps",
+            }
+        )
+    }
+}
+
+// TODO: how to avoid cyclic dependency on the ImageFormat and the Plot data
+// ideally ImageFormat will be defined in a single place and the `data` field would
+// be just a Plot object which is later serialized to JSON
 #[derive(Serialize)]
 struct PlotData<'a> {
     format: ImageFormat,
@@ -161,49 +182,19 @@ impl Staticly {
     /// Convert the Plotly graph to a static image using Kaleido and return the
     /// result as a String
     pub(crate) fn export(&mut self, plot: PlotData) -> Result<String> {
-        info!("Generate plotly html file");
-        let file =
-            self.generate_static_html_plot(&plot.data, &plot.format, plot.width, plot.height)?;
-        info!("Extract static plot using WebDriver");
-        let data = self.static_export(&file, &plot)?;
+        let data = self.static_export(&plot)?;
         Ok(data)
     }
 
-    fn generate_static_html_plot(
-        &self,
-        plot: &serde_json::Value,
-        format: &ImageFormat,
-        width: usize,
-        height: usize,
-    ) -> Result<PathBuf> {
-        use std::env;
-
-        let rendered = Plot::render_static2(plot, format, width, height);
-
-        // Set up the temp file with a unique filename.
-        let mut tmp_path = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut rng(), 22);
-        plot_name.push_str(".html");
-        plot_name = format!("plotly_{}", plot_name);
-        tmp_path.push(plot_name);
-
-        // Save the rendered plot to the temp file.
-        let temp_path = tmp_path
-            .to_str()
-            .context("Failed to convert path to string")?;
-        let mut file = File::create(temp_path)?;
-        file.write_all(rendered.as_bytes())?;
-        file.flush()?;
-        Ok(tmp_path)
-    }
-
-    fn static_export(&mut self, file: &PathBuf, data: &PlotData) -> Result<String> {
+    fn static_export(&mut self, data: &PlotData) -> Result<String> {
+        let file = template::generate_html_file()?;
         Runtime::new()?
             .block_on(self.extract(&file, data))
             .with_context(|| "Failed to extract static image from browser session")
     }
 
     async fn extract(&mut self, file_path: &PathBuf, plot: &PlotData<'_>) -> Result<String> {
+        info!("Export static plot using WebDriver");
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
         let webdriver_url = format!("{}:{}", self.webdriver_url, self.webdriver_port,);
 
