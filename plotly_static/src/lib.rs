@@ -68,6 +68,7 @@ pub struct StaticlyBuilder {
     webdriver_port: u32,
     webdriver_url: String,
     spawn_webdriver: bool,
+    offline_mode: bool,
 }
 
 impl Default for StaticlyBuilder {
@@ -76,6 +77,7 @@ impl Default for StaticlyBuilder {
             webdriver_port: webdriver::WEBDRIVER_PORT,
             webdriver_url: webdriver::WEBDRIVER_URL.to_string(),
             spawn_webdriver: true,
+            offline_mode: false,
         }
     }
 }
@@ -95,6 +97,11 @@ impl StaticlyBuilder {
         self
     }
 
+    pub fn offline_mode(mut self, yes: bool) -> Self {
+        self.offline_mode = yes;
+        self
+    }
+
     pub fn build(&self) -> Result<Staticly> {
         let mut wd = WebDriver::new(self.webdriver_port, &self.webdriver_url)?;
         if self.spawn_webdriver {
@@ -104,6 +111,7 @@ impl StaticlyBuilder {
             webdriver_port: self.webdriver_port,
             webdriver_url: self.webdriver_url.to_string(),
             webdriver: wd,
+            offline_mode: self.offline_mode,
         })
     }
 }
@@ -112,6 +120,7 @@ pub struct Staticly {
     webdriver_port: u32,
     webdriver_url: String,
     webdriver: WebDriver,
+    offline_mode: bool,
 }
 
 impl Drop for Staticly {
@@ -187,7 +196,7 @@ impl Staticly {
     }
 
     fn static_export(&mut self, data: &PlotData) -> Result<String> {
-        let file = template::generate_html_file()?;
+        let file = template::generate_html_file(self.offline_mode)?;
         Runtime::new()?
             .block_on(self.extract(&file, data))
             .with_context(|| "Failed to extract static image from browser session")

@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use askama::Template;
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
@@ -13,7 +14,11 @@ use log::debug;
 #[cfg(test)]
 use std::println as debug;
 
-pub(crate) const INLINE_HTML: &'static str = r#""
+#[derive(Template)]
+#[template(
+    ext = "html",
+    escape = "none",
+    source = r#""
 <!doctype html>
 <html lang="en">
     <head>
@@ -21,16 +26,31 @@ pub(crate) const INLINE_HTML: &'static str = r#""
     </head>
     <body>
         <div>
-            <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+            if ({{offline_mode}}) {
+                {{ offline_js }}
+            } else  {
+                {{ cdn_js }}
+            } 
             <div id="plotly-html-element" hidden></div>
         </div>
     </body>
 </html>
-"#;
+"#
+)]
+#[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
+struct ExportHtmlTemplate<'a> {
+    offline_mode: bool,
+    cdn_js: &'a str,
+    offline_js: &'a str,
+}
 
-pub(crate) fn generate_html_file() -> Result<PathBuf> {
+pub(crate) fn generate_html_file(offline: bool) -> Result<PathBuf> {
+    let tmpl = ExportHtmlTemplate {
+        cdn_js: &online_js_cdn(),
+        offline_js: &offline_js_sources(),
+        offline_mode: offline,
+    };
+    let html = tmpl.render()?;
     debug!("Generate plotly html file");
     use std::env;
     // Set up the temp file with a unique filename.
@@ -45,10 +65,11 @@ pub(crate) fn generate_html_file() -> Result<PathBuf> {
         .to_str()
         .context("Failed to convert path to string")?;
     let mut file = File::create(temp_path)?;
-    file.write_all(INLINE_HTML.as_bytes())?;
+    file.write_all(html.as_bytes())?;
     file.flush()?;
     Ok(tmp_path)
 }
+
 fn offline_js_sources() -> String {
     let local_plotly_js = include_str!("../resource/plotly.min.js");
     let local_tex_mml_js = include_str!("../resource/tex-mml-chtml-3.2.0.js");
@@ -72,10 +93,11 @@ fn offline_js_sources() -> String {
     .to_string()
 }
 
-fn online_cdn_js() -> String {
-    r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-        "##
+fn online_js_cdn() -> String {
+    r##"
+                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+    "##
     .to_string()
 }
