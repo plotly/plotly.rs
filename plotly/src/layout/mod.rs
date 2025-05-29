@@ -137,6 +137,41 @@ pub enum SelectDirection {
     Any,
 }
 
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Geo {
+    /// Sets the zoom level of the map.
+    zoom: Option<u8>,
+    /// Sets the projection of the map
+    #[field_setter(default = "Projection::new().projection_type(ProjectionType::Orthographic)")]
+    projection: Option<Projection>,
+    /// If to show the ocean or not
+    #[field_setter(default = "Some(true)")]
+    showocean: Option<bool>,
+    /// Sets the color of the ocean
+    #[field_setter(default = "'rgb(0, 255, 255)'")]
+    oceancolor: Option<Box<dyn Color>>,
+    /// If to show the land or not
+    showland: Option<bool>,
+    /// Sets the color of the land
+    landcolor: Option<Box<dyn Color>>,
+    /// If to show lakes or not
+    showlakes: Option<bool>,
+    /// Sets the color of the lakes
+    lakecolor: Option<Box<dyn Color>>,
+    /// If to show countries (borders) or not
+    showcountries: Option<bool>,
+    /// Configures the longitude axis
+    lonaxis: Option<Axis>,
+    /// Configures the latitude axis
+    lataxis: Option<Axis>,
+}
+
+impl Geo {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct Template {
