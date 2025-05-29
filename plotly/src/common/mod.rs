@@ -215,6 +215,7 @@ pub enum PlotType {
     ScatterGL,
     Scatter3D,
     ScatterMapbox,
+    ScatterGeo,
     ScatterPolar,
     ScatterPolarGL,
     Bar,
@@ -1750,6 +1751,7 @@ mod tests {
         assert_eq!(to_value(PlotType::Scatter).unwrap(), json!("scatter"));
         assert_eq!(to_value(PlotType::ScatterGL).unwrap(), json!("scattergl"));
         assert_eq!(to_value(PlotType::Scatter3D).unwrap(), json!("scatter3d"));
+        assert_eq!(to_value(PlotType::ScatterGeo).unwrap(), json!("scattergeo"));
         assert_eq!(to_value(PlotType::ScatterPolar).unwrap(), json!("scatterpolar"));
         assert_eq!(to_value(PlotType::ScatterPolarGL).unwrap(), json!("scatterpolargl"));
         assert_eq!(to_value(PlotType::Bar).unwrap(), json!("bar"));
