@@ -251,7 +251,9 @@ impl Staticly {
 
         match plot.format {
             ImageFormat::SVG => Self::extract_plain(&src, &plot.format),
-            ImageFormat::PNG | ImageFormat::JPEG => Self::extract_encoded(&src, &plot.format),
+            ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP => {
+                Self::extract_encoded(&src, &plot.format)
+            }
             _ => return Err(anyhow!("Not implemented for {}", plot.format)),
         }
     }
@@ -350,13 +352,14 @@ mod tests {
     fn save_png() {
         let test_plot = create_test_plot();
 
-        let mut ps = StaticlyBuilder::default()
+        let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(4444)
             .build()
             .unwrap();
         let dst = PathBuf::from("example.png");
-        ps.write_fig(dst.as_path(), &test_plot, ImageFormat::PNG, 1200, 900, 4.5)
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::PNG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -368,13 +371,14 @@ mod tests {
     #[test]
     fn save_jpeg() {
         let test_plot = create_test_plot();
-        let mut ps = StaticlyBuilder::default()
+        let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(4445)
             .build()
             .unwrap();
         let dst = PathBuf::from("example.jpeg");
-        ps.write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -386,14 +390,15 @@ mod tests {
     #[test]
     fn save_jpeg_sequentially() {
         let test_plot = create_test_plot();
-        let mut ps = StaticlyBuilder::default()
+        let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(4446)
             .build()
             .unwrap();
 
         let dst = PathBuf::from("example.jpeg");
-        ps.write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -402,7 +407,8 @@ mod tests {
         // assert!(std::fs::remove_file(dst.as_path()).is_ok());
 
         let dst = PathBuf::from("example2.jpeg");
-        ps.write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -412,31 +418,35 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
-    fn save_webp() {
-        let test_plot = create_test_plot();
-        let mut k = StaticlyBuilder::default().build().unwrap();
-        let dst = PathBuf::from("example.webp");
-        k.write_fig(dst.as_path(), &test_plot, ImageFormat::WEBP, 1200, 900, 4.5)
-            .unwrap();
-        assert!(dst.exists());
-        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
-        let file_size = metadata.len();
-        assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
-    }
-
-    #[test]
-    // #[ignore]
     fn save_svg() {
         let test_plot = create_test_plot();
-        let mut ps = StaticlyBuilder::default()
+        let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(4447)
             .build()
             .unwrap();
         let dst = PathBuf::from("example.svg");
-        ps.write_fig(dst.as_path(), &test_plot, ImageFormat::SVG, 1200, 900, 4.5)
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::SVG, 1200, 900, 4.5)
+            .unwrap();
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+    }
+
+    #[test]
+    fn save_webp() {
+        let test_plot = create_test_plot();
+        let mut export = StaticlyBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(4449)
+            .build()
+            .unwrap();
+        let dst = PathBuf::from("example.webp");
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::WEBP, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
