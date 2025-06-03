@@ -7,19 +7,21 @@ fn main() {
 
     // Adjust these arguments to set the width and height of the
     // output image.
-    let filename = "out";
     let width = 800;
     let height = 600;
     let scale = 1.0;
 
-    // The image will be saved to format!("{filename}.{image_format}") relative to
+    std::fs::create_dir_all("./output").unwrap();
+    let filename = "./output/image".to_string();
+
+    // The image will be saved to format!("output/image.{image_format}") relative to
     // the current working directory.
-    plot.write_image(filename, ImageFormat::EPS, width, height, scale);
-    plot.write_image(filename, ImageFormat::JPEG, width, height, scale);
-    plot.write_image(filename, ImageFormat::PDF, width, height, scale);
-    plot.write_image(filename, ImageFormat::PNG, width, height, scale);
-    plot.write_image(filename, ImageFormat::SVG, width, height, scale);
-    plot.write_image(filename, ImageFormat::WEBP, width, height, scale);
+    plot.write_image(&filename, ImageFormat::EPS, width, height, scale);
+    plot.write_image(&filename, ImageFormat::JPEG, width, height, scale);
+    plot.write_image(&filename, ImageFormat::PDF, width, height, scale);
+    plot.write_image(&filename, ImageFormat::PNG, width, height, scale);
+    plot.write_image(&filename, ImageFormat::SVG, width, height, scale);
+    plot.write_image(&filename, ImageFormat::WEBP, width, height, scale);
 
     let _svg_string = plot.to_svg(width, height, scale);
 }

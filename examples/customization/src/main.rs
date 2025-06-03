@@ -1,5 +1,8 @@
 #![allow(dead_code)]
 
+use std::fs::File;
+use std::io::Write;
+
 use build_html::*;
 use ndarray::Array;
 use plotly::{
@@ -10,7 +13,7 @@ use plotly::{
 };
 const DEFAULT_HTML_APP_NOT_FOUND: &str = "Could not find default application for HTML files.";
 
-fn density_mapbox_responsive_autofill() {
+fn density_mapbox_responsive_autofill(show: bool, file_name: &str) {
     let trace = DensityMapbox::new(vec![45.5017], vec![-73.5673], vec![0.75]).zauto(true);
 
     let layout = Layout::new()
@@ -28,10 +31,13 @@ fn density_mapbox_responsive_autofill() {
     plot.set_layout(layout);
     plot.set_configuration(Configuration::default().responsive(true).fill_frame(true));
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn multiple_plots_on_same_html_page() {
+fn multiple_plots_on_same_html_page(show: bool, file_name: &str) {
     let html: String = HtmlPage::new()
         .with_title("Plotly-rs Multiple Plots")
         .with_script_link("https://cdn.plot.ly/plotly-latest.min.js")
@@ -41,8 +47,15 @@ fn multiple_plots_on_same_html_page() {
         .with_raw(third_plot())
         .to_html_string();
 
-    let file = write_html(&html);
-    show_with_default_app(&file);
+    std::fs::create_dir_all("./output").unwrap();
+    let path = format!("./output/{}.html", file_name);
+    let mut file = File::create(&path).unwrap();
+    file.write_all(html.as_bytes())
+        .expect("failed to write html output");
+    file.flush().unwrap();
+    if show {
+        show_with_default_app(&path);
+    }
 }
 
 fn first_plot() -> String {
@@ -117,34 +130,16 @@ fn show_with_default_app(temp_path: &str) {
         .expect(DEFAULT_HTML_APP_NOT_FOUND);
 }
 
-fn write_html(html_data: &str) -> String {
-    use std::env;
-    use std::{fs::File, io::Write};
-
-    use rand::distr::{Alphanumeric, SampleString};
-
-    // Set up the temp file with a unique filename.
-    let mut temp = env::temp_dir();
-    let mut plot_name = Alphanumeric.sample_string(&mut rand::rng(), 22);
-    plot_name.push_str(".html");
-    plot_name = format!("plotly_{}", plot_name);
-    temp.push(plot_name);
-
-    // Save the rendered plot to the temp file.
-    let temp_path = temp.to_str().unwrap();
-
-    {
-        let mut file = File::create(temp_path).unwrap();
-        file.write_all(html_data.as_bytes())
-            .expect("failed to write html output");
-        file.flush().unwrap();
-    }
-    temp_path.to_string()
+fn write_example_to_html(plot: &Plot, name: &str) -> String {
+    std::fs::create_dir_all("./output").unwrap();
+    let path = format!("./output/{}.html", name);
+    plot.write_html(&path);
+    path
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
-
-    // density_mapbox_responsive_autofill();
-    // multiple_plots_on_same_html_page();
+    // Switch the boolean flag to `true` to display the example, otherwise manually
+    // open the generated file in the `output` folder.
+    density_mapbox_responsive_autofill(false, "density_mapbox");
+    multiple_plots_on_same_html_page(false, "multiple_plots");
 }

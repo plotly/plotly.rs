@@ -8,7 +8,7 @@ authors = [
 edition = "2021"
 
 [dependencies]
-plotly = { path = "../../plotly" }
+plotly = { path = "../../../plotly" }
 yew = "0.21"
 yew-hooks = "0.3"
 log = "0.4"

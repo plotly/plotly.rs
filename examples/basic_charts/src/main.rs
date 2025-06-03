@@ -19,7 +19,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 
 // Scatter Plots
 // ANCHOR: simple_scatter_plot
-fn simple_scatter_plot(show: bool) -> Plot {
+fn simple_scatter_plot(show: bool, file_name: &str) {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -28,15 +28,15 @@ fn simple_scatter_plot(show: bool) -> Plot {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: simple_scatter_plot
 
 // ANCHOR: line_and_scatter_plots
-fn line_and_scatter_plots(show: bool) -> Plot {
+fn line_and_scatter_plots(show: bool, file_name: &str) {
     let n: usize = 100;
     let mut rng = rand::rng();
     let random_x: Vec<f64> = Array::linspace(0., 1., n).into_raw_vec_and_offset().0;
@@ -71,15 +71,15 @@ fn line_and_scatter_plots(show: bool) -> Plot {
     plot.add_trace(trace2);
     plot.add_trace(trace3);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: line_and_scatter_plots
 
 // ANCHOR: bubble_scatter_plots
-fn bubble_scatter_plots(show: bool) -> Plot {
+fn bubble_scatter_plots(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 11, 12, 13])
         .mode(Mode::Markers)
         .marker(
@@ -95,14 +95,14 @@ fn bubble_scatter_plots(show: bool) -> Plot {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: bubble_scatter_plots
 
-fn polar_scatter_plot(show: bool) -> Plot {
+fn polar_scatter_plot(show: bool, file_name: &str) {
     let n: usize = 400;
     let theta: Vec<f64> = Array::linspace(0., 360., n).into_raw_vec_and_offset().0;
     let r: Vec<f64> = theta
@@ -118,14 +118,14 @@ fn polar_scatter_plot(show: bool) -> Plot {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 
 // ANCHOR: data_labels_hover
-fn data_labels_hover(show: bool) -> Plot {
+fn data_labels_hover(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 6, 3, 6, 1])
         .mode(Mode::Markers)
         .name("Team A")
@@ -145,15 +145,15 @@ fn data_labels_hover(show: bool) -> Plot {
         .y_axis(Axis::new().title("y").range(vec![0., 8.]));
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: data_labels_hover
 
 // ANCHOR: data_labels_on_the_plot
-fn data_labels_on_the_plot(show: bool) -> Plot {
+fn data_labels_on_the_plot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 6, 3, 6, 1])
         .mode(Mode::Markers)
         .name("Team A")
@@ -175,15 +175,15 @@ fn data_labels_on_the_plot(show: bool) -> Plot {
         .y_axis(Axis::new().range(vec![0., 8.]));
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: data_labels_on_the_plot
 
 // ANCHOR: colored_and_styled_scatter_plot
-fn colored_and_styled_scatter_plot(show: bool) -> Plot {
+fn colored_and_styled_scatter_plot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![52698, 43117], vec![53, 31])
         .mode(Mode::Markers)
         .name("North America")
@@ -263,15 +263,15 @@ fn colored_and_styled_scatter_plot(show: bool) -> Plot {
     plot.add_trace(trace4);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: colored_and_styled_scatter_plot
 
 // ANCHOR: large_data_sets
-fn large_data_sets(show: bool) -> Plot {
+fn large_data_sets(show: bool, file_name: &str) {
     let n: usize = 100_000;
     let mut rng = rand::rng();
     let r: Vec<f64> = Uniform::new(0., 1.)
@@ -306,16 +306,16 @@ fn large_data_sets(show: bool) -> Plot {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: large_data_sets
 
 // Line Charts
 // ANCHOR: adding_names_to_line_and_scatter_plot
-fn adding_names_to_line_and_scatter_plot(show: bool) -> Plot {
+fn adding_names_to_line_and_scatter_plot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Scatter");
@@ -333,15 +333,15 @@ fn adding_names_to_line_and_scatter_plot(show: bool) -> Plot {
     plot.add_trace(trace3);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: adding_names_to_line_and_scatter_plot
 
 // ANCHOR: line_and_scatter_styling
-fn line_and_scatter_styling(show: bool) -> Plot {
+fn line_and_scatter_styling(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("trace1")
@@ -363,15 +363,15 @@ fn line_and_scatter_styling(show: bool) -> Plot {
     plot.add_trace(trace3);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: line_and_scatter_styling
 
 // ANCHOR: styling_line_plot
-fn styling_line_plot(show: bool) -> Plot {
+fn styling_line_plot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Red")
@@ -390,15 +390,15 @@ fn styling_line_plot(show: bool) -> Plot {
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: styling_line_plot
 
 // ANCHOR: line_shape_options_for_interpolation
-fn line_shape_options_for_interpolation(show: bool) -> Plot {
+fn line_shape_options_for_interpolation(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("linear")
@@ -439,15 +439,15 @@ fn line_shape_options_for_interpolation(show: bool) -> Plot {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: line_shape_options_for_interpolation
 
 // ANCHOR: line_dash
-fn line_dash(show: bool) -> Plot {
+fn line_dash(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("solid")
@@ -491,15 +491,15 @@ fn line_dash(show: bool) -> Plot {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: line_dash
 
 // ANCHOR: filled_lines
-fn filled_lines(show: bool) -> Plot {
+fn filled_lines(show: bool, file_name: &str) {
     let x1 = vec![
         1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0,
         2.0, 1.0,
@@ -591,16 +591,16 @@ fn filled_lines(show: bool) -> Plot {
     plot.add_trace(trace5);
     plot.add_trace(trace6);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: filled_lines
 
 /// Scatter plot showing y axis categories and category ordering.
 // ANCHOR: categories_scatter_chart
-fn categories_scatter_chart(show: bool) -> Plot {
+fn categories_scatter_chart(show: bool, file_name: &str) {
     // Categories are ordered on the y axis from bottom to top.
     let categories = vec!["Unknown", "Off", "On"];
 
@@ -639,30 +639,30 @@ fn categories_scatter_chart(show: bool) -> Plot {
 
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: categories_scatter_chart
 
 // Bar Charts
 // ANCHOR: basic_bar_chart
-fn basic_bar_chart(show: bool) -> Plot {
+fn basic_bar_chart(show: bool, file_name: &str) {
     let animals = vec!["giraffes", "orangutans", "monkeys"];
     let t = Bar::new(animals, vec![20, 14, 23]);
     let mut plot = Plot::new();
     plot.add_trace(t);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: basic_bar_chart
 
 // ANCHOR: grouped_bar_chart
-fn grouped_bar_chart(show: bool) -> Plot {
+fn grouped_bar_chart(show: bool, file_name: &str) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
 
@@ -676,15 +676,15 @@ fn grouped_bar_chart(show: bool) -> Plot {
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: grouped_bar_chart
 
 // ANCHOR: stacked_bar_chart
-fn stacked_bar_chart(show: bool) -> Plot {
+fn stacked_bar_chart(show: bool, file_name: &str) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo");
 
@@ -698,17 +698,17 @@ fn stacked_bar_chart(show: bool) -> Plot {
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: stacked_bar_chart
 
 /// Graph a bar chart that orders the x axis categories by the total number
 /// of animals in each category.
 // ANCHOR: category_order_bar_chart
-fn category_order_bar_chart(show: bool) -> Plot {
+fn category_order_bar_chart(show: bool, file_name: &str) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![10, 14, 23]).name("SF Zoo");
 
@@ -726,15 +726,15 @@ fn category_order_bar_chart(show: bool) -> Plot {
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: category_order_bar_chart
 
 // ANCHOR: bar_chart_with_pattern_fills
-fn bar_chart_with_pattern_fills(show: bool) -> Plot {
+fn bar_chart_with_pattern_fills(show: bool, file_name: &str) {
     let animals1 = vec!["giraffes", "orangutans", "monkeys"];
     let trace1 = Bar::new(animals1, vec![20, 14, 23]).name("SF Zoo").marker(
         Marker::new().line(Line::new().width(1.0)).pattern(
@@ -760,16 +760,16 @@ fn bar_chart_with_pattern_fills(show: bool) -> Plot {
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: bar_chart_with_pattern_fills
 
 // Sankey Diagrams
 // ANCHOR: basic_sankey_diagram
-fn basic_sankey_diagram(show: bool) -> Plot {
+fn basic_sankey_diagram(show: bool, file_name: &str) {
     // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
     let trace = Sankey::new()
         .orientation(Orientation::Horizontal)
@@ -803,15 +803,15 @@ fn basic_sankey_diagram(show: bool) -> Plot {
     plot.add_trace(trace);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: basic_sankey_diagram
 
 // ANCHOR: table_chart
-fn table_chart(show: bool) -> Plot {
+fn table_chart(show: bool, file_name: &str) {
     let trace = Table::new(
         Header::new(vec![String::from("col1"), String::from("col2")]),
         Cells::new(vec![vec![1, 2], vec![2, 3]]),
@@ -819,45 +819,45 @@ fn table_chart(show: bool) -> Plot {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: table_chart
 
 // Pie Charts
 // ANCHOR: basic_pie_chart
-fn basic_pie_chart(show: bool) -> Plot {
+fn basic_pie_chart(show: bool, file_name: &str) {
     let values = vec![2, 3, 4];
     let labels = vec!["giraffes", "orangutans", "monkeys"];
     let t = Pie::new(values).labels(labels);
     let mut plot = Plot::new();
     plot.add_trace(t);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: basic_pie_chart
 
 // ANCHOR: basic_pie_chart_labels
-fn basic_pie_chart_labels(show: bool) -> Plot {
+fn basic_pie_chart_labels(show: bool, file_name: &str) {
     let labels = ["giraffes", "giraffes", "orangutans", "monkeys"];
     let t = Pie::<u32>::from_labels(&labels);
     let mut plot = Plot::new();
     plot.add_trace(t);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: basic_pie_chart_labels
 
 // ANCHOR: pie_chart_text_control
-fn pie_chart_text_control(show: bool) -> Plot {
+fn pie_chart_text_control(show: bool, file_name: &str) {
     let values = vec![2, 3, 4, 4];
     let labels = vec!["Wages", "Operating expenses", "Cost of sales", "Insurance"];
     let t = Pie::new(values)
@@ -873,15 +873,15 @@ fn pie_chart_text_control(show: bool) -> Plot {
     let layout = Layout::new().height(700).width(700).show_legend(true);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: pie_chart_text_control
 
 // ANCHOR: grouped_donout_pie_charts
-fn grouped_donout_pie_charts(show: bool) -> Plot {
+fn grouped_donout_pie_charts(show: bool, file_name: &str) {
     let mut plot = Plot::new();
 
     let values = vec![16, 15, 12, 6, 5, 4, 42];
@@ -951,70 +951,61 @@ fn grouped_donout_pie_charts(show: bool) -> Plot {
         );
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 // ANCHOR_END: grouped_donout_pie_charts
 
-fn write_example_to_html(plot: Plot, name: &str) {
-    std::fs::create_dir_all("./out").unwrap();
-    let html = plot.to_inline_html(Some(name));
-    std::fs::write(format!("./out/{}.html", name), html).unwrap();
+fn write_example_to_html(plot: &Plot, name: &str) -> String {
+    std::fs::create_dir_all("./output").unwrap();
+    let path = format!("./output/{}.html", name);
+    plot.write_html(&path);
+    path
 }
 
 fn main() {
     // Change false to true on any of these lines to display the example.
 
     // Scatter Plots
-    write_example_to_html(simple_scatter_plot(false), "simple_scatter_plot");
-    write_example_to_html(line_and_scatter_plots(false), "line_and_scatter_plots");
-    write_example_to_html(bubble_scatter_plots(false), "bubble_scatter_plots");
-    write_example_to_html(polar_scatter_plot(false), "polar_scatter_plot");
-    write_example_to_html(data_labels_hover(false), "data_labels_hover");
-    write_example_to_html(data_labels_on_the_plot(false), "data_labels_on_the_plot");
-    write_example_to_html(
-        colored_and_styled_scatter_plot(false),
-        "colored_and_styled_scatter_plot",
-    );
-    write_example_to_html(large_data_sets(false), "large_data_sets");
-    write_example_to_html(categories_scatter_chart(false), "categories_scatter_chart");
+    simple_scatter_plot(false, "simple_scatter_plot");
+    line_and_scatter_plots(false, "line_and_scatter_plots");
+    bubble_scatter_plots(false, "bubble_scatter_plots");
+    polar_scatter_plot(false, "polar_scatter_plot");
+    data_labels_hover(false, "data_labels_hover");
+    data_labels_on_the_plot(false, "data_labels_on_the_plot");
+
+    colored_and_styled_scatter_plot(false, "colored_and_styled_scatter_plot");
+    large_data_sets(false, "large_data_sets");
+    categories_scatter_chart(false, "categories_scatter_chart");
 
     // Line Charts
-    write_example_to_html(
-        adding_names_to_line_and_scatter_plot(false),
-        "adding_names_to_line_and_scatter_plot",
-    );
-    write_example_to_html(line_and_scatter_styling(false), "line_and_scatter_styling");
-    write_example_to_html(styling_line_plot(false), "styling_line_plot");
-    write_example_to_html(
-        line_shape_options_for_interpolation(false),
-        "line_shape_options_for_interpolation",
-    );
-    write_example_to_html(line_dash(false), "line_dash");
-    write_example_to_html(filled_lines(false), "filled_lines");
+
+    adding_names_to_line_and_scatter_plot(false, "adding_names_to_line_and_scatter_plot");
+    line_and_scatter_styling(false, "line_and_scatter_styling");
+    styling_line_plot(false, "styling_line_plot");
+
+    line_shape_options_for_interpolation(false, "line_shape_options_for_interpolation");
+    line_dash(false, "line_dash");
+    filled_lines(false, "filled_lines");
 
     // Bar Charts
-    write_example_to_html(basic_bar_chart(false), "basic_bar_chart");
-    write_example_to_html(grouped_bar_chart(false), "grouped_bar_chart");
-    write_example_to_html(stacked_bar_chart(false), "stacked_bar_chart");
-    write_example_to_html(table_chart(false), "table_chart");
-    write_example_to_html(category_order_bar_chart(false), "category_order_bar_chart");
-    write_example_to_html(
-        bar_chart_with_pattern_fills(false),
-        "bar_chart_with_pattern_fills",
-    );
+    basic_bar_chart(false, "basic_bar_chart");
+    grouped_bar_chart(false, "grouped_bar_chart");
+    stacked_bar_chart(false, "stacked_bar_chart");
+    table_chart(false, "table_chart");
+    category_order_bar_chart(false, "category_order_bar_chart");
+
+    bar_chart_with_pattern_fills(false, "bar_chart_with_pattern_fills");
 
     // Sankey Diagrams
-    write_example_to_html(basic_sankey_diagram(false), "basic_sankey_diagram");
+    basic_sankey_diagram(false, "basic_sankey_diagram");
 
     // Pie Charts
-    write_example_to_html(basic_pie_chart(false), "basic_pie_chart");
-    write_example_to_html(basic_pie_chart_labels(false), "basic_pie_chart_labels");
-    write_example_to_html(pie_chart_text_control(false), "pie_chart_text_control");
-    write_example_to_html(
-        grouped_donout_pie_charts(false),
-        "grouped_donout_pie_charts",
-    );
+    basic_pie_chart(false, "basic_pie_chart");
+    basic_pie_chart_labels(false, "basic_pie_chart_labels");
+    pie_chart_text_control(false, "pie_chart_text_control");
+
+    grouped_donout_pie_charts(false, "grouped_donout_pie_charts");
 }

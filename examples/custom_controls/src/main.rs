@@ -12,7 +12,7 @@ use plotly::{
 
 /// Display a bar chart with an associated dropdown selector to show different
 /// data.
-fn bar_plot_with_dropdown_for_different_data() {
+fn bar_plot_with_dropdown_for_different_data(show: bool, file_name: &str) {
     type BarType = Bar<&'static str, i32>;
     let mut plot = Plot::new();
     plot.add_trace(
@@ -38,12 +38,15 @@ fn bar_plot_with_dropdown_for_different_data() {
     ];
     plot.set_layout(Layout::new().update_menus(vec![UpdateMenu::new().y(0.8).buttons(buttons)]));
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
 /// Display a heat map, with buttons to allow for toggling of different
 /// colorscales.
-fn heat_map_with_modifiable_colorscale() {
+fn heat_map_with_modifiable_colorscale(show: bool, file_name: &str) {
     type HeatMapType = HeatMap<f64, f64, Vec<f64>>;
     let gauss = |v: i32| (-v as f64 * v as f64 / 200.0).exp();
     let z = (-30..30)
@@ -71,12 +74,15 @@ fn heat_map_with_modifiable_colorscale() {
             .y(0.8)
             .buttons(buttons)]));
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
 /// Display a bar chart, with buttons to toggle between stacked or grouped
 /// display maodes.
-fn bar_chart_with_modifiable_bar_mode() {
+fn bar_chart_with_modifiable_bar_mode(show: bool, file_name: &str) {
     type BarType = Bar<&'static str, i32>;
     let mut plot = Plot::new();
     plot.add_trace(
@@ -104,13 +110,24 @@ fn bar_chart_with_modifiable_bar_mode() {
             .direction(UpdateMenuDirection::Right)
             .buttons(buttons)]));
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: colorscale_plot
+
+fn write_example_to_html(plot: &Plot, name: &str) -> String {
+    std::fs::create_dir_all("./output").unwrap();
+    let path = format!("./output/{}.html", name);
+    plot.write_html(&path);
+    path
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
-    // bar_plot_with_dropdown_for_different_data();
-    // heat_map_with_modifiable_colorscale();
-    // bar_chart_with_modifiable_bar_mode();
+    bar_plot_with_dropdown_for_different_data(false, "bar_plot");
+    heat_map_with_modifiable_colorscale(false, "heat_map");
+    bar_chart_with_modifiable_bar_mode(false, "bar_chart");
 }
