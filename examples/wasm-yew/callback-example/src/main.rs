@@ -10,7 +10,7 @@ pub fn plot_component() -> Html {
     let point_numbers = use_state(|| None::<Vec<usize>>);
     let point_number = use_state(|| None::<usize>);
     let curve_number = use_state(|| 0usize);
-    let click_event = use_state(|| ClickEvent::default());
+    let click_event = use_state(ClickEvent::default);
 
     let x_clone = x.clone();
     let y_clone = y.clone();

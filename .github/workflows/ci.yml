@@ -44,7 +44,7 @@ jobs:
       # lint the plotly library for wasm target
       - run: cargo clippy --package plotly --target wasm32-unknown-unknown -- -D warnings
       # lint the wasm examples
-      - run: cd ${{ github.workspace }}/examples && cargo clippy --target wasm32-unknown-unknown --package "wasm*"
+      - run: cd ${{ github.workspace }}/examples/wasm-yew && cargo clippy --target wasm32-unknown-unknown --all
 
   semver:
     name: semver
@@ -115,11 +115,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: [wasm-yew-minimal, wasm-yew-callback-minimal]
+        example: [basic, callback-example]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
-      - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build --target wasm32-unknown-unknown
+      - run: cd ${{ github.workspace }}/examples/wasm-yew/${{ matrix.example }} && cargo build --target wasm32-unknown-unknown

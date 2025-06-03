@@ -500,32 +500,39 @@ impl Plot {
     }
 
     fn offline_js_sources() -> String {
-        let local_plotly_js = include_str!("../templates/plotly.min.js");
-        let local_tex_mml_js = include_str!("../templates/tex-mml-chtml-3.2.0.js");
+        // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
+        // let local_tex_mml_js = include_str!("../templates/tex-mml-chtml-3.2.0.js");
         let local_tex_svg_js = include_str!("../templates/tex-svg-3.2.2.js");
+        let local_plotly_js = include_str!("../templates/plotly.min.js");
+
         format!(
             "<script type=\"text/javascript\">{}</script>\n
+            <script type=\"text/javascript\">
+            /**
+             * tex-svg JS script
+             **/
+            {}
+            </script>\n
             <script type=\"text/javascript\">
             /**
              * tex-mml-chtml JS script
              **/
             {}
             </script>\n
-            <script type=\"text/javascript\">
-            /**
-             * tex-svg JS script
-             **/
-            {}
-            </script>\n",
-            local_plotly_js, local_tex_mml_js, local_tex_svg_js
+            ",
+            local_plotly_js, local_tex_svg_js, ""
         )
         .to_string()
     }
 
     fn online_cdn_js() -> String {
-        r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+        // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
+        // r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+        // <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+        // <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+        // "##
+        r##"<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+        <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
         "##
         .to_string()
     }

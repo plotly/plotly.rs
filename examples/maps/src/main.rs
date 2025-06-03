@@ -6,7 +6,7 @@ use plotly::{
     DensityMapbox, Layout, Plot, ScatterMapbox,
 };
 
-fn scatter_mapbox() {
+fn scatter_mapbox(show: bool, file_name: &str) {
     let trace = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
         .marker(Marker::new().size(25).opacity(0.9));
 
@@ -24,10 +24,13 @@ fn scatter_mapbox() {
     plot.add_trace(trace);
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn density_mapbox() {
+fn density_mapbox(show: bool, file_name: &str) {
     let trace = DensityMapbox::new(vec![45.5017], vec![-73.5673], vec![0.75]).zauto(true);
 
     let layout = Layout::new()
@@ -44,12 +47,21 @@ fn density_mapbox() {
     plot.add_trace(trace);
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+
+fn write_example_to_html(plot: &Plot, name: &str) -> String {
+    std::fs::create_dir_all("./output").unwrap();
+    let path = format!("./output/{}.html", name);
+    plot.write_html(&path);
+    path
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
-
-    // scatter_mapbox();
-    // density_mapbox();
+    // Change false to true on any of these lines to display the example.
+    scatter_mapbox(false, "scatter_mapbox");
+    density_mapbox(false, "density_mapbox");
 }
