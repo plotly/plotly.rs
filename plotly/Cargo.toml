@@ -40,8 +40,12 @@ rand = "0.9"
 getrandom = { version = "0.3", features = ["wasm_js"] }
 wasm-bindgen-futures = { version = "0.4" }
 wasm-bindgen = { version = "0.2" }
-serde-wasm-bindgen = {version = "0.6.3"}
-web-sys = { version = "0.3.77", features = ["Document", "Window", "HtmlElement"]}
+serde-wasm-bindgen = { version = "0.6.3" }
+web-sys = { version = "0.3.77", features = [
+    "Document",
+    "Window",
+    "HtmlElement",
+] }
 
 [dev-dependencies]
 csv = "1.1"

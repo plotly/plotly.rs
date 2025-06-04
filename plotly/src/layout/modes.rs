@@ -1,6 +1,28 @@
 use serde::{Serialize, Serializer};
 
 #[derive(Serialize, Debug, Clone)]
+/// If "cube", this scene's axes are drawn as a cube, regardless of the axes'
+/// ranges. If "data", this scene's axes are drawn in proportion with the axes'
+/// ranges. If "manual", this scene's axes are drawn in proportion with the
+/// input of "aspectratio" (the default behavior if "aspectratio" is provided).
+/// If "auto", this scene's axes are drawn using the results of "data" except
+/// when one axis is more than four times the size of the two others, where in
+/// that case the results of "cube" are used.
+/// Default: "auto"
+#[derive(Default)]
+pub enum AspectMode {
+    #[serde(rename = "auto")]
+    #[default]
+    Auto,
+    #[serde(rename = "cube")]
+    Cube,
+    #[serde(rename = "data")]
+    Data,
+    #[serde(rename = "manual")]
+    Manual,
+}
+
+#[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum BoxMode {
     Group,
@@ -122,5 +144,20 @@ mod tests {
     fn serialize_waterfall_mode() {
         assert_eq!(to_value(WaterfallMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(WaterfallMode::Overlay).unwrap(), json!("overlay"));
+    }
+
+    #[test]
+    fn serialize_aspect_mode() {
+        let aspect_mode = AspectMode::default();
+
+        assert_eq!(to_value(aspect_mode).unwrap(), json!("auto"));
+
+        let aspect_mode = AspectMode::Data;
+
+        assert_eq!(to_value(aspect_mode).unwrap(), json!("data"));
+
+        let aspect_mode = AspectMode::Cube;
+
+        assert_eq!(to_value(aspect_mode).unwrap(), json!("cube"));
     }
 }
