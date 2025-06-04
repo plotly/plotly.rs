@@ -3,23 +3,8 @@ use serde::{Serialize, Serializer};
 
 use crate::color::Color;
 use crate::common::{Anchor, Font, Label};
+use crate::layout::{HAlign, VAlign};
 use crate::private::NumOrString;
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum VAlign {
-    Top,
-    Middle,
-    Bottom,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum HAlign {
-    Left,
-    Center,
-    Right,
-}
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -292,20 +277,6 @@ mod tests {
 
     use super::*;
     use crate::common::{Anchor, Font, Label};
-
-    #[test]
-    fn serialize_valign() {
-        assert_eq!(to_value(VAlign::Top).unwrap(), json!("top"));
-        assert_eq!(to_value(VAlign::Middle).unwrap(), json!("middle"));
-        assert_eq!(to_value(VAlign::Bottom).unwrap(), json!("bottom"));
-    }
-
-    #[test]
-    fn serialize_halign() {
-        assert_eq!(to_value(HAlign::Left).unwrap(), json!("left"));
-        assert_eq!(to_value(HAlign::Center).unwrap(), json!("center"));
-        assert_eq!(to_value(HAlign::Right).unwrap(), json!("right"));
-    }
 
     #[test]
     fn serialize_click_to_show() {

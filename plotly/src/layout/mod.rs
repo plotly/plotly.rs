@@ -3,25 +3,45 @@ pub mod update_menu;
 
 mod annotation;
 mod axis;
-// Re-export separated module types
+mod legend;
 use std::borrow::Cow;
 
 use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 use update_menu::UpdateMenu;
 
-pub use self::annotation::{Annotation, ArrowSide, ClickToShow, HAlign, VAlign};
+// Re-export layout sub-module types
+pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
 pub use self::axis::{
-    ArrayShow, Axis, AxisConstrain, AxisType, CategoryOrder, ConstrainDirection, TicksDirection,
-    TicksPosition,
+    ArrayShow, Axis, AxisConstrain, AxisType, CategoryOrder, ConstrainDirection, RangeMode,
+    RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton, SelectorStep, SliderRangeMode,
+    StepMode, TicksDirection, TicksPosition,
 };
+
+pub use self::legend::{Legend, TraceOrder};
+
 use crate::common::Domain;
 use crate::{
     color::Color,
-    common::{Anchor, Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Title},
+    common::{Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Title},
     private::NumOrString,
 };
 
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum VAlign {
+    Top,
+    Middle,
+    Bottom,
+}
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum HAlign {
+    Left,
+    Center,
+    Right,
+}
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum BarMode {
@@ -59,91 +79,6 @@ pub enum ViolinMode {
 pub enum WaterfallMode {
     Group,
     Overlay,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum TraceOrder {
-    Reversed,
-    Grouped,
-    #[serde(rename = "reversed+grouped")]
-    ReversedGrouped,
-    Normal,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum ItemSizing {
-    Trace,
-    Constant,
-}
-
-#[derive(Debug, Clone)]
-pub enum ItemClick {
-    Toggle,
-    ToggleOthers,
-    False,
-}
-
-impl Serialize for ItemClick {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match *self {
-            Self::Toggle => serializer.serialize_str("toggle"),
-            Self::ToggleOthers => serializer.serialize_str("toggleothers"),
-            Self::False => serializer.serialize_bool(false),
-        }
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum GroupClick {
-    ToggleItem,
-    ToggleGroup,
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-pub struct Legend {
-    #[serde(rename = "bgcolor")]
-    background_color: Option<Box<dyn Color>>,
-    #[serde(rename = "bordercolor")]
-    border_color: Option<Box<dyn Color>>,
-    #[serde(rename = "borderwidth")]
-    border_width: Option<usize>,
-    font: Option<Font>,
-    orientation: Option<Orientation>,
-    #[serde(rename = "traceorder")]
-    trace_order: Option<TraceOrder>,
-    #[serde(rename = "tracegroupgap")]
-    trace_group_gap: Option<usize>,
-    #[serde(rename = "itemsizing")]
-    item_sizing: Option<ItemSizing>,
-    #[serde(rename = "itemclick")]
-    item_click: Option<ItemClick>,
-    #[serde(rename = "itemdoubleclick")]
-    item_double_click: Option<ItemClick>,
-    x: Option<f64>,
-    #[serde(rename = "xanchor")]
-    x_anchor: Option<Anchor>,
-    y: Option<f64>,
-    #[serde(rename = "yanchor")]
-    y_anchor: Option<Anchor>,
-    valign: Option<VAlign>,
-    title: Option<Title>,
-    #[serde(rename = "groupclick")]
-    group_click: Option<GroupClick>,
-    #[serde(rename = "itemwidth")]
-    item_width: Option<usize>,
-}
-
-impl Legend {
-    pub fn new() -> Self {
-        Default::default()
-    }
 }
 
 #[serde_with::skip_serializing_none]
@@ -1493,81 +1428,18 @@ mod tests {
     }
 
     #[test]
-    #[rustfmt::skip]
-    fn serialize_trace_order() {
-        assert_eq!(to_value(TraceOrder::Reversed).unwrap(), json!("reversed"));
-        assert_eq!(to_value(TraceOrder::Grouped).unwrap(), json!("grouped"));
-        assert_eq!(to_value(TraceOrder::ReversedGrouped).unwrap(), json!("reversed+grouped"));
-        assert_eq!(to_value(TraceOrder::Normal).unwrap(), json!("normal"));
+    fn serialize_valign() {
+        assert_eq!(to_value(VAlign::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(VAlign::Middle).unwrap(), json!("middle"));
+        assert_eq!(to_value(VAlign::Bottom).unwrap(), json!("bottom"));
     }
 
     #[test]
-    fn serialize_item_sizing() {
-        assert_eq!(to_value(ItemSizing::Trace).unwrap(), json!("trace"));
-        assert_eq!(to_value(ItemSizing::Constant).unwrap(), json!("constant"));
+    fn serialize_halign() {
+        assert_eq!(to_value(HAlign::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(HAlign::Center).unwrap(), json!("center"));
+        assert_eq!(to_value(HAlign::Right).unwrap(), json!("right"));
     }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_item_click() {
-        assert_eq!(to_value(ItemClick::Toggle).unwrap(), json!("toggle"));
-        assert_eq!(to_value(ItemClick::ToggleOthers).unwrap(), json!("toggleothers"));
-        assert_eq!(to_value(ItemClick::False).unwrap(), json!(false));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_group_click() {
-        assert_eq!(to_value(GroupClick::ToggleItem).unwrap(), json!("toggleitem"));
-        assert_eq!(to_value(GroupClick::ToggleGroup).unwrap(), json!("togglegroup"));
-    }
-
-    #[test]
-    fn serialize_legend() {
-        let legend = Legend::new()
-            .background_color("#123123")
-            .border_color("#321321")
-            .border_width(500)
-            .font(Font::new())
-            .orientation(Orientation::Vertical)
-            .trace_order(TraceOrder::Normal)
-            .trace_group_gap(10)
-            .item_sizing(ItemSizing::Trace)
-            .item_click(ItemClick::Toggle)
-            .item_double_click(ItemClick::False)
-            .x(1.0)
-            .x_anchor(Anchor::Auto)
-            .y(2.0)
-            .y_anchor(Anchor::Left)
-            .valign(VAlign::Middle)
-            .title("title")
-            .group_click(GroupClick::ToggleItem)
-            .item_width(50);
-
-        let expected = json!({
-            "bgcolor": "#123123",
-            "bordercolor": "#321321",
-            "borderwidth": 500,
-            "font": {},
-            "orientation": "v",
-            "traceorder": "normal",
-            "tracegroupgap": 10,
-            "itemsizing": "trace",
-            "itemclick": "toggle",
-            "itemdoubleclick": false,
-            "x": 1.0,
-            "xanchor": "auto",
-            "y": 2.0,
-            "yanchor": "left",
-            "valign": "middle",
-            "title": {"text": "title"},
-            "groupclick": "toggleitem",
-            "itemwidth": 50
-        });
-
-        assert_eq!(to_value(legend).unwrap(), expected)
-    }
-
     #[test]
     fn serialize_margin() {
         let margin = Margin::new()
