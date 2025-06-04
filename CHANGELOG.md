@@ -9,10 +9,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#281]((https://github.com/plotly/plotly.rs/pull/xxx))] Update to askama 0.13.0
 - [[#287]](https://github.com/plotly/plotly.rs/pull/287) Added functionality for callbacks (using wasm)
 - [[#289]](https://github.com/plotly/plotly.rs/pull/289) Fixes Kaleido static export for MacOS targets by removing `--disable-gpu` flag for MacOS 
-- [[#290]](https://github.com/plotly/plotly.rs/pull/289) Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
+- [[#291]](https://github.com/plotly/plotly.rs/pull/291) Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
+- [[#299]](https://github.com/plotly/plotly.rs/pull/299) Added customdata field to HeatMap
+- [[#303]](https://github.com/plotly/plotly.rs/pull/303) Split layout mod.rs into modules
+- [[#304]](https://github.com/plotly/plotly.rs/pull/304) Refactored examples to allow fo generation of full html files 
 
 ### Fixed
 - [[#284](https://github.com/plotly/plotly.rs/pull/284)]  Allow plotly package to be compiled for android 
+- [[#298](https://github.com/plotly/plotly.rs/pull/298)]  Added support for layout axis scaleratio
+- [[#301](https://github.com/plotly/plotly.rs/pull/301)]  Added ScatterGeo trace and LayoutGeo support 
 
 ## [0.12.1] - 2025-01-02
 ### Fixed

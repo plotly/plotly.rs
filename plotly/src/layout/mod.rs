@@ -13,6 +13,7 @@ pub mod update_menu;
 
 mod annotation;
 mod axis;
+mod geo;
 mod grid;
 mod legend;
 mod mapbox;
@@ -27,6 +28,7 @@ pub use self::axis::{
     RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton, SelectorStep,
     SliderRangeMode, StepMode, TicksDirection, TicksPosition,
 };
+pub use self::geo::LayoutGeo;
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
 pub use self::legend::{Legend, TraceOrder};
 pub use self::mapbox::{Center, Mapbox, MapboxStyle};
@@ -35,6 +37,7 @@ pub use self::modes::{
 };
 pub use self::scene::{
     Camera, CameraCenter, DragMode, DragMode3D, HoverMode, LayoutScene, Projection, ProjectionType,
+    Rotation,
 };
 pub use self::shape::{
     ActiveShape, DrawDirection, FillRule, NewShape, Shape, ShapeLayer, ShapeLine, ShapeSizeMode,
@@ -135,41 +138,6 @@ pub enum SelectDirection {
     #[serde(rename = "d")]
     Diagonal,
     Any,
-}
-
-#[derive(Serialize, Clone, Debug, FieldSetter)]
-pub struct Geo {
-    /// Sets the zoom level of the map.
-    zoom: Option<u8>,
-    /// Sets the projection of the map
-    #[field_setter(default = "Projection::new().projection_type(ProjectionType::Orthographic)")]
-    projection: Option<Projection>,
-    /// If to show the ocean or not
-    #[field_setter(default = "Some(true)")]
-    showocean: Option<bool>,
-    /// Sets the color of the ocean
-    #[field_setter(default = "'rgb(0, 255, 255)'")]
-    oceancolor: Option<Box<dyn Color>>,
-    /// If to show the land or not
-    showland: Option<bool>,
-    /// Sets the color of the land
-    landcolor: Option<Box<dyn Color>>,
-    /// If to show lakes or not
-    showlakes: Option<bool>,
-    /// Sets the color of the lakes
-    lakecolor: Option<Box<dyn Color>>,
-    /// If to show countries (borders) or not
-    showcountries: Option<bool>,
-    /// Configures the longitude axis
-    lonaxis: Option<Axis>,
-    /// Configures the latitude axis
-    lataxis: Option<Axis>,
-}
-
-impl Geo {
-    pub fn new() -> Self {
-        Default::default()
-    }
 }
 
 #[serde_with::skip_serializing_none]
@@ -309,7 +277,10 @@ pub struct LayoutFields {
     y_axis8: Option<Box<Axis>>,
     #[serde(rename = "zaxis8")]
     z_axis8: Option<Box<Axis>>,
+    // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
+    geo: Option<LayoutGeo>,
+    // polar: Option<LayoutPolar>,
     annotations: Option<Vec<Annotation>>,
     shapes: Option<Vec<Shape>>,
     #[serde(rename = "newshape")]
