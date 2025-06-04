@@ -40,6 +40,7 @@ pub enum MapboxStyle {
     SatelliteStreets,
 }
 
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Mapbox {
     /// Sets the mapbox access token to be used for this mapbox map. Note that
