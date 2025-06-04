@@ -1,8 +1,7 @@
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 use std::borrow::Cow;
 use update_menu::UpdateMenu;
 
-use crate::common::Domain;
 use crate::{
     color::Color,
     common::{Calendar, ColorScale, Font, Label, Orientation, Title},
@@ -16,6 +15,9 @@ mod annotation;
 mod axis;
 mod grid;
 mod legend;
+mod mapbox;
+mod modes;
+mod scene;
 mod shape;
 
 // Re-export layout sub-module types
@@ -27,6 +29,11 @@ pub use self::axis::{
 };
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
 pub use self::legend::{Legend, TraceOrder};
+pub use self::mapbox::{Mapbox, MapboxStyle};
+pub use self::modes::{
+    BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
+};
+pub use self::scene::{DragMode, DragMode3D, HoverMode, LayoutScene, Projection, ProjectionType};
 pub use self::shape::{
     ActiveShape, DrawDirection, FillRule, NewShape, Shape, ShapeLayer, ShapeLine, ShapeSizeMode,
     ShapeType,
@@ -46,44 +53,6 @@ pub enum HAlign {
     Left,
     Center,
     Right,
-}
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum BarMode {
-    Stack,
-    Group,
-    Overlay,
-    Relative,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum BarNorm {
-    #[serde(rename = "")]
-    Empty,
-    Fraction,
-    Percent,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum BoxMode {
-    Group,
-    Overlay,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum ViolinMode {
-    Group,
-    Overlay,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum WaterfallMode {
-    Group,
-    Overlay,
 }
 
 #[serde_with::skip_serializing_none]
@@ -123,26 +92,6 @@ impl LayoutColorScale {
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum UniformTextMode {
-    False,
-    Hide,
-    Show,
-}
-
-impl Serialize for UniformTextMode {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match *self {
-            Self::False => serializer.serialize_bool(false),
-            Self::Hide => serializer.serialize_str("hide"),
-            Self::Show => serializer.serialize_str("show"),
-        }
-    }
-}
-
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 pub struct UniformText {
@@ -154,32 +103,6 @@ pub struct UniformText {
 impl UniformText {
     pub fn new() -> Self {
         Default::default()
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum HoverMode {
-    X,
-    Y,
-    Closest,
-    False,
-    XUnified,
-    YUnified,
-}
-
-impl Serialize for HoverMode {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match *self {
-            Self::X => serializer.serialize_str("x"),
-            Self::Y => serializer.serialize_str("y"),
-            Self::Closest => serializer.serialize_str("closest"),
-            Self::False => serializer.serialize_bool(false),
-            Self::XUnified => serializer.serialize_str("x unified"),
-            Self::YUnified => serializer.serialize_str("y unified"),
-        }
     }
 }
 
@@ -202,79 +125,6 @@ impl ModeBar {
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
-pub enum ClickMode {
-    Event,
-    Select,
-    #[serde(rename = "event+select")]
-    EventAndSelect,
-    None,
-}
-
-#[derive(Debug, Clone)]
-pub enum DragMode {
-    Zoom,
-    Pan,
-    Select,
-    Lasso,
-    DrawClosedPath,
-    DrawOpenPath,
-    DrawLine,
-    DrawRect,
-    DrawCircle,
-    Orbit,
-    Turntable,
-    False,
-}
-
-impl Serialize for DragMode {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match *self {
-            Self::Zoom => serializer.serialize_str("zoom"),
-            Self::Pan => serializer.serialize_str("pan"),
-            Self::Select => serializer.serialize_str("select"),
-            Self::Lasso => serializer.serialize_str("lasso"),
-            Self::DrawClosedPath => serializer.serialize_str("drawclosedpath"),
-            Self::DrawOpenPath => serializer.serialize_str("drawopenpath"),
-            Self::DrawLine => serializer.serialize_str("drawline"),
-            Self::DrawRect => serializer.serialize_str("drawrect"),
-            Self::DrawCircle => serializer.serialize_str("drawcircle"),
-            Self::Orbit => serializer.serialize_str("orbit"),
-            Self::Turntable => serializer.serialize_str("turntable"),
-            Self::False => serializer.serialize_bool(false),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-/// Determines the mode of drag interactions.
-pub enum DragMode3D {
-    Zoom,
-    Pan,
-    Turntable,
-    Orbit,
-    False,
-}
-
-impl Serialize for DragMode3D {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match *self {
-            Self::Zoom => serializer.serialize_str("zoom"),
-            Self::Pan => serializer.serialize_str("pan"),
-            Self::Turntable => serializer.serialize_str("turntable"),
-            Self::Orbit => serializer.serialize_str("orbit"),
-            Self::False => serializer.serialize_bool(false),
-        }
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
 pub enum SelectDirection {
     #[serde(rename = "h")]
     Horizontal,
@@ -283,303 +133,6 @@ pub enum SelectDirection {
     #[serde(rename = "d")]
     Diagonal,
     Any,
-}
-
-/// Defines the latitude and longitude at which a map will be centered.
-#[derive(Serialize, Clone, Debug)]
-pub struct Center {
-    lat: f64,
-    lon: f64,
-}
-
-impl Center {
-    /// Create a new instance of `Center`.
-    ///
-    /// `lat` is the number of degrees north, `lon` is the number of degrees
-    /// east.
-    pub fn new(lat: f64, lon: f64) -> Self {
-        Center { lat, lon }
-    }
-}
-
-#[derive(Serialize, Clone, Debug)]
-#[serde(rename_all = "kebab-case")]
-pub enum MapboxStyle {
-    #[serde(rename = "carto-darkmatter")]
-    CartoDarkMatter,
-    CartoPositron,
-    OpenStreetMap,
-    StamenTerrain,
-    StamenToner,
-    StamenWatercolor,
-    WhiteBg,
-    Basic,
-    Streets,
-    Outdoors,
-    Light,
-    Dark,
-    Satellite,
-    SatelliteStreets,
-}
-
-#[derive(Serialize, Clone, Debug, FieldSetter)]
-pub struct Mapbox {
-    /// Sets the mapbox access token to be used for this mapbox map. Note that
-    /// `access_token`s are only required when `style` (e.g with values: basic,
-    /// streets, outdoors, light, dark, satellite, satellite-streets)
-    /// and/or a layout layer references the Mapbox server.
-    #[serde(rename = "accesstoken")]
-    access_token: Option<String>,
-    /// Sets the bearing angle of the map in degrees counter-clockwise from
-    /// North.
-    bearing: Option<f64>,
-    /// Sets the latitude and longitude of the center of the map.
-    center: Option<Center>,
-    /// Sets the domain within which the mapbox will be drawn.
-    domain: Option<Domain>,
-    /// Sets the pitch angle of the map in degrees, where `0` means
-    /// perpendicular to the surface of the map.
-    pitch: Option<f64>,
-    /// Sets the style of the map.
-    style: Option<MapboxStyle>,
-    /// Sets the zoom level of the map.
-    zoom: Option<u8>,
-}
-
-impl Mapbox {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-/// If "cube", this scene's axes are drawn as a cube, regardless of the axes'
-/// ranges. If "data", this scene's axes are drawn in proportion with the axes'
-/// ranges. If "manual", this scene's axes are drawn in proportion with the
-/// input of "aspectratio" (the default behavior if "aspectratio" is provided).
-/// If "auto", this scene's axes are drawn using the results of "data" except
-/// when one axis is more than four times the size of the two others, where in
-/// that case the results of "cube" are used.
-/// Default: "auto"
-#[derive(Default)]
-pub enum AspectMode {
-    #[serde(rename = "auto")]
-    #[default]
-    Auto,
-    #[serde(rename = "cube")]
-    Cube,
-    #[serde(rename = "data")]
-    Data,
-    #[serde(rename = "manual")]
-    Manual,
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Sets the (x, y, z) components of the 'eye' camera vector. This vector
-/// determines the view point about the origin of this scene.
-/// Default: {x: 1.25, y: 1.25, z: 1.25}
-pub struct Eye {
-    x: Option<f64>,
-    y: Option<f64>,
-    z: Option<f64>,
-}
-
-impl Eye {
-    pub fn new() -> Self {
-        Eye {
-            x: Some(1.25),
-            y: Some(1.25),
-            z: Some(1.25),
-        }
-    }
-}
-
-impl From<(f64, f64, f64)> for Eye {
-    fn from((x, y, z): (f64, f64, f64)) -> Self {
-        Eye {
-            x: Some(x),
-            y: Some(y),
-            z: Some(z),
-        }
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Sets the (x, y, z) components of the 'up' camera vector. This vector
-/// determines the up direction of this scene with respect to the page. The
-/// Default: {x: 0, y: 0, z: 1} which means that the z axis points up.
-pub struct Up {
-    x: Option<f64>,
-    y: Option<f64>,
-    z: Option<f64>,
-}
-
-impl Up {
-    pub fn new() -> Self {
-        Up {
-            x: Some(0.0),
-            y: Some(0.0),
-            z: Some(1.0),
-        }
-    }
-}
-
-impl From<(f64, f64, f64)> for Up {
-    fn from((x, y, z): (f64, f64, f64)) -> Self {
-        Up {
-            x: Some(x),
-            y: Some(y),
-            z: Some(z),
-        }
-    }
-}
-
-#[derive(Default, Serialize, Debug, Clone)]
-/// Sets the projection type. The projection type could be either "perspective"
-/// or "orthographic".
-/// Default: "perspective"
-pub enum ProjectionType {
-    #[default]
-    #[serde(rename = "perspective")]
-    Perspective,
-    #[serde(rename = "orthographic")]
-    Orthographic,
-}
-
-impl From<ProjectionType> for Projection {
-    fn from(projection_type: ProjectionType) -> Self {
-        Projection {
-            projection_type: Some(projection_type),
-        }
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Container for Projection options.
-pub struct Projection {
-    #[serde(rename = "type")]
-    projection_type: Option<ProjectionType>,
-}
-
-impl Projection {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Sets the (x, y, z) components of the 'center' camera vector. This vector
-/// determines the translation (x, y, z) space about the center of this scene.
-/// Default: {x: 0, y: 0, z: 0} which means that the center of the scene is at
-/// the origin.
-pub struct CameraCenter {
-    x: Option<f64>,
-    y: Option<f64>,
-    z: Option<f64>,
-}
-
-impl CameraCenter {
-    pub fn new() -> Self {
-        CameraCenter {
-            x: Some(0.0),
-            y: Some(0.0),
-            z: Some(0.0),
-        }
-    }
-}
-
-impl From<(f64, f64, f64)> for CameraCenter {
-    fn from((x, y, z): (f64, f64, f64)) -> Self {
-        CameraCenter {
-            x: Some(x),
-            y: Some(y),
-            z: Some(z),
-        }
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Container for CameraCenter, Eye, Up, and Projection objects. The camera of a
-/// 3D scene.
-pub struct Camera {
-    center: Option<CameraCenter>,
-    eye: Option<Eye>,
-    up: Option<Up>,
-    projection: Option<Projection>,
-}
-
-impl Camera {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Sets this scene's axis aspectratio.
-/// x, y, z must be positive.
-/// Default: {x: 1, y: 1, z: 1}
-pub struct AspectRatio {
-    x: Option<f64>,
-    y: Option<f64>,
-    z: Option<f64>,
-}
-
-impl AspectRatio {
-    pub fn new() -> Self {
-        AspectRatio {
-            x: Some(1.0),
-            y: Some(1.0),
-            z: Some(1.0),
-        }
-    }
-}
-
-impl From<(f64, f64, f64)> for AspectRatio {
-    fn from((x, y, z): (f64, f64, f64)) -> Self {
-        AspectRatio {
-            x: Some(x),
-            y: Some(y),
-            z: Some(z),
-        }
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-/// 3D scene layout
-pub struct LayoutScene {
-    #[serde(rename = "bgcolor")]
-    background_color: Option<Box<dyn Color>>,
-    camera: Option<Camera>,
-    #[serde(rename = "aspectmode")]
-    aspect_mode: Option<AspectMode>,
-    #[serde(rename = "aspectratio")]
-    aspect_ratio: Option<AspectRatio>,
-    #[serde(rename = "xaxis")]
-    x_axis: Option<Axis>,
-    #[serde(rename = "yaxis")]
-    y_axis: Option<Axis>,
-    #[serde(rename = "zaxis")]
-    z_axis: Option<Axis>,
-    #[serde(rename = "dragmode")]
-    drag_mode: Option<DragMode3D>,
-    #[serde(rename = "hovermode")]
-    hover_mode: Option<HoverMode>,
-    annotations: Option<Vec<Annotation>>,
-    // domain: Domain,
-    // uirevision: Uirevision,
-}
-
-impl LayoutScene {
-    pub fn new() -> Self {
-        Default::default()
-    }
 }
 
 #[serde_with::skip_serializing_none]
@@ -982,56 +535,6 @@ mod tests {
     use crate::common::ColorScalePalette;
 
     #[test]
-    fn serialize_uniform_text_mode() {
-        assert_eq!(to_value(UniformTextMode::False).unwrap(), json!(false));
-        assert_eq!(to_value(UniformTextMode::Hide).unwrap(), json!("hide"));
-        assert_eq!(to_value(UniformTextMode::Show).unwrap(), json!("show"));
-    }
-
-    #[test]
-    fn serialize_hover_mode() {
-        assert_eq!(to_value(HoverMode::X).unwrap(), json!("x"));
-        assert_eq!(to_value(HoverMode::Y).unwrap(), json!("y"));
-        assert_eq!(to_value(HoverMode::Closest).unwrap(), json!("closest"));
-        assert_eq!(to_value(HoverMode::False).unwrap(), json!(false));
-        assert_eq!(to_value(HoverMode::XUnified).unwrap(), json!("x unified"));
-        assert_eq!(to_value(HoverMode::YUnified).unwrap(), json!("y unified"));
-    }
-
-    #[test]
-    fn serialize_bar_mode() {
-        assert_eq!(to_value(BarMode::Stack).unwrap(), json!("stack"));
-        assert_eq!(to_value(BarMode::Group).unwrap(), json!("group"));
-        assert_eq!(to_value(BarMode::Overlay).unwrap(), json!("overlay"));
-        assert_eq!(to_value(BarMode::Relative).unwrap(), json!("relative"));
-    }
-
-    #[test]
-    fn serialize_bar_norm() {
-        assert_eq!(to_value(BarNorm::Empty).unwrap(), json!(""));
-        assert_eq!(to_value(BarNorm::Fraction).unwrap(), json!("fraction"));
-        assert_eq!(to_value(BarNorm::Percent).unwrap(), json!("percent"));
-    }
-
-    #[test]
-    fn serialize_box_mode() {
-        assert_eq!(to_value(BoxMode::Group).unwrap(), json!("group"));
-        assert_eq!(to_value(BoxMode::Overlay).unwrap(), json!("overlay"));
-    }
-
-    #[test]
-    fn serialize_violin_mode() {
-        assert_eq!(to_value(ViolinMode::Group).unwrap(), json!("group"));
-        assert_eq!(to_value(ViolinMode::Overlay).unwrap(), json!("overlay"));
-    }
-
-    #[test]
-    fn serialize_waterfall_mode() {
-        assert_eq!(to_value(WaterfallMode::Group).unwrap(), json!("group"));
-        assert_eq!(to_value(WaterfallMode::Overlay).unwrap(), json!("overlay"));
-    }
-
-    #[test]
     fn serialize_valign() {
         assert_eq!(to_value(VAlign::Top).unwrap(), json!("top"));
         assert_eq!(to_value(VAlign::Middle).unwrap(), json!("middle"));
@@ -1103,51 +606,6 @@ mod tests {
         assert_eq!(to_value(ArrowSide::Start).unwrap(), json!("start"));
         assert_eq!(to_value(ArrowSide::StartEnd).unwrap(), json!("end+start"));
         assert_eq!(to_value(ArrowSide::None).unwrap(), json!("none"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_click_mode() {
-        assert_eq!(to_value(ClickMode::Event).unwrap(), json!("event"));
-        assert_eq!(to_value(ClickMode::Select).unwrap(), json!("select"));
-        assert_eq!(to_value(ClickMode::EventAndSelect).unwrap(), json!("event+select"));
-        assert_eq!(to_value(ClickMode::None).unwrap(), json!("none"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_drag_mode() {
-        assert_eq!(to_value(DragMode::Zoom).unwrap(), json!("zoom"));
-        assert_eq!(to_value(DragMode::Pan).unwrap(), json!("pan"));
-        assert_eq!(to_value(DragMode::Select).unwrap(), json!("select"));
-        assert_eq!(to_value(DragMode::Lasso).unwrap(), json!("lasso"));
-        assert_eq!(to_value(DragMode::DrawClosedPath).unwrap(), json!("drawclosedpath"));
-        assert_eq!(to_value(DragMode::DrawOpenPath).unwrap(), json!("drawopenpath"));
-        assert_eq!(to_value(DragMode::DrawLine).unwrap(), json!("drawline"));
-        assert_eq!(to_value(DragMode::DrawRect).unwrap(), json!("drawrect"));
-        assert_eq!(to_value(DragMode::DrawCircle).unwrap(), json!("drawcircle"));
-        assert_eq!(to_value(DragMode::Orbit).unwrap(), json!("orbit"));
-        assert_eq!(to_value(DragMode::Turntable).unwrap(), json!("turntable"));
-        assert_eq!(to_value(DragMode::False).unwrap(), json!(false));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_mapbox_style() {
-        assert_eq!(to_value(MapboxStyle::CartoDarkMatter).unwrap(), json!("carto-darkmatter"));
-        assert_eq!(to_value(MapboxStyle::CartoPositron).unwrap(), json!("carto-positron"));
-        assert_eq!(to_value(MapboxStyle::OpenStreetMap).unwrap(), json!("open-street-map"));
-        assert_eq!(to_value(MapboxStyle::StamenTerrain).unwrap(), json!("stamen-terrain"));
-        assert_eq!(to_value(MapboxStyle::StamenToner).unwrap(), json!("stamen-toner"));
-        assert_eq!(to_value(MapboxStyle::StamenWatercolor).unwrap(), json!("stamen-watercolor"));
-        assert_eq!(to_value(MapboxStyle::WhiteBg).unwrap(), json!("white-bg"));
-        assert_eq!(to_value(MapboxStyle::Basic).unwrap(), json!("basic"));
-        assert_eq!(to_value(MapboxStyle::Streets).unwrap(), json!("streets"));
-        assert_eq!(to_value(MapboxStyle::Outdoors).unwrap(), json!("outdoors"));
-        assert_eq!(to_value(MapboxStyle::Light).unwrap(), json!("light"));
-        assert_eq!(to_value(MapboxStyle::Dark).unwrap(), json!("dark"));
-        assert_eq!(to_value(MapboxStyle::Satellite).unwrap(), json!("satellite"));
-        assert_eq!(to_value(MapboxStyle::SatelliteStreets).unwrap(), json!("satellite-streets"));
     }
 
     #[test]
@@ -1440,184 +898,5 @@ mod tests {
         });
 
         assert_eq!(to_value(layout).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_layout_scene() {
-        let layout = Layout::new().scene(
-            LayoutScene::new()
-                .x_axis(Axis::new())
-                .y_axis(Axis::new())
-                .z_axis(Axis::new())
-                .camera(Camera::new())
-                .aspect_mode(AspectMode::Auto)
-                .hover_mode(HoverMode::Closest)
-                .drag_mode(DragMode3D::Turntable)
-                .background_color("#FFFFFF")
-                .annotations(vec![Annotation::new()]),
-        );
-
-        let expected = json!({
-            "scene": {
-                "xaxis": {},
-                "yaxis": {},
-                "zaxis": {},
-                "camera": {},
-                "aspectmode": "auto",
-                "hovermode": "closest",
-                "dragmode": "turntable",
-                "bgcolor": "#FFFFFF",
-                "annotations": [{}],
-            }
-        });
-
-        assert_eq!(to_value(layout).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_eye() {
-        let eye = Eye::new();
-
-        assert_eq!(
-            to_value(eye).unwrap(),
-            json!({
-                "x": 1.25,
-                "y": 1.25,
-                "z": 1.25,
-            })
-        );
-
-        let eye = Eye::new().x(1f64).y(2f64).z(3f64);
-
-        let expected = json!({
-            "x": 1.0,
-            "y": 2.0,
-            "z": 3.0,
-        });
-
-        assert_eq!(to_value(eye).unwrap(), expected);
-
-        let eye: Eye = (1f64, 2f64, 3f64).into();
-
-        assert_eq!(to_value(eye).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_projection() {
-        let projection = Projection::new().projection_type(ProjectionType::default());
-
-        let expected = json!({
-            "type": "perspective",
-        });
-
-        assert_eq!(to_value(projection).unwrap(), expected);
-
-        let projection = Projection::new().projection_type(ProjectionType::Orthographic);
-
-        let expected = json!({
-            "type": "orthographic",
-        });
-
-        assert_eq!(to_value(projection).unwrap(), expected);
-
-        let projection: Projection = ProjectionType::Orthographic.into();
-
-        assert_eq!(to_value(projection).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_camera_center() {
-        let camera_center = CameraCenter::new();
-
-        let expected = json!({
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0,
-        });
-
-        assert_eq!(to_value(camera_center).unwrap(), expected);
-
-        let camera_center = CameraCenter::new().x(1f64).y(2f64).z(3f64);
-
-        let expected = json!({
-            "x": 1.0,
-            "y": 2.0,
-            "z": 3.0,
-        });
-
-        assert_eq!(to_value(camera_center).unwrap(), expected);
-
-        let camera_center: CameraCenter = (1f64, 2f64, 3f64).into();
-
-        assert_eq!(to_value(camera_center).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_aspect_ratio() {
-        let aspect_ratio = AspectRatio::new();
-
-        let expected = json!({
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0,
-        });
-
-        assert_eq!(to_value(aspect_ratio).unwrap(), expected);
-
-        let aspect_ratio = AspectRatio::new().x(1f64).y(2f64).z(3f64);
-
-        let expected = json!({
-            "x": 1.0,
-            "y": 2.0,
-            "z": 3.0,
-        });
-
-        assert_eq!(to_value(aspect_ratio).unwrap(), expected);
-
-        let aspect_ratio: AspectRatio = (1f64, 2f64, 3f64).into();
-
-        assert_eq!(to_value(aspect_ratio).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_aspect_mode() {
-        let aspect_mode = AspectMode::default();
-
-        assert_eq!(to_value(aspect_mode).unwrap(), json!("auto"));
-
-        let aspect_mode = AspectMode::Data;
-
-        assert_eq!(to_value(aspect_mode).unwrap(), json!("data"));
-
-        let aspect_mode = AspectMode::Cube;
-
-        assert_eq!(to_value(aspect_mode).unwrap(), json!("cube"));
-    }
-
-    #[test]
-    fn serialize_up() {
-        let up = Up::new();
-
-        let expected = json!({
-            "x": 0.0,
-            "y": 0.0,
-            "z": 1.0,
-        });
-
-        assert_eq!(to_value(up).unwrap(), expected);
-
-        let up = Up::new().x(1f64).y(2f64).z(3f64);
-
-        let expected = json!({
-            "x": 1.0,
-            "y": 2.0,
-            "z": 3.0,
-        });
-
-        assert_eq!(to_value(up).unwrap(), expected);
-
-        let up: Up = (1f64, 2f64, 3f64).into();
-
-        assert_eq!(to_value(up).unwrap(), expected);
     }
 }
