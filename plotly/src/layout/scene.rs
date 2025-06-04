@@ -2,29 +2,7 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::color::Color;
-use crate::layout::{Annotation, Axis};
-
-#[derive(Serialize, Debug, Clone)]
-/// If "cube", this scene's axes are drawn as a cube, regardless of the axes'
-/// ranges. If "data", this scene's axes are drawn in proportion with the axes'
-/// ranges. If "manual", this scene's axes are drawn in proportion with the
-/// input of "aspectratio" (the default behavior if "aspectratio" is provided).
-/// If "auto", this scene's axes are drawn using the results of "data" except
-/// when one axis is more than four times the size of the two others, where in
-/// that case the results of "cube" are used.
-/// Default: "auto"
-#[derive(Default)]
-pub enum AspectMode {
-    #[serde(rename = "auto")]
-    #[default]
-    Auto,
-    #[serde(rename = "cube")]
-    Cube,
-    #[serde(rename = "data")]
-    Data,
-    #[serde(rename = "manual")]
-    Manual,
-}
+use crate::layout::{Annotation, AspectMode, Axis};
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
@@ -492,21 +470,6 @@ mod tests {
         let camera_center: CameraCenter = (1f64, 2f64, 3f64).into();
 
         assert_eq!(to_value(camera_center).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_aspect_mode() {
-        let aspect_mode = AspectMode::default();
-
-        assert_eq!(to_value(aspect_mode).unwrap(), json!("auto"));
-
-        let aspect_mode = AspectMode::Data;
-
-        assert_eq!(to_value(aspect_mode).unwrap(), json!("data"));
-
-        let aspect_mode = AspectMode::Cube;
-
-        assert_eq!(to_value(aspect_mode).unwrap(), json!("cube"));
     }
 
     #[test]

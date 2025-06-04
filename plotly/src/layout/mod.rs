@@ -1,12 +1,12 @@
-use serde::Serialize;
 use std::borrow::Cow;
+
+use plotly_derive::layout_structs;
+use plotly_derive::FieldSetter;
+use serde::Serialize;
 use update_menu::UpdateMenu;
 
-use crate::{
-    color::Color,
-    common::{Calendar, ColorScale, Font, Label, Orientation, Title},
-};
-use plotly_derive::FieldSetter;
+use crate::color::Color;
+use crate::common::{Calendar, ColorScale, Font, Label, Orientation, Title};
 
 pub mod themes;
 pub mod update_menu;
@@ -29,11 +29,13 @@ pub use self::axis::{
 };
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
 pub use self::legend::{Legend, TraceOrder};
-pub use self::mapbox::{Mapbox, MapboxStyle};
+pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
-    BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
+    AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
 };
-pub use self::scene::{DragMode, DragMode3D, HoverMode, LayoutScene, Projection, ProjectionType};
+pub use self::scene::{
+    Camera, CameraCenter, DragMode, DragMode3D, HoverMode, LayoutScene, Projection, ProjectionType,
+};
 pub use self::shape::{
     ActiveShape, DrawDirection, FillRule, NewShape, Shape, ShapeLayer, ShapeLine, ShapeSizeMode,
     ShapeType,
@@ -161,10 +163,14 @@ impl Into<Cow<'static, Template>> for &'static Template {
     }
 }
 
-// LayoutTemplate matches Layout except it lacks a field for template
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-pub struct LayoutTemplate {
+/// Generates Layout and LayoutTemplate
+/// LayoutTemplate matches Layout except it lacks a field for template
+/// See layout/layout.rs for the full field list and doc comments.
+/// Layout is identical to LayoutTemplate except it has a `template` field and
+/// #[field_setter(kind = "layout")] See layout/layout.rs for the full field
+/// list and doc comments.
+#[layout_structs]
+pub struct LayoutFields {
     title: Option<Title>,
     #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
@@ -218,83 +224,69 @@ pub struct LayoutTemplate {
     spike_distance: Option<i32>,
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
-
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
-
     #[serde(rename = "xaxis")]
     x_axis: Option<Box<Axis>>,
     #[serde(rename = "yaxis")]
     y_axis: Option<Box<Axis>>,
     #[serde(rename = "zaxis")]
     z_axis: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis2")]
     x_axis2: Option<Box<Axis>>,
     #[serde(rename = "yaxis2")]
     y_axis2: Option<Box<Axis>>,
     #[serde(rename = "zaxis2")]
     z_axis2: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis3")]
     x_axis3: Option<Box<Axis>>,
     #[serde(rename = "yaxis3")]
     y_axis3: Option<Box<Axis>>,
     #[serde(rename = "zaxis3")]
     z_axis3: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis4")]
     x_axis4: Option<Box<Axis>>,
     #[serde(rename = "yaxis4")]
     y_axis4: Option<Box<Axis>>,
     #[serde(rename = "zaxis4")]
     z_axis4: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis5")]
     x_axis5: Option<Box<Axis>>,
     #[serde(rename = "yaxis5")]
     y_axis5: Option<Box<Axis>>,
     #[serde(rename = "zaxis5")]
     z_axis5: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis6")]
     x_axis6: Option<Box<Axis>>,
     #[serde(rename = "yaxis6")]
     y_axis6: Option<Box<Axis>>,
     #[serde(rename = "zaxis6")]
     z_axis6: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis7")]
     x_axis7: Option<Box<Axis>>,
     #[serde(rename = "yaxis7")]
     y_axis7: Option<Box<Axis>>,
     #[serde(rename = "zaxis7")]
     z_axis7: Option<Box<Axis>>,
-
     #[serde(rename = "xaxis8")]
     x_axis8: Option<Box<Axis>>,
     #[serde(rename = "yaxis8")]
     y_axis8: Option<Box<Axis>>,
     #[serde(rename = "zaxis8")]
     z_axis8: Option<Box<Axis>>,
-
-    // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
-    // polar: Option<LayoutPolar>,
     annotations: Option<Vec<Annotation>>,
     shapes: Option<Vec<Shape>>,
     #[serde(rename = "newshape")]
     new_shape: Option<NewShape>,
     #[serde(rename = "activeshape")]
     active_shape: Option<ActiveShape>,
-
     #[serde(rename = "boxmode")]
     box_mode: Option<BoxMode>,
     #[serde(rename = "boxgap")]
     box_gap: Option<f64>,
     #[serde(rename = "boxgroupgap")]
     box_group_gap: Option<f64>,
-
     #[serde(rename = "barmode")]
     bar_mode: Option<BarMode>,
     #[serde(rename = "barnorm")]
@@ -303,262 +295,29 @@ pub struct LayoutTemplate {
     bar_gap: Option<f64>,
     #[serde(rename = "bargroupgap")]
     bar_group_gap: Option<f64>,
-
     #[serde(rename = "violinmode")]
     violin_mode: Option<ViolinMode>,
     #[serde(rename = "violingap")]
     violin_gap: Option<f64>,
     #[serde(rename = "violingroupgap")]
     violin_group_gap: Option<f64>,
-
     #[serde(rename = "waterfallmode")]
     waterfall_mode: Option<WaterfallMode>,
     #[serde(rename = "waterfallgap")]
     waterfall_gap: Option<f64>,
     #[serde(rename = "waterfallgroupgap")]
     waterfall_group_gap: Option<f64>,
-
     #[serde(rename = "piecolorway")]
     pie_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendpiecolors")]
     extend_pie_colors: Option<bool>,
-
     #[serde(rename = "sunburstcolorway")]
     sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendsunburstcolors")]
     extend_sunburst_colors: Option<bool>,
-
     mapbox: Option<Mapbox>,
-
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
-}
-
-impl LayoutTemplate {
-    pub fn new() -> Self {
-        Default::default()
-    }
-
-    pub fn add_annotation(&mut self, annotation: Annotation) {
-        if self.annotations.is_none() {
-            self.annotations = Some(Vec::new());
-        }
-        self.annotations.as_mut().unwrap().push(annotation);
-    }
-
-    pub fn add_shape(&mut self, shape: Shape) {
-        if self.shapes.is_none() {
-            self.shapes = Some(Vec::new());
-        }
-        self.shapes.as_mut().unwrap().push(shape);
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-#[field_setter(kind = "layout")]
-pub struct Layout {
-    title: Option<Title>,
-    #[serde(rename = "showlegend")]
-    show_legend: Option<bool>,
-    legend: Option<Legend>,
-    margin: Option<Margin>,
-    #[serde(rename = "autosize")]
-    auto_size: Option<bool>,
-    width: Option<usize>,
-    height: Option<usize>,
-    font: Option<Font>,
-    #[serde(rename = "uniformtext")]
-    uniform_text: Option<UniformText>,
-    separators: Option<String>,
-    #[serde(rename = "paper_bgcolor")]
-    paper_background_color: Option<Box<dyn Color>>,
-    #[serde(rename = "plot_bgcolor")]
-    plot_background_color: Option<Box<dyn Color>>,
-    #[serde(rename = "colorscale")]
-    color_scale: Option<LayoutColorScale>,
-    colorway: Option<Vec<Box<dyn Color>>>,
-    #[serde(rename = "coloraxis")]
-    color_axis: Option<ColorAxis>,
-    #[serde(rename = "modebar")]
-    mode_bar: Option<ModeBar>,
-    /// Determines the mode of hover interactions. If "closest", a single
-    /// hoverlabel will appear for the "closest" point within the
-    /// `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for
-    /// multiple points at the "closest" x- (or y-) coordinate within the
-    /// `hoverdistance`, with the caveat that no more than one hoverlabel
-    /// will appear per trace. If "x unified" (or "y unified"), a single
-    /// hoverlabel will appear multiple points at the closest x- (or y-)
-    /// coordinate within the `hoverdistance` with the caveat that no more than
-    /// one hoverlabel will appear per trace. In this mode, spikelines are
-    /// enabled by default perpendicular to the specified axis.
-    /// If false, hover interactions are disabled. If `clickmode` includes the
-    /// "select" flag, `hovermode` defaults to "closest". If `clickmode`
-    /// lacks the "select" flag, it defaults to "x" or "y" (depending on the
-    /// trace's `orientation` value) for plots based on cartesian coordinates.
-    /// For anything else the default value is "closest".
-    #[serde(rename = "hovermode")]
-    hover_mode: Option<HoverMode>,
-    #[serde(rename = "clickmode")]
-    click_mode: Option<ClickMode>,
-    #[serde(rename = "dragmode")]
-    drag_mode: Option<DragMode>,
-    #[serde(rename = "selectdirection")]
-    select_direction: Option<SelectDirection>,
-    #[serde(rename = "hoverdistance")]
-    hover_distance: Option<i32>,
-    #[serde(rename = "spikedistance")]
-    spike_distance: Option<i32>,
-    #[serde(rename = "hoverlabel")]
-    hover_label: Option<Label>,
-    #[field_setter(skip)]
-    template: Option<Box<Cow<'static, Template>>>,
-
-    grid: Option<LayoutGrid>,
-    calendar: Option<Calendar>,
-
-    #[serde(rename = "xaxis")]
-    x_axis: Option<Box<Axis>>,
-    #[serde(rename = "yaxis")]
-    y_axis: Option<Box<Axis>>,
-    #[serde(rename = "zaxis")]
-    z_axis: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis2")]
-    x_axis2: Option<Box<Axis>>,
-    #[serde(rename = "yaxis2")]
-    y_axis2: Option<Box<Axis>>,
-    #[serde(rename = "zaxis2")]
-    z_axis2: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis3")]
-    x_axis3: Option<Box<Axis>>,
-    #[serde(rename = "yaxis3")]
-    y_axis3: Option<Box<Axis>>,
-    #[serde(rename = "zaxis3")]
-    z_axis3: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis4")]
-    x_axis4: Option<Box<Axis>>,
-    #[serde(rename = "yaxis4")]
-    y_axis4: Option<Box<Axis>>,
-    #[serde(rename = "zaxis4")]
-    z_axis4: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis5")]
-    x_axis5: Option<Box<Axis>>,
-    #[serde(rename = "yaxis5")]
-    y_axis5: Option<Box<Axis>>,
-    #[serde(rename = "zaxis5")]
-    z_axis5: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis6")]
-    x_axis6: Option<Box<Axis>>,
-    #[serde(rename = "yaxis6")]
-    y_axis6: Option<Box<Axis>>,
-    #[serde(rename = "zaxis6")]
-    z_axis6: Option<Box<Axis>>,
-
-    #[serde(rename = "xaxis7")]
-    x_axis7: Option<Box<Axis>>,
-    #[serde(rename = "yaxis7")]
-    y_axis7: Option<Box<Axis>>,
-    #[serde(rename = "zaxis7")]
-    z_axis7: Option<Box<Axis>>,
-    #[serde(rename = "xaxis8")]
-
-    x_axis8: Option<Box<Axis>>,
-    #[serde(rename = "yaxis8")]
-    y_axis8: Option<Box<Axis>>,
-    #[serde(rename = "zaxis8")]
-    z_axis8: Option<Box<Axis>>,
-
-    // ternary: Option<LayoutTernary>,
-    scene: Option<LayoutScene>,
-    // polar: Option<LayoutPolar>,
-    annotations: Option<Vec<Annotation>>,
-    shapes: Option<Vec<Shape>>,
-    #[serde(rename = "newshape")]
-    new_shape: Option<NewShape>,
-    #[serde(rename = "activeshape")]
-    active_shape: Option<ActiveShape>,
-
-    #[serde(rename = "boxmode")]
-    box_mode: Option<BoxMode>,
-    #[serde(rename = "boxgap")]
-    box_gap: Option<f64>,
-    #[serde(rename = "boxgroupgap")]
-    box_group_gap: Option<f64>,
-
-    #[serde(rename = "barmode")]
-    bar_mode: Option<BarMode>,
-    #[serde(rename = "barnorm")]
-    bar_norm: Option<BarNorm>,
-    #[serde(rename = "bargap")]
-    bar_gap: Option<f64>,
-    #[serde(rename = "bargroupgap")]
-    bar_group_gap: Option<f64>,
-
-    #[serde(rename = "violinmode")]
-    violin_mode: Option<ViolinMode>,
-    #[serde(rename = "violingap")]
-    violin_gap: Option<f64>,
-    #[serde(rename = "violingroupgap")]
-    violin_group_gap: Option<f64>,
-
-    #[serde(rename = "waterfallmode")]
-    waterfall_mode: Option<WaterfallMode>,
-    #[serde(rename = "waterfallgap")]
-    waterfall_gap: Option<f64>,
-    #[serde(rename = "waterfallgroupgap")]
-    waterfall_group_gap: Option<f64>,
-
-    #[serde(rename = "piecolorway")]
-    pie_colorway: Option<Vec<Box<dyn Color>>>,
-    #[serde(rename = "extendpiecolors")]
-    extend_pie_colors: Option<bool>,
-
-    #[serde(rename = "sunburstcolorway")]
-    sunburst_colorway: Option<Vec<Box<dyn Color>>>,
-    #[serde(rename = "extendsunburstcolors")]
-    extend_sunburst_colors: Option<bool>,
-
-    mapbox: Option<Mapbox>,
-
-    #[serde(rename = "updatemenus")]
-    update_menus: Option<Vec<UpdateMenu>>,
-}
-
-impl Layout {
-    pub fn new() -> Self {
-        Default::default()
-    }
-
-    pub fn to_json(&self) -> String {
-        serde_json::to_string(self).unwrap()
-    }
-
-    pub fn add_annotation(&mut self, annotation: Annotation) {
-        if self.annotations.is_none() {
-            self.annotations = Some(Vec::new());
-        }
-        self.annotations.as_mut().unwrap().push(annotation);
-    }
-
-    pub fn add_shape(&mut self, shape: Shape) {
-        if self.shapes.is_none() {
-            self.shapes = Some(Vec::new());
-        }
-        self.shapes.as_mut().unwrap().push(shape);
-    }
-
-    pub fn template<T>(mut self, template: T) -> Layout
-    where
-        T: Into<Cow<'static, Template>>,
-    {
-        self.template = Some(Box::new(template.into()));
-        self
-    }
 }
 
 #[cfg(test)]

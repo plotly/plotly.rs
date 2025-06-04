@@ -73,8 +73,9 @@ impl Mapbox {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json::{json, to_value};
+
+    use super::*;
 
     #[test]
     #[rustfmt::skip]
