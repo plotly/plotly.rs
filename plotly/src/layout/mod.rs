@@ -3,6 +3,7 @@ pub mod update_menu;
 
 mod annotation;
 mod axis;
+mod grid;
 mod legend;
 use std::borrow::Cow;
 
@@ -13,17 +14,16 @@ use update_menu::UpdateMenu;
 // Re-export layout sub-module types
 pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
 pub use self::axis::{
-    ArrayShow, Axis, AxisConstrain, AxisType, CategoryOrder, ConstrainDirection, RangeMode,
-    RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton, SelectorStep, SliderRangeMode,
-    StepMode, TicksDirection, TicksPosition,
+    ArrayShow, Axis, AxisConstrain, AxisType, CategoryOrder, ColorAxis, ConstrainDirection,
+    RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton, SelectorStep,
+    SliderRangeMode, StepMode, TicksDirection, TicksPosition,
 };
-
+pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
 pub use self::legend::{Legend, TraceOrder};
-
 use crate::common::Domain;
 use crate::{
     color::Color,
-    common::{Calendar, ColorBar, ColorScale, DashType, Font, Label, Orientation, Title},
+    common::{Calendar, ColorScale, DashType, Font, Label, Orientation, Title},
     private::NumOrString,
 };
 
@@ -113,112 +113,6 @@ pub struct LayoutColorScale {
 }
 
 impl LayoutColorScale {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-pub struct ColorAxis {
-    cauto: Option<bool>,
-    cmin: Option<f64>,
-    cmax: Option<f64>,
-    cmid: Option<f64>,
-    #[serde(rename = "colorscale")]
-    color_scale: Option<ColorScale>,
-    #[serde(rename = "autocolorscale")]
-    auto_color_scale: Option<bool>,
-    #[serde(rename = "reversescale")]
-    reverse_scale: Option<bool>,
-    #[serde(rename = "showscale")]
-    show_scale: Option<bool>,
-    #[serde(rename = "colorbar")]
-    color_bar: Option<ColorBar>,
-}
-
-impl ColorAxis {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-pub enum RowOrder {
-    #[serde(rename = "top to bottom")]
-    TopToBottom,
-    #[serde(rename = "bottom to top")]
-    BottomToTop,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum GridPattern {
-    Independent,
-    Coupled,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum GridXSide {
-    Bottom,
-    #[serde(rename = "bottom plot")]
-    BottomPlot,
-    #[serde(rename = "top plot")]
-    TopPlot,
-    Top,
-}
-
-#[derive(Serialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum GridYSide {
-    Left,
-    #[serde(rename = "left plot")]
-    LeftPlot,
-    #[serde(rename = "right plot")]
-    RightPlot,
-    Right,
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-pub struct GridDomain {
-    x: Option<Vec<f64>>,
-    y: Option<Vec<f64>>,
-}
-
-impl GridDomain {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Serialize, Debug, Clone, FieldSetter)]
-pub struct LayoutGrid {
-    rows: Option<usize>,
-    #[serde(rename = "roworder")]
-    row_order: Option<RowOrder>,
-    columns: Option<usize>,
-    #[serde(rename = "subplots")]
-    sub_plots: Option<Vec<String>>,
-    #[serde(rename = "xaxes")]
-    x_axes: Option<Vec<String>>,
-    #[serde(rename = "yaxes")]
-    y_axes: Option<Vec<String>>,
-    pattern: Option<GridPattern>,
-    #[serde(rename = "xgap")]
-    x_gap: Option<f64>,
-    #[serde(rename = "ygap")]
-    y_gap: Option<f64>,
-    domain: Option<GridDomain>,
-    #[serde(rename = "xside")]
-    x_side: Option<GridXSide>,
-    #[serde(rename = "yside")]
-    y_side: Option<GridYSide>,
-}
-
-impl LayoutGrid {
     pub fn new() -> Self {
         Default::default()
     }
@@ -1342,13 +1236,6 @@ mod tests {
     }
 
     #[test]
-    fn serialize_click_to_show() {
-        assert_eq!(to_value(ClickToShow::False).unwrap(), json!(false));
-        assert_eq!(to_value(ClickToShow::OnOff).unwrap(), json!("onoff"));
-        assert_eq!(to_value(ClickToShow::OnOut).unwrap(), json!("onout"));
-    }
-
-    #[test]
     fn serialize_hover_mode() {
         assert_eq!(to_value(HoverMode::X).unwrap(), json!("x"));
         assert_eq!(to_value(HoverMode::Y).unwrap(), json!("y"));
@@ -1356,42 +1243,6 @@ mod tests {
         assert_eq!(to_value(HoverMode::False).unwrap(), json!(false));
         assert_eq!(to_value(HoverMode::XUnified).unwrap(), json!("x unified"));
         assert_eq!(to_value(HoverMode::YUnified).unwrap(), json!("y unified"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_axis_type() {
-        assert_eq!(to_value(AxisType::Default).unwrap(), json!("-"));
-        assert_eq!(to_value(AxisType::Linear).unwrap(), json!("linear"));
-        assert_eq!(to_value(AxisType::Log).unwrap(), json!("log"));
-        assert_eq!(to_value(AxisType::Date).unwrap(), json!("date"));
-        assert_eq!(to_value(AxisType::Category).unwrap(), json!("category"));
-        assert_eq!(to_value(AxisType::MultiCategory).unwrap(), json!("multicategory"));
-    }
-
-    #[test]
-    fn serialize_axis_constrain() {
-        assert_eq!(to_value(AxisConstrain::Range).unwrap(), json!("range"));
-        assert_eq!(to_value(AxisConstrain::Domain).unwrap(), json!("domain"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_constrain_direction() {
-        assert_eq!(to_value(ConstrainDirection::Left).unwrap(), json!("left"));
-        assert_eq!(to_value(ConstrainDirection::Center).unwrap(), json!("center"));
-        assert_eq!(to_value(ConstrainDirection::Right).unwrap(), json!("right"));
-        assert_eq!(to_value(ConstrainDirection::Top).unwrap(), json!("top"));
-        assert_eq!(to_value(ConstrainDirection::Middle).unwrap(), json!("middle"));
-        assert_eq!(to_value(ConstrainDirection::Bottom).unwrap(), json!("bottom"));
-    }
-
-    #[test]
-    fn serialize_array_show() {
-        assert_eq!(to_value(ArrayShow::All).unwrap(), json!("all"));
-        assert_eq!(to_value(ArrayShow::First).unwrap(), json!("first"));
-        assert_eq!(to_value(ArrayShow::Last).unwrap(), json!("last"));
-        assert_eq!(to_value(ArrayShow::None).unwrap(), json!("none"));
     }
 
     #[test]
@@ -1474,122 +1325,6 @@ mod tests {
         });
 
         assert_eq!(to_value(layout_color_scale).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_color_axis() {
-        let color_axis = ColorAxis::new()
-            .auto_color_scale(false)
-            .cauto(true)
-            .cmax(1.0)
-            .cmid(0.5)
-            .cmin(0.0)
-            .color_bar(ColorBar::new())
-            .color_scale(ColorScale::Palette(ColorScalePalette::Greens))
-            .reverse_scale(false)
-            .show_scale(true);
-
-        let expected = json!({
-            "autocolorscale": false,
-            "cauto": true,
-            "cmin": 0.0,
-            "cmid": 0.5,
-            "cmax": 1.0,
-            "colorbar": {},
-            "colorscale": "Greens",
-            "reversescale": false,
-            "showscale": true,
-        });
-
-        assert_eq!(to_value(color_axis).unwrap(), expected);
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_row_order() {
-        assert_eq!(to_value(RowOrder::TopToBottom).unwrap(), json!("top to bottom"));
-        assert_eq!(to_value(RowOrder::BottomToTop).unwrap(), json!("bottom to top"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_grid_pattern() {
-        assert_eq!(to_value(GridPattern::Independent).unwrap(), json!("independent"));
-        assert_eq!(to_value(GridPattern::Coupled).unwrap(), json!("coupled"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_grid_x_side() {
-        assert_eq!(to_value(GridXSide::Bottom).unwrap(), json!("bottom"));
-        assert_eq!(to_value(GridXSide::BottomPlot).unwrap(), json!("bottom plot"));
-        assert_eq!(to_value(GridXSide::Top).unwrap(), json!("top"));
-        assert_eq!(to_value(GridXSide::TopPlot).unwrap(), json!("top plot"));
-    }
-
-    #[test]
-    #[rustfmt::skip]
-    fn serialize_grid_y_side() {
-        assert_eq!(to_value(GridYSide::Left).unwrap(), json!("left"));
-        assert_eq!(to_value(GridYSide::LeftPlot).unwrap(), json!("left plot"));
-        assert_eq!(to_value(GridYSide::Right).unwrap(), json!("right"));
-        assert_eq!(to_value(GridYSide::RightPlot).unwrap(), json!("right plot"));
-    }
-
-    #[test]
-    fn serialize_grid_domain() {
-        let grid_domain = GridDomain::new().x(vec![0.0]).y(vec![1.0]);
-        let expected = json!({
-            "x": [0.0],
-            "y": [1.0]
-        });
-
-        assert_eq!(to_value(grid_domain).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_layout_grid() {
-        let layout_grid = LayoutGrid::new()
-            .rows(224)
-            .row_order(RowOrder::BottomToTop)
-            .columns(501)
-            .sub_plots(vec!["subplots".to_string()])
-            .x_axes(vec!["xaxes".to_string()])
-            .y_axes(vec!["yaxes".to_string()])
-            .pattern(GridPattern::Coupled)
-            .x_gap(2.2)
-            .y_gap(4.4)
-            .domain(GridDomain::new())
-            .x_side(GridXSide::Top)
-            .y_side(GridYSide::Right);
-
-        let expected = json!({
-            "rows": 224,
-            "roworder": "bottom to top",
-            "columns": 501,
-            "subplots": ["subplots"],
-            "xaxes": ["xaxes"],
-            "yaxes": ["yaxes"],
-            "pattern": "coupled",
-            "xgap": 2.2,
-            "ygap": 4.4,
-            "domain": {},
-            "xside": "top",
-            "yside": "right",
-        });
-
-        assert_eq!(to_value(layout_grid).unwrap(), expected);
-    }
-
-    #[test]
-    fn serialize_uniform_text() {
-        let uniform_text = UniformText::new().mode(UniformTextMode::Hide).min_size(5);
-        let expected = json!({
-            "mode": "hide",
-            "minsize": 5
-        });
-
-        assert_eq!(to_value(uniform_text).unwrap(), expected);
     }
 
     #[test]

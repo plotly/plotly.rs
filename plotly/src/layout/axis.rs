@@ -3,7 +3,8 @@ use serde::Serialize;
 
 use crate::color::Color;
 use crate::common::{
-    Anchor, AxisSide, Calendar, DashType, ExponentFormat, Font, TickFormatStop, TickMode, Title,
+    Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font,
+    TickFormatStop, TickMode, Title,
 };
 use crate::private::NumOrStringCollection;
 
@@ -63,6 +64,31 @@ pub enum AxisType {
 pub enum AxisConstrain {
     Range,
     Domain,
+}
+
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct ColorAxis {
+    cauto: Option<bool>,
+    cmin: Option<f64>,
+    cmax: Option<f64>,
+    cmid: Option<f64>,
+    #[serde(rename = "colorscale")]
+    color_scale: Option<ColorScale>,
+    #[serde(rename = "autocolorscale")]
+    auto_color_scale: Option<bool>,
+    #[serde(rename = "reversescale")]
+    reverse_scale: Option<bool>,
+    #[serde(rename = "showscale")]
+    show_scale: Option<bool>,
+    #[serde(rename = "colorbar")]
+    color_bar: Option<ColorBar>,
+}
+
+impl ColorAxis {
+    pub fn new() -> Self {
+        Default::default()
+    }
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -419,6 +445,18 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
+    use crate::common::ColorScalePalette;
+
+    #[test]
+    #[rustfmt::skip]
+    fn serialize_axis_type() {
+        assert_eq!(to_value(AxisType::Default).unwrap(), json!("-"));
+        assert_eq!(to_value(AxisType::Linear).unwrap(), json!("linear"));
+        assert_eq!(to_value(AxisType::Log).unwrap(), json!("log"));
+        assert_eq!(to_value(AxisType::Date).unwrap(), json!("date"));
+        assert_eq!(to_value(AxisType::Category).unwrap(), json!("category"));
+        assert_eq!(to_value(AxisType::MultiCategory).unwrap(), json!("multicategory"));
+    }
 
     #[test]
     #[rustfmt::skip]
@@ -439,6 +477,59 @@ mod tests {
     fn serialize_ticks_position() {
         assert_eq!(to_value(TicksPosition::Labels).unwrap(), json!("labels"));
         assert_eq!(to_value(TicksPosition::Boundaries).unwrap(), json!("boundaries"));
+    }
+
+    #[test]
+    fn serialize_axis_constrain() {
+        assert_eq!(to_value(AxisConstrain::Range).unwrap(), json!("range"));
+        assert_eq!(to_value(AxisConstrain::Domain).unwrap(), json!("domain"));
+    }
+
+    #[test]
+    fn serialize_array_show() {
+        assert_eq!(to_value(ArrayShow::All).unwrap(), json!("all"));
+        assert_eq!(to_value(ArrayShow::First).unwrap(), json!("first"));
+        assert_eq!(to_value(ArrayShow::Last).unwrap(), json!("last"));
+        assert_eq!(to_value(ArrayShow::None).unwrap(), json!("none"));
+    }
+
+    #[test]
+    fn serialize_color_axis() {
+        let color_axis = ColorAxis::new()
+            .auto_color_scale(false)
+            .cauto(true)
+            .cmax(1.0)
+            .cmid(0.5)
+            .cmin(0.0)
+            .color_bar(ColorBar::new())
+            .color_scale(ColorScale::Palette(ColorScalePalette::Greens))
+            .reverse_scale(false)
+            .show_scale(true);
+
+        let expected = json!({
+            "autocolorscale": false,
+            "cauto": true,
+            "cmin": 0.0,
+            "cmid": 0.5,
+            "cmax": 1.0,
+            "colorbar": {},
+            "colorscale": "Greens",
+            "reversescale": false,
+            "showscale": true,
+        });
+
+        assert_eq!(to_value(color_axis).unwrap(), expected);
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn serialize_constrain_direction() {
+        assert_eq!(to_value(ConstrainDirection::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(ConstrainDirection::Center).unwrap(), json!("center"));
+        assert_eq!(to_value(ConstrainDirection::Right).unwrap(), json!("right"));
+        assert_eq!(to_value(ConstrainDirection::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(ConstrainDirection::Middle).unwrap(), json!("middle"));
+        assert_eq!(to_value(ConstrainDirection::Bottom).unwrap(), json!("bottom"));
     }
 
     #[test]
