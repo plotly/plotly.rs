@@ -15,7 +15,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:two_y_axes}}
 ```
 
-{{#include ../../../../../examples/subplots/out/two_y_axes.html}}
+{{#include ../../../../../examples/subplots/output/inline_two_y_axes.html}}
 
 
 ## Multiple Axes
@@ -23,4 +23,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:multiple_axes}}
 ```
 
-{{#include ../../../../../examples/subplots/out/multiple_axes.html}}
+{{#include ../../../../../examples/subplots/output/inline_multiple_axes.html}}

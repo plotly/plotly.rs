@@ -19,4 +19,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/3d_charts/src/main.rs:simple_scatter3d_plot}}
 ```
 
-{{#include ../../../../../examples/3d_charts/out/simple_scatter3d_plot.html}}
+{{#include ../../../../../examples/3d_charts/output/inline_simple_scatter3d_plot.html}}

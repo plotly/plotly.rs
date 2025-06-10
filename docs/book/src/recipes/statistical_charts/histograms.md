@@ -21,7 +21,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:basic_histogram}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/basic_histogram.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_basic_histogram.html}}
 
 
 ## Horizontal Histogram
@@ -29,14 +29,14 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:horizontal_histogram}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/horizontal_histogram.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_horizontal_histogram.html}}
 
 ## Overlaid Histogram
 ```rust,no_run
 {{#include ../../../../../examples/statistical_charts/src/main.rs:overlaid_histogram}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/overlaid_histogram.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_overlaid_histogram.html}}
 
 
 ## Stacked Histograms
@@ -44,7 +44,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:stacked_histograms}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/stacked_histograms.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_stacked_histograms.html}}
 
 
 ## Colored and Styled Histograms
@@ -52,7 +52,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:colored_and_styled_histograms}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/colored_and_styled_histograms.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_colored_and_styled_histograms.html}}
 
 
 ## Cumulative Histogram
@@ -60,7 +60,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:cumulative_histogram}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/cumulative_histogram.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_cumulative_histogram.html}}
 
 
 ## Normalized Histogram
@@ -68,7 +68,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:normalized_histogram}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/normalized_histogram.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_normalized_histogram.html}}
 
 
 ## Specify Binning Function
@@ -76,4 +76,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:specify_binning_function}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/specify_binning_function.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_specify_binning_function.html}}

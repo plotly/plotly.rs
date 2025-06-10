@@ -16,7 +16,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:simple_subplot}}
 ```
 
-{{#include ../../../../../examples/subplots/out/simple_subplot.html}}
+{{#include ../../../../../examples/subplots/output/inline_simple_subplot.html}}
 
 
 ## Custom Sized Subplot
@@ -24,7 +24,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:custom_sized_subplot}}
 ```
 
-{{#include ../../../../../examples/subplots/out/custom_sized_subplot.html}}
+{{#include ../../../../../examples/subplots/output/inline_custom_sized_subplot.html}}
 
 
 ## Multiple Subplots
@@ -32,7 +32,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:multiple_subplots}}
 ```
 
-{{#include ../../../../../examples/subplots/out/multiple_subplots.html}}
+{{#include ../../../../../examples/subplots/output/inline_multiple_subplots.html}}
 
 
 ## Stacked Subplots
@@ -40,7 +40,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:stacked_subplots}}
 ```
 
-{{#include ../../../../../examples/subplots/out/stacked_subplots.html}}
+{{#include ../../../../../examples/subplots/output/inline_stacked_subplots.html}}
 
 
 ## Stacked Subplots with Shared X Axis
@@ -48,7 +48,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:stacked_subplots_with_shared_x_axis}}
 ```
 
-{{#include ../../../../../examples/subplots/out/stacked_subplots_with_shared_x_axis.html}}
+{{#include ../../../../../examples/subplots/output/inline_stacked_subplots_with_shared_x_axis.html}}
 
 
 ## Multiple Custom Sized Subplots
@@ -56,4 +56,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:multiple_custom_sized_subplots}}
 ```
 
-{{#include ../../../../../examples/subplots/out/multiple_custom_sized_subplots.html}}
+{{#include ../../../../../examples/subplots/output/inline_multiple_custom_sized_subplots.html}}

@@ -20,21 +20,21 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:basic_symmetric_error_bars}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/basic_symmetric_error_bars.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_basic_symmetric_error_bars.html}}
 
 ## Asymmetric Error Bars
 ```rust,no_run
 {{#include ../../../../../examples/statistical_charts/src/main.rs:asymmetric_error_bars}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/asymmetric_error_bars.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_asymmetric_error_bars.html}}
 
 ## Error Bars as a Percentage of the Y Value
 ```rust,no_run
 {{#include ../../../../../examples/statistical_charts/src/main.rs:error_bars_as_a_percentage_of_the_y_value}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/error_bars_as_a_percentage_of_the_y_value.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_error_bars_as_a_percentage_of_the_y_value.html}}
 
 
 ## Asymmetric Error Bars with a Constant Offset
@@ -42,7 +42,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:asymmetric_error_bars_with_a_constant_offset}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/asymmetric_error_bars_with_a_constant_offset.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_asymmetric_error_bars_with_a_constant_offset.html}}
 
 
 ## Horizontal Error Bars
@@ -50,7 +50,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:horizontal_error_bars}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/horizontal_error_bars.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_horizontal_error_bars.html}}
 
 
 ## Bar Chart with Error Bars
@@ -58,7 +58,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:bar_chart_with_error_bars}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/bar_chart_with_error_bars.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_bar_chart_with_error_bars.html}}
 
 
 ## Colored and Styled Error Bars
@@ -66,4 +66,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:colored_and_styled_error_bars}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/colored_and_styled_error_bars.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_colored_and_styled_error_bars.html}}

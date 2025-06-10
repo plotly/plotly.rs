@@ -12,7 +12,7 @@ fn main() {
     let scale = 1.0;
 
     std::fs::create_dir_all("./output").unwrap();
-    let filename = "./output/image".to_string();
+    let filename = "./output/inline_image".to_string();
 
     // The image will be saved to format!("output/image.{image_format}") relative to
     // the current working directory.
