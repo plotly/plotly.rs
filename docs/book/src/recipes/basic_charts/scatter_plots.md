@@ -19,7 +19,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:simple_scatter_plot}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/simple_scatter_plot.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_simple_scatter_plot.html}}
 
 
 ## Line and Scatter Plots
@@ -27,14 +27,14 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:line_and_scatter_plots}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/line_and_scatter_plots.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_line_and_scatter_plots.html}}
 
 ## Bubble Scatter Plots
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:bubble_scatter_plots}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/bubble_scatter_plots.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_bubble_scatter_plots.html}}
 
 
 ## Data Labels Hover
@@ -42,7 +42,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:data_labels_hover}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/data_labels_hover.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_data_labels_hover.html}}
 
 
 ## Data Labels on the Plot
@@ -50,7 +50,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:data_labels_on_the_plot}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/data_labels_on_the_plot.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_data_labels_on_the_plot.html}}
 
 
 ## Colored and Styled Scatter Plot
@@ -58,7 +58,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:colored_and_styled_scatter_plot}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/colored_and_styled_scatter_plot.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_colored_and_styled_scatter_plot.html}}
 
 
 ## Large Data Sets
@@ -66,4 +66,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:large_data_sets}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/large_data_sets.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_large_data_sets.html}}

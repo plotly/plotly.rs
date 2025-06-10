@@ -16,4 +16,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/scientific_charts/src/main.rs:basic_heat_map}}
 ```
 
-{{#include ../../../../../examples/scientific_charts/out/basic_heat_map.html}}
+{{#include ../../../../../examples/scientific_charts/output/inline_basic_heat_map.html}}

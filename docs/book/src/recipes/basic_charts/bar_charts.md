@@ -20,18 +20,18 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:basic_bar_chart}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/basic_bar_chart.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_basic_bar_chart.html}}
 
 ## Grouped Bar Chart
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:grouped_bar_chart}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/grouped_bar_chart.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_grouped_bar_chart.html}}
 
 ## Stacked Bar Chart
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:stacked_bar_chart}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/stacked_bar_chart.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_stacked_bar_chart.html}}

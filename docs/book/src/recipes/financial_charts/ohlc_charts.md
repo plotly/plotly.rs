@@ -18,4 +18,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/financial_charts/src/main.rs:simple_ohlc_chart}}
 ```
 
-{{#include ../../../../../examples/financial_charts/out/simple_ohlc_chart.html}}
+{{#include ../../../../../examples/financial_charts/output/inline_simple_ohlc_chart.html}}

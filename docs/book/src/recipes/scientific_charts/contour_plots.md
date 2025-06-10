@@ -16,7 +16,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/scientific_charts/src/main.rs:simple_contour_plot}}
 ```
 
-{{#include ../../../../../examples/scientific_charts/out/simple_contour_plot.html}}
+{{#include ../../../../../examples/scientific_charts/output/inline_simple_contour_plot.html}}
 
 
 ## Colorscale for Contour Plot
@@ -24,7 +24,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/scientific_charts/src/main.rs:colorscale_for_contour_plot}}
 ```
 
-{{#include ../../../../../examples/scientific_charts/out/colorscale_for_contour_plot.html}}
+{{#include ../../../../../examples/scientific_charts/output/inline_colorscale_for_contour_plot.html}}
 
 
 ## Customizing Size and Range of a Contour Plot Contours
@@ -32,7 +32,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/scientific_charts/src/main.rs:customizing_size_and_range_of_a_contour_plots_contours}}
 ```
 
-{{#include ../../../../../examples/scientific_charts/out/customizing_size_and_range_of_a_contour_plots_contours.html}}
+{{#include ../../../../../examples/scientific_charts/output/inline_customizing_size_and_range_of_a_contour_plots_contours.html}}
 
 
 ## Customizing Spacing Between X and Y Ticks
@@ -40,4 +40,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/scientific_charts/src/main.rs:customizing_spacing_between_x_and_y_ticks}}
 ```
 
-{{#include ../../../../../examples/scientific_charts/out/customizing_spacing_between_x_and_y_ticks.html}}
+{{#include ../../../../../examples/scientific_charts/output/inline_customizing_spacing_between_x_and_y_ticks.html}}

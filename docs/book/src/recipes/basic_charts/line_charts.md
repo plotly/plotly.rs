@@ -20,7 +20,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:adding_names_to_line_and_scatter_plot}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/adding_names_to_line_and_scatter_plot.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_adding_names_to_line_and_scatter_plot.html}}
 
 
 ## Line and Scatter Styling
@@ -28,32 +28,32 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/src/main.rs:line_and_scatter_styling}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/line_and_scatter_styling.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_line_and_scatter_styling.html}}
 
 ## Styling Line Plot
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:styling_line_plot}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/styling_line_plot.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_styling_line_plot.html}}
 
 ## Line Shape Options for Interpolation
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:line_shape_options_for_interpolation}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/line_shape_options_for_interpolation.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_line_shape_options_for_interpolation.html}}
 
 ## Line Dash
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:line_dash}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/line_dash.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_line_dash.html}}
 
 ## Filled Lines
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:filled_lines}}
 ```
 
-{{#include ../../../../../examples/basic_charts/out/filled_lines.html}}
+{{#include ../../../../../examples/basic_charts/output/inline_filled_lines.html}}

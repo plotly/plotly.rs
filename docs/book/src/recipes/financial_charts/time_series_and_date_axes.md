@@ -18,7 +18,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/financial_charts/src/main.rs:time_series_plot_with_custom_date_range}}
 ```
 
-{{#include ../../../../../examples/financial_charts/out/time_series_plot_with_custom_date_range.html}}
+{{#include ../../../../../examples/financial_charts/output/inline_time_series_plot_with_custom_date_range.html}}
 
 
 ## Time Series with Range Slider
@@ -26,7 +26,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/financial_charts/src/main.rs:time_series_with_range_slider}}
 ```
 
-{{#include ../../../../../examples/financial_charts/out/time_series_with_range_slider.html}}
+{{#include ../../../../../examples/financial_charts/output/inline_time_series_with_range_slider.html}}
 
 
 ## Time Series with Range Selector Buttons
@@ -34,7 +34,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/financial_charts/src/main.rs:time_series_with_range_selector_buttons}}
 ```
 
-{{#include ../../../../../examples/financial_charts/out/time_series_with_range_selector_buttons.html}}
+{{#include ../../../../../examples/financial_charts/output/inline_time_series_with_range_selector_buttons.html}}
 
 
 ## Customizing Tick Label Formatting by Zoom Level
@@ -42,4 +42,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/financial_charts/src/main.rs:customizing_tick_label_formatting_by_zoom_level}}
 ```
 
-{{#include ../../../../../examples/financial_charts/out/customizing_tick_label_formatting_by_zoom_level.html}}
+{{#include ../../../../../examples/financial_charts/output/inline_customizing_tick_label_formatting_by_zoom_level.html}}

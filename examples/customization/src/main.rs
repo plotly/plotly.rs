@@ -48,7 +48,7 @@ fn multiple_plots_on_same_html_page(show: bool, file_name: &str) {
         .to_html_string();
 
     std::fs::create_dir_all("./output").unwrap();
-    let path = format!("./output/{}.html", file_name);
+    let path = format!("./output/inline_{}.html", file_name);
     let mut file = File::create(&path).unwrap();
     file.write_all(html.as_bytes())
         .expect("failed to write html output");
@@ -132,6 +132,11 @@ fn show_with_default_app(temp_path: &str) {
 
 fn write_example_to_html(plot: &Plot, name: &str) -> String {
     std::fs::create_dir_all("./output").unwrap();
+    // Write inline HTML
+    let html = plot.to_inline_html(Some(&name));
+    let path = format!("./output/inline_{}.html", name);
+    std::fs::write(path, html).unwrap();
+    // Write standalone HTML
     let path = format!("./output/{}.html", name);
     plot.write_html(&path);
     path

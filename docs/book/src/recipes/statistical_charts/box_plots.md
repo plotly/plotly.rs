@@ -21,7 +21,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:basic_box_plot}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/basic_box_plot.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_basic_box_plot.html}}
 
 
 ## Box Plot that Displays the Underlying Data
@@ -29,7 +29,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:box_plot_that_displays_the_underlying_data}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/box_plot_that_displays_the_underlying_data.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_box_plot_that_displays_the_underlying_data.html}}
 
 
 ## Horizontal Box Plot
@@ -37,7 +37,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:horizontal_box_plot}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/horizontal_box_plot.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_horizontal_box_plot.html}}
 
 
 ## Grouped Box Plot
@@ -45,7 +45,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:grouped_box_plot}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/grouped_box_plot.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_grouped_box_plot.html}}
 
 
 ## Box Plot Styling Outliers
@@ -53,7 +53,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:box_plot_styling_outliers}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/box_plot_styling_outliers.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_box_plot_styling_outliers.html}}
 
 
 ## Box Plot Styling Mean and Standard Deviation
@@ -61,7 +61,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:box_plot_styling_mean_and_standard_deviation}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/box_plot_styling_mean_and_standard_deviation.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_box_plot_styling_mean_and_standard_deviation.html}}
 
 
 ## Grouped Horizontal Box Plot
@@ -69,7 +69,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:grouped_horizontal_box_plot}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/grouped_horizontal_box_plot.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_grouped_horizontal_box_plot.html}}
 
 
 ## Fully Styled Box Plot
@@ -77,4 +77,4 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/statistical_charts/src/main.rs:fully_styled_box_plot}}
 ```
 
-{{#include ../../../../../examples/statistical_charts/out/fully_styled_box_plot.html}}
+{{#include ../../../../../examples/statistical_charts/output/inline_fully_styled_box_plot.html}}

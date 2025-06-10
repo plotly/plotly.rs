@@ -102,7 +102,7 @@ jobs:
           ndarray,
           scientific_charts,
           shapes,
-            subplots,
+          subplots,
         ]
     runs-on: ubuntu-latest
     steps:

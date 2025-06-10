@@ -774,6 +774,11 @@ fn svg_paths(show: bool, file_name: &str) {
 
 fn write_example_to_html(plot: &Plot, name: &str) -> String {
     std::fs::create_dir_all("./output").unwrap();
+    // Write inline HTML
+    let html = plot.to_inline_html(Some(&name));
+    let path = format!("./output/inline_{}.html", name);
+    std::fs::write(path, html).unwrap();
+    // Write standalone HTML
     let path = format!("./output/{}.html", name);
     plot.write_html(&path);
     path
@@ -794,9 +799,9 @@ fn main() {
         "lines_positioned_relative_to_the_plot_and_to_the_axes",
     );
 
-    creating_tangent_lines_with_shapes(true, "creating_tangent_lines_with_shapes");
+    creating_tangent_lines_with_shapes(false, "creating_tangent_lines_with_shapes");
 
-    rectangles_positioned_relative_to_the_axes(true, "rectangles_positioned_relative_to_the_axes");
+    rectangles_positioned_relative_to_the_axes(false, "rectangles_positioned_relative_to_the_axes");
 
     rectangle_positioned_relative_to_the_plot_and_to_the_axes(
         false,
