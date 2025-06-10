@@ -388,7 +388,7 @@ fn many_subplots_with_titles(show: bool, file_name: &str) {
 fn write_example_to_html(plot: &Plot, name: &str) -> String {
     std::fs::create_dir_all("./output").unwrap();
     // Write inline HTML
-    let html = plot.to_inline_html(Some(&name));
+    let html = plot.to_inline_html(Some(name));
     let path = format!("./output/inline_{}.html", name);
     std::fs::write(path, html).unwrap();
     // Write standalone HTML
