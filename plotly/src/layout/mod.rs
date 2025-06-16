@@ -30,7 +30,7 @@ pub use self::axis::{
 };
 pub use self::geo::LayoutGeo;
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
-pub use self::legend::{Legend, TraceOrder};
+pub use self::legend::{GroupClick, Legend, TraceOrder};
 pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
     AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
