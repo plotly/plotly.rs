@@ -28,9 +28,8 @@ serde_json = "1.0"
 base64 = "0.22"
 fantoccini = "0.21.5"
 tokio = { version = "1", features = ["full"] }
-askama = { version = "0.14.0", features = ["serde_json"] }
-percent-encoding = "2.3.1"
 anyhow = "1.0.98"
+urlencoding = "2"
 
 [dev-dependencies]
 plotly_static = { path = ".", features = ["download"] }

@@ -1,56 +1,55 @@
+use std::fs::File;
+use std::io::Write;
+use std::path::PathBuf;
+#[cfg(test)]
+use std::println as debug;
+
 use anyhow::{Context, Result};
-use askama::Template;
+#[cfg(not(test))]
+use log::debug;
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
 };
-use std::fs::File;
-use std::io::Write;
-use std::path::PathBuf;
 
-#[cfg(not(test))]
-use log::debug;
+pub(crate) fn html_body(offline: bool) -> String {
+    let offline_js = offline_js_sources();
+    let cdn_js = online_js_cdn();
 
-#[cfg(test)]
-use std::println as debug;
-
-#[derive(Template)]
-#[template(
-    ext = "html",
-    escape = "none",
-    source = r#""
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-        <div>
-            if ({{offline_mode}}) {
-                {{ offline_js }}
-            } else  {
-                {{ cdn_js }}
-            } 
-            <div id="plotly-html-element" hidden></div>
-        </div>
-    </body>
-</html>
-"#
-)]
-#[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-struct ExportHtmlTemplate<'a> {
-    offline_mode: bool,
-    cdn_js: &'a str,
-    offline_js: &'a str,
+    // HTML with embedded script
+    if offline {
+        format!(
+            r#"
+        <!doctype html>
+        <html lang="en">
+            <body>
+                <div>
+                    {offline_js}
+                </div>
+                <div id="plotly-html-element" hidden></div>
+            </body>
+        </html>"#,
+            offline_js = offline_js
+        )
+    } else {
+        format!(
+            r#"
+        <!doctype html>
+        <html lang="en">
+            <body>
+                <div>
+                    {cdn_js}
+                </div>
+                <div id="plotly-html-element" hidden></div>
+            </body>
+        </html>"#,
+            cdn_js = cdn_js
+        )
+    }
 }
 
-pub(crate) fn generate_html_file(offline: bool) -> Result<PathBuf> {
-    let tmpl = ExportHtmlTemplate {
-        cdn_js: &online_js_cdn(),
-        offline_js: &offline_js_sources(),
-        offline_mode: offline,
-    };
-    let html = tmpl.render()?;
+/// Save the html file to a temporary file
+pub(crate) fn to_file(data: &str) -> Result<PathBuf> {
     debug!("Generate plotly html file");
     use std::env;
     // Set up the temp file with a unique filename.
@@ -65,7 +64,7 @@ pub(crate) fn generate_html_file(offline: bool) -> Result<PathBuf> {
         .to_str()
         .context("Failed to convert path to string")?;
     let mut file = File::create(temp_path)?;
-    file.write_all(html.as_bytes())?;
+    file.write_all(data.as_bytes())?;
     file.flush()?;
     Ok(tmp_path)
 }

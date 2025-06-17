@@ -2,7 +2,8 @@
 use serde::Serialize;
 
 /// Image format for static image export.
-/// Redifined from `plotly_static` package to be used when `kaleido` feature is not enabled
+/// Redifined from `plotly_static` package to be used when `kaleido` feature is
+/// not enabled
 #[derive(Debug, Clone, Serialize)]
 pub enum ImageFormat {
     PNG,
