@@ -8,7 +8,6 @@ use rand::{
     rng,
 };
 use serde::Serialize;
-use serde_json::Value;
 
 use crate::{Configuration, Layout};
 
@@ -24,17 +23,6 @@ struct PlotTemplate<'a> {
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
 struct StaticPlotTemplate<'a> {
     plot: &'a Plot,
-    format: ImageFormat,
-    js_scripts: &'a str,
-    width: usize,
-    height: usize,
-}
-
-#[derive(Template)]
-#[template(path = "static_plot2.html", escape = "none")]
-#[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-struct StaticPlotTemplate2<'a> {
-    plot: &'a Value,
     format: ImageFormat,
     js_scripts: &'a str,
     width: usize,
@@ -495,23 +483,6 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
-    #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-    pub fn render_static2(
-        data: &serde_json::Value,
-        format: &ImageFormat,
-        width: usize,
-        height: usize,
-    ) -> String {
-        let tmpl = StaticPlotTemplate2 {
-            plot: &data,
-            format: format.clone(),
-            js_scripts: &Self::js_scripts(),
-            width,
-            height,
-        };
-        tmpl.render().unwrap()
-    }
-
     fn render_inline(&self, plot_div_id: &str) -> String {
         let tmpl = InlinePlotTemplate {
             plot: self,
@@ -530,9 +501,9 @@ impl Plot {
 
     fn offline_js_sources() -> String {
         // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
-        // let local_tex_mml_js = include_str!("../templates/tex-mml-chtml-3.2.0.js");
-        let local_tex_svg_js = include_str!("../templates/tex-svg-3.2.2.js");
-        let local_plotly_js = include_str!("../templates/plotly.min.js");
+        // let local_tex_mml_js = include_str!("../resource/tex-mml-chtml-3.2.0.js");
+        let local_tex_svg_js = include_str!("../resource/tex-svg-3.2.2.js");
+        let local_plotly_js = include_str!("../resource/plotly.min.js");
 
         format!(
             "<script type=\"text/javascript\">{}</script>\n

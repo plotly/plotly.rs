@@ -16,3 +16,5 @@
 
 Other esoteric issues;
  - added `percent-encoding = "2.3.1"` because the SVG, when saved via extracting the data from the src element contains URL-encoded data. I am using that package to decode  the url encodings to text  
+
+ - replaced percent-encoding with urlenconding

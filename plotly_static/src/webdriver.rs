@@ -1,16 +1,16 @@
-use anyhow::Context;
-use anyhow::{anyhow, Result};
-#[cfg(not(test))]
-use log::{debug, error, info, warn};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
-
 #[cfg(test)]
-use std::{println as info, println as warn, println as error, println as debug};
+use std::{println as info, println as error, println as debug};
+
+use anyhow::Context;
+use anyhow::{anyhow, Result};
+#[cfg(not(test))]
+use log::{debug, error, info};
 
 const WEBDRIVER_PATH_ENV: &str = "WEBDRIVER_PATH";
 

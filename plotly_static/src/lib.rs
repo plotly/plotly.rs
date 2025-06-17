@@ -1,19 +1,18 @@
-use anyhow::{anyhow, Context, Result};
-use fantoccini::{wd::Capabilities, ClientBuilder, Locator};
-use serde::Serialize;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use tokio::runtime::Runtime;
-use webdriver::WebDriver;
-
-use base64::{engine::general_purpose, Engine as _};
-
-#[cfg(not(test))]
-use log::{error, info, warn};
-
 #[cfg(test)]
 use std::{println as info, println as warn, println as error};
+
+use anyhow::{anyhow, Context, Result};
+use base64::{engine::general_purpose, Engine as _};
+use fantoccini::{wd::Capabilities, ClientBuilder};
+#[cfg(not(test))]
+use log::{error, info, warn};
+use serde::Serialize;
+use tokio::runtime::Runtime;
+use urlencoding::{encode};
+use webdriver::WebDriver;
 
 #[cfg(feature = "geckodriver")]
 const DRIVER_ARGS: &str =
@@ -54,8 +53,8 @@ impl std::fmt::Display for ImageFormat {
 }
 
 // TODO: how to avoid cyclic dependency on the ImageFormat and the Plot data
-// ideally ImageFormat will be defined in a single place and the `data` field would
-// be just a Plot object which is later serialized to JSON
+// ideally ImageFormat will be defined in a single place and the `data` field
+// would be just a Plot object which is later serialized to JSON
 #[derive(Serialize)]
 struct PlotData<'a> {
     format: ImageFormat,
@@ -196,13 +195,15 @@ impl Staticly {
     }
 
     fn static_export(&mut self, data: &PlotData) -> Result<String> {
-        let file = template::generate_html_file(self.offline_mode)?;
+        // TODO: how to handle saving to file
+        let data_uri = template::html_body(self.offline_mode);
+        let _file = template::to_file(&data_uri);
         Runtime::new()?
-            .block_on(self.extract(&file, data))
+            .block_on(self.extract(&data_uri, data))
             .with_context(|| "Failed to extract static image from browser session")
     }
 
-    async fn extract(&mut self, file_path: &PathBuf, plot: &PlotData<'_>) -> Result<String> {
+    async fn extract(&mut self, data_uri: &str, plot: &PlotData<'_>) -> Result<String> {
         info!("Export static plot using WebDriver");
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
         let webdriver_url = format!("{}:{}", self.webdriver_url, self.webdriver_port,);
@@ -213,11 +214,10 @@ impl Staticly {
             .await
             .with_context(|| "WebDriver session errror")?;
 
-        // client.persist().await?;
-        // dbg!(client.session_id().await?);
-        // Open generate static plotly html file
-        let url = format!("file:{}", file_path.display());
-        client.goto(&url).await?;
+        // URL-encode the HTML
+        let data_uri = format!("data:text/html,{}", encode(data_uri));
+        // Open plotly data uri
+        client.goto(&data_uri).await?;
 
         let js = r#"
             const plot = arguments[0];
@@ -240,12 +240,9 @@ impl Staticly {
             plot.width.try_into()?,
             plot.height.try_into()?,
         ];
-        // dbg!(&args[0]);
-        // dbg!(&args);
         let data = client.execute(js, args).await?;
-        // dbg!(&data);
         // Really ... really guys ...
-        let src = data.as_str().unwrap_or_default();
+        let src = data.as_str().ok_or(anyhow!("Failed to execture Plotly.toImage in browser session"))?;
 
         client.close().await?;
 
@@ -259,12 +256,10 @@ impl Staticly {
     }
 
     fn extract_plain(payload: &str, format: &ImageFormat) -> Result<String> {
-        use percent_encoding::percent_decode;
-
         match payload.split_once(",") {
             Some((type_info, data)) => {
                 Self::extract_type_info(type_info, format);
-                let decoded = percent_decode(data.as_bytes()).decode_utf8()?;
+                let decoded = urlencoding::decode(data)?;
                 Ok(decoded.to_string())
             }
             None => Err(anyhow!("'src' attribute has invalid {format} data")),

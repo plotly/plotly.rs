@@ -29,16 +29,14 @@ pub mod plot;
 pub(crate) mod static_format;
 pub mod traces;
 
-#[cfg(feature = "kaleido")]
-pub use static_format::ImageFormat;
-#[cfg(not(feature = "kaleido"))]
-pub use static_format::ImageFormat;
-
 pub use common::color;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{Plot, Trace};
-
+#[cfg(feature = "kaleido")]
+pub use static_format::ImageFormat;
+#[cfg(not(feature = "kaleido"))]
+pub use static_format::ImageFormat;
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
     box_plot, contour, heat_map, histogram, image, mesh3d, sankey, scatter, scatter3d,
