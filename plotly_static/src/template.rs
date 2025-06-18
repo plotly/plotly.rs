@@ -1,23 +1,24 @@
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
-#[cfg(test)]
-use std::println as debug;
-
 use anyhow::{Context, Result};
-#[cfg(not(test))]
-use log::debug;
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
 };
+
+#[cfg(test)]
+use std::println as debug;
+
+#[cfg(not(test))]
+use log::{debug, log_enabled, Level::Debug};
 
 pub(crate) fn html_body(offline: bool) -> String {
     let offline_js = offline_js_sources();
     let cdn_js = online_js_cdn();
 
     // HTML with embedded script
-    if offline {
+    let html = if offline {
         format!(
             r#"
         <!doctype html>
@@ -45,10 +46,20 @@ pub(crate) fn html_body(offline: bool) -> String {
         </html>"#,
             cdn_js = cdn_js
         )
+    };
+
+    #[cfg(not(test))]
+    if log_enabled!(Debug) {
+        if let Err(e) = to_file(&html) {
+            debug!("Failed to save HTML to file: {}", e);
+        }
     }
+
+    html
 }
 
 /// Save the html file to a temporary file
+#[allow(unused)]
 pub(crate) fn to_file(data: &str) -> Result<PathBuf> {
     debug!("Generate plotly html file");
     use std::env;

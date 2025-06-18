@@ -3,7 +3,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::Duration;
-
 use anyhow::{anyhow, Context, Result};
 use tokio::time::sleep;
 use webdriver_downloader::prelude::*;
@@ -53,6 +52,7 @@ fn user_bin_dir() -> PathBuf {
     }
     PathBuf::from(".")
 }
+
 /// Check if a driver is already installed at the given path from environment
 /// variable
 fn is_webdriver_available(env_var: &str, executable_name: &str) -> bool {
@@ -83,7 +83,7 @@ fn is_webdriver_available(env_var: &str, executable_name: &str) -> bool {
             bin_path.display()
         );
         println!(
-            "cargo:rustc-env=WEBDRIVER_DLD_PATH={}",
+            "cargo:rustc-env=WEBDRIVER_DOWNLOAD_PATH={}",
             bin_dir.to_string_lossy()
         );
         return true;
@@ -200,7 +200,7 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
     }
 
     println!(
-        "cargo:rustc-env=WEBDRIVER_DLD_PATH={}",
+        "cargo:rustc-env=WEBDRIVER_DOWNLOAD_PATH={}",
         webdriver_bin_dir.to_string_lossy()
     );
 
