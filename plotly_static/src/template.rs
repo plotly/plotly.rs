@@ -1,17 +1,16 @@
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
+#[cfg(test)]
+use std::println as debug;
+
 use anyhow::{Context, Result};
+#[cfg(not(test))]
+use log::{debug, log_enabled, Level::Debug};
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
 };
-
-#[cfg(test)]
-use std::println as debug;
-
-#[cfg(not(test))]
-use log::{debug, log_enabled, Level::Debug};
 
 pub(crate) fn html_body(offline: bool) -> String {
     let offline_js = offline_js_sources();
