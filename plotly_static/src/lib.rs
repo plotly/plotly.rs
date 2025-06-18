@@ -204,7 +204,7 @@ impl Staticly {
     }
 
     async fn extract(&mut self, data_uri: &str, plot: &PlotData<'_>) -> Result<String> {
-        info!("Export static plot using WebDriver");
+        info!("Use WebDriver and headless browser to export static plot");
         let cap: Capabilities = serde_json::from_str(DRIVER_ARGS)?;
         let webdriver_url = format!("{}:{}", self.webdriver_url, self.webdriver_port,);
 
