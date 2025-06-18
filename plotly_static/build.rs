@@ -225,7 +225,7 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
 #[cfg(feature = "geckodriver")]
 fn get_firefox_path() -> Result<PathBuf> {
     if let Ok(firefox_path) = env::var(FIREFOX_PATH_ENV) {
-        let path = PathBuf::from(firefox_path);
+        let path = PathBuf::from(firefox_path.clone());
         if path.exists() {
             Ok(path)
         } else {

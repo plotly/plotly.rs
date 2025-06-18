@@ -217,20 +217,64 @@ impl Staticly {
         // Open plotly data uri
         client.goto(&data_uri).await?;
 
-        let js = r#"
-                    const plot = arguments[0];
-                    console.log(plot);
-                    const graph_div = document.getElementById("plotly-html-element");
-                    Plotly.newPlot(graph_div, plot)
-                    const img_element = document.getElementById("plotly-img-element");
-                    const data = Plotly.toImage(graph_div, {
-                        format: arguments[1],
-                        width: arguments[2],
-                        height: arguments[3],
-                }
-            );
-                    return data;
-                "#;
+        let js = r##"
+            const plot = arguments[0];
+            const format = arguments[1];
+            const width = arguments[2];
+            const height = arguments[3];
+            const callback = arguments[arguments.length - 1];
+
+            const graph_div = document.getElementById('plotly-html-element');
+            Plotly.newPlot(graph_div, plot);
+
+            Plotly.toImage(graph_div, {
+                format: format,
+                width: width,
+                height: height,
+            }).then(function(dataUrl) {
+                // Convert px to mm: 1px = 0.264583 mm
+                const mmWidth = width * 0.264583;
+                const mmHeight = height * 0.264583;
+
+                // Create a temporary div for the image
+                const tempDiv = document.createElement('div');
+                tempDiv.style.width = width + 'px';
+                tempDiv.style.height = height + 'px';
+                tempDiv.style.background = 'white';
+                document.body.appendChild(tempDiv);
+
+                // Create and set the image
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                tempDiv.appendChild(img);
+
+                // Generate PDF
+                html2pdf().from(tempDiv).set({
+                    margin: 0,
+                    filename: 'plotly-plot.pdf',
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { scale: 1, backgroundColor: '#fff', useCORS: true },
+                    jsPDF: { unit: 'mm', format: [mmWidth, mmHeight], orientation: mmWidth > mmHeight ? 'landscape' : 'portrait' }
+                }).toPdf().output('datauristring').then(dataUri => {
+                    // Clean up
+                    document.body.removeChild(tempDiv);
+                    // Extract just the base64 data from the PDF data URI
+                    // const base64Data = dataUri.split(',')[1];
+                    // callback(base64Data);
+                    callback(dataUri);
+                }).catch(function(err) {
+                    // Clean up
+                    document.body.removeChild(tempDiv);
+                    console.error('PDF generation error:', err);
+                    callback('ERROR:' + err.toString());
+                });
+            }).catch(function(err) {
+                console.error('Plotly error:', err);
+                callback('ERROR:' + err.toString());
+            });
+        "##;
 
         let args = vec![
             plot.data.clone(),
@@ -238,7 +282,10 @@ impl Staticly {
             plot.width.try_into()?,
             plot.height.try_into()?,
         ];
-        let data = client.execute(js, args).await?;
+        
+        let data = client.execute_async(js, args).await?;
+        dbg!(&data);
+
         // Really ... really guys ...
         let src = data.as_str().ok_or(anyhow!(
             "Failed to execute Plotly.toImage in browser session"
@@ -248,7 +295,7 @@ impl Staticly {
 
         match plot.format {
             ImageFormat::SVG => Self::extract_plain(&src, &plot.format),
-            ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP => {
+            ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP | ImageFormat::PDF => {
                 Self::extract_encoded(&src, &plot.format)
             }
             _ => return Err(anyhow!("Not implemented for {}", plot.format)),

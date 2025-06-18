@@ -21,7 +21,17 @@ pub(crate) fn html_body(offline: bool) -> String {
         format!(
             r#"
         <!doctype html>
+
         <html lang="en">
+        <style>
+            /* Ensures the image has no extra spacing */
+            #plotly-img-element {{
+                display: block;
+                margin: 0;
+                padding: 0;
+                background: white;
+        }}
+        </style>
             <body>
                 <div>
                     {offline_js}
@@ -36,6 +46,15 @@ pub(crate) fn html_body(offline: bool) -> String {
             r#"
         <!doctype html>
         <html lang="en">
+        <style>
+            /* Ensures the image has no extra spacing */
+            #plotly-img-element {{
+                display: block;
+                margin: 0;
+                padding: 0;
+                background: white;
+        }}
+        </style>
             <body>
                 <div>
                     {cdn_js}
@@ -107,6 +126,7 @@ fn online_js_cdn() -> String {
                 <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     "##
     .to_string()
 }
