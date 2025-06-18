@@ -18,11 +18,15 @@ const WEBDRIVER_BIN: &str = "chromedriver";
 
 const CHROME_PATH_ENV: &str = "CHROME_PATH";
 const CHROMEDRIVER_PATH_ENV: &str = "CHROMEDRIVER_PATH";
-
 const FIREFOX_PATH_ENV: &str = "FIREFOX_PATH";
 const GECKODRIVER_PATH_ENV: &str = "GECKODRIVER_PATH";
-
 const INSTALL_PATH_ENV: &str = "INSTALL_BIN_PATH";
+
+struct WebdriverDownloadConfig {
+    driver_name: &'static str,
+    path_env: &'static str,
+    get_browser_path: fn() -> Result<PathBuf>,
+}
 
 /// Get user's bin directory for driver installs (e.g., $HOME/.local/bin or %USERPROFILE%\.local\bin)
 /// or set it to the one specified via the ENV variable `INSTALL_BIN_PATH`
@@ -63,117 +67,53 @@ fn is_webdriver_path_set(env_var: &str, executable_name: &str) -> bool {
     false
 }
 
-fn main() -> Result<()> {
-    if cfg!(feature = "download") {
-        println!(
-            "cargo::warning={}",
-            "You can specify GECKODRIVER_PATH or CHROMEDRIVER_PATH to an existing installation to avoid downloads."
-        );
-        println!(
+fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
+    if is_webdriver_path_set(config.path_env, config.driver_name) {
+        return Ok(());
+    }
+
+    println!(
         "cargo::warning={}",
-        "You can override browser detection using CHROME_PATH or FIREFOX_PATH environment variables."
+        format!("{} selected but not installed, will be downloaded ... ", config.driver_name)
     );
 
-        println!("cargo:rerun-if-changed=src/lib.rs");
+    let browser_path = (config.get_browser_path)()?;
+    let browser_version = get_browser_version(&browser_path)?;
+    println!("cargo::warning=Browser version detected: {}", browser_version);
 
-        if cfg!(feature = "chromedriver") {
-            if is_webdriver_path_set(CHROMEDRIVER_PATH_ENV, "chromedriver") {
-                return Ok(());
-            } else {
-                println!(
-                    "cargo::warning={}",
-                    "CHROMEDRIVER selected but not installed, will be downloaded ... "
-                );
+    let webdriver_bin_dir = user_bin_dir();
+    println!("cargo::warning=Driver will be installed in: {:?}", webdriver_bin_dir);
 
-                let chrome_path = get_chrome_path()?;
-                let chrome_version = get_browser_version(&chrome_path)?;
-                println!("cargo::warning=Chrome version detected: {}", chrome_version);
+    fs::create_dir_all(&webdriver_bin_dir)?;
+    let webdriver_bin = webdriver_bin_dir.join(WEBDRIVER_BIN);
 
-                println!(
-                    "cargo::warning=Driver will be installed in: {:?}",
-                    user_bin_dir()
-                );
+    println!("cargo::rerun-if-changed={}", webdriver_bin.to_string_lossy());
 
-                let webdriver_bin_dir = user_bin_dir();
-                fs::create_dir_all(&webdriver_bin_dir)?;
-                let webdriver_bin = webdriver_bin_dir.join(WEBDRIVER_BIN);
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .expect("Failed to create Tokio runtime");
 
-                println!(
-                    "cargo::rerun-if-changed={}",
-                    webdriver_bin.to_string_lossy()
-                );
-
-                let driver_info = ChromedriverInfo::new(webdriver_bin.clone(), chrome_path);
-
-                let runtime = tokio::runtime::Builder::new_current_thread()
-                    .enable_all()
-                    .build()
-                    .expect("Failed to create Tokio runtime");
-                runtime
-                    .block_on(async { download(&driver_info, false, true, 1).await })
-                    .unwrap();
-
-                println!(
-                    "cargo:rustc-env=WEBDRIVER_DLD_PATH={}",
-                    webdriver_bin_dir.to_string_lossy()
-                );
-            }
+    match config.driver_name {
+        "chromedriver" => {
+            let driver_info = ChromedriverInfo::new(webdriver_bin.clone(), browser_path);
+            runtime.block_on(async { download(&driver_info, false, true, 1).await })?;
         }
-        if cfg!(feature = "geckodriver") {
-            if is_webdriver_path_set(GECKODRIVER_PATH_ENV, "geckodriver") {
-                return Ok(());
-            } else {
-                println!(
-                    "cargo::warning={}",
-                    "GECKODRIVER selected but not installed, will be downloaded ... "
-                );
-                let firefox_path = get_firefox_path()?;
-                let firefox_version = get_browser_version(&firefox_path)?;
-                println!(
-                    "cargo::warning=Firefox version detected: {}",
-                    firefox_version
-                );
-
-                println!(
-                    "cargo::warning=Driver will be installed in: {:?}",
-                    user_bin_dir()
-                );
-
-                let webdriver_bin_dir = user_bin_dir();
-                fs::create_dir_all(&webdriver_bin_dir)?;
-                let webdriver_bin = webdriver_bin_dir.join(WEBDRIVER_BIN);
-
-                println!(
-                    "cargo::rerun-if-changed={}",
-                    webdriver_bin.to_string_lossy()
-                );
-
-                let driver_info = GeckodriverInfo::new(
-                    webdriver_bin.clone(),
-                    os_specific::geckodriver::default_browser_path()?,
-                );
-
-                let runtime = tokio::runtime::Builder::new_current_thread()
-                    .enable_all()
-                    .build()
-                    .expect("Failed to create Tokio runtime");
-                runtime
-                    .block_on(async { download(&driver_info, false, true, 1).await })
-                    .unwrap();
-
-                println!(
-                    "cargo:rustc-env=WEBDRIVER_DLD_PATH={}",
-                    webdriver_bin_dir.to_string_lossy()
-                );
-            }
+        "geckodriver" => {
+            let driver_info = GeckodriverInfo::new(webdriver_bin.clone(), browser_path);
+            runtime.block_on(async { download(&driver_info, false, true, 1).await })?;
         }
-    } else {
-        let msg = "'download' feature disabled. Please install a GECKODRIVER or CHROMEDRIVER version manually and make the environment variable 'WEBDRIVER_PATH' point to it.".to_string();
-        println!("cargo::warning={msg}");
+        _ => return Err(anyhow!("Unsupported driver type")),
     }
+
+    println!(
+        "cargo:rustc-env=WEBDRIVER_DLD_PATH={}",
+        webdriver_bin_dir.to_string_lossy()
+    );
+
     Ok(())
 }
-
+#[cfg(feature = "geckodriver")]
 fn get_firefox_path() -> Result<PathBuf> {
     if let Ok(firefox_path) = env::var(FIREFOX_PATH_ENV) {
         if Path::new(&firefox_path).exists() {
@@ -191,6 +131,7 @@ fn get_firefox_path() -> Result<PathBuf> {
     }
 }
 
+#[cfg(feature = "chromedriver")]
 fn get_chrome_path() -> Result<PathBuf> {
     if let Ok(chrome_path) = env::var(CHROME_PATH_ENV) {
         if Path::new(&chrome_path).exists() {
@@ -244,3 +185,47 @@ async fn download(
         Ok(())
     }
 }
+
+
+fn main() -> Result<()> {
+    if cfg!(feature = "download") {
+        println!(
+            "cargo::warning={}",
+            format!("You can specify {} or {} to an existing installation to avoid downloads.",
+                GECKODRIVER_PATH_ENV, CHROMEDRIVER_PATH_ENV)
+        );
+        println!(
+            "cargo::warning={}",
+            format!("You can override browser detection using {} or {} environment variables.",
+                CHROME_PATH_ENV, FIREFOX_PATH_ENV)
+        );
+
+        println!("cargo:rerun-if-changed=src/lib.rs");
+
+        #[cfg(feature = "chromedriver")]
+        {
+            let config = WebdriverDownloadConfig {
+                driver_name: WEBDRIVER_BIN,
+                path_env: CHROMEDRIVER_PATH_ENV,
+                get_browser_path: get_chrome_path,
+            };
+            setup_driver(&config)?;
+        }
+
+        #[cfg(feature = "geckodriver")]
+        {
+            let config = WebdriverDownloadConfig {
+                driver_name: WEBDRIVER_BIN,
+                path_env: GECKODRIVER_PATH_ENV,
+                get_browser_path: get_firefox_path,
+            };
+            setup_driver(&config)?;
+        }
+    } else {
+        let msg = format!("'download' feature disabled. Please install a {} or {} version manually and make the environment variable 'WEBDRIVER_PATH' point to it.",
+            GECKODRIVER_PATH_ENV, CHROMEDRIVER_PATH_ENV);
+        println!("cargo::warning={msg}");
+    }
+    Ok(())
+}
+
