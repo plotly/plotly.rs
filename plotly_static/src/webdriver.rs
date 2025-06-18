@@ -15,10 +15,10 @@ use log::{debug, error, info};
 const WEBDRIVER_PATH_ENV: &str = "WEBDRIVER_PATH";
 
 #[cfg(feature = "geckodriver")]
-const WEBDRIVER_APP: &str = "geckodriver";
+const WEBDRIVER_BIN: &str = "geckodriver";
 
 #[cfg(feature = "chromedriver")]
-const WEBDRIVER_APP: &str = "chromedriver";
+const WEBDRIVER_BIN: &str = "chromedriver";
 
 pub(crate) const WEBDRIVER_PORT: u32 = 4444;
 pub(crate) const WEBDRIVER_URL: &str = "http://localhost";
@@ -26,7 +26,6 @@ pub(crate) const WEBDRIVER_URL: &str = "http://localhost";
 #[derive(Debug)]
 struct WdInner {
     webdriver_port: u32,
-    webdriver_url: String,
     driver_path: PathBuf,
     webdriver_process_id: Option<u32>,
 }
@@ -36,7 +35,7 @@ pub struct WebDriver {
 }
 
 impl WebDriver {
-    pub(crate) fn new(port: u32, url: &str) -> Result<Self> {
+    pub(crate) fn new(port: u32) -> Result<Self> {
         use std::env;
 
         let path = match env::var(WEBDRIVER_PATH_ENV) {
@@ -53,12 +52,11 @@ impl WebDriver {
         };
 
         let full_path = Self::full_path(&path)
-            .with_context(|| format!("Failed tu use WebDriver binary at {path}"))?;
+            .with_context(|| format!("Failed to use WebDriver binary at {path}"))?;
 
         Ok(Self {
             inner: Arc::new(Mutex::new(WdInner {
                 webdriver_port: port,
-                webdriver_url: url.to_string(),
                 driver_path: full_path,
                 webdriver_process_id: None,
             })),
@@ -66,7 +64,7 @@ impl WebDriver {
     }
 
     pub(crate) fn spawn_webdriver(&mut self) {
-        info!("Spawning {WEBDRIVER_APP}");
+        info!("Spawning {WEBDRIVER_BIN}");
         let local_self = self.inner.clone();
 
         let _ = thread::spawn(move || {
@@ -91,7 +89,7 @@ impl WebDriver {
                     c
                 }
                 Err(e) => {
-                    error!("Failed to spawn '{WEBDRIVER_APP}': {e}");
+                    error!("Failed to spawn '{WEBDRIVER_BIN}': {e}");
                     return;
                 }
             };
@@ -108,7 +106,7 @@ impl WebDriver {
                     }
                 }
                 Err(e) => {
-                    error!("Failed waiting on '{WEBDRIVER_APP}': {e}");
+                    error!("Failed waiting on '{WEBDRIVER_BIN}': {e}");
                 }
             };
         });
@@ -116,7 +114,7 @@ impl WebDriver {
 
     pub fn stop(&mut self) -> Result<()> {
         if let Some(id) = self.inner.lock().unwrap().webdriver_process_id {
-            info!("Stopping '{WEBDRIVER_APP}'");
+            info!("Stopping '{WEBDRIVER_BIN}'");
             let mut kill = Command::new("kill").arg(id.to_string()).spawn()?;
             kill.wait()?;
         }
@@ -128,7 +126,7 @@ impl WebDriver {
         p = Self::os_binary_path(p)?;
         if !p.exists() {
             Err(anyhow!(
-                "'{WEBDRIVER_APP}' executable not found in provided path: '{}'",
+                "'{WEBDRIVER_BIN}' executable not found in provided path: '{}'",
                 p.display()
             ))
         } else {
@@ -138,10 +136,10 @@ impl WebDriver {
 
     #[cfg(any(target_os = "linux", target_os = "macos"))]
     fn os_binary_path(path: PathBuf) -> Result<PathBuf> {
-        match path.join(WEBDRIVER_APP).canonicalize() {
+        match path.join(WEBDRIVER_BIN).canonicalize() {
             Ok(v) => Ok(v),
             Err(e) => Err(anyhow!(
-                "No {WEBDRIVER_APP} found at '{}': {e}",
+                "No {WEBDRIVER_BIN} found at '{}': {e}",
                 path.display()
             )),
         }
@@ -149,7 +147,7 @@ impl WebDriver {
 
     #[cfg(target_os = "windows")]
     fn os_binary_path(path: PathBuf) -> PathBuf {
-        let app = format!("{WEBDRIVER_APP}.exe");
+        let app = format!("{WEBDRIVER_BIN}.exe");
         path.join(app)
     }
 }
