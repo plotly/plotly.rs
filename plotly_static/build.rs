@@ -1,14 +1,17 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use webdriver_downloader::prelude::*;
+use std::time::Duration;
+use tokio::time::sleep;
 
 #[cfg(target_os = "windows")]
-const CHROMEDRIVER_EXT: &str = ".exe";
+const DRIVER_EXT: &str = ".exe";
 #[cfg(not(target_os = "windows"))]
-const CHROMEDRIVER_EXT: &str = "";
+const DRIVER_EXT: &str = "";
+
 
 #[cfg(feature = "geckodriver")]
 const WEBDRIVER_BIN: &str = "geckodriver";
@@ -21,6 +24,9 @@ const CHROMEDRIVER_PATH_ENV: &str = "CHROMEDRIVER_PATH";
 const FIREFOX_PATH_ENV: &str = "FIREFOX_PATH";
 const GECKODRIVER_PATH_ENV: &str = "GECKODRIVER_PATH";
 const INSTALL_PATH_ENV: &str = "INSTALL_BIN_PATH";
+
+const MAX_DOWNLOAD_RETRIES: u32 = 3;
+const INITIAL_RETRY_DELAY: u64 = 2;
 
 struct WebdriverDownloadConfig {
     driver_name: &'static str,
@@ -46,12 +52,11 @@ fn user_bin_dir() -> PathBuf {
     }
     PathBuf::from(".")
 }
-
 /// Check if a driver is already installed at the given path from environment variable
 fn is_webdriver_path_set(env_var: &str, executable_name: &str) -> bool {
     if let Ok(path) = env::var(env_var) {
         let exe_path = if cfg!(windows) && !path.to_lowercase().ends_with(".exe") {
-            format!("{}{}", path, CHROMEDRIVER_EXT)
+            format!("{}{}", path, DRIVER_EXT)
         } else {
             path
         };
@@ -65,6 +70,42 @@ fn is_webdriver_path_set(env_var: &str, executable_name: &str) -> bool {
         }
     }
     false
+}
+
+async fn download_with_retry(
+    driver_info: &impl WebdriverDownloadInfo,
+    reinstall: bool,
+    skip_verification: bool,
+    num_tries: usize,
+) -> Result<()> {
+    let mut attempts = 0;
+    let mut last_error = None;
+
+    while attempts < MAX_DOWNLOAD_RETRIES {
+        match download(driver_info, reinstall, skip_verification, num_tries).await {
+            Ok(_) => {
+                return Ok(());
+            }
+            Err(e) => {
+                last_error = Some(e);
+                attempts += 1;
+                if attempts < MAX_DOWNLOAD_RETRIES {
+                    let delay = Duration::from_secs(INITIAL_RETRY_DELAY * 2u64.pow(attempts as u32 - 1));
+                    println!(
+                        "cargo:warning=Download attempt {} failed, retrying in {:?}...",
+                        attempts, delay
+                    );
+                    sleep(delay).await;
+                }
+            }
+        }
+    }
+
+    Err(anyhow!(
+        "Failed to download driver after {} attempts: {:?}",
+        MAX_DOWNLOAD_RETRIES,
+        last_error
+    ))
 }
 
 fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
@@ -97,11 +138,11 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
     match config.driver_name {
         "chromedriver" => {
             let driver_info = ChromedriverInfo::new(webdriver_bin.clone(), browser_path);
-            runtime.block_on(async { download(&driver_info, false, true, 1).await })?;
+            runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await })?;
         }
         "geckodriver" => {
             let driver_info = GeckodriverInfo::new(webdriver_bin.clone(), browser_path);
-            runtime.block_on(async { download(&driver_info, false, true, 1).await })?;
+            runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await })?;
         }
         _ => return Err(anyhow!("Unsupported driver type")),
     }
@@ -113,6 +154,7 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
 
     Ok(())
 }
+
 #[cfg(feature = "geckodriver")]
 fn get_firefox_path() -> Result<PathBuf> {
     if let Ok(firefox_path) = env::var(FIREFOX_PATH_ENV) {
@@ -185,7 +227,6 @@ async fn download(
         Ok(())
     }
 }
-
 
 fn main() -> Result<()> {
     if cfg!(feature = "download") {
