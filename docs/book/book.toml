@@ -17,7 +17,6 @@ mathjax-support = true
 additional-css = ["ferris.css"]
 additional-js = ["ferris.js", "plotly.min.js"]
 
-
 [output.html.fold]
 enable = true
 level = 1
