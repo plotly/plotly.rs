@@ -1,14 +1,14 @@
+use anyhow::{anyhow, Result};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
+
 #[cfg(test)]
 use std::{println as info, println as error, println as debug};
 
-use anyhow::Context;
-use anyhow::{anyhow, Result};
 #[cfg(not(test))]
 use log::{debug, error, info};
 
@@ -30,6 +30,7 @@ struct WdInner {
     webdriver_process_id: Option<u32>,
 }
 
+#[derive(Debug)]
 pub struct WebDriver {
     inner: Arc<Mutex<WdInner>>,
 }
@@ -40,7 +41,7 @@ impl WebDriver {
 
         let path = match env::var(WEBDRIVER_PATH_ENV) {
             Ok(runtime_env) => runtime_env,
-            Err(runtime_env_err) => match option_env!("WEBDRIVER_DLD_PATH") {
+            Err(runtime_env_err) => match option_env!("WEBDRIVER_DOWNLOAD_PATH") {
                 Some(compile_time_path) => compile_time_path.to_string(),
                 None => {
                     debug!("{WEBDRIVER_PATH_ENV}: {runtime_env_err}");
@@ -51,8 +52,7 @@ impl WebDriver {
             },
         };
 
-        let full_path = Self::full_path(&path)
-            .with_context(|| format!("Failed to use WebDriver binary at {path}"))?;
+        let full_path = Self::full_path(&path)?;
 
         Ok(Self {
             inner: Arc::new(Mutex::new(WdInner {

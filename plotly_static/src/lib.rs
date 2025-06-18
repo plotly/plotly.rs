@@ -1,18 +1,19 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-#[cfg(test)]
-use std::{println as info, println as warn, println as error};
-
 use anyhow::{anyhow, Context, Result};
 use base64::{engine::general_purpose, Engine as _};
 use fantoccini::{wd::Capabilities, ClientBuilder};
-#[cfg(not(test))]
-use log::{error, info, warn};
 use serde::Serialize;
 use tokio::runtime::Runtime;
 use urlencoding::encode;
 use webdriver::WebDriver;
+
+#[cfg(test)]
+use std::{println as info, println as warn, println as error};
+
+#[cfg(not(test))]
+use log::{error, info, warn};
 
 #[cfg(feature = "geckodriver")]
 const DRIVER_ARGS: &str =
@@ -195,9 +196,7 @@ impl Staticly {
     }
 
     fn static_export(&mut self, data: &PlotData) -> Result<String> {
-        // TODO: how to handle saving to file
         let data_uri = template::html_body(self.offline_mode);
-        let _file = template::to_file(&data_uri);
         Runtime::new()?
             .block_on(self.extract(&data_uri, data))
             .with_context(|| "Failed to extract static image from browser session")
@@ -298,9 +297,14 @@ impl Staticly {
 
 #[cfg(test)]
 mod tests {
+    use env_logger;
     use std::path::PathBuf;
 
     use super::*;
+
+    fn init() {
+        let _ = env_logger::try_init();
+    }
 
     fn create_test_plot() -> serde_json::Value {
         serde_json::to_value(serde_json::json!(
@@ -347,6 +351,7 @@ mod tests {
     #[test]
     // #[ignore]
     fn save_png() {
+        init();
         let test_plot = create_test_plot();
 
         let mut export = StaticlyBuilder::default()
@@ -367,6 +372,7 @@ mod tests {
 
     #[test]
     fn save_jpeg() {
+        init();
         let test_plot = create_test_plot();
         let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
@@ -386,6 +392,7 @@ mod tests {
 
     #[test]
     fn save_jpeg_sequentially() {
+        init();
         let test_plot = create_test_plot();
         let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
@@ -416,6 +423,7 @@ mod tests {
 
     #[test]
     fn save_svg() {
+        init();
         let test_plot = create_test_plot();
         let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
@@ -435,6 +443,7 @@ mod tests {
 
     #[test]
     fn save_webp() {
+        init();
         let test_plot = create_test_plot();
         let mut export = StaticlyBuilder::default()
             .spawn_webdriver(true)
@@ -455,6 +464,7 @@ mod tests {
     #[test]
     #[ignore]
     fn save_pdf() {
+        init();
         let test_plot = create_test_plot();
         let mut k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.pdf");
@@ -470,6 +480,7 @@ mod tests {
     #[test]
     #[ignore]
     fn save_eps() {
+        init();
         let test_plot = create_test_plot();
         let mut k = StaticlyBuilder::default().build().unwrap();
         let dst = PathBuf::from("example.eps");
