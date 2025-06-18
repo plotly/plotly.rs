@@ -59,10 +59,14 @@ pub struct Node {
     hover_template: Option<Dim<String>>,
     label: Option<Vec<String>>,
     line: Option<Line>,
+    /// Sets the padding (in px) between the `nodes`.
     pad: Option<usize>,
+    /// Sets the thickness (in px) of the `nodes`.
     thickness: Option<usize>,
-    x: Option<f64>,
-    y: Option<f64>,
+    /// The normalized horizontal position of the node.
+    x: Option<Vec<f64>>,
+    /// The normalized vertical position of the node.
+    y: Option<Vec<f64>>,
 }
 
 impl Node {
@@ -115,12 +119,12 @@ impl Node {
         self
     }
 
-    pub fn x(mut self, x: f64) -> Self {
+    pub fn x(mut self, x: Vec<f64>) -> Self {
         self.x = Some(x);
         self
     }
 
-    pub fn y(mut self, y: f64) -> Self {
+    pub fn y(mut self, y: Vec<f64>) -> Self {
         self.y = Some(y);
         self
     }
@@ -509,8 +513,8 @@ mod tests {
             .line(Line::new())
             .pad(5)
             .thickness(10)
-            .x(0.5)
-            .y(0.25);
+            .x(vec![0.5])
+            .y(vec![0.25]);
         let expected = json!({
             "color": ["blue"],
             "hoverinfo": "all",
@@ -519,8 +523,8 @@ mod tests {
             "line": {},
             "pad": 5,
             "thickness": 10,
-            "x": 0.5,
-            "y": 0.25
+            "x": [0.5],
+            "y": [0.25]
         });
 
         assert_eq!(to_value(node).unwrap(), expected)
