@@ -11,7 +11,7 @@ use fantoccini::{wd::Capabilities, ClientBuilder};
 use log::{error, info, warn};
 use serde::Serialize;
 use tokio::runtime::Runtime;
-use urlencoding::{encode};
+use urlencoding::encode;
 use webdriver::WebDriver;
 
 #[cfg(feature = "geckodriver")]
@@ -102,7 +102,7 @@ impl StaticlyBuilder {
     }
 
     pub fn build(&self) -> Result<Staticly> {
-        let mut wd = WebDriver::new(self.webdriver_port, &self.webdriver_url)?;
+        let mut wd = WebDriver::new(self.webdriver_port)?;
         if self.spawn_webdriver {
             wd.spawn_webdriver();
         }
@@ -242,7 +242,9 @@ impl Staticly {
         ];
         let data = client.execute(js, args).await?;
         // Really ... really guys ...
-        let src = data.as_str().ok_or(anyhow!("Failed to execture Plotly.toImage in browser session"))?;
+        let src = data.as_str().ok_or(anyhow!(
+            "Failed to execture Plotly.toImage in browser session"
+        ))?;
 
         client.close().await?;
 
