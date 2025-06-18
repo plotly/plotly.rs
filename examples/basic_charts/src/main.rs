@@ -810,6 +810,44 @@ fn basic_sankey_diagram(show: bool, file_name: &str) {
 }
 // ANCHOR_END: basic_sankey_diagram
 
+// ANCHOR: custom_node_sankey_diagram
+fn custom_node_sankey_diagram(show: bool, file_name: &str) {
+    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
+    let trace = Sankey::new()
+        .orientation(Orientation::Horizontal)
+        .arrangement(plotly::sankey::Arrangement::Snap)
+        .node(
+            Node::new()
+                .pad(15)
+                .thickness(30)
+                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
+                .label(vec!["A", "B", "C", "D", "E", "F"])
+                .x(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
+                .y(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
+                .pad(20),
+        )
+        .link(
+            Link::new()
+                .source(vec![0, 0, 1, 2, 5, 4, 3, 5])
+                .target(vec![5, 3, 4, 3, 0, 2, 2, 3])
+                .value(vec![1, 2, 1, 1, 1, 1, 1, 2]),
+        );
+
+    let layout = Layout::new()
+        .title("Define Node Position")
+        .font(Font::new().size(10));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: custom_node_sankey_diagram
+
 // ANCHOR: table_chart
 fn table_chart(show: bool, file_name: &str) {
     let trace = Table::new(
@@ -1006,6 +1044,7 @@ fn main() {
 
     // Sankey Diagrams
     basic_sankey_diagram(false, "basic_sankey_diagram");
+    custom_node_sankey_diagram(false, "custom_node_sankey_diagram");
 
     // Pie Charts
     basic_pie_chart(false, "basic_pie_chart");
