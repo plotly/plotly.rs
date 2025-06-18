@@ -1,14 +1,13 @@
-use anyhow::{anyhow, Result};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::thread;
-
 #[cfg(test)]
 use std::{println as info, println as error, println as debug};
 
+use anyhow::{anyhow, Result};
 #[cfg(not(test))]
 use log::{debug, error, info};
 

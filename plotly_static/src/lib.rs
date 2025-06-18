@@ -1,19 +1,18 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
+#[cfg(test)]
+use std::{println as error, println as info, println as warn};
+
 use anyhow::{anyhow, Context, Result};
 use base64::{engine::general_purpose, Engine as _};
 use fantoccini::{wd::Capabilities, ClientBuilder};
+#[cfg(not(test))]
+use log::{error, info, warn};
 use serde::Serialize;
 use tokio::runtime::Runtime;
 use urlencoding::encode;
 use webdriver::WebDriver;
-
-#[cfg(test)]
-use std::{println as info, println as warn, println as error};
-
-#[cfg(not(test))]
-use log::{error, info, warn};
 
 #[cfg(feature = "geckodriver")]
 const DRIVER_ARGS: &str =
@@ -195,10 +194,10 @@ impl Staticly {
         Ok(data)
     }
 
-    fn static_export(&mut self, data: &PlotData) -> Result<String> {
+    fn static_export(&mut self, plot: &PlotData<'_>) -> Result<String> {
         let data_uri = template::html_body(self.offline_mode);
         Runtime::new()?
-            .block_on(self.extract(&data_uri, data))
+            .block_on(self.extract(&data_uri, plot))
             .with_context(|| "Failed to extract static image from browser session")
     }
 
@@ -219,19 +218,19 @@ impl Staticly {
         client.goto(&data_uri).await?;
 
         let js = r#"
-            const plot = arguments[0];
-            console.log(plot);
-            const graph_div = document.getElementById("plotly-html-element");
-            Plotly.newPlot(graph_div, plot)
-            const img_element = document.getElementById("plotly-img-element");
-            const data = Plotly.toImage(graph_div, {
-                    format: arguments[1],
-                    width: arguments[2],
-                    height: arguments[3],
+                    const plot = arguments[0];
+                    console.log(plot);
+                    const graph_div = document.getElementById("plotly-html-element");
+                    Plotly.newPlot(graph_div, plot)
+                    const img_element = document.getElementById("plotly-img-element");
+                    const data = Plotly.toImage(graph_div, {
+                        format: arguments[1],
+                        width: arguments[2],
+                        height: arguments[3],
                 }
             );
-            return data;
-            "#;
+                    return data;
+                "#;
 
         let args = vec![
             plot.data.clone(),
@@ -242,7 +241,7 @@ impl Staticly {
         let data = client.execute(js, args).await?;
         // Really ... really guys ...
         let src = data.as_str().ok_or(anyhow!(
-            "Failed to execture Plotly.toImage in browser session"
+            "Failed to execute Plotly.toImage in browser session"
         ))?;
 
         client.close().await?;
@@ -297,8 +296,9 @@ impl Staticly {
 
 #[cfg(test)]
 mod tests {
-    use env_logger;
     use std::path::PathBuf;
+
+    use env_logger;
 
     use super::*;
 
@@ -462,13 +462,18 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    // #[ignore]
     fn save_pdf() {
         init();
         let test_plot = create_test_plot();
-        let mut k = StaticlyBuilder::default().build().unwrap();
+        let mut export = StaticlyBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(4450)
+            .build()
+            .unwrap();
         let dst = PathBuf::from("example.pdf");
-        k.write_fig(dst.as_path(), &test_plot, ImageFormat::PDF, 1200, 900, 4.5)
+        export
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::PDF, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
