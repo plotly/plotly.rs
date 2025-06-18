@@ -526,13 +526,10 @@ impl Plot {
     }
 
     fn online_cdn_js() -> String {
-        // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
-        // r##"<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
-        // <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
-        // <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-        // "##
+        // Removed tex-mml-chtml as it conflicts with tex-svg when generating Latex
+        // Titles
         r##"<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
-        <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
         "##
         .to_string()
     }

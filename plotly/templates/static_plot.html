@@ -1,20 +1,22 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-        <div>
-           {{js_scripts}}
 
-            <div id="plotly-html-element" hidden></div>
-            <img id="plotly-img-element"></img>
+<head>
+    <meta charset="utf-8" />
+    {{js_scripts}}
+</head>
 
-            <script type="module">
-                const graph_div = document.getElementById("plotly-html-element");
-                await Plotly.newPlot(graph_div, {{ plot|tojson|safe }});
+<body>
+    <div>
 
-                const img_element = document.getElementById("plotly-img-element");
+        <div id="plotly-html-element" hidden></div>
+        <img id="plotly-img-element"></img>
+
+        <script type="module">
+            const graph_div = document.getElementById("plotly-html-element");
+            await Plotly.newPlot(graph_div, {{ plot| tojson | safe }});
+
+            const img_element = document.getElementById("plotly-img-element");
                 const data_url = await Plotly.toImage(
                     graph_div,
                     {
@@ -24,8 +26,9 @@
                     }
                 );
 
-                img_element.setAttribute("src", data_url);
-            </script>
-        </div>
-    </body>
+            img_element.setAttribute("src", data_url);
+        </script>
+    </div>
+</body>
+
 </html>
