@@ -156,8 +156,10 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
         )
     );
 
-    let browser_path = (config.get_browser_path)()?;
-    let browser_version = get_browser_version(&browser_path)?;
+    let browser_path = (config.get_browser_path)()
+        .with_context(|| format!("Failed to detect browser path for {}", config.driver_name))?;
+    let browser_version = get_browser_version(&browser_path)
+        .with_context(|| format!("Failed to get version for browser at {}", browser_path.display()))?;
     println!(
         "cargo::warning=Browser version detected: {}",
         browser_version
@@ -169,7 +171,8 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
         webdriver_bin_dir
     );
 
-    fs::create_dir_all(&webdriver_bin_dir)?;
+    fs::create_dir_all(&webdriver_bin_dir)
+        .with_context(|| format!("Failed to create directory: {}", webdriver_bin_dir.display()))?;
     let webdriver_bin = webdriver_bin_dir.join(WEBDRIVER_BIN);
 
     println!(
@@ -180,18 +183,20 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()
-        .expect("Failed to create Tokio runtime");
+        .context("Failed to create Tokio runtime")?;
 
     match config.driver_name {
         "chromedriver" => {
             let driver_info = ChromedriverInfo::new(webdriver_bin.clone(), browser_path);
-            runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await })?;
+            runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await })
+                .with_context(|| format!("Failed to download and install {}", config.driver_name))?;
         }
         "geckodriver" => {
             let driver_info = GeckodriverInfo::new(webdriver_bin.clone(), browser_path);
-            runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await })?;
+            runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await })
+                .with_context(|| format!("Failed to download and install {}", config.driver_name))?;
         }
-        _ => return Err(anyhow!("Unsupported driver type")),
+        _ => return Err(anyhow!("Unsupported driver type: {}", config.driver_name)),
     }
 
     println!(
@@ -205,17 +210,20 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
 #[cfg(feature = "geckodriver")]
 fn get_firefox_path() -> Result<PathBuf> {
     if let Ok(firefox_path) = env::var(FIREFOX_PATH_ENV) {
-        if Path::new(&firefox_path).exists() {
-            return Ok(PathBuf::from(firefox_path));
+        let path = PathBuf::from(firefox_path);
+        if path.exists() {
+            Ok(path)
         } else {
             Err(anyhow!("Firefox not found on path: {firefox_path}"))
+                .with_context(|| format!("Please set {} to a valid Firefox installation", FIREFOX_PATH_ENV))
         }
     } else {
         let browser_path = os_specific::geckodriver::default_browser_path()?;
         if browser_path.exists() {
             Ok(browser_path)
         } else {
-            Err(anyhow!("Firefox browser not detected. Use {FIREFOX_PATH_ENV} to point to a valid Firefox installation ..."))
+            Err(anyhow!("Firefox browser not detected"))
+                .with_context(|| format!("Use {} to point to a valid Firefox installation", FIREFOX_PATH_ENV))
         }
     }
 }
@@ -223,10 +231,12 @@ fn get_firefox_path() -> Result<PathBuf> {
 #[cfg(feature = "chromedriver")]
 fn get_chrome_path() -> Result<PathBuf> {
     if let Ok(chrome_path) = env::var(CHROME_PATH_ENV) {
-        if Path::new(&chrome_path).exists() {
-            return Ok(PathBuf::from(chrome_path));
+        let path = PathBuf::from(&chrome_path);
+        if path.exists() {
+            Ok(path)
         } else {
-            Err(anyhow!("Chrome not found on path: {chrome_path}"))
+            Err(anyhow!("Chrome not found on path: {}", chrome_path))
+                .with_context(|| format!("Please set {} to a valid Chrome installation", CHROME_PATH_ENV))
         }
     } else {
         let new_browser_path = os_specific::chromedriver_for_testing::default_browser_path()?;
@@ -236,13 +246,17 @@ fn get_chrome_path() -> Result<PathBuf> {
         } else if old_browser_path.exists() {
             Ok(old_browser_path)
         } else {
-            Err(anyhow!("Chrome browser not detected. Use {CHROME_PATH_ENV} to point to a valid Chrome installation ..."))
+            Err(anyhow!("Chrome browser not detected"))
+                .with_context(|| format!("Use {} to point to a valid Chrome installation", CHROME_PATH_ENV))
         }
     }
 }
 
 fn get_browser_version(path: &PathBuf) -> Result<String> {
-    let output = Command::new(path).arg("--version").output()?;
+    let output = Command::new(path)
+        .arg("--version")
+        .output()
+        .with_context(|| format!("Failed to execute browser at {}", path.display()))?;
     let out_str = String::from_utf8_lossy(&output.stdout);
     out_str
         .split_whitespace()
@@ -252,6 +266,7 @@ fn get_browser_version(path: &PathBuf) -> Result<String> {
             "Failed to get browser version for browser: {}",
             path.display()
         ))
+        .with_context(|| format!("Browser at {} did not return a valid version string", path.display()))
 }
 
 async fn download(
