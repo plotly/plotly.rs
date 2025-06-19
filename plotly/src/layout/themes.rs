@@ -2,7 +2,9 @@ use once_cell::sync::Lazy;
 
 use crate::{
     common::{ColorBar, ColorScale, ColorScaleElement, Font, Label, Title},
-    layout::{Axis, ColorAxis, HoverMode, LayoutColorScale, LayoutTemplate, Template, TicksDirection},
+    layout::{
+        Axis, ColorAxis, HoverMode, LayoutColorScale, LayoutTemplate, Template, TicksDirection,
+    },
 };
 
 pub static DEFAULT: Lazy<Template> = Lazy::new(|| {
@@ -60,8 +62,8 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
         .font(Font::new().color("#2a3f5f"))
         .hover_label(Label::new().align("left"))
         .hover_mode(HoverMode::Closest)
-        .paper_background_color("#ffffff")
-        .plot_background_color("#ffffff")
+        .paper_background_color("#FFFFFF")
+        .plot_background_color("#FFFFFF")
         .title(Title::new().x(0.05))
         .x_axis(
             Axis::new()
@@ -256,11 +258,11 @@ pub static MATPLOTLIB: Lazy<Template> = Lazy::new(|| {
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("Arial").size(26).color("black"))
         .colorway(vec![
-            "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b",
-            "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+            "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+            "#bcbd22", "#17becf",
         ])
-        .paper_background_color("white")
-        .plot_background_color("white")
+        .paper_background_color("#FFFFFF")
+        .plot_background_color("#FFFFFF")
         .hover_label(Label::new().align("left"))
         .hover_mode(HoverMode::Closest)
         .x_axis(
@@ -439,7 +441,8 @@ mod tests {
         plot.set_layout(layout);
         plot.add_trace(Bar::new(vec![0], vec![1]));
 
-        let expected = r##""paper_bgcolor":"#ffffff""##;
+        let expected = r##""paper_bgcolor":"#FFFFFF""##;
+        dbg!(plot.to_json());
         assert!(plot.to_json().contains(expected));
     }
 

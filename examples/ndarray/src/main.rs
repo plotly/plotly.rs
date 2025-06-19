@@ -4,6 +4,7 @@ use ndarray::{Array, Ix1, Ix2};
 use plotly::common::Mode;
 use plotly::ndarray::ArrayTraces;
 use plotly::{Plot, Scatter};
+use plotly_utils::write_example_to_html;
 
 fn single_ndarray_trace(show: bool, file_name: &str) {
     let n: usize = 11;
@@ -71,18 +72,6 @@ fn multiple_ndarray_traces_over_rows(show: bool, file_name: &str) {
     if show {
         plot.show_html(path);
     }
-}
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
 }
 
 fn main() {

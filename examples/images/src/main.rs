@@ -2,6 +2,7 @@
 
 use ndarray::arr2;
 use plotly::{color::Rgb, image::ColorModel, Image, Plot};
+use plotly_utils::write_example_to_html;
 
 fn basic_image(show: bool, file_name: &str) {
     let w = Rgb::new(255, 255, 255);
@@ -100,18 +101,6 @@ fn trace_from_ndarray_rgba(show: bool, file_name: &str) {
     if show {
         plot.show_html(path);
     }
-}
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
 }
 
 fn main() {

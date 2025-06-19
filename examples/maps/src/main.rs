@@ -8,6 +8,7 @@ use plotly::{
     },
     DensityMapbox, Layout, Plot, ScatterGeo, ScatterMapbox,
 };
+use plotly_utils::write_example_to_html;
 
 fn scatter_mapbox(show: bool, file_name: &str) {
     let trace = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
@@ -157,18 +158,6 @@ fn density_mapbox(show: bool, file_name: &str) {
     if show {
         plot.show_html(path);
     }
-}
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
 }
 
 fn main() {
