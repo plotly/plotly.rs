@@ -29,3 +29,4 @@
     - [Subplots](./recipes/subplots.md)
         - [Subplots](./recipes/subplots/subplots.md)
         - [Multiple Axes](./recipes/subplots/multiple_axes.md)
+    - [Themes](./recipes/themes.md)

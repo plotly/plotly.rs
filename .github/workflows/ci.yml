@@ -95,6 +95,7 @@ jobs:
           3d_charts,
           basic_charts,
           custom_controls,
+          customization,
           financial_charts,
           images,
           kaleido,
@@ -103,6 +104,7 @@ jobs:
           scientific_charts,
           shapes,
           subplots,
+          themes,
         ]
     runs-on: ubuntu-latest
     steps:
@@ -140,5 +142,6 @@ jobs:
           cd ${{ github.workspace }}/examples/3d_charts && cargo run
           cd ${{ github.workspace }}/examples/subplots && cargo run
           cd ${{ github.workspace }}/examples/shapes && cargo run
+          cd ${{ github.workspace }}/examples/themes && cargo run
       - name: Build book 
         run: mdbook build docs/book

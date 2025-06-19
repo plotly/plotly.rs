@@ -11,3 +11,5 @@ plotly = { path = "../../plotly", features = [
     "plotly_image",
     "plotly_ndarray",
 ] }
+
+plotly_utils = { path = "../plotly_utils" }

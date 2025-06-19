@@ -7,3 +7,4 @@ edition = "2021"
 [dependencies]
 itertools = "0.10"
 plotly = { path = "../../plotly" }
+plotly_utils = { path = "../plotly_utils" }

@@ -2141,7 +2141,7 @@ mod tests {
             .smoothing(1.0)
             .dash(DashType::Dash)
             .simplify(true)
-            .color("#ffffff")
+            .color("#FFFFFF")
             .cauto(true)
             .cmin(0.0)
             .cmax(1.0)
@@ -2158,7 +2158,7 @@ mod tests {
             "smoothing": 1.0,
             "dash": "dash",
             "simplify": true,
-            "color": "#ffffff",
+            "color": "#FFFFFF",
             "cauto": true,
             "cmin": 0.0,
             "cmax": 1.0,
@@ -2226,12 +2226,12 @@ mod tests {
     #[test]
     #[rustfmt::skip]
     fn serialize_gradient() {
-        let gradient = Gradient::new(GradientType::Horizontal, "#ffffff");
-        let expected = json!({"color": "#ffffff", "type": "horizontal"});
+        let gradient = Gradient::new(GradientType::Horizontal, "#FFFFFF");
+        let expected = json!({"color": "#FFFFFF", "type": "horizontal"});
         assert_eq!(to_value(gradient).unwrap(), expected);
 
-        let gradient = Gradient::new_array(GradientType::Horizontal, vec!["#ffffff"]);
-        let expected = json!({"color": ["#ffffff"], "type": "horizontal"});
+        let gradient = Gradient::new_array(GradientType::Horizontal, vec!["#FFFFFF"]);
+        let expected = json!({"color": ["#FFFFFF"], "type": "horizontal"});
         assert_eq!(to_value(gradient).unwrap(), expected);
     }
 

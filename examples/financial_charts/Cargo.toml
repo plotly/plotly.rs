@@ -7,4 +7,5 @@ edition = "2021"
 [dependencies]
 csv = "1.1"
 plotly = { path = "../../plotly" }
+plotly_utils = { path = "../plotly_utils" }
 serde = "1.0"

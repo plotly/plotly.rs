@@ -9,6 +9,7 @@ use plotly::{
     },
     Bar, HeatMap, Layout, Plot,
 };
+use plotly_utils::write_example_to_html;
 
 /// Display a bar chart with an associated dropdown selector to show different
 /// data.
@@ -116,18 +117,6 @@ fn bar_chart_with_modifiable_bar_mode(show: bool, file_name: &str) {
     }
 }
 // ANCHOR_END: colorscale_plot
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
-}
 
 fn main() {
     // Change false to true on any of these lines to display the example.

@@ -11,6 +11,7 @@ use plotly::{
     layout::{Center, DragMode, Mapbox, MapboxStyle, Margin},
     Configuration, DensityMapbox, Layout, Plot, Scatter, Scatter3D,
 };
+use plotly_utils::write_example_to_html;
 const DEFAULT_HTML_APP_NOT_FOUND: &str = "Could not find default application for HTML files.";
 
 fn density_mapbox_responsive_autofill(show: bool, file_name: &str) {
@@ -128,18 +129,6 @@ fn show_with_default_app(temp_path: &str) {
         .args(&["/C", "start", &format!(r#"{}"#, temp_path)])
         .spawn()
         .expect(DEFAULT_HTML_APP_NOT_FOUND);
-}
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
 }
 
 fn main() {

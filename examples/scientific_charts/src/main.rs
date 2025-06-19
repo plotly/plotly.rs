@@ -5,6 +5,7 @@ use std::f64::consts::PI;
 use plotly::common::{ColorScale, ColorScalePalette, Font};
 use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
+use plotly_utils::write_example_to_html;
 
 // Contour Plots
 // ANCHOR: simple_contour_plot
@@ -175,18 +176,6 @@ fn customized_heat_map(show: bool, file_name: &str) {
     }
 }
 // ANCHOR_END: customized_heat_map
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
-}
 
 fn main() {
     // Change false to true on any of these lines to display the example.

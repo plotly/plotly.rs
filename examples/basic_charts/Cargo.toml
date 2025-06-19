@@ -7,5 +7,6 @@ edition = "2021"
 [dependencies]
 ndarray = "0.16"
 plotly = { path = "../../plotly" }
+plotly_utils = { path = "../plotly_utils" }
 rand = "0.9"
 rand_distr = "0.5"

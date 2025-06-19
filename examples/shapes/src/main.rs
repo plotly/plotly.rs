@@ -9,6 +9,7 @@ use plotly::{
     },
     Bar, Plot, Scatter,
 };
+use plotly_utils::write_example_to_html;
 use rand_distr::{num_traits::Float, Distribution, Normal};
 
 // ANCHOR: filled_area_chart
@@ -771,18 +772,6 @@ fn svg_paths(show: bool, file_name: &str) {
     }
 }
 // ANCHOR_END: svg_paths
-
-fn write_example_to_html(plot: &Plot, name: &str) -> String {
-    std::fs::create_dir_all("./output").unwrap();
-    // Write inline HTML
-    let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
-    std::fs::write(path, html).unwrap();
-    // Write standalone HTML
-    let path = format!("./output/{}.html", name);
-    plot.write_html(&path);
-    path
-}
 
 fn main() {
     // Change false to true on any of these lines to display the example.
