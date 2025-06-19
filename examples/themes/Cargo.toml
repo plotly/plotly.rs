@@ -1,0 +1,10 @@
+[package]
+name = "themes"
+version = "0.1.0"
+authors = ["Andrei Gherghescu andrei-ng@protonmail.com"]
+edition = "2021"
+
+[dependencies]
+ndarray = "0.16"
+csv = "1.1"
+plotly = { path = "../../plotly" }
