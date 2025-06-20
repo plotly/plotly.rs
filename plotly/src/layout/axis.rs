@@ -6,6 +6,7 @@ use crate::common::{
     Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font,
     TickFormatStop, TickMode, Title,
 };
+use crate::layout::RangeBreak;
 use crate::private::NumOrStringCollection;
 
 #[derive(Serialize, Debug, Clone)]
@@ -304,6 +305,8 @@ pub struct Axis {
     r#type: Option<AxisType>,
     #[serde(rename = "autorange")]
     auto_range: Option<bool>,
+    #[serde(rename = "rangebreaks")]
+    range_breaks: Option<Vec<RangeBreak>>,
     #[serde(rename = "rangemode")]
     range_mode: Option<RangeMode>,
     range: Option<NumOrStringCollection>,

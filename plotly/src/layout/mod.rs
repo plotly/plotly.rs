@@ -18,6 +18,7 @@ mod grid;
 mod legend;
 mod mapbox;
 mod modes;
+mod rangebreaks;
 mod scene;
 mod shape;
 
@@ -35,6 +36,7 @@ pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
     AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
 };
+pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
     Camera, CameraCenter, DragMode, DragMode3D, HoverMode, LayoutScene, Projection, ProjectionType,
     Rotation,
