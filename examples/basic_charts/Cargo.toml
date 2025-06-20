@@ -10,3 +10,4 @@ plotly = { path = "../../plotly" }
 plotly_utils = { path = "../plotly_utils" }
 rand = "0.9"
 rand_distr = "0.5"
+csv = "1.3"

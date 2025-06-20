@@ -142,8 +142,8 @@ fn data_labels_hover(show: bool, file_name: &str) {
 
     let layout = Layout::new()
         .title("Data Labels Hover")
-        .x_axis(Axis::new().title("x").range(vec![0.75, 5.25]))
-        .y_axis(Axis::new().title("y").range(vec![0., 8.]));
+        .x_axis(Axis::new().title("x").range(vec![0.75, 5.25].into()))
+        .y_axis(Axis::new().title("y").range(vec![0., 8.].into()));
     plot.set_layout(layout);
 
     let path = write_example_to_html(&plot, file_name);
@@ -172,8 +172,8 @@ fn data_labels_on_the_plot(show: bool, file_name: &str) {
 
     let layout = Layout::new()
         .title("Data Labels on the Plot")
-        .x_axis(Axis::new().range(vec![0.75, 5.25]))
-        .y_axis(Axis::new().range(vec![0., 8.]));
+        .x_axis(Axis::new().range(vec![0.75, 5.25].into()))
+        .y_axis(Axis::new().range(vec![0., 8.].into()));
     plot.set_layout(layout);
 
     let path = write_example_to_html(&plot, file_name);
@@ -482,8 +482,8 @@ fn line_dash(show: bool, file_name: &str) {
                 .trace_order(TraceOrder::Reversed)
                 .font(Font::new().size(16)),
         )
-        .x_axis(Axis::new().range(vec![0.95, 5.05]).auto_range(false))
-        .y_axis(Axis::new().range(vec![0.0, 28.5]).auto_range(false));
+        .x_axis(Axis::new().range(vec![0.95, 5.05].into()).auto_range(false))
+        .y_axis(Axis::new().range(vec![0.0, 28.5].into()).auto_range(false));
     plot.set_layout(layout);
     plot.add_trace(trace1);
     plot.add_trace(trace2);
@@ -564,7 +564,7 @@ fn filled_lines(show: bool, file_name: &str) {
         .x_axis(
             Axis::new()
                 .grid_color(Rgb::new(255, 255, 255))
-                .range(vec![1.0, 10.0])
+                .range(vec![1.0, 10.0].into())
                 .show_grid(true)
                 .show_line(false)
                 .show_tick_labels(true)
@@ -997,6 +997,116 @@ fn grouped_donout_pie_charts(show: bool, file_name: &str) {
 }
 // ANCHOR_END: grouped_donout_pie_charts
 
+// ANCHOR: iris_faceted_plot
+fn iris_faceted_plot(show: bool, file_name: &str) {
+    use std::fs::File;
+    use std::io::BufReader;
+
+    // Read the iris dataset
+    let file = File::open("assets/iris.csv").expect("Failed to open iris.csv");
+    let reader = BufReader::new(file);
+    let mut csv_reader = csv::Reader::from_reader(reader);
+
+    // Parse the data
+    let mut sepal_width = Vec::new();
+    let mut sepal_length = Vec::new();
+    let mut species = Vec::new();
+
+    for result in csv_reader.records() {
+        let record = result.expect("Failed to read CSV record");
+        sepal_width.push(record[1].parse::<f64>().unwrap());
+        sepal_length.push(record[0].parse::<f64>().unwrap());
+        species.push(record[4].to_string());
+    }
+
+    // Create separate traces for each species (faceted plot)
+    let mut traces = Vec::new();
+    let unique_species: Vec<String> = species
+        .iter()
+        .cloned()
+        .collect::<std::collections::HashSet<_>>()
+        .into_iter()
+        .collect();
+
+    for (i, species_name) in unique_species.iter().enumerate() {
+        let mut x = Vec::new();
+        let mut y = Vec::new();
+
+        for (j, s) in species.iter().enumerate() {
+            if s == species_name {
+                x.push(sepal_width[j]);
+                y.push(sepal_length[j]);
+            }
+        }
+
+        let trace = Scatter::new(x, y)
+            .name(species_name)
+            .mode(plotly::common::Mode::Markers)
+            .x_axis(format!("x{}", i + 1))
+            .y_axis(format!("y{}", i + 1));
+        traces.push(trace);
+    }
+
+    let mut plot = Plot::new();
+    for trace in traces {
+        plot.add_trace(trace);
+    }
+
+    // Create layout with subplots (faceted)
+    let mut layout = Layout::new()
+        .title("Iris Dataset - Faceted by Species")
+        .grid(
+            LayoutGrid::new()
+                .rows(1)
+                .columns(3)
+                .pattern(plotly::layout::GridPattern::Independent),
+        );
+
+    // Set x-axis range for all subplots: [None, 4.5]
+    layout = layout
+        .x_axis(
+            Axis::new()
+                .title("sepal_width")
+                .range(vec![None, Some(4.5)].into()),
+        )
+        .x_axis2(
+            Axis::new()
+                .title("sepal_width")
+                .range(vec![None, Some(4.5)].into()),
+        )
+        .x_axis3(
+            Axis::new()
+                .title("sepal_width")
+                .range(vec![None, Some(4.5)].into()),
+        );
+
+    // Set y-axis range for all subplots: [3, None]
+    layout = layout
+        .y_axis(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None].into()),
+        )
+        .y_axis2(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None].into()),
+        )
+        .y_axis3(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None].into()),
+        );
+
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: iris_faceted_plot
+
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -1013,7 +1123,6 @@ fn main() {
     categories_scatter_chart(false, "categories_scatter_chart");
 
     // Line Charts
-
     adding_names_to_line_and_scatter_plot(false, "adding_names_to_line_and_scatter_plot");
     line_and_scatter_styling(false, "line_and_scatter_styling");
     styling_line_plot(false, "styling_line_plot");
@@ -1041,4 +1150,7 @@ fn main() {
     pie_chart_text_control(false, "pie_chart_text_control");
 
     grouped_donout_pie_charts(false, "grouped_donout_pie_charts");
+
+    // Iris Faceted Plot with Partial Axis Ranges
+    iris_faceted_plot(false, "iris_faceted_plot");
 }
