@@ -9,3 +9,6 @@ csv = "1.1"
 plotly = { path = "../../plotly" }
 plotly_utils = { path = "../plotly_utils" }
 serde = "1.0"
+chrono = "0.4"
+rand = "0.8"
+rand_chacha = "0.3"
