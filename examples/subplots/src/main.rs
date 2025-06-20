@@ -386,6 +386,58 @@ fn many_subplots_with_titles(show: bool, file_name: &str) {
 }
 // ANCHOR_END: many_subplots_with_titles
 
+// ANCHOR: subplots_with_multiple_traces
+fn subplots_with_multiple_traces(show: bool, file_name: &str) {
+    // Create multiple traces for the first subplot (left side)
+    let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 11, 12, 13])
+        .name("Line 1")
+        .mode(plotly::common::Mode::LinesMarkers);
+
+    let trace2 = Scatter::new(vec![1, 2, 3, 4], vec![8, 9, 10, 11])
+        .name("Line 2")
+        .mode(plotly::common::Mode::LinesMarkers);
+
+    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 13, 14, 15])
+        .name("Line 3")
+        .mode(plotly::common::Mode::LinesMarkers);
+
+    // Create traces for the second subplot (right side)
+    let trace4 = Scatter::new(vec![1, 2, 3, 4], vec![20, 25, 30, 35])
+        .name("Dots 1")
+        .x_axis("x2")
+        .y_axis("y2")
+        .mode(plotly::common::Mode::Markers);
+
+    let trace5 = Scatter::new(vec![1, 2, 3, 4], vec![15, 20, 25, 30])
+        .name("Dots 2")
+        .x_axis("x2")
+        .y_axis("y2")
+        .mode(plotly::common::Mode::Markers);
+
+    let mut plot = Plot::new();
+    // Add traces to first subplot (default axes)
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+    // Add traces to second subplot (x2, y2 axes)
+    plot.add_trace(trace4);
+    plot.add_trace(trace5);
+
+    let layout = Layout::new().title("Subplots with Multiple Traces").grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: subplots_with_multiple_traces
+
 fn main() {
     // Change false to true on any of these lines to display the example.
     // Subplots
@@ -403,6 +455,9 @@ fn main() {
     multiple_custom_sized_subplots(false, "multiple_custom_sized_subplots");
 
     many_subplots_with_titles(false, "many_subplots_with_titles");
+
+    // Multiple traces in subplots
+    subplots_with_multiple_traces(false, "subplots_with_multiple_traces");
 
     // Multiple Axes
     two_y_axes(false, "two_y_axes");
