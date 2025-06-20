@@ -7,7 +7,100 @@ use crate::common::{
     TickFormatStop, TickMode, Title,
 };
 use crate::layout::RangeBreak;
-use crate::private::NumOrStringCollection;
+use crate::private::{NumOrString, NumOrStringCollection};
+
+#[derive(Serialize, Clone, Debug, PartialEq)]
+pub struct AxisRange(pub Vec<Option<NumOrString>>);
+
+impl AxisRange {
+    /// Create a new axis range with two optional values (min, max)
+    pub fn new(min: Option<NumOrString>, max: Option<NumOrString>) -> Self {
+        Self(vec![min, max])
+    }
+
+    /// Create a range with only a lower bound (min, None)
+    pub fn min_only(min: impl Into<NumOrString>) -> Self {
+        Self(vec![Some(min.into()), None])
+    }
+
+    /// Create a range with only an upper bound (None, max)
+    pub fn max_only(max: impl Into<NumOrString>) -> Self {
+        Self(vec![None, Some(max.into())])
+    }
+
+    /// Create a range with both bounds
+    pub fn both(min: impl Into<NumOrString>, max: impl Into<NumOrString>) -> Self {
+        Self(vec![Some(min.into()), Some(max.into())])
+    }
+}
+
+impl From<Vec<Option<NumOrString>>> for AxisRange {
+    fn from(values: Vec<Option<NumOrString>>) -> Self {
+        Self(values)
+    }
+}
+
+impl From<Vec<NumOrString>> for AxisRange {
+    fn from(values: Vec<NumOrString>) -> Self {
+        Self(values.into_iter().map(Some).collect())
+    }
+}
+
+impl From<Vec<f64>> for AxisRange {
+    fn from(values: Vec<f64>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::F(v)))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<i64>> for AxisRange {
+    fn from(values: Vec<i64>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::I(v)))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<String>> for AxisRange {
+    fn from(values: Vec<String>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::S(v)))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<&str>> for AxisRange {
+    fn from(values: Vec<&str>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::S(v.to_string())))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<Option<f64>>> for AxisRange {
+    fn from(values: Vec<Option<f64>>) -> Self {
+        Self(values.into_iter().map(|v| v.map(NumOrString::F)).collect())
+    }
+}
+
+impl From<Vec<Option<i64>>> for AxisRange {
+    fn from(values: Vec<Option<i64>>) -> Self {
+        Self(values.into_iter().map(|v| v.map(NumOrString::I)).collect())
+    }
+}
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -309,7 +402,7 @@ pub struct Axis {
     range_breaks: Option<Vec<RangeBreak>>,
     #[serde(rename = "rangemode")]
     range_mode: Option<RangeMode>,
-    range: Option<NumOrStringCollection>,
+    range: Option<AxisRange>,
     #[serde(rename = "fixedrange")]
     fixed_range: Option<bool>,
     constrain: Option<AxisConstrain>,
@@ -715,7 +808,7 @@ mod tests {
             .type_(AxisType::Date)
             .auto_range(false)
             .range_mode(RangeMode::NonNegative)
-            .range(vec![2.0])
+            .range(AxisRange::from(vec![2.0]))
             .fixed_range(true)
             .constrain(AxisConstrain::Range)
             .constrain_toward(ConstrainDirection::Middle)
@@ -841,6 +934,50 @@ mod tests {
             "calendar": "coptic",
             "categoryorder": "array",
             "categoryarray": ["Category0", "Category1"]
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_min_only() {
+        let axis = Axis::new().range(AxisRange::min_only(5.0));
+
+        let expected = json!({
+            "range": [5.0, null]
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_max_only() {
+        let axis = Axis::new().range(AxisRange::max_only(10.0));
+
+        let expected = json!({
+            "range": [null, 10.0]
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_both() {
+        let axis = Axis::new().range(AxisRange::both(1.0, 5.0));
+
+        let expected = json!({
+            "range": [1.0, 5.0]
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_with_strings() {
+        let axis = Axis::new().range(AxisRange::min_only("2020-01-01"));
+
+        let expected = json!({
+            "range": ["2020-01-01", null]
         });
 
         assert_eq!(to_value(axis).unwrap(), expected);

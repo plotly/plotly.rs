@@ -52,7 +52,7 @@ fn time_series_plot_with_custom_date_range(show: bool, file_name: &str) {
     plot.add_trace(trace);
 
     let layout = Layout::new()
-        .x_axis(Axis::new().range(vec!["2016-07-01", "2016-12-31"]))
+        .x_axis(Axis::new().range(vec!["2016-07-01", "2016-12-31"].into()))
         .title("Manually Set Date Range");
     plot.set_layout(layout);
 
@@ -343,7 +343,7 @@ fn series_with_gaps_for_weekends_and_holidays(show: bool, file_name: &str) {
         .title("Series with Weekend and Holiday Gaps")
         .x_axis(
             Axis::new()
-                .range(vec!["2015-12-01", "2016-01-15"])
+                .range(vec!["2015-12-01", "2016-01-15"].into())
                 .title("Date"),
         )
         .y_axis(Axis::new().title("Price"));
@@ -378,7 +378,7 @@ fn hiding_weekends_and_holidays_with_rangebreaks(show: bool, file_name: &str) {
         .title("Hide Weekend and Holiday Gaps with rangebreaks")
         .x_axis(
             Axis::new()
-                .range(vec!["2015-12-01", "2016-01-15"])
+                .range(vec!["2015-12-01", "2016-01-15"].into())
                 .title("Date")
                 .range_breaks(vec![
                     plotly::layout::RangeBreak::new()

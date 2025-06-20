@@ -43,8 +43,8 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool, file_na
     plot.add_trace(trace);
 
     let mut layout = Layout::new()
-        .x_axis(Axis::new().range(vec![0.0, 7.0]))
-        .y_axis(Axis::new().range(vec![0.0, 2.5]));
+        .x_axis(Axis::new().range(vec![0.0, 7.0].into()))
+        .y_axis(Axis::new().range(vec![0.0, 2.5].into()));
 
     layout.add_shape(
         Shape::new()
@@ -108,8 +108,8 @@ fn lines_positioned_relative_to_the_plot_and_to_the_axes(show: bool, file_name: 
     plot.add_trace(trace);
 
     let mut layout = Layout::new()
-        .x_axis(Axis::new().range(vec![0.0, 8.0]))
-        .y_axis(Axis::new().range(vec![0.0, 2.]));
+        .x_axis(Axis::new().range(vec![0.0, 8.0].into()))
+        .y_axis(Axis::new().range(vec![0.0, 2.].into()));
 
     layout.add_shape(
         Shape::new()
@@ -212,8 +212,8 @@ fn rectangles_positioned_relative_to_the_axes(show: bool, file_name: &str) {
     plot.add_trace(trace);
 
     let mut layout = Layout::new()
-        .x_axis(Axis::new().range(vec![0.0, 7.0]).show_grid(false))
-        .y_axis(Axis::new().range(vec![0.0, 3.5]));
+        .x_axis(Axis::new().range(vec![0.0, 7.0].into()).show_grid(false))
+        .y_axis(Axis::new().range(vec![0.0, 3.5].into()));
 
     layout.add_shape(
         Shape::new()
@@ -262,8 +262,8 @@ fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool, file_na
     plot.add_trace(trace);
 
     let mut layout = Layout::new()
-        .x_axis(Axis::new().range(vec![0.0, 4.0]).show_grid(false))
-        .y_axis(Axis::new().range(vec![0.0, 4.0]));
+        .x_axis(Axis::new().range(vec![0.0, 4.0].into()).show_grid(false))
+        .y_axis(Axis::new().range(vec![0.0, 4.0].into()));
 
     layout.add_shape(
         Shape::new()
@@ -392,8 +392,8 @@ fn circles_positioned_relative_to_the_axes(show: bool, file_name: &str) {
     plot.add_trace(trace);
 
     let mut layout = Layout::new()
-        .x_axis(Axis::new().range(vec![0.0, 4.5]).zero_line(false))
-        .y_axis(Axis::new().range(vec![0.0, 4.5]))
+        .x_axis(Axis::new().range(vec![0.0, 4.5].into()).zero_line(false))
+        .y_axis(Axis::new().range(vec![0.0, 4.5].into()))
         .width(800)
         .height(800);
 
@@ -728,13 +728,13 @@ fn svg_paths(show: bool, file_name: &str) {
         .x_axis(
             Axis::new()
                 .domain(&[0.05, 0.95])
-                .range(vec![0., 9.])
+                .range(vec![0., 9.].into())
                 .zero_line(false),
         )
         .y_axis(
             Axis::new()
                 .domain(&[0.05, 0.95])
-                .range(vec![0, 11])
+                .range(vec![0, 11].into())
                 .zero_line(false),
         );
     layout.add_shape(
