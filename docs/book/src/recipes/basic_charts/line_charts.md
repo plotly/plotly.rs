@@ -57,3 +57,12 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 ```
 
 {{#include ../../../../../examples/basic_charts/output/inline_filled_lines.html}}
+
+## Setting Lower or Upper Bounds on Axis
+This example demonstrates how to set partial axis ranges using both the new `AxisRange` API and the backward-compatible vector syntax. The x-axis uses both the new `AxisRange::upper()` method and the traditional `vec![None, Some(value)]` syntax to set only an upper bound, while the y-axis uses only the `vec![Some(value), None]` syntax to set a lower bound.
+
+```rust,no_run
+{{#include ../../../../../examples/basic_charts/src/main.rs:set_lower_or_upper_bound_on_axis}}
+```
+
+{{#include ../../../../../examples/basic_charts/output/inline_set_lower_or_upper_bound_on_axis.html}}

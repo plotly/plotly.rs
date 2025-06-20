@@ -8,8 +8,8 @@ use plotly::{
         Marker, Mode, Orientation, Pattern, PatternShape,
     },
     layout::{
-        Annotation, Axis, BarMode, CategoryOrder, Layout, LayoutGrid, Legend, TicksDirection,
-        TraceOrder,
+        Annotation, Axis, AxisRange, BarMode, CategoryOrder, Layout, LayoutGrid, Legend,
+        TicksDirection, TraceOrder,
     },
     sankey::{Line as SankeyLine, Link, Node},
     traces::table::{Cells, Header},
@@ -997,6 +997,119 @@ fn grouped_donout_pie_charts(show: bool, file_name: &str) {
 }
 // ANCHOR_END: grouped_donout_pie_charts
 
+// ANCHOR: set_lower_or_upper_bound_on_axis
+fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &str) {
+    use std::fs::File;
+    use std::io::BufReader;
+
+    // Read the iris dataset
+    let file = File::open("assets/iris.csv").expect("Failed to open iris.csv");
+    let reader = BufReader::new(file);
+    let mut csv_reader = csv::Reader::from_reader(reader);
+
+    // Parse the data
+    let mut sepal_width = Vec::new();
+    let mut sepal_length = Vec::new();
+    let mut species = Vec::new();
+
+    for result in csv_reader.records() {
+        let record = result.expect("Failed to read CSV record");
+        sepal_width.push(record[1].parse::<f64>().unwrap());
+        sepal_length.push(record[0].parse::<f64>().unwrap());
+        species.push(record[4].to_string());
+    }
+
+    // Create separate traces for each species
+    let mut traces = Vec::new();
+    let unique_species: Vec<String> = species
+        .iter()
+        .cloned()
+        .collect::<std::collections::HashSet<_>>()
+        .into_iter()
+        .collect();
+
+    for (i, species_name) in unique_species.iter().enumerate() {
+        let mut x = Vec::new();
+        let mut y = Vec::new();
+
+        for (j, s) in species.iter().enumerate() {
+            if s == species_name {
+                x.push(sepal_width[j]);
+                y.push(sepal_length[j]);
+            }
+        }
+
+        let trace = Scatter::new(x, y)
+            .name(species_name)
+            .mode(plotly::common::Mode::Markers)
+            .x_axis(format!("x{}", i + 1))
+            .y_axis(format!("y{}", i + 1));
+        traces.push(trace);
+    }
+
+    let mut plot = Plot::new();
+    for trace in traces {
+        plot.add_trace(trace);
+    }
+
+    // Create layout with subplots
+    let mut layout = Layout::new()
+        .title("Iris Dataset - Subplots by Species")
+        .grid(
+            LayoutGrid::new()
+                .rows(1)
+                .columns(3)
+                .pattern(plotly::layout::GridPattern::Independent),
+        );
+
+    // Set x-axis range for all subplots: [None, 4.5]
+    layout = layout
+        .x_axis(
+            Axis::new()
+                .title("sepal_width")
+                // Can be set using a vec! of two optional values
+                .range(vec![None, Some(4.5)]),
+        )
+        .x_axis2(
+            Axis::new()
+                .title("sepal_width")
+                // Or can be set using AxisRange::upper(4.5)
+                .range(AxisRange::upper(4.5)),
+        )
+        .x_axis3(
+            Axis::new()
+                .title("sepal_width")
+                // Or can be set using AxisRange::upper(4.5)
+                .range(AxisRange::upper(4.5)),
+        );
+
+    // Set y-axis range for all subplots: [3, None]
+    layout = layout
+        .y_axis(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        )
+        .y_axis2(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        )
+        .y_axis3(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        );
+
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: set_lower_or_upper_bound_on_axis
+
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -1013,7 +1126,6 @@ fn main() {
     categories_scatter_chart(false, "categories_scatter_chart");
 
     // Line Charts
-
     adding_names_to_line_and_scatter_plot(false, "adding_names_to_line_and_scatter_plot");
     line_and_scatter_styling(false, "line_and_scatter_styling");
     styling_line_plot(false, "styling_line_plot");
@@ -1041,4 +1153,7 @@ fn main() {
     pie_chart_text_control(false, "pie_chart_text_control");
 
     grouped_donout_pie_charts(false, "grouped_donout_pie_charts");
+
+    // Set Lower or Upper Bound on Axis
+    set_lower_or_upper_bound_on_axis(false, "set_lower_or_upper_bound_on_axis");
 }
