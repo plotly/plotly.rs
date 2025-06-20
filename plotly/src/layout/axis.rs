@@ -7,7 +7,108 @@ use crate::common::{
     TickFormatStop, TickMode, Title,
 };
 use crate::layout::RangeBreak;
-use crate::private::NumOrStringCollection;
+use crate::private::{NumOrString, NumOrStringCollection};
+
+#[derive(Serialize, Clone, Debug, PartialEq)]
+pub struct AxisRange(pub Vec<Option<NumOrString>>);
+
+impl AxisRange {
+    /// Create a new axis range with both upper and lower values (min, max)
+    pub fn new(min: impl Into<NumOrString>, max: impl Into<NumOrString>) -> Self {
+        Self(vec![Some(min.into()), Some(max.into())])
+    }
+
+    /// Create a range with only a lower bound, the upper bound is not set:
+    /// (min, None)
+    pub fn lower(min: impl Into<NumOrString>) -> Self {
+        Self(vec![Some(min.into()), None])
+    }
+
+    /// Create a range with only an upper bound, the lower bound is not set:
+    /// (None, max)
+    pub fn upper(max: impl Into<NumOrString>) -> Self {
+        Self(vec![None, Some(max.into())])
+    }
+}
+
+impl From<Vec<Option<NumOrString>>> for AxisRange {
+    fn from(values: Vec<Option<NumOrString>>) -> Self {
+        Self(values)
+    }
+}
+
+impl From<Vec<NumOrString>> for AxisRange {
+    fn from(values: Vec<NumOrString>) -> Self {
+        Self(values.into_iter().map(Some).collect())
+    }
+}
+
+impl From<Vec<f64>> for AxisRange {
+    fn from(values: Vec<f64>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::F(v)))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<i64>> for AxisRange {
+    fn from(values: Vec<i64>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::I(v)))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<String>> for AxisRange {
+    fn from(values: Vec<String>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::S(v)))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<&str>> for AxisRange {
+    fn from(values: Vec<&str>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| Some(NumOrString::S(v.to_string())))
+                .collect(),
+        )
+    }
+}
+
+impl From<Vec<Option<f64>>> for AxisRange {
+    fn from(values: Vec<Option<f64>>) -> Self {
+        Self(values.into_iter().map(|v| v.map(NumOrString::F)).collect())
+    }
+}
+
+impl From<Vec<Option<i64>>> for AxisRange {
+    fn from(values: Vec<Option<i64>>) -> Self {
+        Self(values.into_iter().map(|v| v.map(NumOrString::I)).collect())
+    }
+}
+
+impl From<Vec<Option<&str>>> for AxisRange {
+    fn from(values: Vec<Option<&str>>) -> Self {
+        Self(
+            values
+                .into_iter()
+                .map(|v| v.map(|s| NumOrString::S(s.to_string())))
+                .collect(),
+        )
+    }
+}
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -309,7 +410,9 @@ pub struct Axis {
     range_breaks: Option<Vec<RangeBreak>>,
     #[serde(rename = "rangemode")]
     range_mode: Option<RangeMode>,
-    range: Option<NumOrStringCollection>,
+    /// Set the range of the axis.
+    #[field_setter(skip)]
+    range: Option<AxisRange>,
     #[serde(rename = "fixedrange")]
     fixed_range: Option<bool>,
     constrain: Option<AxisConstrain>,
@@ -439,6 +542,14 @@ impl Axis {
 
     pub fn domain(mut self, domain: &[f64]) -> Self {
         self.domain = Some(domain.to_vec());
+        self
+    }
+
+    /// Set the range of the axis. This method accepts various types and
+    /// converts them to `AxisRange` while also keeping backward compatibility
+    /// with API prior to AxisRange introduction.
+    pub fn range(mut self, range: impl Into<AxisRange>) -> Self {
+        self.range = Some(range.into());
         self
     }
 }
@@ -843,6 +954,60 @@ mod tests {
             "categoryarray": ["Category0", "Category1"]
         });
 
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_lower_only() {
+        let axis = Axis::new().range(AxisRange::lower(5.0));
+        let expected = json!({ "range": [5.0, null] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+
+        let axis = Axis::new().range(vec![Some(5.0), None]);
+        let expected = json!({ "range": [5.0, null] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_upper_only() {
+        let axis = Axis::new().range(AxisRange::upper(10.0));
+        let expected = json!({ "range": [null, 10.0] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+
+        let axis = Axis::new().range(vec![None, Some(10.0)]);
+        let expected = json!({ "range": [null, 10.0] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_both() {
+        let axis = Axis::new().range(AxisRange::new(1.0, 5.0));
+        let expected = json!({ "range": [1.0, 5.0] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+
+        let axis = Axis::new().range(vec![Some(1.0), Some(5.0)]);
+        let expected = json!({ "range": [1.0, 5.0] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+
+        // Backward compatible range() setter version with both ends
+        let axis = Axis::new().range(vec![1.0, 5.0]);
+        let expected = json!({ "range": [1.0, 5.0] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_range_with_strings() {
+        let axis = Axis::new().range(AxisRange::lower("2020-01-01"));
+        let expected = json!({ "range": ["2020-01-01", null] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+
+        let axis = Axis::new().range(vec![Some("2020-01-01"), None]);
+        let expected = json!({ "range": ["2020-01-01", null] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+
+        // Backward compatible range() setter version with both ends
+        let axis = Axis::new().range(vec!["2020-01-01", "2020-01-02"]);
+        let expected = json!({ "range": ["2020-01-01", "2020-01-02"] });
         assert_eq!(to_value(axis).unwrap(), expected);
     }
 }

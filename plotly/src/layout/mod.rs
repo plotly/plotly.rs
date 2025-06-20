@@ -25,9 +25,9 @@ mod shape;
 // Re-export layout sub-module types
 pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
 pub use self::axis::{
-    ArrayShow, Axis, AxisConstrain, AxisType, CategoryOrder, ColorAxis, ConstrainDirection,
-    RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton, SelectorStep,
-    SliderRangeMode, SpikeMode, SpikeSnap, StepMode, TicksDirection, TicksPosition,
+    ArrayShow, Axis, AxisConstrain, AxisRange, AxisType, CategoryOrder, ColorAxis,
+    ConstrainDirection, RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton,
+    SelectorStep, SliderRangeMode, SpikeMode, SpikeSnap, StepMode, TicksDirection, TicksPosition,
 };
 pub use self::geo::LayoutGeo;
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
