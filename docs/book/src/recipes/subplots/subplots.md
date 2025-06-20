@@ -19,6 +19,14 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/output/inline_simple_subplot.html}}
 
 
+## Subplots with Multiple Traces
+```rust,no_run
+{{#include ../../../../../examples/subplots/src/main.rs:subplots_with_multiple_traces}}
+```
+
+{{#include ../../../../../examples/subplots/output/inline_subplot_with_multiple_traces.html}}
+
+
 ## Custom Sized Subplot
 ```rust,no_run
 {{#include ../../../../../examples/subplots/src/main.rs:custom_sized_subplot}}
