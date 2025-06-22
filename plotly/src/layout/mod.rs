@@ -27,19 +27,19 @@ pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
 pub use self::axis::{
     ArrayShow, Axis, AxisConstrain, AxisType, CategoryOrder, ColorAxis, ConstrainDirection,
     RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton, SelectorStep,
-    SliderRangeMode, StepMode, TicksDirection, TicksPosition,
+    SliderRangeMode, SpikeMode, SpikeSnap, StepMode, TicksDirection, TicksPosition,
 };
 pub use self::geo::LayoutGeo;
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
-pub use self::legend::{GroupClick, Legend, TraceOrder};
+pub use self::legend::{GroupClick, ItemClick, ItemSizing, Legend, TraceOrder};
 pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
     AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
 };
 pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
-    Camera, CameraCenter, DragMode, DragMode3D, HoverMode, LayoutScene, Projection, ProjectionType,
-    Rotation,
+    AspectRatio, Camera, CameraCenter, DragMode, DragMode3D, Eye, HoverMode, LayoutScene,
+    Projection, ProjectionType, Rotation, Up,
 };
 pub use self::shape::{
     ActiveShape, DrawDirection, FillRule, NewShape, Shape, ShapeLayer, ShapeLine, ShapeSizeMode,
