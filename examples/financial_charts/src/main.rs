@@ -471,7 +471,7 @@ fn hiding_non_business_hours_with_rangebreaks(show: bool, file_name: &str) {
                 .tick_format("%b %d, %Y %H:%M")
                 .range_breaks(vec![
                     plotly::layout::RangeBreak::new()
-                        .bounds("17", "9")
+                        .bounds(17, 9)
                         .pattern("hour"), // hide hours outside of 9am-5pm
                 ]),
         )
