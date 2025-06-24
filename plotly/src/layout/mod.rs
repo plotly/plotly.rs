@@ -21,6 +21,7 @@ mod modes;
 mod rangebreaks;
 mod scene;
 mod shape;
+mod slider;
 
 // Re-export layout sub-module types
 pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
@@ -45,6 +46,44 @@ pub use self::shape::{
     ActiveShape, DrawDirection, FillRule, NewShape, Shape, ShapeLayer, ShapeLine, ShapeSizeMode,
     ShapeType,
 };
+pub use self::slider::{
+    Slider, SliderCurrentValue, SliderCurrentValueXAnchor, SliderMethod, SliderStep,
+    SliderStepBuilder, SliderTransition, SliderTransitionEasing,
+};
+
+/// Error type for ControlBuilder operations
+#[derive(Debug)]
+pub enum ControlBuilderError {
+    RestyleSerializationError(String),
+    RelayoutSerializationError(String),
+    ValueSerializationError(String),
+    InvalidRestyleObject(String),
+    InvalidRelayoutObject(String),
+}
+
+impl std::fmt::Display for ControlBuilderError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ControlBuilderError::RestyleSerializationError(e) => {
+                write!(f, "Failed to serialize restyle: {}", e)
+            }
+            ControlBuilderError::RelayoutSerializationError(e) => {
+                write!(f, "Failed to serialize relayout: {}", e)
+            }
+            ControlBuilderError::ValueSerializationError(e) => {
+                write!(f, "Failed to serialize value: {}", e)
+            }
+            ControlBuilderError::InvalidRestyleObject(s) => {
+                write!(f, "Invalid restyle object: expected object but got {}", s)
+            }
+            ControlBuilderError::InvalidRelayoutObject(s) => {
+                write!(f, "Invalid relayout object: expected object but got {}", s)
+            }
+        }
+    }
+}
+
+impl std::error::Error for ControlBuilderError {}
 
 #[derive(Serialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -326,6 +365,7 @@ pub struct LayoutFields {
     mapbox: Option<Mapbox>,
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
+    sliders: Option<Vec<Slider>>,
 }
 
 #[cfg(test)]
@@ -491,7 +531,8 @@ mod tests {
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
             .mapbox(Mapbox::new())
-            .update_menus(vec![UpdateMenu::new()]);
+            .update_menus(vec![UpdateMenu::new()])
+            .sliders(vec![Slider::new()]);
 
         let expected = json!({
             "title": {"text": "Title"},
@@ -566,6 +607,7 @@ mod tests {
             "extendsunburstcolors": false,
             "mapbox": {},
             "updatemenus": [{}],
+            "sliders": [{}],
         });
 
         assert_eq!(to_value(layout_template).unwrap(), expected);
