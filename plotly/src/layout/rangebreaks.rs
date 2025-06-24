@@ -48,3 +48,55 @@ impl RangeBreak {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::{json, to_value};
+
+    use super::*;
+
+    #[test]
+    fn serialize_range_break_default() {
+        let range_break = RangeBreak::new();
+
+        let expected = json!({});
+
+        assert_eq!(to_value(range_break).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_range_break() {
+        let range_break = RangeBreak::new()
+            .pattern("day of week")
+            .bounds("sat", "mon")
+            .values(vec!["sat", "sun"])
+            .dvalue(86400000)
+            .enabled(true);
+
+        let expected = json!({
+            "pattern": "day of week",
+            "bounds": ["sat", "mon"],
+            "values": ["sat", "sun"],
+            "dvalue": 86400000,
+            "enabled": true
+        });
+
+        assert_eq!(to_value(range_break).unwrap(), expected);
+    }
+
+    #[test]
+    fn seriealize_range_break_with_mixed_values() {
+        let range_break = RangeBreak::new().values(vec![
+            NumOrString::S("sat".to_string()),
+            NumOrString::I(0),
+            NumOrString::S("sun".to_string()),
+            NumOrString::I(1),
+        ]);
+
+        let expected = json!({
+            "values": ["sat", 0, "sun", 1]
+        });
+
+        assert_eq!(to_value(range_break).unwrap(), expected);
+    }
+}
