@@ -31,3 +31,6 @@
     - [Subplots](./recipes/subplots.md)
         - [Subplots](./recipes/subplots/subplots.md)
         - [Multiple Axes](./recipes/subplots/multiple_axes.md)
+    - [Custom Controls](./recipes/custom_controls.md)
+        - [Dropdowns](./recipes/custom_controls/dropdowns.md)
+        - [Sliders](./recipes/custom_controls/sliders.md)

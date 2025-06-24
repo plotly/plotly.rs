@@ -2552,6 +2552,17 @@ mod tests {
     }
 
     #[test]
+    fn serialize_slider_anchor() {
+        assert_eq!(to_value(Anchor::Auto).unwrap(), json!("auto"));
+        assert_eq!(to_value(Anchor::Left).unwrap(), json!("left"));
+        assert_eq!(to_value(Anchor::Center).unwrap(), json!("center"));
+        assert_eq!(to_value(Anchor::Right).unwrap(), json!("right"));
+        assert_eq!(to_value(Anchor::Top).unwrap(), json!("top"));
+        assert_eq!(to_value(Anchor::Middle).unwrap(), json!("middle"));
+        assert_eq!(to_value(Anchor::Bottom).unwrap(), json!("bottom"));
+    }
+
+    #[test]
     #[allow(clippy::needless_borrows_for_generic_args)]
     fn title_method_can_take_string() {
         ColorBar::new().title("Title");
