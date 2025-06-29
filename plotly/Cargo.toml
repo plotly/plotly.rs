@@ -1,8 +1,11 @@
 [package]
 name = "plotly"
-version = "0.12.1"
+version = "0.13.0"
 description = "A plotting library powered by Plotly.js"
-authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
+authors = [
+    "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
+    "Andrei Gherghescu <andrei-ng@protonmail.com>",
+]
 license = "MIT"
 readme = "../README.md"
 homepage = "https://github.com/plotly/plotly.rs"
@@ -14,8 +17,29 @@ keywords = ["plot", "chart", "plotly"]
 exclude = ["target/*"]
 
 [features]
+# DEPRECATED: kaleido feature will be removed in version 0.14.0. Use `static_export_*` features instead.
 kaleido = ["plotly_kaleido"]
+# DEPRECATED: kaleido_download feature will be removed in version 0.14.0. Use `static_export_wd_download` instead.
 kaleido_download = ["plotly_kaleido/download"]
+
+static_export_chromedriver = ["plotly_static", "plotly_static/chromedriver"]
+static_export_geckodriver = ["plotly_static", "plotly_static/geckodriver"]
+static_export_wd_download = ["plotly_static/webdriver_download"]
+static_export_default = [
+    "plotly_static",
+    "plotly_static/chromedriver",
+    "plotly_static/webdriver_download",
+]
+
+# All non-conflicting features
+all = [
+    "plotly_ndarray",
+    "plotly_image",
+    "plotly_embed_js",
+    "static_export_default",
+]
+# This is used for enabling extra debugging messages and debugging functionality
+debug = ["plotly_static?/debug"]
 
 plotly_ndarray = ["ndarray"]
 plotly_image = ["image"]
@@ -26,8 +50,9 @@ askama = { version = "0.14.0", features = ["serde_json"] }
 dyn-clone = "1"
 erased-serde = "0.4"
 image = { version = "0.25", optional = true }
-plotly_derive = { version = "0.12", path = "../plotly_derive" }
-plotly_kaleido = { version = "0.12", path = "../plotly_kaleido", optional = true }
+plotly_derive = { version = "0.13", path = "../plotly_derive" }
+plotly_static = { version = "0.0.1", path = "../plotly_static", optional = true }
+plotly_kaleido = { version = "0.13", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.16", optional = true }
 once_cell = "1"
 serde = { version = "1.0", features = ["derive"] }
@@ -53,6 +78,6 @@ image = "0.25"
 itertools = ">=0.10, <0.15"
 itertools-num = "0.1"
 ndarray = "0.16"
-plotly_kaleido = { path = "../plotly_kaleido", features = ["download"] }
+plotly_static = { path = "../plotly_static" }
 rand_distr = "0.5"
 base64 = "0.22"

@@ -3,6 +3,10 @@ use std::{fs::File, io::Write, path::Path};
 use askama::Template;
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
+#[cfg(feature = "kaleido")]
+use plotly_kaleido::ImageFormat;
+#[cfg(feature = "plotly_static")]
+use plotly_static::ImageFormat;
 use rand::{
     distr::{Alphanumeric, SampleString},
     rng,
@@ -18,6 +22,7 @@ struct PlotTemplate<'a> {
     js_scripts: &'a str,
 }
 
+#[cfg(any(feature = "kaleido", feature = "plotly_static"))]
 #[derive(Template)]
 #[template(path = "static_plot.html", escape = "none")]
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
@@ -45,14 +50,14 @@ struct JupyterNotebookPlotTemplate<'a> {
 
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
-Consider using the `to_html` method obtain a string representation instead. If using the `kaleido` feature the
+Consider using the `to_html` method obtain a string representation instead. If using the `kaleido` or `plotly_static` feature the
 `write_image` method can be used to produce a static image in one of the following formats:
 - ImageFormat::PNG
 - ImageFormat::JPEG
 - ImageFormat::WEBP
 - ImageFormat::SVG
 - ImageFormat::PDF
-- ImageFormat::EPS
+- ImageFormat::EPS // will be removed in version 0.14.0
 
 Used as follows:
 let plot = Plot::new();
@@ -64,34 +69,6 @@ plot.write_image("filename", ImageFormat::PNG, width, height, scale);
 
 See https://plotly.github.io/plotly.rs/content/getting_started.html for further details.
 "#;
-
-/// Image format for static image export.
-#[derive(Debug)]
-pub enum ImageFormat {
-    PNG,
-    JPEG,
-    WEBP,
-    SVG,
-    PDF,
-    EPS,
-}
-
-impl std::fmt::Display for ImageFormat {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::PNG => "png",
-                Self::JPEG => "jpeg",
-                Self::WEBP => "webp",
-                Self::SVG => "svg",
-                Self::PDF => "pdf",
-                Self::EPS => "eps",
-            }
-        )
-    }
-}
 
 /// A struct that implements `Trace` can be serialized to json format that is
 /// understood by Plotly.js.
@@ -289,10 +266,11 @@ impl Plot {
     /// Display the fully rendered `Plot` as a static image of the given format
     /// in the default system browser.
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
+    #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
-        let rendered = self.render_static(format, width, height);
+        let rendered = self.render_static(&format, width, height);
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
@@ -390,7 +368,15 @@ impl Plot {
     }
 
     /// Convert the `Plot` to a static image of the given image format and save
-    /// at the given location.
+    /// at the given location using kaleido.
+    ///
+    /// This function is deprecated since version 0.13.0. The kaleido-based
+    /// implementation will be removed in version 0.14.0. Use
+    /// `plotly_static` feature instead for static image export functionality.
+    #[deprecated(
+        since = "0.13.0",
+        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.14.0"
+    )]
     #[cfg(feature = "kaleido")]
     pub fn write_image<P: AsRef<Path>>(
         &self,
@@ -405,7 +391,7 @@ impl Plot {
             .save(
                 filename.as_ref(),
                 &serde_json::to_value(self).unwrap(),
-                &format.to_string(),
+                format,
                 width,
                 height,
                 scale,
@@ -414,8 +400,16 @@ impl Plot {
     }
 
     /// Convert the `Plot` to a static image and return the image as a `base64`
-    /// String Supported formats are [ImageFormat::JPEG], [ImageFormat::PNG]
-    /// and [ImageFormat::WEBP]
+    /// String using kaleido. Supported formats are [ImageFormat::JPEG],
+    /// [ImageFormat::PNG] and [ImageFormat::WEBP]
+    ///
+    /// This function is deprecated since version 0.13.0. The kaleido-based
+    /// implementation will be removed in version 0.14.0. Use
+    /// `plotly_static` feature instead for static image export functionality.
+    #[deprecated(
+        since = "0.13.0",
+        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.14.0"
+    )]
     #[cfg(feature = "kaleido")]
     pub fn to_base64(
         &self,
@@ -430,7 +424,7 @@ impl Plot {
                 kaleido
                     .image_to_string(
                         &serde_json::to_value(self).unwrap(),
-                        &format.to_string(),
+                        format,
                         width,
                         height,
                         scale,
@@ -444,19 +438,270 @@ impl Plot {
         }
     }
 
-    /// Convert the `Plot` to SVG and return it as a String.
+    /// Convert the `Plot` to SVG and return it as a String using kaleido.
+    ///
+    /// This function is deprecated since version 0.13.0. The kaleido-based
+    /// implementation will be removed in version 0.14.0. Use
+    /// `plotly_static` feature instead for static image export functionality.
+    #[deprecated(
+        since = "0.13.0",
+        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.14.0"
+    )]
     #[cfg(feature = "kaleido")]
     pub fn to_svg(&self, width: usize, height: usize, scale: f64) -> String {
         let kaleido = plotly_kaleido::Kaleido::new();
         kaleido
             .image_to_string(
                 &serde_json::to_value(self).unwrap(),
-                "svg",
+                ImageFormat::SVG,
                 width,
                 height,
                 scale,
             )
             .unwrap_or_else(|_| panic!("Kaleido failed to generate image"))
+    }
+
+    /// Convert the `Plot` to a static image of the given image format and save
+    /// at the given location.
+    ///
+    /// This method requires the usage of the `plotly_static` crate using one of
+    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
+    ///
+    /// **Note:** This method creates a new `StaticExporter` (and thus a new
+    /// WebDriver instance) for each call, which is not performant for
+    /// repeated operations. For better performance and resource management,
+    /// consider using `write_image_with_exporter` to reuse a single
+    /// `StaticExporter` instance across multiple operations.
+    #[cfg(feature = "plotly_static")]
+    pub fn write_image<P: AsRef<Path>>(
+        &self,
+        filename: P,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .build()
+            .map_err(|e| format!("Failed to create StaticExporter: {e}"))?;
+        self.write_image_with_exporter(&mut exporter, filename, format, width, height, scale)
+    }
+
+    /// Convert the `Plot` to a static image and return the image as a `base64`
+    /// String. Supported formats are [ImageFormat::JPEG],
+    /// [ImageFormat::PNG] and [ImageFormat::WEBP].
+    ///
+    /// This method uses the [plotly_static](https://docs.rs/plotly_static/) crate and requires a WebDriver-compatible browser (Chrome or Firefox) to be available on the system.
+    ///
+    /// For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
+    ///
+    ///
+    /// **Note:** This method creates a new `StaticExporter` (and thus a new
+    /// WebDriver instance) for each call, which is not performant for
+    /// repeated operations. For better performance and resource management,
+    /// consider using `to_base64_with_exporter` to reuse a single
+    /// `StaticExporter` instance across multiple operations.
+    #[cfg(feature = "plotly_static")]
+    pub fn to_base64(
+        &self,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .build()
+            .map_err(|e| format!("Failed to create StaticExporter: {e}"))?;
+        self.to_base64_with_exporter(&mut exporter, format, width, height, scale)
+    }
+
+    /// Convert the `Plot` to SVG and return it as a String using plotly_static.
+    ///
+    /// This method requires the usage of the `plotly_static` crate using one of
+    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
+    ///
+    /// **Note:** This method creates a new `StaticExporter` (and thus a new
+    /// WebDriver instance) for each call, which is not performant for
+    /// repeated operations. For better performance and resource management,
+    /// consider using `to_svg_with_exporter` to reuse a single
+    /// `StaticExporter` instance across multiple operations.
+    #[cfg(feature = "plotly_static")]
+    pub fn to_svg(
+        &self,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .build()
+            .map_err(|e| format!("Failed to create StaticExporter: {e}"))?;
+        self.to_svg_with_exporter(&mut exporter, width, height, scale)
+    }
+
+    /// Convert the `Plot` to a static image of the given image format and save
+    /// at the given location using a provided StaticExporter.
+    ///
+    /// This method allows you to reuse a StaticExporter instance across
+    /// multiple plots, which is more efficient than creating a new one for
+    /// each operation.
+    ///
+    /// This method requires the usage of the `plotly_static` crate using one of
+    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
+    ///
+    /// # Arguments
+    ///
+    /// * `exporter` - A mutable reference to a StaticExporter instance
+    /// * `filename` - The destination path for the output file
+    /// * `format` - The desired output image format
+    /// * `width` - The width of the output image in pixels
+    /// * `height` - The height of the output image in pixels
+    /// * `scale` - The scale factor for the image (1.0 = normal size)
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use plotly::{Plot, Scatter};
+    /// use plotly_static::{StaticExporterBuilder, ImageFormat};
+    ///
+    /// let mut plot = Plot::new();
+    /// plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
+    ///
+    /// let mut exporter = StaticExporterBuilder::default()
+    ///     .build()
+    ///     .expect("Failed to create StaticExporter");
+    ///
+    /// // Export multiple plots using the same exporter
+    /// plot.write_image_with_exporter(&mut exporter, "plot1", ImageFormat::PNG, 800, 600, 1.0)
+    ///     .expect("Failed to export plot");
+    /// ```
+    #[cfg(feature = "plotly_static")]
+    pub fn write_image_with_exporter<P: AsRef<Path>>(
+        &self,
+        exporter: &mut plotly_static::StaticExporter,
+        filename: P,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        exporter.write_fig(
+            filename.as_ref(),
+            &serde_json::to_value(self)?,
+            format,
+            width,
+            height,
+            scale,
+        )
+    }
+
+    /// Convert the `Plot` to a static image and return the image as a `base64`
+    /// String using a provided StaticExporter. Supported formats are
+    /// [ImageFormat::JPEG], [ImageFormat::PNG] and [ImageFormat::WEBP].
+    ///
+    /// This method allows you to reuse a StaticExporter instance across
+    /// multiple plots, which is more efficient than creating a new one for
+    /// each operation.
+    ///
+    /// This method requires the usage of the `plotly_static` crate using one of
+    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
+    ///
+    /// # Arguments
+    ///
+    /// * `exporter` - A mutable reference to a StaticExporter instance
+    /// * `format` - The desired output image format
+    /// * `width` - The width of the output image in pixels
+    /// * `height` - The height of the output image in pixels
+    /// * `scale` - The scale factor for the image (1.0 = normal size)
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use plotly::{Plot, Scatter};
+    /// use plotly_static::{StaticExporterBuilder, ImageFormat};
+    ///
+    /// let mut plot = Plot::new();
+    /// plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
+    ///
+    /// let mut exporter = StaticExporterBuilder::default()
+    ///     .build()
+    ///     .expect("Failed to create StaticExporter");
+    ///
+    /// let base64_data = plot.to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 800, 600, 1.0)
+    ///     .expect("Failed to export plot");
+    /// ```
+    #[cfg(feature = "plotly_static")]
+    pub fn to_base64_with_exporter(
+        &self,
+        exporter: &mut plotly_static::StaticExporter,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        match format {
+            ImageFormat::JPEG | ImageFormat::PNG | ImageFormat::WEBP => {
+                exporter.write_to_string(
+                    &serde_json::to_value(self)?,
+                    format,
+                    width,
+                    height,
+                    scale,
+                )
+            }
+            _ => {
+                Err(format!("Cannot generate base64 string for ImageFormat:{format}. Allowed formats are JPEG, PNG, WEBP").into())
+            }
+        }
+    }
+
+    /// Convert the `Plot` to SVG and return it as a String using a provided
+    /// StaticExporter.
+    ///
+    /// This method allows you to reuse a StaticExporter instance across
+    /// multiple plots, which is more efficient than creating a new one for
+    /// each operation.
+    ///
+    /// This method requires the usage of the `plotly_static` crate using one of
+    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
+    ///
+    /// # Arguments
+    ///
+    /// * `exporter` - A mutable reference to a StaticExporter instance
+    /// * `width` - The width of the output image in pixels
+    /// * `height` - The height of the output image in pixels
+    /// * `scale` - The scale factor for the image (1.0 = normal size)
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use plotly::{Plot, Scatter};
+    /// use plotly_static::StaticExporterBuilder;
+    ///
+    /// let mut plot = Plot::new();
+    /// plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
+    ///
+    /// let mut exporter = StaticExporterBuilder::default()
+    ///     .build()
+    ///     .expect("Failed to create StaticExporter");
+    ///
+    /// let svg_data = plot.to_svg_with_exporter(&mut exporter, 800, 600, 1.0)
+    ///     .expect("Failed to export plot");
+    /// ```
+    #[cfg(feature = "plotly_static")]
+    pub fn to_svg_with_exporter(
+        &self,
+        exporter: &mut plotly_static::StaticExporter,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        exporter.write_to_string(
+            &serde_json::to_value(self)?,
+            ImageFormat::SVG,
+            width,
+            height,
+            scale,
+        )
     }
 
     fn render(&self) -> String {
@@ -468,10 +713,11 @@ impl Plot {
     }
 
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-    fn render_static(&self, format: ImageFormat, width: usize, height: usize) -> String {
+    #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
+    pub fn render_static(&self, format: &ImageFormat, width: usize, height: usize) -> String {
         let tmpl = StaticPlotTemplate {
             plot: self,
-            format,
+            format: format.clone(),
             js_scripts: &self.js_scripts,
             width,
             height,
@@ -509,12 +755,12 @@ impl Plot {
     pub fn offline_js_sources() -> String {
         // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when generating
         // Latex Titles we no longer include it.
-        let local_tex_svg_js = include_str!("../templates/tex-svg-3.2.2.js");
-        let local_plotly_js = include_str!("../templates/plotly.min.js");
+        let local_tex_svg_js = include_str!("../resource/tex-svg-3.2.2.js");
+        let local_plotly_js = include_str!("../resource/plotly.min.js");
 
         format!(
             "<script type=\"text/javascript\">{local_plotly_js}</script>\n
-             <script type=\"text/javascript\">{local_tex_svg_js}</script>\n"
+            <script type=\"text/javascript\">{local_tex_svg_js}</script>\n",
         )
         .to_string()
     }
@@ -595,9 +841,14 @@ impl PartialEq for Plot {
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
+    use std::sync::atomic::{AtomicU32, Ordering};
 
-    use serde_json::{json, to_value};
     #[cfg(feature = "kaleido")]
+    use plotly_kaleido::ImageFormat;
+    #[cfg(feature = "plotly_static")]
+    use plotly_static::ImageFormat;
+    use serde_json::{json, to_value};
+    #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
     use {base64::engine::general_purpose, base64::Engine};
 
     use super::*;
@@ -744,107 +995,144 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // Don't really want it to try and open a browser window every time we run a test.
-    #[cfg(not(target_family = "wasm"))]
-    fn show_image() {
-        let plot = create_test_plot();
-        plot.show_image(ImageFormat::PNG, 1024, 680);
-    }
-
-    #[test]
     fn save_html() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("example.html");
+        let dst = PathBuf::from("plotly_example.html");
         plot.write_html(&dst);
         assert!(dst.exists());
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(feature = "plotly_static")]
+    // Helper to generate unique ports for parallel tests
+    static PORT_COUNTER: AtomicU32 = AtomicU32::new(4444);
+
+    #[cfg(feature = "plotly_static")]
+    fn get_unique_port() -> u32 {
+        PORT_COUNTER.fetch_add(1, Ordering::SeqCst)
+    }
+
     #[test]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn save_to_png() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("example.png");
-        plot.write_image(&dst, ImageFormat::PNG, 1024, 680, 1.0);
+        let dst = PathBuf::from("plotly_example.png");
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PNG, 1024, 680, 1.0)
+            .unwrap();
         assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "macos"))]
     #[test]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn save_to_jpeg() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("example.jpeg");
-        plot.write_image(&dst, ImageFormat::JPEG, 1024, 680, 1.0);
+        let dst = PathBuf::from("plotly_example.jpeg");
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::JPEG, 1024, 680, 1.0)
+            .unwrap();
         assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "macos"))]
     #[test]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn save_to_svg() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("example.svg");
-        plot.write_image(&dst, ImageFormat::SVG, 1024, 680, 1.0);
+        let dst = PathBuf::from("plotly_example.svg");
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::SVG, 1024, 680, 1.0)
+            .unwrap();
         assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
     }
 
     #[test]
-    #[ignore] // This seems to fail unpredictably on MacOs.
-    #[cfg(feature = "kaleido")]
-    fn save_to_eps() {
-        let plot = create_test_plot();
-        let dst = PathBuf::from("example.eps");
-        plot.write_image(&dst, ImageFormat::EPS, 1024, 680, 1.0);
-        assert!(dst.exists());
-        assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-    }
-
-    #[cfg(not(target_os = "macos"))]
-    #[test]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn save_to_pdf() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("example.pdf");
-        plot.write_image(&dst, ImageFormat::PDF, 1024, 680, 1.0);
+        let dst = PathBuf::from("plotly_example.pdf");
+        #[cfg(feature = "debug")]
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(get_unique_port())
+            .pdf_export_timeout(750)
+            .build()
+            .unwrap();
+        #[cfg(not(feature = "debug"))]
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PDF, 1024, 680, 1.0)
+            .unwrap();
         assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
     }
 
-    #[cfg(not(target_os = "macos"))]
     #[test]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn save_to_webp() {
         let plot = create_test_plot();
-        let dst = PathBuf::from("example.webp");
-        plot.write_image(&dst, ImageFormat::WEBP, 1024, 680, 1.0);
+        let dst = PathBuf::from("plotly_example.webp");
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::WEBP, 1024, 680, 1.0)
+            .unwrap();
         assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
     }
 
     #[test]
-    #[cfg(not(target_os = "macos"))]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn image_to_base64() {
         let plot = create_test_plot();
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
 
-        let image_base64 = plot.to_base64(ImageFormat::PNG, 200, 150, 1.0);
+        let image_base64 = plot
+            .to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 200, 150, 1.0)
+            .unwrap();
 
         assert!(!image_base64.is_empty());
 
         let result_decoded = general_purpose::STANDARD.decode(image_base64).unwrap();
-        let expected = "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";
+        let expected = "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";
         let expected_decoded = general_purpose::STANDARD.decode(expected).unwrap();
 
         // Comparing the result seems to end up being a flaky test.
@@ -854,19 +1142,16 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "kaleido")]
-    fn image_to_base64_invalid_format() {
-        let plot = create_test_plot();
-        let image_base64 = plot.to_base64(ImageFormat::EPS, 200, 150, 1.0);
-        assert!(image_base64.is_empty());
-    }
-
-    #[test]
-    #[cfg(not(target_os = "macos"))]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn image_to_svg_string() {
         let plot = create_test_plot();
-        let image_svg = plot.to_svg(200, 150, 1.0);
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+        let image_svg = plot
+            .to_svg_with_exporter(&mut exporter, 200, 150, 1.0)
+            .unwrap();
 
         assert!(!image_svg.is_empty());
 
@@ -877,9 +1162,8 @@ mod tests {
         assert_eq!(expected[..LEN], image_svg[..LEN]);
     }
 
-    #[cfg(target_os = "macos")]
     #[test]
-    #[cfg(feature = "kaleido")]
+    #[cfg(feature = "plotly_static")]
     fn save_surface_to_png() {
         use crate::Surface;
         let mut plot = Plot::new();
@@ -896,11 +1180,25 @@ mod tests {
             .name("Surface");
 
         plot.add_trace(surface);
-        let dst = PathBuf::from("example.png");
-        plot.write_image("example.png", ImageFormat::PNG, 800, 600, 1.0);
+        let dst = PathBuf::from("plotly_example_surface.png");
+        let mut exporter = plotly_static::StaticExporterBuilder::default()
+            .webdriver_port(get_unique_port())
+            .build()
+            .unwrap();
+
+        assert!(!plot
+            .to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 1024, 680, 1.0)
+            .unwrap()
+            .is_empty());
+
+        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PNG, 800, 600, 1.0)
+            .unwrap();
         assert!(dst.exists());
+
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
-        assert!(!dst.exists());
-        assert!(!plot.to_base64(ImageFormat::PNG, 1024, 680, 1.0).is_empty());
     }
 }

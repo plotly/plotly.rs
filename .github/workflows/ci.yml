@@ -33,14 +33,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
           targets: wasm32-unknown-unknown
+      # lint plotly_static for all features
+      - run: cargo clippy -p plotly_static --features geckodriver,webdriver_download -- -D warnings -A deprecated
+      - run: cargo clippy -p plotly_static --features chromedriver,webdriver_download -- -D warnings -A deprecated
       # lint the main library workspace for non-wasm target
-      - run: cargo clippy --all-features -- -D warnings
+      - run: cargo clippy --features all -- -D warnings -A deprecated
       # lint the non-wasm examples
-      - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" -- -D warnings
+      - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" --exclude "kaleido" -- -D warnings
       # lint the plotly library for wasm target
       - run: cargo clippy --package plotly --target wasm32-unknown-unknown -- -D warnings
       # lint the wasm examples
@@ -65,14 +73,121 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            browser: chrome
+            features: plotly_ndarray,plotly_image,static_export_default,debug
+          - os: ubuntu-latest
+            browser: firefox
+            features: plotly_ndarray,plotly_image,static_export_geckodriver,static_export_wd_download,debug
+          - os: windows-latest
+            browser: chrome
+            features: plotly_ndarray,plotly_image,static_export_chromedriver,debug
+          - os: macos-latest
+            browser: chrome
+            features: plotly_ndarray,plotly_image,static_export_default,debug
     runs-on: ${{ matrix.os }}
+    timeout-minutes: ${{ matrix.os == 'windows-latest' && 30 || 10 }}
     steps:
+      - name: Setup Chrome
+        if: matrix.browser == 'chrome'
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
+        id: setup-chrome
+
+      - name: Setup Firefox
+        if: matrix.browser == 'firefox'
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: 'latest'
+        id: setup-firefox
+
       - uses: actions/checkout@v4
+
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test --features plotly_ndarray,plotly_image,kaleido
-      - if: ${{ matrix.os == 'windows-latest' }}
-        run: gci -recurse -filter "*example*"
+
+      # Cache cargo registry for all platforms
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-registry-
+
+      # Windows-specific environment setup for static export tests
+      - name: Setup Windows environment for static export
+        if: matrix.os == 'windows-latest'
+        run: |
+          .\.github\scripts\setup-windows-static-export.ps1 `
+            -ChromeVersion "${{ steps.setup-chrome.outputs.chrome-version }}" `
+            -ChromePath "${{ steps.setup-chrome.outputs.chrome-path }}" `
+            -ChromeDriverPath "${{ steps.setup-chrome.outputs.chromedriver-path }}"
+
+      # Run tests on Ubuntu with Chrome
+      - name: Run tests (${{ matrix.os }} - Chrome)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        run: cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+
+      # Install xvfb for Firefox WebGL support
+      - name: Install xvfb
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
+      # Run tests on Ubuntu with Firefox
+      - name: Run tests (${{ matrix.os }} - Firefox)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+        run: |
+          # Set environment variables for Firefox WebDriver
+          export BROWSER_PATH="${{ steps.setup-firefox.outputs.firefox-path }}"
+          export RUST_LOG="debug"
+          export RUST_BACKTRACE="1"
+          
+          echo "Environment variables set:"
+          echo "BROWSER_PATH: $BROWSER_PATH"
+          echo "RUST_LOG: $RUST_LOG"
+          
+          xvfb-run -s "-screen 0 1920x1080x24" cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+
+      # Run tests on macOS with Chrome
+      - name: Run tests (${{ matrix.os }} - Chrome)
+        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
+        run: cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+
+      # Run tests on Windows with Chrome WebDriver
+      - name: Run tests (${{ matrix.os }} - Chrome)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+        shell: pwsh
+        run: |
+          # Set environment variables for WebDriver
+          $env:WEBDRIVER_PATH = "${{ steps.setup-chrome.outputs.chromedriver-path }}"
+          $env:BROWSER_PATH = "${{ steps.setup-chrome.outputs.chrome-path }}"
+          $env:RUST_LOG = "debug"
+          $env:RUST_BACKTRACE = "1"
+          $env:ANGLE_DEFAULT_PLATFORM = "swiftshader"
+
+          Write-Host "Environment variables set:"
+          Write-Host "WEBDRIVER_PATH: $env:WEBDRIVER_PATH"
+          Write-Host "BROWSER_PATH: $env:BROWSER_PATH"
+
+          cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido          
+
+      - name: Upload static image(s) artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: example-pdf-${{ matrix.os }}-${{ matrix.browser }}
+          path: |
+            ${{ github.workspace }}/plotly_static/static_example.*
+            ${{ github.workspace }}/plotly/plotly_example.*
+            ${{ github.workspace }}/plotly/plotly_example_surface.*
+          retention-days: 30
 
   code-coverage:
     name: Code Coverage
@@ -112,6 +227,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Chrome (for static_export)
+        if: matrix.example == 'static_export'
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
+
       - uses: dtolnay/rust-toolchain@stable
       - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build
 
@@ -134,17 +257,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Chrome (for static_export)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
+        id: setup-chrome
+
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo install mdbook --no-default-features --features search --vers "^0.4" --locked --quiet
       - name: Build examples to generate needed html files
-        run: |
-          cd ${{ github.workspace }}/examples/basic_charts && cargo run
-          cd ${{ github.workspace }}/examples/statistical_charts && cargo run
-          cd ${{ github.workspace }}/examples/scientific_charts && cargo run
-          cd ${{ github.workspace }}/examples/financial_charts && cargo run
-          cd ${{ github.workspace }}/examples/3d_charts && cargo run
-          cd ${{ github.workspace }}/examples/subplots && cargo run
-          cd ${{ github.workspace }}/examples/shapes && cargo run
-          cd ${{ github.workspace }}/examples/themes && cargo run
+        run: .github/scripts/build-book-examples.sh ${{ github.workspace }}/examples
       - name: Build book 
         run: mdbook build docs/book

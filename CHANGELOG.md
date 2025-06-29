@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#314](https://github.com/plotly/plotly.rs/pull/314)] Add axis range bounds support
 - [[#317](https://github.com/plotly/plotly.rs/pull/317)] Show rangebreak usage with ints
 - [[#318](https://github.com/plotly/plotly.rs/pull/318)] Add slider support
+- [[#319](https://github.com/plotly/plotly.rs/pull/319)] Introduce `plotly_static` package for static export of plots using WebDriver driven browsers 
+
 
 ### Fixed
 - [[#284](https://github.com/plotly/plotly.rs/pull/284)]  Allow plotly package to be compiled for android 

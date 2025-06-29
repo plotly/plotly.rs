@@ -189,8 +189,7 @@ impl FromStr for Rgba {
         let prefix: &[_] = &['r', 'g', 'b', 'a', '('];
         let trimmed = rgba.trim_start_matches(prefix).trim_end_matches(')');
         let fields: Vec<&str> = trimmed.split(',').collect();
-        dbg!(&fields);
-        println!("{:?}", &fields);
+        // println!("{:?}", &fields);
         if fields.len() != 4 {
             Err(ParseError::new("Invalid string length of for RGBA color"))
         } else {

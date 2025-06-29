@@ -53,7 +53,6 @@ A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
 
 Documentation and numerous interactive examples are available in the [Plotly.rs Book](https://plotly.github.io/plotly.rs/content/getting_started.html), the [examples/](https://github.com/plotly/plotly.rs/tree/main/examples) directory and [docs.rs](https://docs.rs/crate/plotly).
 
-
 For changes since the last version, please consult the [changelog](https://github.com/plotly/plotly.rs/tree/main/CHANGELOG.md).
 
 # Basic Usage
@@ -62,7 +61,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.12"
+plotly = "0.13"
 ```
 
 ## Exporting a single Interactive Plot
@@ -108,7 +107,32 @@ When the applications developed with `plotly.rs` are intended for other targets 
 
 Kaleido binaries are available on Github [release page](https://github.com/plotly/Kaleido/releases). It currently supports Linux(`x86_64`), Windows(`x86_64`) and MacOS(`x86_64`/`aarch64`).
 
-## Exporting a Static Images
+## Exporting Static Images with plotly_static (Recommended)
+
+The recommended way to export static images is using the `plotly_static` backend, which uses a headless browser via WebDriver (Chrome or Firefox) for rendering. This is available via the `static_export_default` feature:
+
+```toml
+[dependencies]
+plotly = { version = "0.13", features = ["static_export_default"] }
+```
+
+This supports PNG, JPEG, WEBP, SVG, and PDF formats:
+
+```rust
+use plotly::{Plot, Scatter, ImageFormat};
+
+let mut plot = Plot::new();
+plot.add_trace(Scatter::new(vec![0, 1, 2], vec![2, 1, 0]));
+
+plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0)?;
+plot.write_image("out.svg", ImageFormat::SVG, 800, 600, 1.0)?;
+let base64_data = plot.to_base64(ImageFormat::PNG, 800, 600, 1.0)?;
+let svg_string = plot.to_svg(800, 600, 1.0)?;
+```
+
+**Note:** This feature requires a WebDriver-compatible browser (Chrome or Firefox) as well as a Webdriver (chromedriver/geckodriver) to be available on the system. For advanced usage, see the [`plotly_static` crate documentation](https://docs.rs/plotly_static/).
+
+## Exporting Static Images with Kaleido (to be deprecated)
 
 Enable the `kaleido` feature and opt in for automatic downloading of the `kaleido` binaries by doing the following
 
@@ -116,7 +140,7 @@ Enable the `kaleido` feature and opt in for automatic downloading of the `kaleid
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.12", features = ["kaleido", "kaleido_download"] }
+plotly = { version = "0.13", features = ["kaleido", "kaleido_download"] }
 ```
 
 Alternatively, enable only the `kaleido` feature and manually install Kaleido.
