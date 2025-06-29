@@ -19,3 +19,11 @@
 # Fundamentals
 
 Functionality that applies to the library as a whole is described in the next sections.
+
+## Core Features
+
+- **[Jupyter Support](./fundamentals/jupyter_support.md)**: Interactive plotting in Jupyter notebooks
+- **[ndarray Support](./fundamentals/ndarray_support.md)**: Integration with the ndarray crate for numerical computing
+- **[Shapes](./fundamentals/shapes.md)**: Adding shapes and annotations to plots
+- **[Themes](./fundamentals/themes.md)**: Customizing plot appearance with themes
+- **[Static Image Export](./fundamentals/static_image_export.md)**: Exporting plots to static images (PNG, JPEG, SVG, PDF) using WebDriver

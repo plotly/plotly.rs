@@ -16,12 +16,16 @@ fn main() {
 
     // The image will be saved to format!("output/image.{image_format}") relative to
     // the current working directory.
-    plot.write_image(&filename, ImageFormat::EPS, width, height, scale);
-    plot.write_image(&filename, ImageFormat::JPEG, width, height, scale);
-    plot.write_image(&filename, ImageFormat::PDF, width, height, scale);
-    plot.write_image(&filename, ImageFormat::PNG, width, height, scale);
-    plot.write_image(&filename, ImageFormat::SVG, width, height, scale);
-    plot.write_image(&filename, ImageFormat::WEBP, width, height, scale);
+    #[allow(deprecated)]
+    {
+        plot.write_image(&filename, ImageFormat::EPS, width, height, scale);
+        plot.write_image(&filename, ImageFormat::JPEG, width, height, scale);
+        plot.write_image(&filename, ImageFormat::PDF, width, height, scale);
+        plot.write_image(&filename, ImageFormat::PNG, width, height, scale);
+        plot.write_image(&filename, ImageFormat::SVG, width, height, scale);
+        plot.write_image(&filename, ImageFormat::WEBP, width, height, scale);
 
-    let _svg_string = plot.to_svg(width, height, scale);
+        let svg_string = plot.to_svg(width, height, scale);
+        println!("SVG plot string: {svg_string}");
+    }
 }

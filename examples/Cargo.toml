@@ -15,6 +15,7 @@ members = [
     "scientific_charts",
     "shapes",
     "statistical_charts",
+    "static_export",
     "subplots",
     "themes"
 ]

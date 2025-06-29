@@ -15,9 +15,16 @@ jobs:
     - run: cargo login ${{ env.CRATES_IO_TOKEN }}
       env:
         CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+    - name: Setup Chrome (for static_export)
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: 'latest'
+        install-chromedriver: true        
     - run: cargo publish --allow-dirty -p plotly_derive
     - run: sleep 10
     - run: cargo publish --allow-dirty -p plotly_kaleido
+    - run: sleep 10
+    - run: cargo publish --allow-dirty -p plotly_static --features webdriver_downlaod,chromedriver
     - run: sleep 10
     - run: cargo publish --allow-dirty -p plotly
 

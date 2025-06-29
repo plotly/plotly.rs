@@ -6,4 +6,6 @@ authors = ["Yuriy D. Sibirmovsky"]
 description = "This example demonstrates exporting a plot to SVG, PNG, and PDF and keeping the font size consistent across all formats."
 
 [dependencies]
-plotly = { path = "../../../plotly", features = ["kaleido", "kaleido_download"] } 
+plotly = { path = "../../../plotly", features = ["static_export_default"] }
+env_logger = "0.10"
+log = "0.4"

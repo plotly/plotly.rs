@@ -21,6 +21,74 @@ use base64::{engine::general_purpose, Engine as _};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+/// Image format for static image export using Kaleido.
+///
+/// This enum defines all the image formats that can be exported from Plotly
+/// plots using the Kaleido engine. Kaleido supports all these formats natively.
+#[derive(Debug, Clone)]
+#[allow(deprecated)]
+pub enum ImageFormat {
+    /// Portable Network Graphics format
+    PNG,
+    /// Joint Photographic Experts Group format
+    JPEG,
+    /// WebP format (Google's image format)
+    WEBP,
+    /// Scalable Vector Graphics format
+    SVG,
+    /// Portable Document Format
+    PDF,
+    /// Encapsulated PostScript format (deprecated)
+    ///
+    /// This format is deprecated since version 0.13.0 and will be removed in
+    /// version 0.14.0. Use SVG or PDF instead for vector graphics. EPS is
+    /// not supported in the open source version.
+    #[deprecated(
+        since = "0.13.0",
+        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.14.0"
+    )]
+    EPS,
+}
+
+impl std::fmt::Display for ImageFormat {
+    /// Converts the ImageFormat to its lowercase string representation.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use plotly_kaleido::ImageFormat;
+    ///
+    /// assert_eq!(ImageFormat::PNG.to_string(), "png");
+    /// assert_eq!(ImageFormat::SVG.to_string(), "svg");
+    /// assert_eq!(ImageFormat::PDF.to_string(), "pdf");
+    /// assert_eq!(ImageFormat::EPS.to_string(), "eps");
+    /// ```
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::PNG => "png",
+                Self::JPEG => "jpeg",
+                Self::WEBP => "webp",
+                Self::SVG => "svg",
+                Self::PDF => "pdf",
+                #[allow(deprecated)]
+                Self::EPS => "eps",
+            }
+        )
+    }
+}
+
+impl serde::Serialize for ImageFormat {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct KaleidoResult {
@@ -44,9 +112,7 @@ impl KaleidoResult {
 
 #[derive(Serialize)]
 struct PlotData<'a> {
-    // TODO: as with `data`, it would be much better if this were a plotly::ImageFormat, but
-    // problems with cyclic dependencies.
-    format: String,
+    format: ImageFormat,
     width: usize,
     height: usize,
     scale: f64,
@@ -56,9 +122,15 @@ struct PlotData<'a> {
 }
 
 impl<'a> PlotData<'a> {
-    fn new(data: &'a Value, format: &str, width: usize, height: usize, scale: f64) -> PlotData<'a> {
+    fn new(
+        data: &'a Value,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> PlotData<'a> {
         PlotData {
-            format: format.to_string(),
+            format,
             width,
             height,
             scale,
@@ -137,17 +209,18 @@ impl Kaleido {
         &self,
         dst: &Path,
         plotly_data: &Value,
-        format: &str,
+        format: ImageFormat,
         width: usize,
         height: usize,
         scale: f64,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut dst = PathBuf::from(dst);
-        dst.set_extension(format);
+        dst.set_extension(format.to_string());
 
-        let image_data = self.convert(plotly_data, format, width, height, scale)?;
+        let image_data = self.convert(plotly_data, format.clone(), width, height, scale)?;
+        #[allow(deprecated)]
         let data = match format {
-            "svg" | "eps" => image_data.as_bytes(),
+            ImageFormat::SVG | ImageFormat::EPS => image_data.as_bytes(),
             _ => &general_purpose::STANDARD.decode(image_data).unwrap(),
         };
         let mut file = File::create(dst.as_path())?;
@@ -164,12 +237,12 @@ impl Kaleido {
     pub fn image_to_string(
         &self,
         plotly_data: &Value,
-        format: &str,
+        format: ImageFormat,
         width: usize,
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
-        let image_data = self.convert(plotly_data, format, width, height, scale)?;
+        let image_data = self.convert(plotly_data, format.clone(), width, height, scale)?;
         Ok(image_data)
     }
 
@@ -178,12 +251,13 @@ impl Kaleido {
     pub fn convert(
         &self,
         plotly_data: &Value,
-        format: &str,
+        format: ImageFormat,
         width: usize,
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
         let p = self.cmd_path.to_str().unwrap();
+        let format_str = format.to_string();
 
         // Removed flag 'disable-gpu' as it causes issues on MacOS and other platforms
         // see Kaleido issue #323
@@ -238,7 +312,7 @@ impl Kaleido {
         }
 
         // Don't eat up Kaleido/Chromium errors but show them in the terminal
-        println!("Kaleido failed to generate static image for format: {format}.");
+        println!("Kaleido failed to generate static image for format: {format_str}.");
         println!("Kaleido stderr output:");
         let stderr = process.stderr.take().unwrap();
         let stderr_lines = BufReader::new(stderr).lines();
@@ -307,7 +381,7 @@ mod tests {
     #[test]
     fn plot_data_to_json() {
         let test_plot = create_test_plot();
-        let kaleido_data = PlotData::new(&test_plot, "png", 400, 500, 1.);
+        let kaleido_data = PlotData::new(&test_plot, ImageFormat::PNG, 400, 500, 1.);
         let expected = json!({
             "data": test_plot,
             "format": "png",
@@ -325,7 +399,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.png");
-        let r = k.save(dst.as_path(), &test_plot, "png", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, ImageFormat::PNG, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -339,7 +413,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.jpeg");
-        let r = k.save(dst.as_path(), &test_plot, "jpeg", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -353,7 +427,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.webp");
-        let r = k.save(dst.as_path(), &test_plot, "webp", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, ImageFormat::WEBP, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -367,7 +441,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.svg");
-        let r = k.save(dst.as_path(), &test_plot, "svg", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, ImageFormat::SVG, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -381,7 +455,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.pdf");
-        let r = k.save(dst.as_path(), &test_plot, "pdf", 1200, 900, 4.5);
+        let r = k.save(dst.as_path(), &test_plot, ImageFormat::PDF, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -397,7 +471,8 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");
-        let r = k.save(dst.as_path(), &test_plot, "eps", 1200, 900, 4.5);
+        #[allow(deprecated)]
+        let r = k.save(dst.as_path(), &test_plot, ImageFormat::EPS, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }

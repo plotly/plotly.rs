@@ -426,7 +426,7 @@ fn main() {
     bar_chart_with_modifiable_bar_mode(false, "bar_chart");
 
     // Silder examples
-    bar_chart_with_slider_customization(true, "bar_chart_with_slider_customization");
+    bar_chart_with_slider_customization(false, "bar_chart_with_slider_customization");
     sinusoidal_slider_example(false, "sinusoidal_slider_example");
     gdp_life_expectancy_slider_example(false, "gdp_life_expectancy_slider_example");
 }

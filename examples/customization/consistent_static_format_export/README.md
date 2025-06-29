@@ -1,6 +1,6 @@
 # SVG Export Example
 
-This example demonstrates exporting a plot to SVG, PNG, and PDF using plotly.rs and keeping font size and style consistent accross SVG and other formats. 
+This example demonstrates exporting a plot to SVG, PNG, and PDF using plotly.rs and keeping font size and style consistent across SVG and other formats. 
 
 This example is based on [GitHub Issue #171](https://github.com/plotly/plotly.rs/issues/171).
 

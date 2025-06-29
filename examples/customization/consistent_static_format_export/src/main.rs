@@ -1,14 +1,16 @@
+use log::info;
 use plotly::color::{NamedColor, Rgb};
 use plotly::common::{Anchor, Font, Line, Marker, MarkerSymbol, Mode, Title};
 use plotly::layout::{Axis, ItemSizing, Legend, Margin, Shape, ShapeLine, ShapeType};
-use plotly::{ImageFormat, Layout, Plot, Scatter};
+use plotly::plotly_static::{ImageFormat, StaticExporterBuilder};
+use plotly::{Layout, Plot, Scatter};
 
 fn line_and_scatter_plot(
     x1: Vec<f64>,
     y1: Vec<f64>,
     x2: Vec<f64>,
     y2: Vec<f64>,
-    flnm: &str,
+    file_name: &str,
     title: &str,
 ) {
     let bgcol = Rgb::new(255, 255, 255);
@@ -140,18 +142,26 @@ fn line_and_scatter_plot(
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
-    // Export to multiple formats to demonstrate the SVG export issue
-    println!("Exporting plot to multiple formats...");
-    println!("Note: SVG export may have font sizing issues compared to PNG/PDF");
+    let mut exporter = StaticExporterBuilder::default()
+        .spawn_webdriver(true)
+        .webdriver_port(4444)
+        .build()
+        .unwrap();
 
-    plot.write_image(flnm, ImageFormat::PDF, 1280, 960, 1.0);
-    plot.write_image(flnm, ImageFormat::SVG, 1280, 960, 1.0);
-    plot.write_image(flnm, ImageFormat::PNG, 1280, 960, 1.0);
+    info!("Exporting to PNG format...");
+    plot.write_image_with_exporter(&mut exporter, file_name, ImageFormat::PNG, 1280, 960, 1.0)
+        .unwrap();
+    info!("Exporting to SVG format...");
+    plot.write_image_with_exporter(&mut exporter, file_name, ImageFormat::SVG, 1280, 960, 1.0)
+        .unwrap();
+    info!("Exporting to PDF format...");
+    plot.write_image_with_exporter(&mut exporter, file_name, ImageFormat::PDF, 1280, 960, 1.0)
+        .unwrap();
 
-    println!("Export complete. Check the output files:");
-    println!("  - {flnm}.pdf");
-    println!("  - {flnm}.svg");
-    println!("  - {flnm}.png");
+    info!("Export complete. Check the output files:");
+    info!("  - {file_name}.pdf");
+    info!("  - {file_name}.svg");
+    info!("  - {file_name}.png");
 }
 
 fn read_from_file(file_path: &str) -> Vec<Vec<f64>> {
@@ -204,6 +214,8 @@ fn read_from_file(file_path: &str) -> Vec<Vec<f64>> {
 }
 
 fn main() {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+
     let data = read_from_file("assets/data_file.dat");
     let x1 = data[0].clone();
     let y1 = data[1].clone();

@@ -22,7 +22,7 @@ To start using [plotly.rs](https://github.com/plotly/plotly.rs) in your project 
 
 ```toml
 [dependencies]
-plotly = "0.12"
+plotly = "0.13"
 ```
 
 [Plotly.rs](https://github.com/plotly/plotly.rs) is ultimately a thin wrapper around the `plotly.js` library. The main job of this library is to provide `structs` and `enums` which get serialized to `json` and passed to the `plotly.js` library to actually do the heavy lifting. As such, if you are familiar with `plotly.js` or its derivatives (e.g. the equivalent Python library), then you should find [`plotly.rs`](https://github.com/plotly/plotly.rs) intuitive to use.
@@ -91,14 +91,25 @@ plot.write_image("/home/user/plot_name.ext", ImageFormat::PNG, 1280, 900, 1.0);
 
 The extension in the file-name path is optional as the appropriate extension (`ImageFormat::PNG`) will be included. Note that in all functions that save files to disk, both relative and absolute paths are supported.
 
-## Saving Plots
+## Saving Plots with Kaleido (legacy)
 
 To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the `kaleido` feature. This feature depends on [plotly/Kaleido](https://github.com/plotly/Kaleido): a cross-platform open source library for generating static images. All the necessary binaries have been included with `plotly_kaleido` for `Linux`, `Windows` and `MacOS`. Previous versions of [plotly.rs](https://github.com/plotly/plotly.rs) used the `orca` feature, however, this has been deprecated as it provided the same functionality but required additional installation steps. To enable the `kaleido` feature add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = { version = "0.12", features = ["kaleido"] }
+plotly = { version = "0.13", features = ["kaleido"] }
 ```
+
+## Static Image Export with WebDriver (recommended)
+
+For static image export using WebDriver and headless browsers, you can use the `plotly_static` feature. This feature supports the same formats as Kaleido (png, jpeg, webp, svg, pdf) but uses WebDriver for the static export process. To enable static export, add the following to your `Cargo.toml`:
+
+```toml
+[dependencies]
+plotly = { version = "0.13", features = ["static_export_default"] }
+```
+
+The `static_export_default` feature includes Chrome WebDriver support with automatic download. For Firefox support, use `static_export_geckodriver` instead. See the [Static Image Export](../fundamentals/static_image_export.md) chapter for a detailed usage example.
 
 ## WebAssembly Support
 

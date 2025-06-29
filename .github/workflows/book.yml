@@ -15,16 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Chrome (for static_export)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
       - run: cargo install mdbook --no-default-features --features search --vers "^0.4" --locked --quiet
       - name: Build examples
-        run: |
-          cd ${{ github.workspace }}/examples/basic_charts && cargo run
-          cd ${{ github.workspace }}/examples/statistical_charts && cargo run
-          cd ${{ github.workspace }}/examples/scientific_charts && cargo run
-          cd ${{ github.workspace }}/examples/financial_charts && cargo run
-          cd ${{ github.workspace }}/examples/3d_charts && cargo run
-          cd ${{ github.workspace }}/examples/subplots && cargo run
-          cd ${{ github.workspace }}/examples/shapes && cargo run
+        run: .github/scripts/build-book-examples.sh ${{ github.workspace }}/examples
       - run: mdbook build docs/book
       - name: Checkout gh-pages branch
         run: |

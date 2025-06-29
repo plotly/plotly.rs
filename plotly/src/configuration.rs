@@ -10,7 +10,6 @@ pub enum ImageButtonFormats {
     Webp,
 }
 
-// TODO: should this be behind the plotly-kaleido feature?
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct ToImageButtonOptions {
