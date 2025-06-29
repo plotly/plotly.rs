@@ -7,6 +7,7 @@
     - [ndarray Support](./fundamentals/ndarray_support.md)
     - [Shapes](./fundamentals/shapes.md)
     - [Themes](./fundamentals/themes.md)
+    - [Static Image Export](./fundamentals/static_image_export.md)
 - [Recipes](./recipes.md)
     - [Basic Charts](./recipes/basic_charts.md)
         - [Scatter Plots](./recipes/basic_charts/scatter_plots.md)
