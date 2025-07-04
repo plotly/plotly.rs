@@ -18,10 +18,10 @@ pub fn write_example_to_html(plot: &Plot, name: &str) -> String {
     std::fs::create_dir_all("./output").unwrap();
     // Write inline HTML
     let html = plot.to_inline_html(Some(name));
-    let path = format!("./output/inline_{}.html", name);
+    let path = format!("./output/inline_{name}.html");
     std::fs::write(path, html).unwrap();
     // Write standalone HTML
-    let path = format!("./output/{}.html", name);
+    let path = format!("./output/{name}.html");
     plot.write_html(&path);
     path
 }

@@ -44,12 +44,12 @@ fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
         let mut file = archive.by_index(i).unwrap();
         let outpath = file.mangled_name();
         let outpath = p.join(outpath);
-        println!("outpath: {:?}", outpath);
+        println!("outpath: {outpath:?}");
 
         {
             let comment = file.comment();
             if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
+                println!("File {i} comment: {comment}");
             }
         }
 

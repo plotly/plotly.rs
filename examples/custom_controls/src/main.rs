@@ -280,7 +280,7 @@ fn sinusoidal_slider_example(show: bool, file_name: &str) {
                 Visible::False
             }) // Make 10th trace visible
             .line(plotly::common::Line::new().color("#00CED1").width(6.0))
-            .name(format!("ν = {:.1}", frequency));
+            .name(format!("ν = {frequency:.1}"));
         plot.add_trace(trace);
     }
 
@@ -291,12 +291,11 @@ fn sinusoidal_slider_example(show: bool, file_name: &str) {
         let mut visible = vec![Visible::False; num_steps];
         visible[i] = Visible::True;
         let step = SliderStepBuilder::new()
-            .label(format!("step-{}", i))
-            .value(format!("{:.1}", frequency))
+            .label(format!("step-{i}"))
+            .value(format!("{frequency:.1}"))
             .push_restyle(Scatter::<f64, f64>::modify_visible(visible))
             .push_relayout(Layout::modify_title(format!(
-                "Slider switched to step: {}",
-                i
+                "Slider switched to step: {i}"
             )))
             .build()
             .unwrap();
@@ -389,12 +388,11 @@ fn gdp_life_expectancy_slider_example(show: bool, file_name: &str) {
             visible[start..end].fill(Visible::True);
 
             SliderStepBuilder::new()
-                .label(format!("year = {}", year))
+                .label(format!("year = {year}"))
                 .value(year)
                 .push_restyle(Scatter::<f64, f64>::modify_visible(visible))
                 .push_relayout(Layout::modify_title(format!(
-                    "GDP vs. Life Expectancy ({})",
-                    year
+                    "GDP vs. Life Expectancy ({year})"
                 )))
                 .build()
                 .unwrap()

@@ -65,19 +65,19 @@ impl std::fmt::Display for ControlBuilderError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ControlBuilderError::RestyleSerializationError(e) => {
-                write!(f, "Failed to serialize restyle: {}", e)
+                write!(f, "Failed to serialize restyle: {e}")
             }
             ControlBuilderError::RelayoutSerializationError(e) => {
-                write!(f, "Failed to serialize relayout: {}", e)
+                write!(f, "Failed to serialize relayout: {e}")
             }
             ControlBuilderError::ValueSerializationError(e) => {
-                write!(f, "Failed to serialize value: {}", e)
+                write!(f, "Failed to serialize value: {e}")
             }
             ControlBuilderError::InvalidRestyleObject(s) => {
-                write!(f, "Invalid restyle object: expected object but got {}", s)
+                write!(f, "Invalid restyle object: expected object but got {s}")
             }
             ControlBuilderError::InvalidRelayoutObject(s) => {
-                write!(f, "Invalid relayout object: expected object but got {}", s)
+                write!(f, "Invalid relayout object: expected object but got {s}")
             }
         }
     }
