@@ -3,16 +3,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## [0.13.0] - 2025-xx-xx
 ### Changed
 - [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put evrything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
-- [[#281]((https://github.com/plotly/plotly.rs/pull/xxx))] Update to askama 0.13.0
-- [[#287]](https://github.com/plotly/plotly.rs/pull/287) Added functionality for callbacks (using wasm)
-- [[#289]](https://github.com/plotly/plotly.rs/pull/289) Fixes Kaleido static export for MacOS targets by removing `--disable-gpu` flag for MacOS 
-- [[#291]](https://github.com/plotly/plotly.rs/pull/291) Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
-- [[#299]](https://github.com/plotly/plotly.rs/pull/299) Added customdata field to HeatMap
-- [[#303]](https://github.com/plotly/plotly.rs/pull/303) Split layout mod.rs into modules
-- [[#304]](https://github.com/plotly/plotly.rs/pull/304) Refactored examples to allow fo generation of full html files 
+- [[#281](https://github.com/plotly/plotly.rs/pull/281)] Update to askama 0.13.0
+- [[#287](https://github.com/plotly/plotly.rs/pull/287)] Added functionality for callbacks (using wasm)
+- [[#289](https://github.com/plotly/plotly.rs/pull/289)] Fixes Kaleido static export for MacOS targets by removing `--disable-gpu` flag for MacOS 
+- [[#291](https://github.com/plotly/plotly.rs/pull/291)] Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
+- [[#299](https://github.com/plotly/plotly.rs/pull/299)] Added customdata field to HeatMap
+- [[#303](https://github.com/plotly/plotly.rs/pull/303)] Split layout mod.rs into modules
+- [[#304](https://github.com/plotly/plotly.rs/pull/304)] Refactored examples to allow fo generation of full html files 
+- [[#320](https://github.com/plotly/plotly.rs/pull/320)] Make offline_js_sources function `pub`
+- [[#321](https://github.com/plotly/plotly.rs/pull/321)] Make 'online_cdn_js' function also `pub` for consistenccy
+
+### Added
+- [[#311](https://github.com/plotly/plotly.rs/pull/311)] Add extra themes
+- [[#312](https://github.com/plotly/plotly.rs/pull/312)] Add rangebreak to axis
+- [[#313](https://github.com/plotly/plotly.rs/pull/313)] Add example of subplots with multiple traces
+- [[#314](https://github.com/plotly/plotly.rs/pull/314)] Add axis range bounds support
+- [[#317](https://github.com/plotly/plotly.rs/pull/317)] Show rangebreak usage with ints
+- [[#318](https://github.com/plotly/plotly.rs/pull/318)] Add slider support
 
 ### Fixed
 - [[#284](https://github.com/plotly/plotly.rs/pull/284)]  Allow plotly package to be compiled for android 

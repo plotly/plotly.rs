@@ -495,35 +495,45 @@ impl Plot {
         }
     }
 
+    /// Returns HTML script tags containing embedded JavaScript sources for
+    /// offline use.
+    ///
+    /// This function embeds the Plotly.js library and MathJax (tex-svg)
+    /// JavaScript directly into the HTML output, allowing plots to work
+    /// without an internet connection. The embedded sources include:
+    /// - Plotly.js library for interactive plotting
+    /// - MathJax tex-svg for rendering mathematical expressions
+    ///
+    /// This is used when the `plotly_embed_js` feature is enabled, providing
+    /// self-contained HTML files that don't require external CDN resources.
     pub fn offline_js_sources() -> String {
-        // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
-        // let local_tex_mml_js = include_str!("../templates/tex-mml-chtml-3.2.0.js");
+        // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when generating
+        // Latex Titles we no longer include it.
         let local_tex_svg_js = include_str!("../templates/tex-svg-3.2.2.js");
         let local_plotly_js = include_str!("../templates/plotly.min.js");
 
         format!(
-            "<script type=\"text/javascript\">{}</script>\n
-            <script type=\"text/javascript\">
-            /**
-             * tex-svg JS script
-             **/
-            {}
-            </script>\n
-            <script type=\"text/javascript\">
-            /**
-             * tex-mml-chtml JS script
-             **/
-            {}
-            </script>\n
-            ",
-            local_plotly_js, local_tex_svg_js, ""
+            "<script type=\"text/javascript\">{local_plotly_js}</script>\n
+             <script type=\"text/javascript\">{local_tex_svg_js}</script>\n"
         )
         .to_string()
     }
 
-    fn online_cdn_js() -> String {
-        // Removed tex-mml-chtml as it conflicts with tex-svg when generating Latex
-        // Titles
+    /// Returns HTML script tags that reference external CDN resources for
+    /// online use.
+    ///
+    /// This function provides HTML script tags that load JavaScript libraries
+    /// from external CDN sources, requiring an internet connection to
+    /// function. The referenced sources include:
+    /// - Plotly.js library from CDN (version 3.0.1)
+    /// - MathJax tex-svg from jsDelivr CDN (version 3.2.2)
+    ///
+    /// This is the default behavior when the `plotly_embed_js` feature is
+    /// disabled, providing smaller HTML files that rely on external
+    /// resources.
+    pub fn online_cdn_js() -> String {
+        // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when generating
+        // Latex Titles we no longer include it.
         r##"<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
         <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
         "##
