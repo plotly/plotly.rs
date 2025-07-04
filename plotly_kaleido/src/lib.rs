@@ -98,7 +98,7 @@ impl Kaleido {
 
         let path = match Kaleido::binary_path(&path) {
             Ok(kaleido_path) => kaleido_path,
-            Err(msg) => panic!("Failed tu use Kaleido binary at {} due to {}", path, msg),
+            Err(msg) => panic!("Failed tu use Kaleido binary at {path} due to {msg}"),
         };
 
         Kaleido { cmd_path: path }
@@ -244,7 +244,7 @@ impl Kaleido {
         let stderr_lines = BufReader::new(stderr).lines();
         for line in stderr_lines {
             let line = line.unwrap();
-            eprintln!("{}", line);
+            eprintln!("{line}");
         }
 
         Ok(String::default())

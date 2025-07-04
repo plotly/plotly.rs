@@ -360,16 +360,16 @@ fn many_subplots_with_titles(show: bool, file_name: &str) {
         plot.add_trace(
             trace1
                 .clone()
-                .y_axis(format!("y{}", i))
-                .x_axis(format!("x{}", i)),
+                .y_axis(format!("y{i}"))
+                .x_axis(format!("x{i}")),
         );
         layout.add_annotation(
             Annotation::new()
-                .y_ref(format!("y{} domain", i))
+                .y_ref(format!("y{i} domain"))
                 .y_anchor(Anchor::Bottom)
                 .y(1)
-                .text(format!("Title {}", i))
-                .x_ref(format!("x{} domain", i))
+                .text(format!("Title {i}"))
+                .x_ref(format!("x{i} domain"))
                 .x_anchor(Anchor::Center)
                 .x(0.5)
                 .show_arrow(false),
