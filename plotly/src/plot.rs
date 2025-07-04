@@ -499,7 +499,7 @@ impl Plot {
         }
     }
 
-    fn offline_js_sources() -> String {
+    pub fn offline_js_sources() -> String {
         // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
         // let local_tex_mml_js = include_str!("../templates/tex-mml-chtml-3.2.0.js");
         let local_tex_svg_js = include_str!("../templates/tex-svg-3.2.2.js");
