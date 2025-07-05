@@ -221,7 +221,7 @@ impl WebDriver {
                 }
                 #[cfg(target_os = "windows")]
                 {
-                    self.spawn_with_fallback(driver_path, port, e, &command)
+                    self.spawn_with_fallback(driver_path, port, e)
                 }
             }
         }
@@ -234,7 +234,6 @@ impl WebDriver {
         driver_path: &PathBuf,
         port: u32,
         original_error: std::io::Error,
-        original_command: &Command,
     ) -> Result<Child> {
         // If CREATE_NO_WINDOW fails, try without any special flags
         error!("Failed to spawn with CREATE_NO_WINDOW: {original_error}");

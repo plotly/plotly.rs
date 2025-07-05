@@ -60,108 +60,130 @@ pub(crate) fn pdf_export_js_script(timeout_ms: u32) -> String {
 
     const graph_div = document.getElementById('plotly-html-element');
 
-    // Check if html2pdf is available
-    if (typeof html2pdf === 'undefined') {{
-        console.error('html2pdf library not available');
-        callback('ERROR:html2pdf library not loaded');
-        return;
-    }}
-
-  let tempDiv = null;
-
-    const cleanup = () => {{
-        if (tempDiv) {{
-            document.body.removeChild(tempDiv);
-        }}
+    // Check if html2pdf is available and wait for it to load
+    const waitForHtml2Pdf = (maxWaitMs = 5000) => {{
+        return new Promise((resolve, reject) => {{
+            const startTime = Date.now();
+            
+            const checkLibrary = () => {{
+                if (typeof html2pdf !== 'undefined' && html2pdf) {{
+                    console.log('html2pdf library loaded successfully');
+                    resolve();
+                }} else if (Date.now() - startTime > maxWaitMs) {{
+                    console.error('html2pdf library failed to load within timeout');
+                    reject(new Error('html2pdf library not loaded within timeout'));
+                }} else {{
+                    setTimeout(checkLibrary, 100);
+                }}
+            }};
+            
+            checkLibrary();
+        }});
     }};
 
-    Plotly.newPlot(graph_div, plot).then(function() {{
-        return Plotly.toImage(graph_div, {{
-        format: format,
-        width: width,
-        height: height,
-        }});
-    }}).then(function(dataUrl) {{
-        console.log('Plotly image generated successfully');
-        console.log('SVG data URL length:', dataUrl.length);
-        console.log('SVG data URL preview:', dataUrl.substring(0, 200) + '...');
-        console.log('PDF dimensions (px):', width, 'x', height);
+    // Wait for html2pdf to be available before proceeding
+    waitForHtml2Pdf().then(() => {{
+        console.log('html2pdf library is ready, starting PDF export...');
+        
+        let tempDiv = null;
 
-        // Create a temporary div for the image
-        tempDiv = document.createElement('div');
-        tempDiv.style.width = width + 'px';
-        tempDiv.style.height = height + 'px';
-        tempDiv.style.background = 'white';
-        tempDiv.style.position = 'fixed';
-        tempDiv.style.top = '0px';
-        tempDiv.style.left = '0px';
-        tempDiv.style.margin = '0px';
-        tempDiv.style.padding = '0px';
-        tempDiv.style.overflow = 'hidden';
-        tempDiv.style.boxSizing = 'border-box';
-        tempDiv.style.zIndex = '9999';
-        tempDiv.style.display = 'block';
-        document.body.appendChild(tempDiv);
-
-        // Use simple img approach with SVG data URL
-        console.log('Using SVG data URL directly with img element');
-        const img = document.createElement('img');
-        img.src = dataUrl;
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.display = 'block';
-        img.style.objectFit = 'contain';
-        img.style.maxWidth = '100%';
-        img.style.maxHeight = '100%';
-        img.style.verticalAlign = 'top';
-        img.style.boxSizing = 'border-box';
-        tempDiv.appendChild(img);
-
-        // Wait for the image to load
-        return new Promise(function(resolve) {{
-            img.onload = function() {{
-                console.log('SVG image loaded successfully');
-                // Additional delay to ensure image is fully rendered
-                // Brief delay to ensure image is fully rendered
-                setTimeout(resolve, {timeout_ms});
-            }};
-            img.onerror = function() {{
-                cleanup();
-                callback('ERROR:Failed to load SVG image');
-            }};
-        }});
-    }}).then(function() {{
-        console.log('Starting PDF generation...');
-        return html2pdf().from(tempDiv).set({{
-            margin: 0,
-            filename: 'plotly-plot.pdf',
-            image: {{ type: 'jpeg', quality: 1}},
-            html2canvas: {{
-                scale: scale,
-                backgroundColor: '#fff',
-                useCORS: true,
-                allowTaint: true,
-                logging: true,
-                width: width,
-                height: height,
-                imageTimeout: 15000,
-                removeContainer: true,
-                foreignObjectRendering: {foreign_object_rendering},
-                scrollY: 0,
-                scrollX: 0
-            }},
-            jsPDF: {{
-                unit: 'px',
-                format: [width, height],
-                orientation: width > height ? 'landscape' : 'portrait',
-                compress: true
+        const cleanup = () => {{
+            if (tempDiv) {{
+                document.body.removeChild(tempDiv);
             }}
-        }}).toPdf().output('datauristring');
-    }}).then(function(dataUri) {{
-        cleanup();
-            callback(dataUri);
-    }}).catch(function(err) {{
-        cleanup();
+        }};
+
+        Plotly.newPlot(graph_div, plot).then(function() {{
+            return Plotly.toImage(graph_div, {{
+            format: format,
+            width: width,
+            height: height,
+            }});
+        }}).then(function(dataUrl) {{
+            console.log('Plotly image generated successfully');
+            console.log('SVG data URL length:', dataUrl.length);
+            console.log('SVG data URL preview:', dataUrl.substring(0, 200) + '...');
+            console.log('PDF dimensions (px):', width, 'x', height);
+
+            // Create a temporary div for the image
+            tempDiv = document.createElement('div');
+            tempDiv.style.width = width + 'px';
+            tempDiv.style.height = height + 'px';
+            tempDiv.style.background = 'white';
+            tempDiv.style.position = 'fixed';
+            tempDiv.style.top = '0px';
+            tempDiv.style.left = '0px';
+            tempDiv.style.margin = '0px';
+            tempDiv.style.padding = '0px';
+            tempDiv.style.overflow = 'hidden';
+            tempDiv.style.boxSizing = 'border-box';
+            tempDiv.style.zIndex = '9999';
+            tempDiv.style.display = 'block';
+            document.body.appendChild(tempDiv);
+
+            // Use simple img approach with SVG data URL
+            console.log('Using SVG data URL directly with img element');
+            const img = document.createElement('img');
+            img.src = dataUrl;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.display = 'block';
+            img.style.objectFit = 'contain';
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            img.style.verticalAlign = 'top';
+            img.style.boxSizing = 'border-box';
+            tempDiv.appendChild(img);
+
+            // Wait for the image to load
+            return new Promise(function(resolve) {{
+                img.onload = function() {{
+                    console.log('SVG image loaded successfully');
+                    // Additional delay to ensure image is fully rendered
+                    // Brief delay to ensure image is fully rendered
+                    setTimeout(resolve, {timeout_ms});
+                }};
+                img.onerror = function() {{
+                    cleanup();
+                    callback('ERROR:Failed to load SVG image');
+                }};
+            }});
+        }}).then(function() {{
+            console.log('Starting PDF generation...');
+            return html2pdf().from(tempDiv).set({{
+                margin: 0,
+                filename: 'plotly-plot.pdf',
+                image: {{ type: 'jpeg', quality: 1}},
+                html2canvas: {{
+                    scale: scale,
+                    backgroundColor: '#fff',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: true,
+                    width: width,
+                    height: height,
+                    imageTimeout: 15000,
+                    removeContainer: true,
+                    foreignObjectRendering: {foreign_object_rendering},
+                    scrollY: 0,
+                    scrollX: 0
+                }},
+                jsPDF: {{
+                    unit: 'px',
+                    format: [width, height],
+                    orientation: width > height ? 'landscape' : 'portrait',
+                    compress: true
+                }}
+            }}).toPdf().output('datauristring');
+        }}).then(function(dataUri) {{
+            cleanup();
+                callback(dataUri);
+        }}).catch(function(err) {{
+            cleanup();
+            callback('ERROR:' + err.toString());
+        }});
+    }}).catch((err) => {{
+        console.error('Failed to load html2pdf library:', err);
         callback('ERROR:' + err.toString());
     }});
 "##
