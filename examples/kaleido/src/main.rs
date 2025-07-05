@@ -16,6 +16,7 @@ fn main() {
 
     // The image will be saved to format!("output/image.{image_format}") relative to
     // the current working directory.
+    #[allow(deprecated)]
     plot.write_image(&filename, ImageFormat::EPS, width, height, scale);
     plot.write_image(&filename, ImageFormat::JPEG, width, height, scale);
     plot.write_image(&filename, ImageFormat::PDF, width, height, scale);
