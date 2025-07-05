@@ -1,4 +1,21 @@
 [workspace]
-members = ["*", "plotly_utils"]
+members = [
+    "3d_charts",
+    "basic_charts", 
+    "custom_controls",
+    "customization/consistent_static_format_export",
+    "customization/density_mapbox_example",
+    "customization/multiple_plots_example",
+    "financial_charts",
+    "images",
+    "kaleido",
+    "maps",
+    "ndarray",
+    "plotly_utils",
+    "scientific_charts",
+    "shapes",
+    "statistical_charts",
+    "subplots",
+    "themes"
+]
 resolver = "2"
-exclude = ["jupyter", "target", "wasm-yew"]

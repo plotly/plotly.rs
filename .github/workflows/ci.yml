@@ -95,7 +95,9 @@ jobs:
           3d_charts,
           basic_charts,
           custom_controls,
-          customization,
+          customization/consistent_static_format_export,
+          customization/density_mapbox_example,
+          customization/multiple_plots_example,
           financial_charts,
           images,
           kaleido,
@@ -103,6 +105,7 @@ jobs:
           ndarray,
           scientific_charts,
           shapes,
+          statistical_charts,
           subplots,
           themes,
         ]
