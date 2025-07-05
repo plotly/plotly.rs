@@ -219,7 +219,7 @@ pub(crate) fn html_body(js_source: &str) -> String {
             {js_source}
         </head>
         <body>
-            <div id="plotly-html-element" hidden></div>
+            <div id="plotly-html-element" style="position: absolute; left: -9999px; top: -9999px; width: 1200px; height: 900px;"></div>
         </body>
         </html>"#
     );
