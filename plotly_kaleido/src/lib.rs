@@ -26,6 +26,7 @@ use serde_json::Value;
 /// This enum defines all the image formats that can be exported from Plotly
 /// plots using the Kaleido engine. Kaleido supports all these formats natively.
 #[derive(Debug, Clone)]
+#[allow(deprecated)]
 pub enum ImageFormat {
     /// Portable Network Graphics format
     PNG,
@@ -37,7 +38,15 @@ pub enum ImageFormat {
     SVG,
     /// Portable Document Format
     PDF,
-    /// Encapsulated PostScript format
+    /// Encapsulated PostScript format (deprecated)
+    ///
+    /// This format is deprecated since version 0.13.0 and will be removed in
+    /// version 0.14.0. Use SVG or PDF instead for vector graphics. EPS is
+    /// not supported in the open source version.
+    #[deprecated(
+        since = "0.13.0",
+        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.14.0"
+    )]
     EPS,
 }
 
@@ -64,6 +73,7 @@ impl std::fmt::Display for ImageFormat {
                 Self::WEBP => "webp",
                 Self::SVG => "svg",
                 Self::PDF => "pdf",
+                #[allow(deprecated)]
                 Self::EPS => "eps",
             }
         )
@@ -208,6 +218,7 @@ impl Kaleido {
         dst.set_extension(format.to_string());
 
         let image_data = self.convert(plotly_data, format.clone(), width, height, scale)?;
+        #[allow(deprecated)]
         let data = match format {
             ImageFormat::SVG | ImageFormat::EPS => image_data.as_bytes(),
             _ => &general_purpose::STANDARD.decode(image_data).unwrap(),
@@ -460,6 +471,7 @@ mod tests {
         let test_plot = create_test_plot();
         let k = Kaleido::new();
         let dst = PathBuf::from("example.eps");
+        #[allow(deprecated)]
         let r = k.save(dst.as_path(), &test_plot, ImageFormat::EPS, 1200, 900, 4.5);
         assert!(r.is_ok());
         assert!(std::fs::remove_file(dst.as_path()).is_ok());

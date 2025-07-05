@@ -42,6 +42,9 @@ jobs:
         with:
           components: clippy
           targets: wasm32-unknown-unknown
+      # lint plotly_static for all features
+      - run: cargo clippy -p plotly_static --features geckodriver,webdriver_download -- -D warnings -A deprecated
+      - run: cargo clippy -p plotly_static --features chromedriver,webdriver_download -- -D warnings -A deprecated
       # lint the main library workspace for non-wasm target
       - run: cargo clippy --features all -- -D warnings -A deprecated
       # lint the non-wasm examples
@@ -70,16 +73,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            browser: chrome
+            features: plotly_ndarray,plotly_image,static_export_default,ci
+          - os: ubuntu-latest
+            browser: firefox
+            features: plotly_ndarray,plotly_image,static_export_geckodriver,static_export_wd_download,ci
+          - os: windows-latest
+            browser: chrome
+            features: plotly_ndarray,plotly_image,static_export_chromedriver,ci
+          - os: macos-latest
+            browser: chrome
+            features: plotly_ndarray,plotly_image,static_export_default,ci
     runs-on: ${{ matrix.os }}
     timeout-minutes: ${{ matrix.os == 'windows-latest' && 30 || 10 }}
     steps:
       - name: Setup Chrome
+        if: matrix.browser == 'chrome'
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: 'latest'
           install-chromedriver: true
         id: setup-chrome
+
+      - name: Setup Firefox
+        if: matrix.browser == 'firefox'
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: 'latest'
+        id: setup-firefox
 
       - uses: actions/checkout@v4
 
@@ -106,14 +129,41 @@ jobs:
             -ChromePath "${{ steps.setup-chrome.outputs.chrome-path }}" `
             -ChromeDriverPath "${{ steps.setup-chrome.outputs.chromedriver-path }}"
 
-      # Run tests on non-Windows platforms
-      - name: Run tests (${{ matrix.os }})
-        if: matrix.os != 'windows-latest'
-        run: cargo test --verbose --workspace --features plotly_ndarray,plotly_image,static_export_default --exclude plotly_kaleido
+      # Run tests on Ubuntu with Chrome
+      - name: Run tests (${{ matrix.os }} - Chrome)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        run: cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+
+      # Install xvfb for Firefox WebGL support
+      - name: Install xvfb
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
+      # Run tests on Ubuntu with Firefox
+      - name: Run tests (${{ matrix.os }} - Firefox)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'firefox'
+        run: |
+          # Set environment variables for Firefox WebDriver
+          export BROWSER_PATH="${{ steps.setup-firefox.outputs.firefox-path }}"
+          export RUST_LOG="debug"
+          export RUST_BACKTRACE="1"
+          
+          echo "Environment variables set:"
+          echo "BROWSER_PATH: $BROWSER_PATH"
+          echo "RUST_LOG: $RUST_LOG"
+          
+          xvfb-run -s "-screen 0 1920x1080x24" cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+
+      # Run tests on macOS with Chrome
+      - name: Run tests (${{ matrix.os }} - Chrome)
+        if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
+        run: cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
 
       # Run tests on Windows with Chrome WebDriver
-      - name: Run tests (${{ matrix.os }})
-        if: matrix.os == 'windows-latest'
+      - name: Run tests (${{ matrix.os }} - Chrome)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
         shell: pwsh
         run: |
           # Set environment variables for WebDriver
@@ -127,13 +177,13 @@ jobs:
           Write-Host "WEBDRIVER_PATH: $env:WEBDRIVER_PATH"
           Write-Host "BROWSER_PATH: $env:BROWSER_PATH"
 
-          cargo test --verbose --workspace --features plotly_ndarray,plotly_image,static_export_chromedriver --exclude plotly_kaleido
+          cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido          
 
       - name: Upload example.pdf artifact
         uses: actions/upload-artifact@v4
         with:
-          name: example-pdf-${{ matrix.os }}
-          path: ${{ github.workspace }}/plotly_static/example.pdf
+          name: example-pdf-${{ matrix.os }}-${{ matrix.browser }}
+          path: ${{ github.workspace }}/plotly_static/example.*
           retention-days: 30
 
   code-coverage:

@@ -31,7 +31,7 @@ The example uses `static_export_default` which includes:
 
 ```toml
 # Use Chrome/Chromium instead of Firefox
-plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_downloader"] }
+plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_wd_download"] }
 
 # Manual WebDriver installation (no automatic download)
 plotly = { version = "0.13", features = ["static_export_geckodriver"] }

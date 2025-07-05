@@ -19,9 +19,9 @@ kaleido = ["plotly_kaleido"]
 # DEPRECATED: kaleido_download feature will be removed in version 0.14.0. Use plotly_static_download instead.
 kaleido_download = ["plotly_kaleido/download"]
 
-static_export_downloader = ["plotly_static/webdriver_download"]
 static_export_chromedriver = ["plotly_static", "plotly_static/chromedriver"]
 static_export_geckodriver = ["plotly_static", "plotly_static/geckodriver"]
+static_export_wd_download = ["plotly_static/webdriver_download"]
 static_export_default = ["plotly_static", "plotly_static/chromedriver", "plotly_static/webdriver_download"]
 
 # All non-conflicting features
@@ -38,7 +38,7 @@ erased-serde = "0.4"
 image = { version = "0.25", optional = true }
 plotly_derive = { version = "0.13", path = "../plotly_derive" }
 plotly_static = { version = "0.0.1", path = "../plotly_static", optional = true }
-plotly_kaleido = { version = "0.12", path = "../plotly_kaleido", optional = true }
+plotly_kaleido = { version = "0.13", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.16", optional = true }
 once_cell = "1"
 serde = { version = "1.0", features = ["derive"] }

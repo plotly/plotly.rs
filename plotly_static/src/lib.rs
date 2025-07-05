@@ -108,7 +108,7 @@
 //! export BROWSER_PATH="/path/to/chrome"
 //!
 //! # For Firefox
-//! export FIREFOX_PATH="/path/to/firefox"
+//! export BROWSER_PATH="/path/to/firefox"
 //! ```
 //!
 //! The library will automatically use these binaries when creating WebDriver
@@ -198,6 +198,8 @@
 //!   sessions
 //!
 //! ### WebDriver Configuration
+
+#![allow(deprecated)]
 //!
 //! Set the `WEBDRIVER_PATH` environment variable to specify a custom WebDriver
 //! binary location (should point to the full executable path):
@@ -478,7 +480,7 @@ pub struct StaticExporterBuilder {
     spawn_webdriver: bool,
     /// Use bundled JS libraries instead of CDN (default: false)
     offline_mode: bool,
-    /// PDF export timeout in milliseconds (default: 250)
+    /// PDF export timeout in milliseconds (default: 150)
     pdf_export_timeout: u32,
     /// Browser command-line flags (e.g., "--headless", "--no-sandbox")
     webdriver_browser_caps: Vec<String>,
@@ -500,7 +502,7 @@ impl Default for StaticExporterBuilder {
             webdriver_url: webdriver::WEBDRIVER_URL.to_string(),
             spawn_webdriver: true,
             offline_mode: false,
-            pdf_export_timeout: 250,
+            pdf_export_timeout: 150,
             webdriver_browser_caps: {
                 #[cfg(feature = "chromedriver")]
                 {
@@ -617,9 +619,9 @@ impl StaticExporterBuilder {
     /// let builder = StaticExporterBuilder::default()
     ///     .pdf_export_timeout(500);
     ///
-    /// // Use default timeout (250ms)
+    /// // Use default timeout (150ms)
     /// let builder = StaticExporterBuilder::default()
-    ///     .pdf_export_timeout(250);
+    ///     .pdf_export_timeout(150);
     /// ```
     pub fn pdf_export_timeout(mut self, timeout_ms: u32) -> Self {
         self.pdf_export_timeout = timeout_ms;
@@ -1023,19 +1025,23 @@ impl StaticExporter {
         // Don't close the client - keep it for reuse
         // client.close().await?;
 
-        let src = data.as_str().ok_or(anyhow!(
+        let result = data.as_str().ok_or(anyhow!(
             "Failed to execute Plotly.toImage in browser session"
         ))?;
 
+        if let Some(err) = result.strip_prefix("ERROR:") {
+            return Err(anyhow!("JavaScript error during export: {err}"));
+        }
+
         match plot.format {
-            ImageFormat::SVG => Self::extract_plain(src, &plot.format),
+            ImageFormat::SVG => Self::extract_plain(result, &plot.format),
             ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP | ImageFormat::PDF => {
-                Self::extract_encoded(src, &plot.format)
+                Self::extract_encoded(result, &plot.format)
             }
             #[allow(deprecated)]
             ImageFormat::EPS => {
                 error!("EPS format is deprecated. Use SVG or PDF instead.");
-                Self::extract_encoded(src, &plot.format)
+                Self::extract_encoded(result, &plot.format)
             }
         }
     }
@@ -1078,6 +1084,59 @@ impl StaticExporter {
         data.split_once(",").map(|d| d.1.to_string())
     }
 
+    /// Get Firefox preferences optimized for CI environments.
+    ///
+    /// These preferences force software rendering and enable WebGL in headless
+    /// mode to work around graphics/WebGL issues in CI environments.
+    #[cfg(feature = "geckodriver")]
+    fn get_firefox_ci_preferences() -> serde_json::Map<String, serde_json::Value> {
+        let mut prefs = serde_json::Map::new();
+
+        // Force software rendering and enable WebGL in headless mode
+        prefs.insert(
+            "layers.acceleration.disabled".to_string(),
+            serde_json::json!(true),
+        );
+        prefs.insert("gfx.webrender.all".to_string(), serde_json::json!(false));
+        prefs.insert(
+            "gfx.webrender.software".to_string(),
+            serde_json::json!(true),
+        );
+        prefs.insert("webgl.disabled".to_string(), serde_json::json!(false));
+        prefs.insert("webgl.force-enabled".to_string(), serde_json::json!(true));
+        prefs.insert("webgl.enable-webgl2".to_string(), serde_json::json!(true));
+
+        // Force software WebGL implementation
+        prefs.insert(
+            "webgl.software-rendering".to_string(),
+            serde_json::json!(true),
+        );
+        prefs.insert(
+            "webgl.software-rendering.force".to_string(),
+            serde_json::json!(true),
+        );
+
+        // Disable hardware acceleration completely
+        prefs.insert(
+            "gfx.canvas.azure.accelerated".to_string(),
+            serde_json::json!(false),
+        );
+        prefs.insert(
+            "gfx.canvas.azure.accelerated-layers".to_string(),
+            serde_json::json!(false),
+        );
+        prefs.insert(
+            "gfx.content.azure.backends".to_string(),
+            serde_json::json!("cairo"),
+        );
+
+        // Force software rendering for all graphics
+        prefs.insert("gfx.2d.force-enabled".to_string(), serde_json::json!(true));
+        prefs.insert("gfx.2d.force-software".to_string(), serde_json::json!(true));
+
+        prefs
+    }
+
     fn build_webdriver_caps(&self) -> Result<Capabilities> {
         // Define browser capabilities
         let mut caps = JsonMap::new();
@@ -1092,11 +1151,19 @@ impl StaticExporter {
             browser_opts.insert("binary".to_string(), serde_json::json!(chrome_path));
             debug!("Added Chrome binary capability: {chrome_path}");
         }
-        // Add Firefox binary capability if FIREFOX_PATH is set
+        // Add Firefox binary capability if BROWSER_PATH is set
         #[cfg(feature = "geckodriver")]
-        if let Ok(firefox_path) = std::env::var("FIREFOX_PATH") {
+        if let Ok(firefox_path) = std::env::var("BROWSER_PATH") {
             browser_opts.insert("binary".to_string(), serde_json::json!(firefox_path));
-            debug!("Added Firefox binary capability: {}", firefox_path);
+            debug!("Added Firefox binary capability: {firefox_path}");
+        }
+
+        // Add Firefox-specific preferences for CI environments
+        #[cfg(feature = "geckodriver")]
+        {
+            let prefs = Self::get_firefox_ci_preferences();
+            browser_opts.insert("prefs".to_string(), serde_json::json!(prefs));
+            debug!("Added Firefox preferences for CI compatibility");
         }
 
         caps.insert(
@@ -1222,7 +1289,8 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -1242,7 +1310,8 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -1263,7 +1332,8 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
 
         let dst = PathBuf::from("example2.jpeg");
         export
@@ -1273,7 +1343,8 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -1293,7 +1364,8 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -1313,27 +1385,39 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
     fn save_pdf() {
         init();
         let test_plot = create_test_plot();
-        let mut export = StaticExporterBuilder::default()
+        #[cfg(feature = "ci")]
+        let mut exporter = StaticExporterBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(get_unique_port())
+            .pdf_export_timeout(750)
+            .build()
+            .unwrap();
+
+        #[cfg(not(feature = "ci"))]
+        let mut exporter = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
+
         let dst = PathBuf::from("example.pdf");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::PDF, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 600000,);
-        // assert!(std::fs::remove_file(dst.as_path()).is_ok());
+        #[cfg(not(feature = "ci"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
     }
 
     #[test]
@@ -1360,6 +1444,7 @@ mod tests {
             .write_fig(dst1.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst1.exists());
+        #[cfg(not(feature = "ci"))]
         assert!(std::fs::remove_file(dst1.as_path()).is_ok());
 
         // Create second exporter on the same port - this should connect to existing
@@ -1376,6 +1461,7 @@ mod tests {
             .write_fig(dst2.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst2.exists());
+        #[cfg(not(feature = "ci"))]
         assert!(std::fs::remove_file(dst2.as_path()).is_ok());
 
         // Create third exporter on the same port - should also connect to existing
@@ -1392,6 +1478,7 @@ mod tests {
             .write_fig(dst3.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst3.exists());
+        #[cfg(not(feature = "ci"))]
         assert!(std::fs::remove_file(dst3.as_path()).is_ok());
     }
 }

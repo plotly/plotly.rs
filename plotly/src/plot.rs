@@ -1077,6 +1077,7 @@ mod tests {
         let dst = PathBuf::from("example.pdf");
         let mut exporter = plotly_static::StaticExporterBuilder::default()
             .webdriver_port(get_unique_port())
+            .pdf_export_timeout(750)
             .build()
             .unwrap();
         plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PDF, 1024, 680, 1.0)
@@ -1085,8 +1086,8 @@ mod tests {
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
         let file_size = metadata.len();
         assert!(file_size > 0,);
-        // assert!(std::fs::remove_file(&dst).is_ok());
-        // assert!(!dst.exists());
+        assert!(std::fs::remove_file(&dst).is_ok());
+        assert!(!dst.exists());
     }
 
     #[test]
@@ -1177,6 +1178,12 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
+
+        assert!(!plot
+            .to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 1024, 680, 1.0)
+            .unwrap()
+            .is_empty());
+
         plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst.exists());
@@ -1186,10 +1193,5 @@ mod tests {
         assert!(file_size > 0,);
         assert!(std::fs::remove_file(&dst).is_ok());
         assert!(!dst.exists());
-
-        assert!(!plot
-            .to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 1024, 680, 1.0)
-            .unwrap()
-            .is_empty());
     }
 }

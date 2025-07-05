@@ -16,6 +16,8 @@ exclude = ["target/*"]
 webdriver_download = []
 geckodriver = []
 chromedriver = []
+# This is used for CI testing
+ci = []
 
 [dependencies]
 log = "0.4"

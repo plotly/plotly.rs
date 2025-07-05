@@ -15,7 +15,7 @@ The static export functionality is controlled by feature flags in the main `plot
 - `static_export_geckodriver`: Uses Firefox for rendering (requires geckodriver)
 
 ### Optional Features:
-- `static_export_downloader`: Automatically downloads WebDriver binaries at build time
+- `static_export_wd_download`: Automatically downloads WebDriver binaries at build time
 - `static_export_default`: Convenience feature that includes chromedriver + downloader
 
 ### Cargo.toml Configuration Examples:
@@ -27,7 +27,7 @@ plotly = { version = "0.13", features = ["static_export_chromedriver"] }
 
 # With automatic WebDriver download
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_downloader"] }
+plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_wd_download"] }
 
 # Recommended: Default configuration with Firefox + auto-download
 [dependencies]
@@ -39,7 +39,7 @@ plotly = { version = "0.13", features = ["static_export_default"] }
 1. **WebDriver Installation**: You need either chromedriver or geckodriver installed
    - Chrome: Download from https://chromedriver.chromium.org/
    - Firefox: Download from https://github.com/mozilla/geckodriver/releases
-   - Or use the `static_export_downloader` feature for automatic download
+   - Or use the `static_export_wd_download` feature for automatic download
 
 2. **Browser Installation**: You need Chrome/Chromium or Firefox installed
 
