@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.13.0"
+version = "0.13.1"
 description = "A plotting library powered by Plotly.js"
 authors = [
     "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
