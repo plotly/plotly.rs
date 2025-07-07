@@ -24,9 +24,9 @@
         <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="../../highlight.css">
-        <link rel="stylesheet" href="../../tomorrow-night.css">
-        <link rel="stylesheet" href="../../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="../../ferris.css">
@@ -34,21 +34,33 @@
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -62,7 +74,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -75,8 +88,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -102,7 +115,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -112,13 +125,14 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -169,17 +183,17 @@ use plotly::{Pie, Plot};
 <h2 id="basic-pie-chart"><a class="header" href="#basic-pie-chart">Basic Pie Chart</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn basic_pie_chart(show: bool) -&gt; Plot {
+</span>fn basic_pie_chart(show: bool, file_name: &amp;str) {
     let values = vec![2, 3, 4];
     let labels = vec!["giraffes", "orangutans", "monkeys"];
     let t = Pie::new(values).labels(labels);
     let mut plot = Plot::new();
     plot.add_trace(t);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="basic_pie_chart" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -188,16 +202,16 @@ use plotly::{Pie, Plot};
 </script>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn basic_pie_chart_labels(show: bool) -&gt; Plot {
+</span>fn basic_pie_chart_labels(show: bool, file_name: &amp;str) {
     let labels = ["giraffes", "giraffes", "orangutans", "monkeys"];
     let t = Pie::&lt;u32&gt;::from_labels(&amp;labels);
     let mut plot = Plot::new();
     plot.add_trace(t);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="basic_pie_chart_labels" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -207,7 +221,7 @@ use plotly::{Pie, Plot};
 <h2 id="grouped-pie-chart"><a class="header" href="#grouped-pie-chart">Grouped Pie Chart</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn grouped_donout_pie_charts(show: bool) -&gt; Plot {
+</span>fn grouped_donout_pie_charts(show: bool, file_name: &amp;str) {
     let mut plot = Plot::new();
 
     let values = vec![16, 15, 12, 6, 5, 4, 42];
@@ -277,10 +291,10 @@ use plotly::{Pie, Plot};
         );
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="grouped_donout_pie_charts" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -290,7 +304,7 @@ use plotly::{Pie, Plot};
 <h2 id="pie-chart-text-control"><a class="header" href="#pie-chart-text-control">Pie Chart Text Control</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn pie_chart_text_control(show: bool) -&gt; Plot {
+</span>fn pie_chart_text_control(show: bool, file_name: &amp;str) {
     let values = vec![2, 3, 4, 4];
     let labels = vec!["Wages", "Operating expenses", "Cost of sales", "Insurance"];
     let t = Pie::new(values)
@@ -306,10 +320,10 @@ use plotly::{Pie, Plot};
     let layout = Layout::new().height(700).width(700).show_legend(true);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="pie_chart_text_control" class="plotly-graph-div" style="height:100%; width:100%;"></div>

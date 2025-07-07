@@ -1,0 +1,397 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rangebreaks - Plotly.rs Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Plotly.rs documentation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../ferris.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Plotly.rs Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="rangebreaks"><a class="header" href="#rangebreaks">Rangebreaks</a></h1>
+<p>The following imports have been used to produce the plots below:</p>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::common::{Mode, Title};
+use plotly::layout::{Axis, RangeBreak};
+use plotly::{Layout, Plot, Scatter};
+use chrono::{DateTime, Duration};
+use rand::{Rng, SeedableRng};
+use rand_chacha::ChaCha8Rng;
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
+<h2 id="series-with-weekend-and-holiday-gaps"><a class="header" href="#series-with-weekend-and-holiday-gaps">Series with Weekend and Holiday Gaps</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn series_with_gaps_for_weekends_and_holidays(show: bool, file_name: &amp;str) {
+    let data = load_apple_data();
+
+    // Filter data for the specific date range as in the Python example
+    let filtered_data: Vec&lt;&amp;FinData&gt; = data
+        .iter()
+        .filter(|d| d.date.as_str() &gt;= "2015-12-01" &amp;&amp; d.date.as_str() &lt;= "2016-01-15")
+        .collect();
+
+    let date: Vec&lt;String&gt; = filtered_data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec&lt;f64&gt; = filtered_data.iter().map(|d| d.high).collect();
+
+    let trace = Scatter::new(date, high).mode(plotly::common::Mode::Markers);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let layout = Layout::new()
+        .title("Series with Weekend and Holiday Gaps")
+        .x_axis(
+            Axis::new()
+                .range(vec!["2015-12-01", "2016-01-15"])
+                .title("Date"),
+        )
+        .y_axis(Axis::new().title("Price"));
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&amp;plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div id="series_with_gaps_for_weekends_and_holidays" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("series_with_gaps_for_weekends_and_holidays", {"data":[{"type":"scatter","mode":"markers","x":["2015-12-01","2015-12-02","2015-12-03","2015-12-04","2015-12-07","2015-12-08","2015-12-09","2015-12-10","2015-12-11","2015-12-14","2015-12-15","2015-12-16","2015-12-17","2015-12-18","2015-12-21","2015-12-22","2015-12-23","2015-12-24","2015-12-28","2015-12-29","2015-12-30","2015-12-31","2016-01-04","2016-01-05","2016-01-06","2016-01-07","2016-01-08","2016-01-11","2016-01-12","2016-01-13","2016-01-14","2016-01-15"],"y":[118.809998,118.110001,116.790001,119.25,119.860001,118.599998,117.690002,116.940002,115.389999,112.68,112.800003,111.989998,112.25,109.519997,107.370003,107.720001,108.849998,109.0,107.690002,109.43,108.699997,107.029999,105.370003,105.849998,102.370003,100.129997,99.110001,99.059998,100.690002,101.190002,100.480003,97.709999]}],"layout":{"title":{"text":"Series with Weekend and Holiday Gaps"},"xaxis":{"title":{"text":"Date"},"range":["2015-12-01","2016-01-15"]},"yaxis":{"title":{"text":"Price"}}},"config":{}});
+</script>
+<h2 id="hiding-weekend-and-holiday-gaps-with-rangebreaks"><a class="header" href="#hiding-weekend-and-holiday-gaps-with-rangebreaks">Hiding Weekend and Holiday Gaps with Rangebreaks</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn hiding_weekends_and_holidays_with_rangebreaks(show: bool, file_name: &amp;str) {
+    let data = load_apple_data();
+
+    // Filter data for the specific date range as in the Python example
+    let filtered_data: Vec&lt;&amp;FinData&gt; = data
+        .iter()
+        .filter(|d| d.date.as_str() &gt;= "2015-12-01" &amp;&amp; d.date.as_str() &lt;= "2016-01-15")
+        .collect();
+
+    let date: Vec&lt;String&gt; = filtered_data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec&lt;f64&gt; = filtered_data.iter().map(|d| d.high).collect();
+
+    let trace = Scatter::new(date, high).mode(plotly::common::Mode::Markers);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let layout = Layout::new()
+        .title("Hide Weekend and Holiday Gaps with rangebreaks")
+        .x_axis(
+            Axis::new()
+                .range(vec!["2015-12-01", "2016-01-15"])
+                .title("Date")
+                .range_breaks(vec![
+                    plotly::layout::RangeBreak::new()
+                        .bounds("sat", "mon"), // hide weekends
+                    plotly::layout::RangeBreak::new()
+                        .values(vec!["2015-12-25", "2016-01-01"]), // hide Christmas and New Year's
+                ]),
+        )
+        .y_axis(Axis::new().title("Price"));
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&amp;plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div id="hiding_weekends_and_holidays_with_rangebreaks" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("hiding_weekends_and_holidays_with_rangebreaks", {"data":[{"type":"scatter","mode":"markers","x":["2015-12-01","2015-12-02","2015-12-03","2015-12-04","2015-12-07","2015-12-08","2015-12-09","2015-12-10","2015-12-11","2015-12-14","2015-12-15","2015-12-16","2015-12-17","2015-12-18","2015-12-21","2015-12-22","2015-12-23","2015-12-24","2015-12-28","2015-12-29","2015-12-30","2015-12-31","2016-01-04","2016-01-05","2016-01-06","2016-01-07","2016-01-08","2016-01-11","2016-01-12","2016-01-13","2016-01-14","2016-01-15"],"y":[118.809998,118.110001,116.790001,119.25,119.860001,118.599998,117.690002,116.940002,115.389999,112.68,112.800003,111.989998,112.25,109.519997,107.370003,107.720001,108.849998,109.0,107.690002,109.43,108.699997,107.029999,105.370003,105.849998,102.370003,100.129997,99.110001,99.059998,100.690002,101.190002,100.480003,97.709999]}],"layout":{"title":{"text":"Hide Weekend and Holiday Gaps with rangebreaks"},"xaxis":{"title":{"text":"Date"},"rangebreaks":[{"bounds":["sat","mon"]},{"values":["2015-12-25","2016-01-01"]}],"range":["2015-12-01","2016-01-15"]},"yaxis":{"title":{"text":"Price"}}},"config":{}});
+</script>
+<h2 id="series-with-non-business-hours-gaps"><a class="header" href="#series-with-non-business-hours-gaps">Series with Non-Business Hours Gaps</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn series_with_non_business_hours_gaps(show: bool, file_name: &amp;str) {
+    use chrono::NaiveDateTime;
+    use chrono::Timelike;
+    let (dates, all_values) = generate_business_hours_data();
+    let mut values = Vec::with_capacity(all_values.len());
+
+    for (date_str, v) in dates.iter().zip(all_values.iter()) {
+        // Parse the date string to extract hour
+        // Format is "2020-03-02 09:00:00"
+        if let Ok(datetime) = NaiveDateTime::parse_from_str(date_str, "%Y-%m-%d %H:%M:%S") {
+            let hour = datetime.hour();
+            if (9..17).contains(&amp;hour) {
+                values.push(*v);
+            } else {
+                values.push(f64::NAN);
+            }
+        } else {
+            values.push(f64::NAN);
+        }
+    }
+
+    let trace = Scatter::new(dates, values).mode(plotly::common::Mode::Markers);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    let layout = Layout::new()
+        .title("Series with Non-Business Hour Gaps")
+        .x_axis(Axis::new().title("Time").tick_format("%b %d, %Y %H:%M"))
+        .y_axis(Axis::new().title("Value"));
+    plot.set_layout(layout);
+    let path = write_example_to_html(&amp;plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div id="series_with_non_business_hours_gaps" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("series_with_non_business_hours_gaps", {"data":[{"type":"scatter","mode":"markers","x":["2020-03-02 00:00:00","2020-03-02 01:00:00","2020-03-02 02:00:00","2020-03-02 03:00:00","2020-03-02 04:00:00","2020-03-02 05:00:00","2020-03-02 06:00:00","2020-03-02 07:00:00","2020-03-02 08:00:00","2020-03-02 09:00:00","2020-03-02 10:00:00","2020-03-02 11:00:00","2020-03-02 12:00:00","2020-03-02 13:00:00","2020-03-02 14:00:00","2020-03-02 15:00:00","2020-03-02 16:00:00","2020-03-02 17:00:00","2020-03-02 18:00:00","2020-03-02 19:00:00","2020-03-02 20:00:00","2020-03-02 21:00:00","2020-03-02 22:00:00","2020-03-02 23:00:00","2020-03-03 00:00:00","2020-03-03 01:00:00","2020-03-03 02:00:00","2020-03-03 03:00:00","2020-03-03 04:00:00","2020-03-03 05:00:00","2020-03-03 06:00:00","2020-03-03 07:00:00","2020-03-03 08:00:00","2020-03-03 09:00:00","2020-03-03 10:00:00","2020-03-03 11:00:00","2020-03-03 12:00:00","2020-03-03 13:00:00","2020-03-03 14:00:00","2020-03-03 15:00:00","2020-03-03 16:00:00","2020-03-03 17:00:00","2020-03-03 18:00:00","2020-03-03 19:00:00","2020-03-03 20:00:00","2020-03-03 21:00:00","2020-03-03 22:00:00","2020-03-03 23:00:00","2020-03-04 00:00:00","2020-03-04 01:00:00","2020-03-04 02:00:00","2020-03-04 03:00:00","2020-03-04 04:00:00","2020-03-04 05:00:00","2020-03-04 06:00:00","2020-03-04 07:00:00","2020-03-04 08:00:00","2020-03-04 09:00:00","2020-03-04 10:00:00","2020-03-04 11:00:00","2020-03-04 12:00:00","2020-03-04 13:00:00","2020-03-04 14:00:00","2020-03-04 15:00:00","2020-03-04 16:00:00","2020-03-04 17:00:00","2020-03-04 18:00:00","2020-03-04 19:00:00","2020-03-04 20:00:00","2020-03-04 21:00:00","2020-03-04 22:00:00","2020-03-04 23:00:00","2020-03-05 00:00:00","2020-03-05 01:00:00","2020-03-05 02:00:00","2020-03-05 03:00:00","2020-03-05 04:00:00","2020-03-05 05:00:00","2020-03-05 06:00:00","2020-03-05 07:00:00","2020-03-05 08:00:00","2020-03-05 09:00:00","2020-03-05 10:00:00","2020-03-05 11:00:00","2020-03-05 12:00:00","2020-03-05 13:00:00","2020-03-05 14:00:00","2020-03-05 15:00:00","2020-03-05 16:00:00","2020-03-05 17:00:00","2020-03-05 18:00:00","2020-03-05 19:00:00","2020-03-05 20:00:00","2020-03-05 21:00:00","2020-03-05 22:00:00","2020-03-05 23:00:00","2020-03-06 00:00:00","2020-03-06 01:00:00","2020-03-06 02:00:00","2020-03-06 03:00:00","2020-03-06 04:00:00","2020-03-06 05:00:00","2020-03-06 06:00:00","2020-03-06 07:00:00","2020-03-06 08:00:00","2020-03-06 09:00:00","2020-03-06 10:00:00","2020-03-06 11:00:00","2020-03-06 12:00:00","2020-03-06 13:00:00","2020-03-06 14:00:00","2020-03-06 15:00:00","2020-03-06 16:00:00","2020-03-06 17:00:00","2020-03-06 18:00:00","2020-03-06 19:00:00","2020-03-06 20:00:00","2020-03-06 21:00:00","2020-03-06 22:00:00","2020-03-06 23:00:00"],"y":[null,null,null,null,null,null,null,null,null,0.49469729084451175,0.5084310315246496,1.3120373756221975,2.2260179134544797,2.4119750541031477,2.8695720271046983,2.227844845631055,2.3786311388324695,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,-1.8316971285270178,-1.300902423707198,-0.9086247615098064,-1.0599534282334782,-1.9287239906992262,-1.1656795409971819,-0.8534339410579537,-0.30967355361078575,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1.9198330915834583,2.339178078297561,2.2508248067901917,1.2973404650877922,1.5328622208902902,2.2748410271496295,1.9698518702575312,1.0419238727262528,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1.0197707399520752,2.013185042089021,1.7070934326178198,2.26436517692818,1.2805425351828896,0.49010677167014816,-0.016072766085961865,0.6291800813085087,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.318517910214555,1.0854581004816726,0.5513719043827228,0.9040262256322451,0.056485786589808296,0.9667238344300229,0.6225896661424335,-0.24174289652619851,null,null,null,null,null,null,null]}],"layout":{"title":{"text":"Series with Non-Business Hour Gaps"},"xaxis":{"title":{"text":"Time"},"tickformat":"%b %d, %Y %H:%M"},"yaxis":{"title":{"text":"Value"}}},"config":{}});
+</script>
+<h2 id="hiding-non-business-hours-gaps-with-rangebreaks"><a class="header" href="#hiding-non-business-hours-gaps-with-rangebreaks">Hiding Non-Business Hours Gaps with Rangebreaks</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn hiding_non_business_hours_with_rangebreaks(show: bool, file_name: &amp;str) {
+    let (dates, values) = generate_business_hours_data();
+    let trace = Scatter::new(dates, values).mode(plotly::common::Mode::Markers);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    let layout = Layout::new()
+        .title("Hide Non-Business Hour Gaps with rangebreaks")
+        .x_axis(
+            Axis::new()
+                .title("Time")
+                .tick_format("%b %d, %Y %H:%M")
+                .range_breaks(vec![
+                    plotly::layout::RangeBreak::new()
+                        .bounds(17, 9)
+                        .pattern("hour"), // hide hours outside of 9am-5pm
+                ]),
+        )
+        .y_axis(Axis::new().title("Value"));
+    plot.set_layout(layout);
+    let path = write_example_to_html(&amp;plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div id="hiding_non_business_hours_with_rangebreaks" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("hiding_non_business_hours_with_rangebreaks", {"data":[{"type":"scatter","mode":"markers","x":["2020-03-02 00:00:00","2020-03-02 01:00:00","2020-03-02 02:00:00","2020-03-02 03:00:00","2020-03-02 04:00:00","2020-03-02 05:00:00","2020-03-02 06:00:00","2020-03-02 07:00:00","2020-03-02 08:00:00","2020-03-02 09:00:00","2020-03-02 10:00:00","2020-03-02 11:00:00","2020-03-02 12:00:00","2020-03-02 13:00:00","2020-03-02 14:00:00","2020-03-02 15:00:00","2020-03-02 16:00:00","2020-03-02 17:00:00","2020-03-02 18:00:00","2020-03-02 19:00:00","2020-03-02 20:00:00","2020-03-02 21:00:00","2020-03-02 22:00:00","2020-03-02 23:00:00","2020-03-03 00:00:00","2020-03-03 01:00:00","2020-03-03 02:00:00","2020-03-03 03:00:00","2020-03-03 04:00:00","2020-03-03 05:00:00","2020-03-03 06:00:00","2020-03-03 07:00:00","2020-03-03 08:00:00","2020-03-03 09:00:00","2020-03-03 10:00:00","2020-03-03 11:00:00","2020-03-03 12:00:00","2020-03-03 13:00:00","2020-03-03 14:00:00","2020-03-03 15:00:00","2020-03-03 16:00:00","2020-03-03 17:00:00","2020-03-03 18:00:00","2020-03-03 19:00:00","2020-03-03 20:00:00","2020-03-03 21:00:00","2020-03-03 22:00:00","2020-03-03 23:00:00","2020-03-04 00:00:00","2020-03-04 01:00:00","2020-03-04 02:00:00","2020-03-04 03:00:00","2020-03-04 04:00:00","2020-03-04 05:00:00","2020-03-04 06:00:00","2020-03-04 07:00:00","2020-03-04 08:00:00","2020-03-04 09:00:00","2020-03-04 10:00:00","2020-03-04 11:00:00","2020-03-04 12:00:00","2020-03-04 13:00:00","2020-03-04 14:00:00","2020-03-04 15:00:00","2020-03-04 16:00:00","2020-03-04 17:00:00","2020-03-04 18:00:00","2020-03-04 19:00:00","2020-03-04 20:00:00","2020-03-04 21:00:00","2020-03-04 22:00:00","2020-03-04 23:00:00","2020-03-05 00:00:00","2020-03-05 01:00:00","2020-03-05 02:00:00","2020-03-05 03:00:00","2020-03-05 04:00:00","2020-03-05 05:00:00","2020-03-05 06:00:00","2020-03-05 07:00:00","2020-03-05 08:00:00","2020-03-05 09:00:00","2020-03-05 10:00:00","2020-03-05 11:00:00","2020-03-05 12:00:00","2020-03-05 13:00:00","2020-03-05 14:00:00","2020-03-05 15:00:00","2020-03-05 16:00:00","2020-03-05 17:00:00","2020-03-05 18:00:00","2020-03-05 19:00:00","2020-03-05 20:00:00","2020-03-05 21:00:00","2020-03-05 22:00:00","2020-03-05 23:00:00","2020-03-06 00:00:00","2020-03-06 01:00:00","2020-03-06 02:00:00","2020-03-06 03:00:00","2020-03-06 04:00:00","2020-03-06 05:00:00","2020-03-06 06:00:00","2020-03-06 07:00:00","2020-03-06 08:00:00","2020-03-06 09:00:00","2020-03-06 10:00:00","2020-03-06 11:00:00","2020-03-06 12:00:00","2020-03-06 13:00:00","2020-03-06 14:00:00","2020-03-06 15:00:00","2020-03-06 16:00:00","2020-03-06 17:00:00","2020-03-06 18:00:00","2020-03-06 19:00:00","2020-03-06 20:00:00","2020-03-06 21:00:00","2020-03-06 22:00:00","2020-03-06 23:00:00"],"y":[0.36379238461334285,1.2643431999583108,1.1193760056713502,1.3740970480660308,0.9512848063483961,0.251202546929046,-0.1327163338751347,0.47502920047611896,1.0175267620818331,0.49469729084451175,0.5084310315246496,1.3120373756221975,2.2260179134544797,2.4119750541031477,2.8695720271046983,2.227844845631055,2.3786311388324695,1.7221557206337206,1.6102603904756725,0.7630423986528472,0.07215906717782672,-0.28697939988699317,0.11239657723708785,-0.7307924454303982,-1.65388423217123,-2.1302411313539826,-1.4506893100646665,-0.9318319975188845,-0.5878184241306197,-0.223574210944135,0.12493632659113829,-0.6753802405395459,-1.2701086376117217,-1.8316971285270178,-1.300902423707198,-0.9086247615098064,-1.0599534282334782,-1.9287239906992262,-1.1656795409971819,-0.8534339410579537,-0.30967355361078575,0.3357613395556782,-0.5796321429870002,0.08456020446950152,0.9587610207097153,1.3768036286094034,1.2828075158468242,2.012683814946203,2.1802605916807263,3.1091387437982654,2.5707983541301718,2.817117044629036,2.5497666277142677,2.4339244533276787,1.7040664726824701,0.9794137213268148,1.3342744368867483,1.9198330915834583,2.339178078297561,2.2508248067901917,1.2973404650877922,1.5328622208902902,2.2748410271496295,1.9698518702575312,1.0419238727262528,1.0769316614881423,0.4268840059094361,0.029461463941795163,0.00233069127280916,-0.5334528275846533,-0.9059088354460847,-1.112800335736646,-0.7950002962128748,-0.10379901662076674,-0.24847103355934874,-0.03907551528099096,0.20834194717252075,1.0916727870882215,1.9347150490816862,1.7101957020198448,1.6318815549898702,1.0197707399520752,2.013185042089021,1.7070934326178198,2.26436517692818,1.2805425351828896,0.49010677167014816,-0.016072766085961865,0.6291800813085087,0.6446516403769649,0.5403105232248739,-0.11319458631973367,0.6161540099264318,1.029705893750684,0.09479122559474118,0.33829883681966955,1.020085143475974,1.6192568869082542,1.5010601782546216,1.4626295680326196,0.48447692289056943,0.24185307787656618,-0.2107285815810629,-0.4782126663277819,0.4225775425814786,0.318517910214555,1.0854581004816726,0.5513719043827228,0.9040262256322451,0.056485786589808296,0.9667238344300229,0.6225896661424335,-0.24174289652619851,-0.33419089688806136,0.31996992445759487,-0.410242837832546,-0.5372550388894295,-0.4893374553028804,0.0008488419674905767,0.8009070237361213]}],"layout":{"title":{"text":"Hide Non-Business Hour Gaps with rangebreaks"},"xaxis":{"title":{"text":"Time"},"rangebreaks":[{"bounds":[17,9],"pattern":"hour"}],"tickformat":"%b %d, %Y %H:%M"},"yaxis":{"title":{"text":"Value"}}},"config":{}});
+</script> 
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../recipes/financial_charts/ohlc_charts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../recipes/3dcharts.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../recipes/financial_charts/ohlc_charts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../recipes/3dcharts.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../ferris.js"></script>
+        <script src="../../plotly.min.js"></script>
+
+
+    </div>
+    </body>
+</html>

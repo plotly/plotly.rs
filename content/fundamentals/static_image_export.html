@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Static Image Export - Plotly.rs Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Plotly.rs documentation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../ferris.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Plotly.rs Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="static-image-export"><a class="header" href="#static-image-export">Static Image Export</a></h1>
+<p>The <code>plotly</code> crate provides static image export functionality through the <code>plotly_static</code> crate, which uses WebDriver and headless browsers to render plots as static images.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Static image export allows you to convert Plotly plots into various image formats (PNG, JPEG, WEBP, SVG, PDF) for use in reports, web applications, or any scenario where you need static images.</p>
+<h2 id="feature-flags"><a class="header" href="#feature-flags">Feature Flags</a></h2>
+<p>The static export functionality is controlled by feature flags in the main <code>plotly</code> crate:</p>
+<h3 id="required-features-choose-one"><a class="header" href="#required-features-choose-one">Required Features (choose one):</a></h3>
+<ul>
+<li><code>static_export_chromedriver</code>: Uses Chrome/Chromium for rendering (requires chromedriver)</li>
+<li><code>static_export_geckodriver</code>: Uses Firefox for rendering (requires geckodriver)</li>
+</ul>
+<h3 id="optional-features"><a class="header" href="#optional-features">Optional Features:</a></h3>
+<ul>
+<li><code>static_export_wd_download</code>: Automatically downloads WebDriver binaries at build time</li>
+<li><code>static_export_default</code>: Convenience feature that includes chromedriver + downloader</li>
+</ul>
+<h3 id="cargotoml-configuration-examples"><a class="header" href="#cargotoml-configuration-examples">Cargo.toml Configuration Examples:</a></h3>
+<pre><code class="language-toml"># Basic usage with manual Chromedriver installation
+[dependencies]
+plotly = { version = "0.13", features = ["static_export_chromedriver"] }
+
+# With automatic Chromedriver download
+[dependencies]
+plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_wd_download"] }
+
+# Recommended: Default configuration with Chromedriver + auto-download
+[dependencies]
+plotly = { version = "0.13", features = ["static_export_default"] }
+</code></pre>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<ol>
+<li>
+<p><strong>WebDriver Installation</strong>: You need either chromedriver or geckodriver installed</p>
+<ul>
+<li>Chrome: Download from https://chromedriver.chromium.org/</li>
+<li>Firefox: Download from https://github.com/mozilla/geckodriver/releases</li>
+<li>Or use the <code>static_export_wd_download</code> feature for automatic download</li>
+</ul>
+</li>
+<li>
+<p><strong>Browser Installation</strong>: You need Chrome/Chromium or Firefox installed</p>
+</li>
+<li>
+<p><strong>Environment Variables</strong> (optional):</p>
+<ul>
+<li>Set <code>WEBDRIVER_PATH</code> to specify custom WebDriver binary location (should point to the full executable path)</li>
+<li>Set <code>BROWSER_PATH</code> to specify custom browser binary location (should point to the full executable path)</li>
+</ul>
+<pre><code class="language-bash">export WEBDRIVER_PATH=/path/to/chromedriver
+export BROWSER_PATH=/path/to/chrome
+</code></pre>
+</li>
+</ol>
+<h2 id="basic-usage"><a class="header" href="#basic-usage">Basic Usage</a></h2>
+<h3 id="simple-export"><a class="header" href="#simple-export">Simple Export</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::{Plot, Scatter};
+use plotly::plotly_static::ImageFormat;
+
+let mut plot = Plot::new();
+plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
+
+// Export to PNG file
+plot.write_image("my_plot", ImageFormat::PNG, 800, 600, 1.0)
+    .expect("Failed to export plot");
+<span class="boring">}</span></code></pre></pre>
+<h3 id="efficient-exporter-reuse"><a class="header" href="#efficient-exporter-reuse">Efficient Exporter Reuse</a></h3>
+<p>For better performance when exporting multiple plots, reuse a single <code>StaticExporter</code>:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::{Plot, Scatter};
+use plotly::plotly_static::{StaticExporterBuilder, ImageFormat};
+
+let mut plot1 = Plot::new();
+plot1.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
+
+let mut plot2 = Plot::new();
+plot2.add_trace(Scatter::new(vec![2, 3, 4], vec![5, 6, 7]));
+
+// Create a single exporter to reuse
+let mut exporter = StaticExporterBuilder::default()
+    .build()
+    .expect("Failed to create StaticExporter");
+
+// Export multiple plots using the same exporter
+plot1.write_image_with_exporter(&amp;mut exporter, "plot1", ImageFormat::PNG, 800, 600, 1.0)
+    .expect("Failed to export plot1");
+plot2.write_image_with_exporter(&amp;mut exporter, "plot2", ImageFormat::JPEG, 800, 600, 1.0)
+    .expect("Failed to export plot2");
+<span class="boring">}</span></code></pre></pre>
+<h2 id="supported-formats"><a class="header" href="#supported-formats">Supported Formats</a></h2>
+<h3 id="raster-formats"><a class="header" href="#raster-formats">Raster Formats</a></h3>
+<ul>
+<li><strong>PNG</strong>: Portable Network Graphics, lossless compression</li>
+<li><strong>JPEG</strong>: Joint Photographic Experts Group, lossy compression (smaller files)</li>
+<li><strong>WEBP</strong>: Google's image format</li>
+</ul>
+<h3 id="vector-formats"><a class="header" href="#vector-formats">Vector Formats</a></h3>
+<ul>
+<li><strong>SVG</strong>: Scalable Vector Graphics</li>
+<li><strong>PDF</strong>: Portable Document Format</li>
+</ul>
+<h3 id="deprecated"><a class="header" href="#deprecated">Deprecated</a></h3>
+<ul>
+<li><strong>EPS</strong>: Encapsulated PostScript (will be removed in version 0.14.0)</li>
+</ul>
+<h2 id="string-export"><a class="header" href="#string-export">String Export</a></h2>
+<p>For web applications or APIs, you can export to strings:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::{Plot, Scatter};
+use plotly::plotly_static::{StaticExporterBuilder, ImageFormat};
+
+let mut plot = Plot::new();
+plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
+
+let mut exporter = StaticExporterBuilder::default()
+    .build()
+    .expect("Failed to create StaticExporter");
+
+// Get base64 data (useful for embedding in HTML)
+let base64_data = plot.to_base64_with_exporter(&amp;mut exporter, ImageFormat::PNG, 400, 300, 1.0)
+    .expect("Failed to export plot");
+
+// Get SVG data (vector format, scalable)
+let svg_data = plot.to_svg_with_exporter(&amp;mut exporter, 400, 300, 1.0)
+    .expect("Failed to export plot");
+<span class="boring">}</span></code></pre></pre>
+<h2 id="advanced-configuration"><a class="header" href="#advanced-configuration">Advanced Configuration</a></h2>
+<h3 id="custom-webdriver-configuration"><a class="header" href="#custom-webdriver-configuration">Custom WebDriver Configuration</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::plotly_static::StaticExporterBuilder;
+
+let mut exporter = StaticExporterBuilder::default()
+    .webdriver_port(4445)  // Use different port for parallel operations
+    .spawn_webdriver(true) // Explicitly spawn WebDriver
+    .offline_mode(true)    // Use bundled JavaScript (no internet required)
+    .webdriver_browser_caps(vec![
+        "--headless".to_string(),
+        "--no-sandbox".to_string(),
+        "--disable-gpu".to_string(),
+        "--disable-dev-shm-usage".to_string(),
+    ])
+    .build()
+    .expect("Failed to create StaticExporter");
+<span class="boring">}</span></code></pre></pre>
+<h3 id="parallel-usage"><a class="header" href="#parallel-usage">Parallel Usage</a></h3>
+<p>For parallel operations (tests, etc.), use unique ports:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::plotly_static::StaticExporterBuilder;
+use std::sync::atomic::{AtomicU32, Ordering};
+
+// Generate unique ports for parallel usage
+static PORT_COUNTER: AtomicU32 = AtomicU32::new(4444);
+
+fn get_unique_port() -&gt; u32 {
+    PORT_COUNTER.fetch_add(1, Ordering::SeqCst)
+}
+
+// Each thread/process should use a unique port
+let mut exporter = StaticExporterBuilder::default()
+    .webdriver_port(get_unique_port())
+    .build()
+    .expect("Failed to build StaticExporter");
+<span class="boring">}</span></code></pre></pre>
+<h2 id="logging-support"><a class="header" href="#logging-support">Logging Support</a></h2>
+<p>Enable logging for debugging and monitoring:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::plotly_static::StaticExporterBuilder;
+
+// Initialize logging (typically done once at the start of your application)
+env_logger::init();
+
+// Set log level via environment variable
+// RUST_LOG=debug cargo run
+
+let mut exporter = StaticExporterBuilder::default()
+    .build()
+    .expect("Failed to create StaticExporter");
+<span class="boring">}</span></code></pre></pre>
+<h2 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h2>
+<ul>
+<li><strong>Exporter Reuse</strong>: Create a single <code>StaticExporter</code> and reuse it for multiple plots</li>
+<li><strong>Parallel Usage</strong>: Use unique ports for parallel operations (tests, etc.)</li>
+<li><strong>Resource Management</strong>: The exporter automatically manages WebDriver lifecycle</li>
+<li><strong>Format Selection</strong>: Choose appropriate formats for your use case:
+<ul>
+<li>PNG: Good quality, lossless</li>
+<li>JPEG: Smaller files, lossy</li>
+<li>SVG: Scalable, good for web</li>
+<li>PDF: Good for printing</li>
+</ul>
+</li>
+</ul>
+<h2 id="complete-example"><a class="header" href="#complete-example">Complete Example</a></h2>
+<p>See the <a href="../../../examples/static_export/">static export example</a> for a complete working example that demonstrates:</p>
+<ul>
+<li>Multiple export formats</li>
+<li>Exporter reuse</li>
+<li>String export</li>
+<li>Logging</li>
+<li>Error handling</li>
+</ul>
+<p>To run the example:</p>
+<pre><code class="language-bash">cd examples/static_export
+cargo run
+</code></pre>
+<p><strong>NOTE</strong> Set <code>RUST_LOG=debug</code> to see detailed WebDriver operations and troubleshooting information.</p>
+<h2 id="related-documentation"><a class="header" href="#related-documentation">Related Documentation</a></h2>
+<ul>
+<li><a href="https://docs.rs/plotly_static/">plotly_static crate documentation</a></li>
+<li><a href="https://w3c.github.io/webdriver/">WebDriver specification</a></li>
+<li><a href="https://firefox-source-docs.mozilla.org/testing/geckodriver/">GeckoDriver documentation</a></li>
+<li><a href="https://chromedriver.chromium.org/">ChromeDriver documentation</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../fundamentals/themes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../recipes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../fundamentals/themes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../recipes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../ferris.js"></script>
+        <script src="../plotly.min.js"></script>
+
+
+    </div>
+    </body>
+</html>

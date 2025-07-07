@@ -24,9 +24,9 @@
         <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="../../highlight.css">
-        <link rel="stylesheet" href="../../tomorrow-night.css">
-        <link rel="stylesheet" href="../../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="../../ferris.css">
@@ -34,21 +34,33 @@
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -62,7 +74,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -75,8 +88,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -102,7 +115,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -112,13 +125,14 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -169,9 +183,11 @@ use rand_distr::{Distribution, Normal, Uniform};
 <span class="boring">}</span></code></pre></pre>
 <p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
 <h2 id="constructing-a-basic-sankey-diagram"><a class="header" href="#constructing-a-basic-sankey-diagram">Constructing a basic Sankey diagram</a></h2>
-<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let trace = Sankey::new()
+</span>fn basic_sankey_diagram(show: bool, file_name: &amp;str) {
+    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
+    let trace = Sankey::new()
         .orientation(Orientation::Horizontal)
         .node(
             Node::new()
@@ -196,91 +212,67 @@ use rand_distr::{Distribution, Normal, Uniform};
         );
 
     let layout = Layout::new()
-        .title("Basic Sankey".into())
+        .title("Basic Sankey")
         .font(Font::new().size(10));
 
     let mut plot = Plot::new();
     plot.add_trace(trace);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<div id="basic-sankey-diagram" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<div id="basic_sankey_diagram" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    window.PLOTLYENV=window.PLOTLYENV || {};
-    if (document.getElementById("basic-sankey-diagram")) {
-        Plotly.newPlot('basic-sankey-diagram', {
-  "data": [
-    {
-      "type": "sankey",
-      "orientation": "h",
-      "node": {
-        "color": [
-          "blue",
-          "blue",
-          "blue",
-          "blue",
-          "blue",
-          "blue"
-        ],
-        "label": [
-          "A1",
-          "A2",
-          "B1",
-          "B2",
-          "C1",
-          "C2"
-        ],
-        "line": {
-          "color": "black",
-          "width": 0.5
-        },
-        "pad": 15,
-        "thickness": 30
-      },
-      "link": {
-        "source": [
-          0,
-          1,
-          0,
-          2,
-          3,
-          3
-        ],
-        "target": [
-          2,
-          3,
-          3,
-          4,
-          4,
-          5
-        ],
-        "value": [
-          8,
-          4,
-          2,
-          8,
-          4,
-          2
-        ]
-      }
-    }
-  ],
-  "layout": {
-    "title": {
-      "text": "Basic Sankey"
-    },
-    "font": {
-      "size": 10
-    }
-  },
-  "config": {}
-});
-    };
+    Plotly.newPlot("basic_sankey_diagram", {"data":[{"type":"sankey","link":{"source":[0,1,0,2,3,3],"target":[2,3,3,4,4,5],"value":[8,4,2,8,4,2]},"node":{"color":["blue","blue","blue","blue","blue","blue"],"label":["A1","A2","B1","B2","C1","C2"],"line":{"color":"black","width":0.5},"pad":15,"thickness":30},"orientation":"h"}],"layout":{"title":{"text":"Basic Sankey"},"font":{"size":10}},"config":{}});
 </script>
+<h2 id="skankey-diagram-with-defined-node-position"><a class="header" href="#skankey-diagram-with-defined-node-position">Skankey diagram with defined node position</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn custom_node_sankey_diagram(show: bool, file_name: &amp;str) {
+    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
+    let trace = Sankey::new()
+        .orientation(Orientation::Horizontal)
+        .arrangement(plotly::sankey::Arrangement::Snap)
+        .node(
+            Node::new()
+                .pad(15)
+                .thickness(30)
+                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
+                .label(vec!["A", "B", "C", "D", "E", "F"])
+                .x(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
+                .y(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
+                .pad(20),
+        )
+        .link(
+            Link::new()
+                .source(vec![0, 0, 1, 2, 5, 4, 3, 5])
+                .target(vec![5, 3, 4, 3, 0, 2, 2, 3])
+                .value(vec![1, 2, 1, 1, 1, 1, 1, 2]),
+        );
+
+    let layout = Layout::new()
+        .title("Define Node Position")
+        .font(Font::new().size(10));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&amp;plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div id="custom_node_sankey_diagram" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("custom_node_sankey_diagram", {"data":[{"type":"sankey","arrangement":"snap","link":{"source":[0,0,1,2,5,4,3,5],"target":[5,3,4,3,0,2,2,3],"value":[1,2,1,1,1,1,1,2]},"node":{"label":["A","B","C","D","E","F"],"line":{"color":"black","width":0.5},"pad":20,"thickness":30,"x":[0.2,0.1,0.5,0.7,0.3,0.5],"y":[0.2,0.1,0.5,0.7,0.3,0.5]},"orientation":"h"}],"layout":{"title":{"text":"Define Node Position"},"font":{"size":10}},"config":{}});
+</script>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

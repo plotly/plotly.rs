@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Themes - Plotly.rs Book</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Plotly.rs documentation">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../ferris.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Plotly.rs Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="themes"><a class="header" href="#themes">Themes</a></h1>
+<p>The complete source code for the following examples can also be found <a href="https://github.com/plotly/plotly.rs/tree/main/examples/themes">here</a>.</p>
+<h1 id="use-different-theme-templates"><a class="header" href="#use-different-theme-templates">Use different theme templates</a></h1>
+<p>Similar to <a href="https://plotly.com/python/templates/">Plotly Python templates</a>, plotly.rs provides several built-in themes that can be applied to your plots.</p>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use plotly::{
+    common::{Marker, Mode, Title},
+    layout::{Layout, BuiltinTheme},
+    Plot, Scatter,
+};
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>to_inline_html</code> method is used to produce the html plot displayed in this page.</p>
+<h2 id="default-theme-plotly"><a class="header" href="#default-theme-plotly">Default Theme (Plotly)</a></h2>
+<div id="gapminder_plotly" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("gapminder_plotly", {"data":[{"type":"scatter","name":"Asia","mode":"markers","x":[974.5803384,29796.048339999998,1391.253792,1713.7786859999999,4959.1148539999995,39724.97867,2452.210407,3540.6515640000002,11605.71449,4471.061906,25523.2771,31656.06806,4519.461171,1593.06548,23348.139730000003,47306.98978,10461.05868,12451.6558,3095.7722710000003,944.0,1091.359778,22316.19287,2605.94758,3190.481016,21654.83194,47143.179639999995,3970.0954070000003,4184.548089,28718.27684,7458.3963269999995,2441.576404,3025.349798,2280.769906],"y":[43.828,75.635,64.062,59.723,72.961,82.208,64.69800000000001,70.65,70.964,59.545,80.745,82.603,72.535,67.297,78.623,77.58800000000001,71.993,74.241,66.803,62.068999999999996,63.785,75.64,65.483,71.688,72.777,79.972,72.396,74.143,78.4,70.616,74.249,73.422,62.698],"text":["Afghanistan","Bahrain","Bangladesh","Cambodia","China","Hong Kong, China","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Malaysia","Mongolia","Myanmar","Nepal","Oman","Pakistan","Philippines","Saudi Arabia","Singapore","Sri Lanka","Syria","Taiwan","Thailand","Vietnam","West Bank and Gaza","Yemen, Rep."],"marker":{"opacity":0.6,"size":[31,0,60,14,60,6,60,60,60,27,6,60,6,23,49,2,3,24,2,47,28,3,60,60,27,4,20,19,23,60,60,4,22],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#1f77b4"}},{"type":"scatter","name":"Europe","mode":"markers","x":[5937.029525999999,36126.4927,33692.60508,7446.298803,10680.79282,14619.222719999998,22833.30851,35278.41874,33207.0844,30470.0167,32170.37442,27538.41188,18008.94444,36180.789189999996,40675.99635,28569.7197,9253.896111,36797.93332,49357.19017,15389.924680000002,20509.64777,10808.47561,9786.534714,18678.31435,25768.25759,28821.0637,33859.74835,37506.419069999996,8458.276384,33203.26128],"y":[76.423,79.829,79.441,74.852,73.005,75.748,76.486,78.332,79.313,80.657,79.406,79.483,73.33800000000001,81.757,78.885,80.546,74.543,79.762,80.196,75.563,78.098,72.476,74.002,74.663,77.926,80.941,80.884,81.70100000000001,71.777,79.425],"text":["Albania","Austria","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Czech Republic","Denmark","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Serbia","Slovak Republic","Slovenia","Spain","Sweden","Switzerland","Turkey","United Kingdom"],"marker":{"opacity":0.6,"size":[3,8,10,4,7,4,10,5,5,60,60,10,9,0,4,58,0,16,4,38,10,22,10,5,2,40,9,7,60,60],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#ff7f0e"}},{"type":"scatter","name":"Africa","mode":"markers","x":[6223.367465,4797.231267,1441.284873,12569.851770000001,1217.032994,430.07069160000003,2042.0952399999999,706.016537,1704.0637239999999,986.1478792000001,277.55185869999997,3632.557798,1544.750112,2082.4815670000003,5581.180998,12154.08975,641.3695236000001,690.8055759,13206.48452,752.7497265,1327.60891,942.6542111,579.2317429999999,1463.249282,1569.331442,414.5073415,12057.49928,1044.770126,759.3499101,1042.581557,1803.1514960000002,10956.99112,3820.17523,823.6856205,4811.060429,619.6768923999999,2013.9773050000001,7670.122558,863.0884639000001,1598.435089,1712.4721359999999,862.5407561000001,926.1410683,9269.657808,2602.394995,4513.480643,1107.482182,882.9699437999999,7092.923025,1056.3801210000001,1271.211593,469.70929810000007],"y":[72.301,42.731,56.728,50.728,52.295,49.58,50.43,44.74100000000001,50.651,65.152,46.461999999999996,55.321999999999996,48.328,54.791000000000004,71.33800000000001,51.57899999999999,58.04,52.946999999999996,56.735,59.448,60.022,56.007,46.388000000000005,54.11,42.592,45.678000000000004,73.952,59.443000000000005,48.303000000000004,54.467,64.164,72.801,71.164,42.082,52.906000000000006,56.867,46.858999999999995,76.442,46.242,65.528,63.062,42.568000000000005,48.159,49.339,58.556000000000004,39.613,52.516999999999996,58.42,73.923,51.542,42.38399999999999,43.486999999999995],"text":["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Central African Republic","Chad","Comoros","Congo, Dem. Rep.","Congo, Rep.","Cote d\u0027Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Reunion","Rwanda","Sao Tome and Principe","Senegal","Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],"marker":{"opacity":0.6,"size":[33,12,8,1,14,8,17,4,10,0,60,3,18,0,60,0,4,60,1,1,22,9,1,35,2,3,6,19,13,12,3,1,33,19,2,12,60,0,8,0,12,6,9,43,42,1,38,5,10,29,11,12],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#2ca02c"}},{"type":"scatter","name":"Americas","mode":"markers","x":[12779.379640000001,3822.1370840000004,9065.800825,36319.235010000004,13171.63885,7006.580419,9645.06142,8948.102923,6025.374752000001,6873.262326000001,5728.353514,5186.050003,1201.637154,3548.3308460000003,7320.880262000001,11977.57496,2749.320965,9809.185636,4172.838464,7408.905561,19328.70901,18008.50924,42951.65309,10611.46299,11415.805690000001],"y":[75.32,65.554,72.39,80.653,78.553,72.889,78.782,78.273,72.235,74.994,71.878,70.259,60.916000000000004,70.19800000000001,72.567,76.195,72.899,75.53699999999999,71.752,71.421,78.74600000000001,69.819,78.242,76.384,73.747],"text":["Argentina","Bolivia","Brazil","Canada","Chile","Colombia","Costa Rica","Cuba","Dominican Republic","Ecuador","El Salvador","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Paraguay","Peru","Puerto Rico","Trinidad and Tobago","United States","Uruguay","Venezuela"],"marker":{"opacity":0.6,"size":[40,9,60,33,16,44,4,11,9,13,6,12,8,7,2,60,5,3,6,28,3,1,60,3,26],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#d62728"}},{"type":"scatter","name":"Oceania","mode":"markers","x":[34435.367439999995,25185.00911],"y":[81.235,80.204],"text":["Australia","New Zealand"],"marker":{"opacity":0.6,"size":[20,4],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#9467bd"}}],"layout":{"title":{"text":"Gapminder 2007: \u0027plotly\u0027 theme"},"showlegend":true,"width":800,"height":600,"xaxis":{"title":{"text":"GDP per capita (log scale)"},"type":"log"},"yaxis":{"title":{"text":"Life Expectancy"}},"template":{"layout":{}}},"config":{}});
+</script>
+<h2 id="plotly-white-theme"><a class="header" href="#plotly-white-theme">Plotly White Theme</a></h2>
+<div id="gapminder_plotly_white" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("gapminder_plotly_white", {"data":[{"type":"scatter","name":"Asia","mode":"markers","x":[974.5803384,29796.048339999998,1391.253792,1713.7786859999999,4959.1148539999995,39724.97867,2452.210407,3540.6515640000002,11605.71449,4471.061906,25523.2771,31656.06806,4519.461171,1593.06548,23348.139730000003,47306.98978,10461.05868,12451.6558,3095.7722710000003,944.0,1091.359778,22316.19287,2605.94758,3190.481016,21654.83194,47143.179639999995,3970.0954070000003,4184.548089,28718.27684,7458.3963269999995,2441.576404,3025.349798,2280.769906],"y":[43.828,75.635,64.062,59.723,72.961,82.208,64.69800000000001,70.65,70.964,59.545,80.745,82.603,72.535,67.297,78.623,77.58800000000001,71.993,74.241,66.803,62.068999999999996,63.785,75.64,65.483,71.688,72.777,79.972,72.396,74.143,78.4,70.616,74.249,73.422,62.698],"text":["Afghanistan","Bahrain","Bangladesh","Cambodia","China","Hong Kong, China","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Malaysia","Mongolia","Myanmar","Nepal","Oman","Pakistan","Philippines","Saudi Arabia","Singapore","Sri Lanka","Syria","Taiwan","Thailand","Vietnam","West Bank and Gaza","Yemen, Rep."],"marker":{"opacity":0.6,"size":[31,0,60,14,60,6,60,60,60,27,6,60,6,23,49,2,3,24,2,47,28,3,60,60,27,4,20,19,23,60,60,4,22],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#1f77b4"}},{"type":"scatter","name":"Europe","mode":"markers","x":[5937.029525999999,36126.4927,33692.60508,7446.298803,10680.79282,14619.222719999998,22833.30851,35278.41874,33207.0844,30470.0167,32170.37442,27538.41188,18008.94444,36180.789189999996,40675.99635,28569.7197,9253.896111,36797.93332,49357.19017,15389.924680000002,20509.64777,10808.47561,9786.534714,18678.31435,25768.25759,28821.0637,33859.74835,37506.419069999996,8458.276384,33203.26128],"y":[76.423,79.829,79.441,74.852,73.005,75.748,76.486,78.332,79.313,80.657,79.406,79.483,73.33800000000001,81.757,78.885,80.546,74.543,79.762,80.196,75.563,78.098,72.476,74.002,74.663,77.926,80.941,80.884,81.70100000000001,71.777,79.425],"text":["Albania","Austria","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Czech Republic","Denmark","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Serbia","Slovak Republic","Slovenia","Spain","Sweden","Switzerland","Turkey","United Kingdom"],"marker":{"opacity":0.6,"size":[3,8,10,4,7,4,10,5,5,60,60,10,9,0,4,58,0,16,4,38,10,22,10,5,2,40,9,7,60,60],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#ff7f0e"}},{"type":"scatter","name":"Africa","mode":"markers","x":[6223.367465,4797.231267,1441.284873,12569.851770000001,1217.032994,430.07069160000003,2042.0952399999999,706.016537,1704.0637239999999,986.1478792000001,277.55185869999997,3632.557798,1544.750112,2082.4815670000003,5581.180998,12154.08975,641.3695236000001,690.8055759,13206.48452,752.7497265,1327.60891,942.6542111,579.2317429999999,1463.249282,1569.331442,414.5073415,12057.49928,1044.770126,759.3499101,1042.581557,1803.1514960000002,10956.99112,3820.17523,823.6856205,4811.060429,619.6768923999999,2013.9773050000001,7670.122558,863.0884639000001,1598.435089,1712.4721359999999,862.5407561000001,926.1410683,9269.657808,2602.394995,4513.480643,1107.482182,882.9699437999999,7092.923025,1056.3801210000001,1271.211593,469.70929810000007],"y":[72.301,42.731,56.728,50.728,52.295,49.58,50.43,44.74100000000001,50.651,65.152,46.461999999999996,55.321999999999996,48.328,54.791000000000004,71.33800000000001,51.57899999999999,58.04,52.946999999999996,56.735,59.448,60.022,56.007,46.388000000000005,54.11,42.592,45.678000000000004,73.952,59.443000000000005,48.303000000000004,54.467,64.164,72.801,71.164,42.082,52.906000000000006,56.867,46.858999999999995,76.442,46.242,65.528,63.062,42.568000000000005,48.159,49.339,58.556000000000004,39.613,52.516999999999996,58.42,73.923,51.542,42.38399999999999,43.486999999999995],"text":["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Central African Republic","Chad","Comoros","Congo, Dem. Rep.","Congo, Rep.","Cote d\u0027Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Reunion","Rwanda","Sao Tome and Principe","Senegal","Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],"marker":{"opacity":0.6,"size":[33,12,8,1,14,8,17,4,10,0,60,3,18,0,60,0,4,60,1,1,22,9,1,35,2,3,6,19,13,12,3,1,33,19,2,12,60,0,8,0,12,6,9,43,42,1,38,5,10,29,11,12],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#2ca02c"}},{"type":"scatter","name":"Americas","mode":"markers","x":[12779.379640000001,3822.1370840000004,9065.800825,36319.235010000004,13171.63885,7006.580419,9645.06142,8948.102923,6025.374752000001,6873.262326000001,5728.353514,5186.050003,1201.637154,3548.3308460000003,7320.880262000001,11977.57496,2749.320965,9809.185636,4172.838464,7408.905561,19328.70901,18008.50924,42951.65309,10611.46299,11415.805690000001],"y":[75.32,65.554,72.39,80.653,78.553,72.889,78.782,78.273,72.235,74.994,71.878,70.259,60.916000000000004,70.19800000000001,72.567,76.195,72.899,75.53699999999999,71.752,71.421,78.74600000000001,69.819,78.242,76.384,73.747],"text":["Argentina","Bolivia","Brazil","Canada","Chile","Colombia","Costa Rica","Cuba","Dominican Republic","Ecuador","El Salvador","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Paraguay","Peru","Puerto Rico","Trinidad and Tobago","United States","Uruguay","Venezuela"],"marker":{"opacity":0.6,"size":[40,9,60,33,16,44,4,11,9,13,6,12,8,7,2,60,5,3,6,28,3,1,60,3,26],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#d62728"}},{"type":"scatter","name":"Oceania","mode":"markers","x":[34435.367439999995,25185.00911],"y":[81.235,80.204],"text":["Australia","New Zealand"],"marker":{"opacity":0.6,"size":[20,4],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#9467bd"}}],"layout":{"title":{"text":"Gapminder 2007: \u0027plotly_white\u0027 theme"},"showlegend":true,"width":800,"height":600,"xaxis":{"title":{"text":"GDP per capita (log scale)"},"type":"log"},"yaxis":{"title":{"text":"Life Expectancy"}},"template":{"layout":{"title":{"x":0.05},"font":{"color":"#2a3f5f"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0.0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1.0,"#276419"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"coloraxis":{"colorbar":{"outlinewidth":0}},"hovermode":"closest","hoverlabel":{"align":"left"},"xaxis":{"automargin":true,"linecolor":"#EBF0F8","gridcolor":"#EBF0F8","zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"linecolor":"#EBF0F8","gridcolor":"#EBF0F8","zerolinecolor":"#EBF0F8","zerolinewidth":2}}}},"config":{}});
+</script>
+<h2 id="plotly-dark-theme"><a class="header" href="#plotly-dark-theme">Plotly Dark Theme</a></h2>
+<div id="gapminder_plotly_dark" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("gapminder_plotly_dark", {"data":[{"type":"scatter","name":"Asia","mode":"markers","x":[974.5803384,29796.048339999998,1391.253792,1713.7786859999999,4959.1148539999995,39724.97867,2452.210407,3540.6515640000002,11605.71449,4471.061906,25523.2771,31656.06806,4519.461171,1593.06548,23348.139730000003,47306.98978,10461.05868,12451.6558,3095.7722710000003,944.0,1091.359778,22316.19287,2605.94758,3190.481016,21654.83194,47143.179639999995,3970.0954070000003,4184.548089,28718.27684,7458.3963269999995,2441.576404,3025.349798,2280.769906],"y":[43.828,75.635,64.062,59.723,72.961,82.208,64.69800000000001,70.65,70.964,59.545,80.745,82.603,72.535,67.297,78.623,77.58800000000001,71.993,74.241,66.803,62.068999999999996,63.785,75.64,65.483,71.688,72.777,79.972,72.396,74.143,78.4,70.616,74.249,73.422,62.698],"text":["Afghanistan","Bahrain","Bangladesh","Cambodia","China","Hong Kong, China","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Malaysia","Mongolia","Myanmar","Nepal","Oman","Pakistan","Philippines","Saudi Arabia","Singapore","Sri Lanka","Syria","Taiwan","Thailand","Vietnam","West Bank and Gaza","Yemen, Rep."],"marker":{"opacity":0.6,"size":[31,0,60,14,60,6,60,60,60,27,6,60,6,23,49,2,3,24,2,47,28,3,60,60,27,4,20,19,23,60,60,4,22],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#1f77b4"}},{"type":"scatter","name":"Europe","mode":"markers","x":[5937.029525999999,36126.4927,33692.60508,7446.298803,10680.79282,14619.222719999998,22833.30851,35278.41874,33207.0844,30470.0167,32170.37442,27538.41188,18008.94444,36180.789189999996,40675.99635,28569.7197,9253.896111,36797.93332,49357.19017,15389.924680000002,20509.64777,10808.47561,9786.534714,18678.31435,25768.25759,28821.0637,33859.74835,37506.419069999996,8458.276384,33203.26128],"y":[76.423,79.829,79.441,74.852,73.005,75.748,76.486,78.332,79.313,80.657,79.406,79.483,73.33800000000001,81.757,78.885,80.546,74.543,79.762,80.196,75.563,78.098,72.476,74.002,74.663,77.926,80.941,80.884,81.70100000000001,71.777,79.425],"text":["Albania","Austria","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Czech Republic","Denmark","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Serbia","Slovak Republic","Slovenia","Spain","Sweden","Switzerland","Turkey","United Kingdom"],"marker":{"opacity":0.6,"size":[3,8,10,4,7,4,10,5,5,60,60,10,9,0,4,58,0,16,4,38,10,22,10,5,2,40,9,7,60,60],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#ff7f0e"}},{"type":"scatter","name":"Africa","mode":"markers","x":[6223.367465,4797.231267,1441.284873,12569.851770000001,1217.032994,430.07069160000003,2042.0952399999999,706.016537,1704.0637239999999,986.1478792000001,277.55185869999997,3632.557798,1544.750112,2082.4815670000003,5581.180998,12154.08975,641.3695236000001,690.8055759,13206.48452,752.7497265,1327.60891,942.6542111,579.2317429999999,1463.249282,1569.331442,414.5073415,12057.49928,1044.770126,759.3499101,1042.581557,1803.1514960000002,10956.99112,3820.17523,823.6856205,4811.060429,619.6768923999999,2013.9773050000001,7670.122558,863.0884639000001,1598.435089,1712.4721359999999,862.5407561000001,926.1410683,9269.657808,2602.394995,4513.480643,1107.482182,882.9699437999999,7092.923025,1056.3801210000001,1271.211593,469.70929810000007],"y":[72.301,42.731,56.728,50.728,52.295,49.58,50.43,44.74100000000001,50.651,65.152,46.461999999999996,55.321999999999996,48.328,54.791000000000004,71.33800000000001,51.57899999999999,58.04,52.946999999999996,56.735,59.448,60.022,56.007,46.388000000000005,54.11,42.592,45.678000000000004,73.952,59.443000000000005,48.303000000000004,54.467,64.164,72.801,71.164,42.082,52.906000000000006,56.867,46.858999999999995,76.442,46.242,65.528,63.062,42.568000000000005,48.159,49.339,58.556000000000004,39.613,52.516999999999996,58.42,73.923,51.542,42.38399999999999,43.486999999999995],"text":["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Central African Republic","Chad","Comoros","Congo, Dem. Rep.","Congo, Rep.","Cote d\u0027Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Reunion","Rwanda","Sao Tome and Principe","Senegal","Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],"marker":{"opacity":0.6,"size":[33,12,8,1,14,8,17,4,10,0,60,3,18,0,60,0,4,60,1,1,22,9,1,35,2,3,6,19,13,12,3,1,33,19,2,12,60,0,8,0,12,6,9,43,42,1,38,5,10,29,11,12],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#2ca02c"}},{"type":"scatter","name":"Americas","mode":"markers","x":[12779.379640000001,3822.1370840000004,9065.800825,36319.235010000004,13171.63885,7006.580419,9645.06142,8948.102923,6025.374752000001,6873.262326000001,5728.353514,5186.050003,1201.637154,3548.3308460000003,7320.880262000001,11977.57496,2749.320965,9809.185636,4172.838464,7408.905561,19328.70901,18008.50924,42951.65309,10611.46299,11415.805690000001],"y":[75.32,65.554,72.39,80.653,78.553,72.889,78.782,78.273,72.235,74.994,71.878,70.259,60.916000000000004,70.19800000000001,72.567,76.195,72.899,75.53699999999999,71.752,71.421,78.74600000000001,69.819,78.242,76.384,73.747],"text":["Argentina","Bolivia","Brazil","Canada","Chile","Colombia","Costa Rica","Cuba","Dominican Republic","Ecuador","El Salvador","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Paraguay","Peru","Puerto Rico","Trinidad and Tobago","United States","Uruguay","Venezuela"],"marker":{"opacity":0.6,"size":[40,9,60,33,16,44,4,11,9,13,6,12,8,7,2,60,5,3,6,28,3,1,60,3,26],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#d62728"}},{"type":"scatter","name":"Oceania","mode":"markers","x":[34435.367439999995,25185.00911],"y":[81.235,80.204],"text":["Australia","New Zealand"],"marker":{"opacity":0.6,"size":[20,4],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#9467bd"}}],"layout":{"title":{"text":"Gapminder 2007: \u0027plotly_dark\u0027 theme"},"showlegend":true,"width":800,"height":600,"xaxis":{"title":{"text":"GDP per capita (log scale)"},"type":"log"},"yaxis":{"title":{"text":"Life Expectancy"}},"template":{"layout":{"title":{"x":0.05},"font":{"color":"#f2f5fa"},"paper_bgcolor":"#111111","plot_bgcolor":"#111111","colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0.0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1.0,"#276419"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"coloraxis":{"colorbar":{"outlinewidth":0}},"hovermode":"closest","hoverlabel":{"align":"left"},"xaxis":{"automargin":true,"linecolor":"#506784","gridcolor":"#283442","zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"linecolor":"#506784","gridcolor":"#283442","zerolinecolor":"#283442","zerolinewidth":2}}}},"config":{}});
+</script>
+<h2 id="seaborn-theme"><a class="header" href="#seaborn-theme">Seaborn Theme</a></h2>
+<div id="gapminder_seaborn" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("gapminder_seaborn", {"data":[{"type":"scatter","name":"Asia","mode":"markers","x":[974.5803384,29796.048339999998,1391.253792,1713.7786859999999,4959.1148539999995,39724.97867,2452.210407,3540.6515640000002,11605.71449,4471.061906,25523.2771,31656.06806,4519.461171,1593.06548,23348.139730000003,47306.98978,10461.05868,12451.6558,3095.7722710000003,944.0,1091.359778,22316.19287,2605.94758,3190.481016,21654.83194,47143.179639999995,3970.0954070000003,4184.548089,28718.27684,7458.3963269999995,2441.576404,3025.349798,2280.769906],"y":[43.828,75.635,64.062,59.723,72.961,82.208,64.69800000000001,70.65,70.964,59.545,80.745,82.603,72.535,67.297,78.623,77.58800000000001,71.993,74.241,66.803,62.068999999999996,63.785,75.64,65.483,71.688,72.777,79.972,72.396,74.143,78.4,70.616,74.249,73.422,62.698],"text":["Afghanistan","Bahrain","Bangladesh","Cambodia","China","Hong Kong, China","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Malaysia","Mongolia","Myanmar","Nepal","Oman","Pakistan","Philippines","Saudi Arabia","Singapore","Sri Lanka","Syria","Taiwan","Thailand","Vietnam","West Bank and Gaza","Yemen, Rep."],"marker":{"opacity":0.6,"size":[31,0,60,14,60,6,60,60,60,27,6,60,6,23,49,2,3,24,2,47,28,3,60,60,27,4,20,19,23,60,60,4,22],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#1f77b4"}},{"type":"scatter","name":"Europe","mode":"markers","x":[5937.029525999999,36126.4927,33692.60508,7446.298803,10680.79282,14619.222719999998,22833.30851,35278.41874,33207.0844,30470.0167,32170.37442,27538.41188,18008.94444,36180.789189999996,40675.99635,28569.7197,9253.896111,36797.93332,49357.19017,15389.924680000002,20509.64777,10808.47561,9786.534714,18678.31435,25768.25759,28821.0637,33859.74835,37506.419069999996,8458.276384,33203.26128],"y":[76.423,79.829,79.441,74.852,73.005,75.748,76.486,78.332,79.313,80.657,79.406,79.483,73.33800000000001,81.757,78.885,80.546,74.543,79.762,80.196,75.563,78.098,72.476,74.002,74.663,77.926,80.941,80.884,81.70100000000001,71.777,79.425],"text":["Albania","Austria","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Czech Republic","Denmark","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Serbia","Slovak Republic","Slovenia","Spain","Sweden","Switzerland","Turkey","United Kingdom"],"marker":{"opacity":0.6,"size":[3,8,10,4,7,4,10,5,5,60,60,10,9,0,4,58,0,16,4,38,10,22,10,5,2,40,9,7,60,60],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#ff7f0e"}},{"type":"scatter","name":"Africa","mode":"markers","x":[6223.367465,4797.231267,1441.284873,12569.851770000001,1217.032994,430.07069160000003,2042.0952399999999,706.016537,1704.0637239999999,986.1478792000001,277.55185869999997,3632.557798,1544.750112,2082.4815670000003,5581.180998,12154.08975,641.3695236000001,690.8055759,13206.48452,752.7497265,1327.60891,942.6542111,579.2317429999999,1463.249282,1569.331442,414.5073415,12057.49928,1044.770126,759.3499101,1042.581557,1803.1514960000002,10956.99112,3820.17523,823.6856205,4811.060429,619.6768923999999,2013.9773050000001,7670.122558,863.0884639000001,1598.435089,1712.4721359999999,862.5407561000001,926.1410683,9269.657808,2602.394995,4513.480643,1107.482182,882.9699437999999,7092.923025,1056.3801210000001,1271.211593,469.70929810000007],"y":[72.301,42.731,56.728,50.728,52.295,49.58,50.43,44.74100000000001,50.651,65.152,46.461999999999996,55.321999999999996,48.328,54.791000000000004,71.33800000000001,51.57899999999999,58.04,52.946999999999996,56.735,59.448,60.022,56.007,46.388000000000005,54.11,42.592,45.678000000000004,73.952,59.443000000000005,48.303000000000004,54.467,64.164,72.801,71.164,42.082,52.906000000000006,56.867,46.858999999999995,76.442,46.242,65.528,63.062,42.568000000000005,48.159,49.339,58.556000000000004,39.613,52.516999999999996,58.42,73.923,51.542,42.38399999999999,43.486999999999995],"text":["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Central African Republic","Chad","Comoros","Congo, Dem. Rep.","Congo, Rep.","Cote d\u0027Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Reunion","Rwanda","Sao Tome and Principe","Senegal","Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],"marker":{"opacity":0.6,"size":[33,12,8,1,14,8,17,4,10,0,60,3,18,0,60,0,4,60,1,1,22,9,1,35,2,3,6,19,13,12,3,1,33,19,2,12,60,0,8,0,12,6,9,43,42,1,38,5,10,29,11,12],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#2ca02c"}},{"type":"scatter","name":"Americas","mode":"markers","x":[12779.379640000001,3822.1370840000004,9065.800825,36319.235010000004,13171.63885,7006.580419,9645.06142,8948.102923,6025.374752000001,6873.262326000001,5728.353514,5186.050003,1201.637154,3548.3308460000003,7320.880262000001,11977.57496,2749.320965,9809.185636,4172.838464,7408.905561,19328.70901,18008.50924,42951.65309,10611.46299,11415.805690000001],"y":[75.32,65.554,72.39,80.653,78.553,72.889,78.782,78.273,72.235,74.994,71.878,70.259,60.916000000000004,70.19800000000001,72.567,76.195,72.899,75.53699999999999,71.752,71.421,78.74600000000001,69.819,78.242,76.384,73.747],"text":["Argentina","Bolivia","Brazil","Canada","Chile","Colombia","Costa Rica","Cuba","Dominican Republic","Ecuador","El Salvador","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Paraguay","Peru","Puerto Rico","Trinidad and Tobago","United States","Uruguay","Venezuela"],"marker":{"opacity":0.6,"size":[40,9,60,33,16,44,4,11,9,13,6,12,8,7,2,60,5,3,6,28,3,1,60,3,26],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#d62728"}},{"type":"scatter","name":"Oceania","mode":"markers","x":[34435.367439999995,25185.00911],"y":[81.235,80.204],"text":["Australia","New Zealand"],"marker":{"opacity":0.6,"size":[20,4],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#9467bd"}}],"layout":{"title":{"text":"Gapminder 2007: \u0027seaborn\u0027 theme"},"showlegend":true,"width":800,"height":600,"xaxis":{"title":{"text":"GDP per capita (log scale)"},"type":"log"},"yaxis":{"title":{"text":"Life Expectancy"}},"template":{"layout":{"font":{"family":"DejaVu Sans","size":12,"color":"#333333"},"paper_bgcolor":"#EAEAF2","plot_bgcolor":"#EAEAF2","colorway":["#4c72b0","#55a868","#c44e52","#8172b2","#ccb974","#64b5cd"],"hovermode":"closest","hoverlabel":{"align":"left"},"xaxis":{"automargin":true,"linecolor":"#CCCCCC","gridcolor":"#D3D3D3","zerolinecolor":"#D3D3D3","zerolinewidth":1},"yaxis":{"automargin":true,"linecolor":"#CCCCCC","gridcolor":"#D3D3D3","zerolinecolor":"#D3D3D3","zerolinewidth":1}}}},"config":{}});
+</script>
+<h2 id="matplotlib-theme"><a class="header" href="#matplotlib-theme">Matplotlib Theme</a></h2>
+<div id="gapminder_matplotlib" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("gapminder_matplotlib", {"data":[{"type":"scatter","name":"Asia","mode":"markers","x":[974.5803384,29796.048339999998,1391.253792,1713.7786859999999,4959.1148539999995,39724.97867,2452.210407,3540.6515640000002,11605.71449,4471.061906,25523.2771,31656.06806,4519.461171,1593.06548,23348.139730000003,47306.98978,10461.05868,12451.6558,3095.7722710000003,944.0,1091.359778,22316.19287,2605.94758,3190.481016,21654.83194,47143.179639999995,3970.0954070000003,4184.548089,28718.27684,7458.3963269999995,2441.576404,3025.349798,2280.769906],"y":[43.828,75.635,64.062,59.723,72.961,82.208,64.69800000000001,70.65,70.964,59.545,80.745,82.603,72.535,67.297,78.623,77.58800000000001,71.993,74.241,66.803,62.068999999999996,63.785,75.64,65.483,71.688,72.777,79.972,72.396,74.143,78.4,70.616,74.249,73.422,62.698],"text":["Afghanistan","Bahrain","Bangladesh","Cambodia","China","Hong Kong, China","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Malaysia","Mongolia","Myanmar","Nepal","Oman","Pakistan","Philippines","Saudi Arabia","Singapore","Sri Lanka","Syria","Taiwan","Thailand","Vietnam","West Bank and Gaza","Yemen, Rep."],"marker":{"opacity":0.6,"size":[31,0,60,14,60,6,60,60,60,27,6,60,6,23,49,2,3,24,2,47,28,3,60,60,27,4,20,19,23,60,60,4,22],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#1f77b4"}},{"type":"scatter","name":"Europe","mode":"markers","x":[5937.029525999999,36126.4927,33692.60508,7446.298803,10680.79282,14619.222719999998,22833.30851,35278.41874,33207.0844,30470.0167,32170.37442,27538.41188,18008.94444,36180.789189999996,40675.99635,28569.7197,9253.896111,36797.93332,49357.19017,15389.924680000002,20509.64777,10808.47561,9786.534714,18678.31435,25768.25759,28821.0637,33859.74835,37506.419069999996,8458.276384,33203.26128],"y":[76.423,79.829,79.441,74.852,73.005,75.748,76.486,78.332,79.313,80.657,79.406,79.483,73.33800000000001,81.757,78.885,80.546,74.543,79.762,80.196,75.563,78.098,72.476,74.002,74.663,77.926,80.941,80.884,81.70100000000001,71.777,79.425],"text":["Albania","Austria","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Czech Republic","Denmark","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Serbia","Slovak Republic","Slovenia","Spain","Sweden","Switzerland","Turkey","United Kingdom"],"marker":{"opacity":0.6,"size":[3,8,10,4,7,4,10,5,5,60,60,10,9,0,4,58,0,16,4,38,10,22,10,5,2,40,9,7,60,60],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#ff7f0e"}},{"type":"scatter","name":"Africa","mode":"markers","x":[6223.367465,4797.231267,1441.284873,12569.851770000001,1217.032994,430.07069160000003,2042.0952399999999,706.016537,1704.0637239999999,986.1478792000001,277.55185869999997,3632.557798,1544.750112,2082.4815670000003,5581.180998,12154.08975,641.3695236000001,690.8055759,13206.48452,752.7497265,1327.60891,942.6542111,579.2317429999999,1463.249282,1569.331442,414.5073415,12057.49928,1044.770126,759.3499101,1042.581557,1803.1514960000002,10956.99112,3820.17523,823.6856205,4811.060429,619.6768923999999,2013.9773050000001,7670.122558,863.0884639000001,1598.435089,1712.4721359999999,862.5407561000001,926.1410683,9269.657808,2602.394995,4513.480643,1107.482182,882.9699437999999,7092.923025,1056.3801210000001,1271.211593,469.70929810000007],"y":[72.301,42.731,56.728,50.728,52.295,49.58,50.43,44.74100000000001,50.651,65.152,46.461999999999996,55.321999999999996,48.328,54.791000000000004,71.33800000000001,51.57899999999999,58.04,52.946999999999996,56.735,59.448,60.022,56.007,46.388000000000005,54.11,42.592,45.678000000000004,73.952,59.443000000000005,48.303000000000004,54.467,64.164,72.801,71.164,42.082,52.906000000000006,56.867,46.858999999999995,76.442,46.242,65.528,63.062,42.568000000000005,48.159,49.339,58.556000000000004,39.613,52.516999999999996,58.42,73.923,51.542,42.38399999999999,43.486999999999995],"text":["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Central African Republic","Chad","Comoros","Congo, Dem. Rep.","Congo, Rep.","Cote d\u0027Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Reunion","Rwanda","Sao Tome and Principe","Senegal","Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],"marker":{"opacity":0.6,"size":[33,12,8,1,14,8,17,4,10,0,60,3,18,0,60,0,4,60,1,1,22,9,1,35,2,3,6,19,13,12,3,1,33,19,2,12,60,0,8,0,12,6,9,43,42,1,38,5,10,29,11,12],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#2ca02c"}},{"type":"scatter","name":"Americas","mode":"markers","x":[12779.379640000001,3822.1370840000004,9065.800825,36319.235010000004,13171.63885,7006.580419,9645.06142,8948.102923,6025.374752000001,6873.262326000001,5728.353514,5186.050003,1201.637154,3548.3308460000003,7320.880262000001,11977.57496,2749.320965,9809.185636,4172.838464,7408.905561,19328.70901,18008.50924,42951.65309,10611.46299,11415.805690000001],"y":[75.32,65.554,72.39,80.653,78.553,72.889,78.782,78.273,72.235,74.994,71.878,70.259,60.916000000000004,70.19800000000001,72.567,76.195,72.899,75.53699999999999,71.752,71.421,78.74600000000001,69.819,78.242,76.384,73.747],"text":["Argentina","Bolivia","Brazil","Canada","Chile","Colombia","Costa Rica","Cuba","Dominican Republic","Ecuador","El Salvador","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Paraguay","Peru","Puerto Rico","Trinidad and Tobago","United States","Uruguay","Venezuela"],"marker":{"opacity":0.6,"size":[40,9,60,33,16,44,4,11,9,13,6,12,8,7,2,60,5,3,6,28,3,1,60,3,26],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#d62728"}},{"type":"scatter","name":"Oceania","mode":"markers","x":[34435.367439999995,25185.00911],"y":[81.235,80.204],"text":["Australia","New Zealand"],"marker":{"opacity":0.6,"size":[20,4],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#9467bd"}}],"layout":{"title":{"text":"Gapminder 2007: \u0027matplotlib\u0027 theme"},"showlegend":true,"width":800,"height":600,"xaxis":{"title":{"text":"GDP per capita (log scale)"},"type":"log"},"yaxis":{"title":{"text":"Life Expectancy"}},"template":{"layout":{"font":{"family":"Arial","size":26,"color":"black"},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","colorway":["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"],"hovermode":"closest","hoverlabel":{"align":"left"},"xaxis":{"ticks":"outside","mirror":true,"tickwidth":2,"tickcolor":"black","automargin":true,"showline":true,"linecolor":"black","linewidth":2,"gridcolor":"#e5e5e5","zerolinecolor":"#e5e5e5","zerolinewidth":1},"yaxis":{"ticks":"outside","mirror":true,"tickwidth":2,"tickcolor":"black","automargin":true,"showline":true,"linecolor":"black","linewidth":2,"gridcolor":"#e5e5e5","zerolinecolor":"#e5e5e5","zerolinewidth":1}}}},"config":{}});
+</script>
+<h2 id="plotnine-theme"><a class="header" href="#plotnine-theme">Plotnine Theme</a></h2>
+<div id="gapminder_plotnine" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("gapminder_plotnine", {"data":[{"type":"scatter","name":"Asia","mode":"markers","x":[974.5803384,29796.048339999998,1391.253792,1713.7786859999999,4959.1148539999995,39724.97867,2452.210407,3540.6515640000002,11605.71449,4471.061906,25523.2771,31656.06806,4519.461171,1593.06548,23348.139730000003,47306.98978,10461.05868,12451.6558,3095.7722710000003,944.0,1091.359778,22316.19287,2605.94758,3190.481016,21654.83194,47143.179639999995,3970.0954070000003,4184.548089,28718.27684,7458.3963269999995,2441.576404,3025.349798,2280.769906],"y":[43.828,75.635,64.062,59.723,72.961,82.208,64.69800000000001,70.65,70.964,59.545,80.745,82.603,72.535,67.297,78.623,77.58800000000001,71.993,74.241,66.803,62.068999999999996,63.785,75.64,65.483,71.688,72.777,79.972,72.396,74.143,78.4,70.616,74.249,73.422,62.698],"text":["Afghanistan","Bahrain","Bangladesh","Cambodia","China","Hong Kong, China","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Malaysia","Mongolia","Myanmar","Nepal","Oman","Pakistan","Philippines","Saudi Arabia","Singapore","Sri Lanka","Syria","Taiwan","Thailand","Vietnam","West Bank and Gaza","Yemen, Rep."],"marker":{"opacity":0.6,"size":[31,0,60,14,60,6,60,60,60,27,6,60,6,23,49,2,3,24,2,47,28,3,60,60,27,4,20,19,23,60,60,4,22],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#1f77b4"}},{"type":"scatter","name":"Europe","mode":"markers","x":[5937.029525999999,36126.4927,33692.60508,7446.298803,10680.79282,14619.222719999998,22833.30851,35278.41874,33207.0844,30470.0167,32170.37442,27538.41188,18008.94444,36180.789189999996,40675.99635,28569.7197,9253.896111,36797.93332,49357.19017,15389.924680000002,20509.64777,10808.47561,9786.534714,18678.31435,25768.25759,28821.0637,33859.74835,37506.419069999996,8458.276384,33203.26128],"y":[76.423,79.829,79.441,74.852,73.005,75.748,76.486,78.332,79.313,80.657,79.406,79.483,73.33800000000001,81.757,78.885,80.546,74.543,79.762,80.196,75.563,78.098,72.476,74.002,74.663,77.926,80.941,80.884,81.70100000000001,71.777,79.425],"text":["Albania","Austria","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Czech Republic","Denmark","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Montenegro","Netherlands","Norway","Poland","Portugal","Romania","Serbia","Slovak Republic","Slovenia","Spain","Sweden","Switzerland","Turkey","United Kingdom"],"marker":{"opacity":0.6,"size":[3,8,10,4,7,4,10,5,5,60,60,10,9,0,4,58,0,16,4,38,10,22,10,5,2,40,9,7,60,60],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#ff7f0e"}},{"type":"scatter","name":"Africa","mode":"markers","x":[6223.367465,4797.231267,1441.284873,12569.851770000001,1217.032994,430.07069160000003,2042.0952399999999,706.016537,1704.0637239999999,986.1478792000001,277.55185869999997,3632.557798,1544.750112,2082.4815670000003,5581.180998,12154.08975,641.3695236000001,690.8055759,13206.48452,752.7497265,1327.60891,942.6542111,579.2317429999999,1463.249282,1569.331442,414.5073415,12057.49928,1044.770126,759.3499101,1042.581557,1803.1514960000002,10956.99112,3820.17523,823.6856205,4811.060429,619.6768923999999,2013.9773050000001,7670.122558,863.0884639000001,1598.435089,1712.4721359999999,862.5407561000001,926.1410683,9269.657808,2602.394995,4513.480643,1107.482182,882.9699437999999,7092.923025,1056.3801210000001,1271.211593,469.70929810000007],"y":[72.301,42.731,56.728,50.728,52.295,49.58,50.43,44.74100000000001,50.651,65.152,46.461999999999996,55.321999999999996,48.328,54.791000000000004,71.33800000000001,51.57899999999999,58.04,52.946999999999996,56.735,59.448,60.022,56.007,46.388000000000005,54.11,42.592,45.678000000000004,73.952,59.443000000000005,48.303000000000004,54.467,64.164,72.801,71.164,42.082,52.906000000000006,56.867,46.858999999999995,76.442,46.242,65.528,63.062,42.568000000000005,48.159,49.339,58.556000000000004,39.613,52.516999999999996,58.42,73.923,51.542,42.38399999999999,43.486999999999995],"text":["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Central African Republic","Chad","Comoros","Congo, Dem. Rep.","Congo, Rep.","Cote d\u0027Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Reunion","Rwanda","Sao Tome and Principe","Senegal","Sierra Leone","Somalia","South Africa","Sudan","Swaziland","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],"marker":{"opacity":0.6,"size":[33,12,8,1,14,8,17,4,10,0,60,3,18,0,60,0,4,60,1,1,22,9,1,35,2,3,6,19,13,12,3,1,33,19,2,12,60,0,8,0,12,6,9,43,42,1,38,5,10,29,11,12],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#2ca02c"}},{"type":"scatter","name":"Americas","mode":"markers","x":[12779.379640000001,3822.1370840000004,9065.800825,36319.235010000004,13171.63885,7006.580419,9645.06142,8948.102923,6025.374752000001,6873.262326000001,5728.353514,5186.050003,1201.637154,3548.3308460000003,7320.880262000001,11977.57496,2749.320965,9809.185636,4172.838464,7408.905561,19328.70901,18008.50924,42951.65309,10611.46299,11415.805690000001],"y":[75.32,65.554,72.39,80.653,78.553,72.889,78.782,78.273,72.235,74.994,71.878,70.259,60.916000000000004,70.19800000000001,72.567,76.195,72.899,75.53699999999999,71.752,71.421,78.74600000000001,69.819,78.242,76.384,73.747],"text":["Argentina","Bolivia","Brazil","Canada","Chile","Colombia","Costa Rica","Cuba","Dominican Republic","Ecuador","El Salvador","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Paraguay","Peru","Puerto Rico","Trinidad and Tobago","United States","Uruguay","Venezuela"],"marker":{"opacity":0.6,"size":[40,9,60,33,16,44,4,11,9,13,6,12,8,7,2,60,5,3,6,28,3,1,60,3,26],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#d62728"}},{"type":"scatter","name":"Oceania","mode":"markers","x":[34435.367439999995,25185.00911],"y":[81.235,80.204],"text":["Australia","New Zealand"],"marker":{"opacity":0.6,"size":[20,4],"line":{"width":1.0,"color":"#FFFFFF"},"color":"#9467bd"}}],"layout":{"title":{"text":"Gapminder 2007: \u0027plotnine\u0027 theme"},"showlegend":true,"width":800,"height":600,"xaxis":{"title":{"text":"GDP per capita (log scale)"},"type":"log"},"yaxis":{"title":{"text":"Life Expectancy"}},"template":{"layout":{"font":{"family":"DejaVu Sans","size":12,"color":"#525252"},"paper_bgcolor":"#EBEBEB","plot_bgcolor":"#EBEBEB","colorway":["#F8766D","#7CAE00","#00BFC4","#C77CFF","#E58700","#00B0F6","#FF61C3"],"hovermode":"closest","hoverlabel":{"align":"left"},"xaxis":{"automargin":true,"linecolor":"#CCCCCC","gridcolor":"#FFFFFF","zerolinecolor":"#FFFFFF","zerolinewidth":1},"yaxis":{"automargin":true,"linecolor":"#CCCCCC","gridcolor":"#FFFFFF","zerolinecolor":"#FFFFFF","zerolinewidth":1}}}},"config":{}});
+</script>
+<h2 id="available-themes"><a class="header" href="#available-themes">Available Themes</a></h2>
+<p>The following built-in themes are available in plotly.rs:</p>
+<ul>
+<li><code>BuiltinTheme::Default</code> - Default Plotly theme</li>
+<li><code>BuiltinTheme::PlotlyWhite</code> - Clean white background theme</li>
+<li><code>BuiltinTheme::PlotlyDark</code> - Dark theme</li>
+<li><code>BuiltinTheme::Seaborn</code> - Seaborn-style theme</li>
+<li><code>BuiltinTheme::SeabornWhitegrid</code> - Seaborn with white grid</li>
+<li><code>BuiltinTheme::SeabornDark</code> - Dark Seaborn theme</li>
+<li><code>BuiltinTheme::Matplotlib</code> - Matplotlib-style theme</li>
+<li><code>BuiltinTheme::Plotnine</code> - Plotnine-style theme</li>
+</ul>
+<h2 id="using-themes"><a class="header" href="#using-themes">Using Themes</a></h2>
+<p>To apply a theme to your plot, use the <code>template()</code> method on the layout:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let theme = BuiltinTheme::Seaborn;
+let layout = Layout::new().template(theme.build());
+plot.set_layout(layout);
+<span class="boring">}</span></code></pre></pre>
+<p>The example above uses real Gapminder 2007 data showing the relationship between GDP per capita, life expectancy, and population size across different continents, with marker sizes representing population and colors representing continents.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../fundamentals/shapes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../fundamentals/static_image_export.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../fundamentals/shapes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../fundamentals/static_image_export.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../ferris.js"></script>
+        <script src="../plotly.min.js"></script>
+
+
+    </div>
+    </body>
+</html>

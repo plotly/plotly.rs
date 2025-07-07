@@ -24,9 +24,9 @@
         <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="../../highlight.css">
-        <link rel="stylesheet" href="../../tomorrow-night.css">
-        <link rel="stylesheet" href="../../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="../../ferris.css">
@@ -34,21 +34,33 @@
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -62,7 +74,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -75,8 +88,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -102,7 +115,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -112,13 +125,14 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -172,10 +186,10 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="basic-box-plot"><a class="header" href="#basic-box-plot">Basic Box Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn basic_box_plot(show: bool) -&gt; Plot {
-    let mut rng = rand::thread_rng();
-    let uniform1 = Uniform::new(0.0, 1.0);
-    let uniform2 = Uniform::new(1.0, 2.0);
+</span>fn basic_box_plot(show: bool, file_name: &amp;str) {
+    let mut rng = rand::rng();
+    let uniform1 = Uniform::new(0.0, 1.0).unwrap();
+    let uniform2 = Uniform::new(1.0, 2.0).unwrap();
     let n = 50;
 
     let mut y0 = Vec::with_capacity(n);
@@ -192,20 +206,20 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="basic_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    Plotly.newPlot("basic_box_plot", {"data":[{"type":"box","y":[0.6441129557299219,0.18447679482975454,0.8385652631129161,0.5511450736241588,0.6141648527166166,0.0008944824397492113,0.743315873033837,0.28748685204049074,0.404902400033047,0.26110728120582727,0.0988155291321311,0.2526515574339636,0.32604419321605893,0.0857874581480218,0.7297863128271584,0.2495726723530567,0.3233697050839601,0.1046544746553153,0.8194364843769737,0.8654023341302886,0.41500349758085076,0.4389114404408858,0.038071067488309795,0.49217877078870775,0.4623881240564045,0.13663218392728083,0.2653106771857394,0.8330990251267827,0.2621937101094618,0.16720942446735831,0.2650970278587501,0.5807664164012727,0.5654910904958623,0.6762611402373198,0.6941949749424345,0.06507362250243731,0.49680870076752504,0.22295241945786115,0.6013997722663151,0.9512828493696606,0.7662829479348992,0.6777796907518667,0.7798591970418833,0.16889217949945246,0.7368854698701872,0.01284477577394183,0.4624772570432856,0.07708727448118724,0.4548998647742841,0.6758675129642153]},{"type":"box","y":[1.2565621089396881,1.22766413043905,1.0011580155374848,1.1138514690274859,1.7738089729880984,1.7728151601077986,1.4580913142660834,1.8087577387316067,1.1415085843982469,1.7597044691619308,1.858275668014344,1.6969844120432043,1.8024006575754425,1.4524120488877745,1.2514013700340876,1.5800866202368644,1.488326967372576,1.5309295740166862,1.0780301418112048,1.7276247341616402,1.1719312459647955,1.4368277732432033,1.8345287551429648,1.0858394618626999,1.3929873452614103,1.264059923715765,1.341987720595419,1.958235111152655,1.5528599106201146,1.6471223891055988,1.9951585005506136,1.9684731655798697,1.2278607462094153,1.5600215706275862,1.0684625435939736,1.1530080369646267,1.5239253117428955,1.4863712035385785,1.8162337193118556,1.2513342471859574,1.538163611352249,1.8448648070881124,1.3449692856730733,1.6437733679152562,1.6652047455211232,1.4099252087453054,1.3998440430503956,1.8789488400217553,1.9389391852892137,1.410098546793417]}],"layout":{},"config":{}});
+    Plotly.newPlot("basic_box_plot", {"data":[{"type":"box","y":[0.35321866464729834,0.9424276339424826,0.08976087472442917,0.4936267608192333,0.3623069313252034,0.03977748057463182,0.24241774193987453,0.9803159540858304,0.2123983753139036,0.5302569669371633,0.48186960989696725,0.8517271835469287,0.35350863529559895,0.7287829957667447,0.007071994794593639,0.9664595982003268,0.3876147984992193,0.44776411073395805,0.02456114614112792,0.7655568218104489,0.6371720877404377,0.9731925566358572,0.5590274223644616,0.9384840062314801,0.3278556071273655,0.12790371040583426,0.08091939251564795,0.772193400097166,0.5136426954736089,0.38234064419149805,0.2096695471496799,0.12312235605844735,0.7449264633601982,0.6374839701536312,0.39902386958332814,0.9555262959941737,0.7338247833617129,0.11522821169610253,0.7058489510285466,0.7149255663051515,0.683522808517103,0.4704866101088365,0.2979876598832387,0.5046851274011668,0.4635081938001788,0.5109035394999732,0.20969528687661354,0.8945042024831131,0.1932258797264701,0.8666616840560968]},{"type":"box","y":[1.942800604405298,1.0540310614744752,1.740414225357702,1.7688424200602073,1.6870519201049612,1.2909476507221849,1.8473135851409719,1.824833860230053,1.6519737829407963,1.0069827000060692,1.7926345193408213,1.1633743638748977,1.164830146492062,1.3963389183002919,1.3825333445265084,1.6508574437297352,1.3050779706516886,1.799405536329886,1.1897304594119629,1.633066484710478,1.12006323510292,1.8303308735074122,1.7597410458601421,1.2700616539358476,1.976242508396355,1.636894406093272,1.5303308403121954,1.3869052465081813,1.4774440504988728,1.7994095746564471,1.0749242380673643,1.4930826621033668,1.9119084876337542,1.3891390325055526,1.3744941368381693,1.3439183227415805,1.5022218607390947,1.0374235996376056,1.2232360335046406,1.4076607503057432,1.5385547442816614,1.8070804766906745,1.1933560432715722,1.9426683275598338,1.4771454059155629,1.8071265061028043,1.9250707551654669,1.5629046427303261,1.568046721627925,1.9876042951959378]}],"layout":{},"config":{}});
 </script>
 <h2 id="box-plot-that-displays-the-underlying-data"><a class="header" href="#box-plot-that-displays-the-underlying-data">Box Plot that Displays the Underlying Data</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn box_plot_that_displays_the_underlying_data(show: bool) -&gt; Plot {
+</span>fn box_plot_that_displays_the_underlying_data(show: bool, file_name: &amp;str) {
     let trace1 = BoxPlot::new(vec![0, 1, 1, 2, 3, 5, 8, 13, 21])
         .box_points(BoxPoints::All)
         .jitter(0.3)
@@ -213,10 +227,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     let mut plot = Plot::new();
     plot.add_trace(trace1);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="box_plot_that_displays_the_underlying_data" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -226,7 +240,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="horizontal-box-plot"><a class="header" href="#horizontal-box-plot">Horizontal Box Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn horizontal_box_plot(show: bool) -&gt; Plot {
+</span>fn horizontal_box_plot(show: bool, file_name: &amp;str) {
     let x = vec![
         "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 1", "Set 2",
         "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2", "Set 2",
@@ -241,10 +255,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="horizontal_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -254,7 +268,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="grouped-box-plot"><a class="header" href="#grouped-box-plot">Grouped Box Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn grouped_box_plot(show: bool) -&gt; Plot {
+</span>fn grouped_box_plot(show: bool, file_name: &amp;str) {
     let x = vec![
         "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
         "day 2", "day 2",
@@ -284,10 +298,10 @@ use rand_distr::{Distribution, Normal, Uniform};
 
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="grouped_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -297,7 +311,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="box-plot-styling-outliers"><a class="header" href="#box-plot-styling-outliers">Box Plot Styling Outliers</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn box_plot_styling_outliers(show: bool) -&gt; Plot {
+</span>fn box_plot_styling_outliers(show: bool, file_name: &amp;str) {
     let y = vec![
         0.75, 5.25, 5.5, 6.0, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93,
         9.2, 9.5, 10.0, 10.25, 11.5, 12.0, 16.0, 20.90, 22.3, 23.25,
@@ -339,10 +353,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace3);
     plot.add_trace(trace4);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="box_plot_styling_outliers" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -352,7 +366,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="box-plot-styling-mean-and-standard-deviation"><a class="header" href="#box-plot-styling-mean-and-standard-deviation">Box Plot Styling Mean and Standard Deviation</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn box_plot_styling_mean_and_standard_deviation(show: bool) -&gt; Plot {
+</span>fn box_plot_styling_mean_and_standard_deviation(show: bool, file_name: &amp;str) {
     let y = vec![
         2.37, 2.16, 4.82, 1.73, 1.04, 0.23, 1.32, 2.91, 0.11, 4.51, 0.51, 3.75, 1.35, 2.98, 4.50,
         0.18, 4.66, 1.30, 2.06, 1.19,
@@ -373,10 +387,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace1);
     plot.add_trace(trace2);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="box_plot_styling_mean_and_standard_deviation" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -386,7 +400,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="grouped-horizontal-box-plot"><a class="header" href="#grouped-horizontal-box-plot">Grouped Horizontal Box Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn grouped_horizontal_box_plot(show: bool) -&gt; Plot {
+</span>fn grouped_horizontal_box_plot(show: bool, file_name: &amp;str) {
     let x = vec![
         "day 1", "day 1", "day 1", "day 1", "day 1", "day 1", "day 2", "day 2", "day 2", "day 2",
         "day 2", "day 2",
@@ -429,10 +443,10 @@ use rand_distr::{Distribution, Normal, Uniform};
 
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="grouped_horizontal_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -442,11 +456,11 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="fully-styled-box-plot"><a class="header" href="#fully-styled-box-plot">Fully Styled Box Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn fully_styled_box_plot(show: bool) -&gt; Plot {
+</span>fn fully_styled_box_plot(show: bool, file_name: &amp;str) {
     let rnd_sample = |num, mul| -&gt; Vec&lt;f64&gt; {
         let mut v: Vec&lt;f64&gt; = Vec::with_capacity(num);
-        let mut rng = rand::thread_rng();
-        let uniform = Uniform::new(0.0, mul);
+        let mut rng = rand::rng();
+        let uniform = Uniform::new(0.0, mul).unwrap();
         for _ in 0..num {
             v.push(uniform.sample(&amp;mut rng));
         }
@@ -507,15 +521,15 @@ use rand_distr::{Distribution, Normal, Uniform};
         plot.add_trace(trace);
     }
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="fully_styled_box_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    Plotly.newPlot("fully_styled_box_plot", {"data":[{"type":"box","y":[2.762812413921749,7.112973445609924,0.41631716127467744,6.629194256538371,3.7250813292583462,4.919302949197575,1.8458190494220639,7.570967702812165,3.3204993446206132,3.938771279003115,0.28065593746479767,1.8070789543188281,9.780383551938336,2.363618732056374,5.7537831323841555,4.098081927159225,3.2472041620873404,1.0048405806919392,4.583165916365686,7.186568394136654,7.488877415458745,1.891899528924852,0.3172487997424356,9.61899567886891,4.146028609942405,2.0689109341873846,7.0846500493837095,5.567863205343033,5.787758891352974,3.8457538494272137],"name":"Carmelo\u003cbr\u003eAnthony","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[7.649244610757058,19.11942904423907,0.08288245141099271,17.41378366450894,0.5055326112629643,6.921453745711195,3.6065494228061734,2.7475714382696736,10.920457306631235,8.478883329931062,19.186746360166282,11.44697684915867,17.11346697261977,12.281917575742845,14.770419928967463,18.195079950991804,6.923180874283639,5.14182929878662,16.48127792187796,8.548670010610596,9.758271355558596,19.514118169043524,10.178781752947712,13.79118738935623,17.727183281530564,6.2871164171043015,0.38195187873992786,15.543640207895422,1.8006503928713036,16.84954885291279],"name":"Dwyane\u003cbr\u003eWade","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[5.093050244653108,21.307867610255904,11.246883582607659,15.029551135709013,15.818255362198002,1.5980897018805174,24.121915810337068,21.51253081022446,20.048421346140938,8.763676819593474,0.907921906474285,3.612919167447859,16.2391438875095,4.208042997279343,18.781191137956498,12.434453266308015,8.857090376512028,22.982283458418618,9.364918724035864,4.632155183904252,13.756074941236863,6.586371744135749,5.163314834007432,1.8080772185411154,19.570372433508105,0.35861058468883433,13.957325916276863,9.359867968481877,21.564249740259058,3.9430023150866687],"name":"Deron\u003cbr\u003eWilliams","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[9.052067041140965,38.27709758591684,8.96105775155486,29.689207481547406,39.61823742931054,14.814422484618293,13.680075915108567,18.053286274717912,29.04409547660081,5.343889634424155,16.61556605067336,22.363490751928055,27.033400086670227,5.742872781280273,3.324083453217055,35.46227712054059,11.549107017851838,2.172786914706224,27.312792599198783,19.722060462659012,24.80521679850544,25.78132794379238,25.788590960828035,5.722114500629081,0.4308710572608021,1.5344293338282267,26.507576145621805,17.27910314088632,39.56320126935425,31.22861188490387],"name":"Brook\u003cbr\u003eLopez","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[2.2949265383904516,37.83431151513927,15.98535084037074,29.839841409774582,21.468274896603965,32.31135560743718,6.091611256124042,27.756659996338502,26.96231461670829,9.360966217900557,24.808374689781242,37.06393596312068,16.847935995336492,0.9419205458537838,41.80822211946816,29.444816218902634,17.748608408245357,34.344787827219314,23.355462187794622,21.311703095296778,9.236560271765727,26.707136863935638,33.380440821566744,30.1591801686551,37.52280945444491,36.00476189048667,11.967366832774728,44.46918234880921,1.7784805929252434,10.89710659989202],"name":"Damian\u003cbr\u003eLillard","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[8.004622278885439,1.9297011512393025,28.946390340008683,26.206696929597484,13.658499795556128,2.483474277031521,12.96253937083496,17.64775583803672,1.1867362804093107,9.275086131705919,23.9031063728752,22.458658379661593,16.210992207030916,22.613841980579817,8.97844460961209,19.07055422773363,2.189985077909695,19.31892542392157,0.28715477157545743,25.440507805143945,0.798584476832298,29.19941490282412,27.33750685462962,8.37499048888648,10.367098330302698,2.1762536572336377,16.04736730348026,4.223441217992116,8.902858001584686,8.757224456094733],"name":"David\u003cbr\u003eWest","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[5.5273876533881205,19.03743990745554,8.703805643875363,6.482830767312198,16.35269933832059,2.158700232624242,1.0184808879071383,11.922822664660814,13.06529183482004,5.293282203265219,2.529400731943614,11.364775427115061,10.138436112447419,5.09709081545251,13.731776774498288,0.27455397641754864,16.519581836061448,2.9214651876671116,16.80336511030264,5.075624863015595,12.730549957607993,15.725206655435425,2.4697934765247442,2.9999413257733343,15.578737939604173,4.405292471891071,6.277913323961282,15.288693303909637,18.39330059330123,17.74613872369672],"name":"Blake\u003cbr\u003eGriffin","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[12.025316275996062,5.213112870212768,11.223414263578103,4.998292251399933,4.4804191369235316,14.514834863131775,10.010603862669509,11.36873502570647,11.672901133764281,5.835105941572701,14.373853374027043,11.032775845953939,4.854774893565558,5.14952459552789,9.026758196474798,7.054063727483852,3.6341373658897425,9.083935578674204,1.6106640248078952,14.762689290366337,7.179501216648983,4.203511019884748,6.880885867453442,12.847005159651136,2.5800357754960643,4.179265955870969,12.442644796604945,11.771098648903825,12.055826509787712,2.529658050932589],"name":"David\u003cbr\u003eLee","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[37.50350079705231,40.03715638157625,42.60087252721047,12.560963994921906,20.772709385614448,21.407166389851316,13.949144019938242,41.83004686338314,1.1774876004081418,1.6070661378544249,31.351097668237955,34.78185565493499,11.652344872762894,29.145374932068293,35.95879659443766,10.439695030771713,28.20527244965431,17.285966188425206,5.83562683519324,40.74620497380605,19.895688220694055,32.631069241899525,36.23376223900506,33.0160439869054,32.61309386688266,25.426258006565234,10.228935141740134,28.395412360709802,39.321536806694404,42.03488282522277],"name":"Demar\u003cbr\u003eDerozan","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5}],"layout":{"title":{"text":"Points Scored by the Top 9 Scoring NBA Players in 2012"},"showlegend":false,"margin":{"l":40,"r":30,"t":100,"b":80},"paper_bgcolor":"rgb(243, 243, 243)","plot_bgcolor":"rgb(243, 243, 243)","yaxis":{"autorange":true,"dtick":5.0,"showgrid":true,"gridcolor":"rgb(255, 255, 255)","gridwidth":1,"zeroline":true,"zerolinecolor":"rgb(255, 255, 255)","zerolinewidth":2}},"config":{}});
+    Plotly.newPlot("fully_styled_box_plot", {"data":[{"type":"box","y":[9.32182141314504,5.594220326591495,3.464208507835964,2.1772876201926095,4.939865572552879,8.40729601044073,8.920548861124013,0.49750567104706933,3.04124488080455,5.487344671080578,3.6497900909900127,9.027063255466176,1.6520019261594943,4.906737382020783,4.14685994003825,3.7318342750608613,0.3826865689791803,8.424409471600265,1.2958256861201911,2.0352857140793157,8.873634613061148,7.664973979045026,2.085492878174151,3.810128432923956,4.0358849143411994,9.751403032288671,2.055258292883313,3.0655042767049756,7.582585276020069,8.473280300651613],"name":"Carmelo\u003cbr\u003eAnthony","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[15.534601072246911,5.783522033978872,4.724950284198406,10.269986525626127,16.8857221214834,0.21533098740603496,11.581927217971813,6.616780213669484,11.543949256092198,10.497357577481505,15.87223741656651,4.669124531077986,5.7510027940592146,11.84019300262416,14.212417976026742,1.8521298928718055,6.5927527229325245,8.165542518695101,2.472486162815124,11.499312471519527,3.481692672153729,16.911062023690945,12.67089429772625,14.337743981872872,18.13612624022682,3.43431402951893,16.546252374093534,3.0457053282756608,3.497473030914846,3.86214260207304],"name":"Dwyane\u003cbr\u003eWade","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[22.651688282154435,18.78989872757808,1.3698558709259734,1.5339770947432108,13.791416351134972,17.305418715587045,14.701134271064165,16.082021996462004,11.178282533400152,14.37685318761533,10.458256012876271,21.900929143754922,7.933906958094999,24.92917079730781,18.368984230046507,9.824061516893645,22.130550929202787,10.370238091590622,18.392394730191764,20.24203899613189,0.7617942171109449,24.174547359190946,11.712266069603022,24.289338190076453,15.505558613654525,1.2970802768859424,1.7541864172955335,3.1747522394829533,18.983060364357453,21.48841893139859],"name":"Deron\u003cbr\u003eWilliams","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[11.183664530300055,9.16345981089739,29.508049577431727,25.295173308827586,15.929131052540777,28.030492833721617,9.83508995503545,0.47450587033833536,38.40912575171002,6.736137429877598,28.849193987707757,16.942710939335193,10.177059356486442,27.934263351048312,36.89990404887106,39.740000371676054,25.773913808661177,5.079727090178325,4.024801219427081,3.6167019441033865,10.217854050961321,29.378575246005163,3.5961265298985623,25.864661266637956,34.19156393564171,14.915114927100879,5.864988846287931,37.63206845179995,6.35320854642516,5.23167118595409],"name":"Brook\u003cbr\u003eLopez","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[9.72310870335075,3.349959886169327,26.410798226337356,2.310270821621354,21.881721321106326,4.5897798904813625,37.452898366667156,29.40824299107979,12.992439032277014,19.011187457523807,36.332947050859765,28.499188013110672,38.634017076060324,4.566099843894489,9.176540999866507,3.3171069572772027,6.2555731945289015,3.2766121662081735,38.26907811134639,20.715040106778826,39.98360739483442,17.057300984978394,13.917903673072438,8.276703248459288,42.95845864220565,13.616457767254804,5.317023536503727,1.722199649461953,8.475211386132644,21.722019980712435],"name":"Damian\u003cbr\u003eLillard","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[8.651151181955075,9.596910293055362,8.634548745472589,2.9994817004524355,23.68690623782069,2.2550539637191847,3.4825600718863847,24.317786038068093,25.404447018367648,14.898146110922132,20.805177904533338,8.584204968218685,19.688389340339384,16.831014589029284,11.712157653607898,17.089792751118047,7.182859011038323,13.229231395204426,8.874589638557362,9.325133623755406,8.01058539914539,22.969400920171065,23.468553504611606,7.516992816656051,15.463224533063464,5.612990689958297,19.50431275042229,14.411848440198995,13.983858848146081,2.0460283903912457],"name":"David\u003cbr\u003eWest","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[16.15298152394155,8.293614206375759,8.459210828237715,9.443338022314137,4.7581609646282175,18.877866603801266,18.568857211719887,4.217988308772589,2.734669018695546,5.123791782860252,3.087534348119645,9.247806216839907,7.212477359161915,0.3562932892052473,16.110310179546843,12.038292052756617,9.738997904058952,13.550878985608733,9.94897574652692,6.690421579203152,9.124117129900204,10.338660018301722,8.8309450185724,11.103810471973151,12.325548723330426,3.2128239152182614,5.572513599365392,4.436047765008664,4.297019119271348,6.541948970805254],"name":"Blake\u003cbr\u003eGriffin","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[6.362536405727185,2.6942441969163413,12.324093803717505,8.148489025345354,5.385129585253004,6.8576064304439655,7.441077863866864,14.22538446160351,2.1148667638729224,6.261147519332942,11.125888356215066,11.306458530218285,8.417231466335643,0.6100488640664492,2.6589762004170225,4.3727678273476345,13.235419737480427,14.954138969920027,8.323293537794138,3.7071000940089958,11.345296537154056,4.995449954034095,2.4035818583452038,12.893706598968782,8.892280359745335,1.3646993614570424,2.511260285726762,7.727942951928101,13.257820774836825,4.5184017213823875],"name":"David\u003cbr\u003eLee","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5},{"type":"box","y":[40.615487747220854,41.24836930960552,16.004408467415967,13.081016618912631,24.727485568875647,22.767952244877215,42.73130362463555,35.979657231058624,26.833503420083563,14.912973215834109,37.373726708599996,33.786035882303345,31.150110134538707,30.07981382376926,41.86065076307417,19.675285326682687,28.767612266180347,25.456109000474086,31.408972151558743,19.941039139443106,3.050866911136299,38.43766326480441,26.62516899263438,26.714199281343664,12.625490532493158,3.9426076227239175,32.40946528177736,3.507993895901971,6.921321851685999,24.86378110925922],"name":"Demar\u003cbr\u003eDerozan","marker":{"size":6},"line":{"width":2.0},"boxpoints":"all","whiskerwidth":0.2,"jitter":0.5}],"layout":{"title":{"text":"Points Scored by the Top 9 Scoring NBA Players in 2012"},"showlegend":false,"margin":{"l":40,"r":30,"t":100,"b":80},"paper_bgcolor":"rgb(243, 243, 243)","plot_bgcolor":"rgb(243, 243, 243)","yaxis":{"autorange":true,"dtick":5.0,"showgrid":true,"gridcolor":"rgb(255, 255, 255)","gridwidth":1,"zeroline":true,"zerolinecolor":"rgb(255, 255, 255)","zerolinewidth":2}},"config":{}});
 </script>
                     </main>
 

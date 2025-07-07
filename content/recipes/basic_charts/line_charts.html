@@ -24,9 +24,9 @@
         <link rel="stylesheet" href="../../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="../../highlight.css">
-        <link rel="stylesheet" href="../../tomorrow-night.css">
-        <link rel="stylesheet" href="../../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         <link rel="stylesheet" href="../../ferris.css">
@@ -34,21 +34,33 @@
         <!-- MathJax -->
         <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "../../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -62,7 +74,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -75,8 +88,8 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -102,7 +115,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
+                <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -112,13 +125,14 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -171,7 +185,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="adding-names-to-line-and-scatter-plot"><a class="header" href="#adding-names-to-line-and-scatter-plot">Adding Names to Line and Scatter Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn adding_names_to_line_and_scatter_plot(show: bool) -&gt; Plot {
+</span>fn adding_names_to_line_and_scatter_plot(show: bool, file_name: &amp;str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Scatter");
@@ -189,10 +203,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace3);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="adding_names_to_line_and_scatter_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -202,7 +216,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="line-and-scatter-styling"><a class="header" href="#line-and-scatter-styling">Line and Scatter Styling</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn line_and_scatter_styling(show: bool) -&gt; Plot {
+</span>fn line_and_scatter_styling(show: bool, file_name: &amp;str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("trace1")
@@ -224,10 +238,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace3);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="line_and_scatter_styling" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -237,7 +251,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="styling-line-plot"><a class="header" href="#styling-line-plot">Styling Line Plot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn styling_line_plot(show: bool) -&gt; Plot {
+</span>fn styling_line_plot(show: bool, file_name: &amp;str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 15, 13, 17])
         .mode(Mode::Markers)
         .name("Red")
@@ -256,10 +270,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace2);
     plot.set_layout(layout);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="styling_line_plot" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -269,7 +283,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="line-shape-options-for-interpolation"><a class="header" href="#line-shape-options-for-interpolation">Line Shape Options for Interpolation</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn line_shape_options_for_interpolation(show: bool) -&gt; Plot {
+</span>fn line_shape_options_for_interpolation(show: bool, file_name: &amp;str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("linear")
@@ -310,10 +324,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace5);
     plot.add_trace(trace6);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="line_shape_options_for_interpolation" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -323,7 +337,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="line-dash"><a class="header" href="#line-dash">Line Dash</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn line_dash(show: bool) -&gt; Plot {
+</span>fn line_dash(show: bool, file_name: &amp;str) {
     let trace1 = Scatter::new(vec![1, 2, 3, 4, 5], vec![1, 3, 2, 3, 1])
         .mode(Mode::LinesMarkers)
         .name("solid")
@@ -367,10 +381,10 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace5);
     plot.add_trace(trace6);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="line_dash" class="plotly-graph-div" style="height:100%; width:100%;"></div>
@@ -380,7 +394,7 @@ use rand_distr::{Distribution, Normal, Uniform};
 <h2 id="filled-lines"><a class="header" href="#filled-lines">Filled Lines</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn filled_lines(show: bool) -&gt; Plot {
+</span>fn filled_lines(show: bool, file_name: &amp;str) {
     let x1 = vec![
         1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0,
         2.0, 1.0,
@@ -472,15 +486,134 @@ use rand_distr::{Distribution, Normal, Uniform};
     plot.add_trace(trace5);
     plot.add_trace(trace6);
 
+    let path = write_example_to_html(&amp;plot, file_name);
     if show {
-        plot.show();
+        plot.show_html(path);
     }
-    plot
 }
 <span class="boring">}</span></code></pre></pre>
 <div id="filled_lines" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
     Plotly.newPlot("filled_lines", {"data":[{"type":"scatter","name":"Fair","showlegend":false,"x":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,10.0,9.0,8.0,7.0,6.0,5.0,4.0,3.0,2.0,1.0],"y":[2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,11.0,9.0,8.0,7.0,6.0,5.0,4.0,3.0,2.0,1.0,0.0],"line":{"color":"transparent"},"fill":"tozerox","fillcolor":"rgba(0, 100, 80, 0.2)"},{"type":"scatter","name":"Premium","showlegend":false,"x":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,10.0,9.0,8.0,7.0,6.0,5.0,4.0,3.0,2.0,1.0],"y":[5.5,3.0,5.5,8.0,6.0,3.0,8.0,5.0,6.0,5.5,4.75,5.0,4.0,7.0,2.0,4.0,7.0,4.4,2.0,4.5],"line":{"color":"transparent"},"fill":"tozerox","fillcolor":"rgba(0, 176, 246, 0.2)"},{"type":"scatter","name":"Fair","showlegend":false,"x":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,10.0,9.0,8.0,7.0,6.0,5.0,4.0,3.0,2.0,1.0],"y":[11.0,9.0,7.0,5.0,3.0,1.0,3.0,5.0,3.0,1.0,-1.0,1.0,3.0,1.0,-0.5,1.0,3.0,5.0,7.0,9.0],"line":{"color":"transparent"},"fill":"tozerox","fillcolor":"rgba(231, 107, 243, 0.2)"},{"type":"scatter","name":"Fair","x":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"y":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"line":{"color":"rgb(0, 100, 80)"}},{"type":"scatter","name":"Premium","x":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"y":[5.0,2.5,5.0,7.5,5.0,2.5,7.5,4.5,5.5,5.0],"line":{"color":"rgb(0, 176, 246)"}},{"type":"scatter","name":"Ideal","x":[1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0],"y":[10.0,8.0,6.0,4.0,2.0,0.0,2.0,4.0,2.0,0.0],"line":{"color":"rgb(231, 107, 243)"}}],"layout":{"paper_bgcolor":"rgb(255, 255, 255)","plot_bgcolor":"rgb(229, 229, 229)","xaxis":{"range":[1.0,10.0],"ticks":"outside","tickcolor":"rgb(127, 127, 127)","showticklabels":true,"showline":false,"showgrid":true,"gridcolor":"rgb(255, 255, 255)","zeroline":false},"yaxis":{"ticks":"outside","tickcolor":"rgb(127, 127, 127)","showticklabels":true,"showline":false,"showgrid":true,"gridcolor":"rgb(255, 255, 255)","zeroline":false}},"config":{}});
+</script>
+<h2 id="setting-lower-or-upper-bounds-on-axis"><a class="header" href="#setting-lower-or-upper-bounds-on-axis">Setting Lower or Upper Bounds on Axis</a></h2>
+<p>This example demonstrates how to set partial axis ranges using both the new <code>AxisRange</code> API and the backward-compatible vector syntax. The x-axis uses both the new <code>AxisRange::upper()</code> method and the traditional <code>vec![None, Some(value)]</code> syntax to set only an upper bound, while the y-axis uses only the <code>vec![Some(value), None]</code> syntax to set a lower bound.</p>
+<pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &amp;str) {
+    use std::fs::File;
+    use std::io::BufReader;
+
+    // Read the iris dataset
+    let file = File::open("assets/iris.csv").expect("Failed to open iris.csv");
+    let reader = BufReader::new(file);
+    let mut csv_reader = csv::Reader::from_reader(reader);
+
+    // Parse the data
+    let mut sepal_width = Vec::new();
+    let mut sepal_length = Vec::new();
+    let mut species = Vec::new();
+
+    for result in csv_reader.records() {
+        let record = result.expect("Failed to read CSV record");
+        sepal_width.push(record[1].parse::&lt;f64&gt;().unwrap());
+        sepal_length.push(record[0].parse::&lt;f64&gt;().unwrap());
+        species.push(record[4].to_string());
+    }
+
+    // Create separate traces for each species
+    let mut traces = Vec::new();
+    let unique_species: Vec&lt;String&gt; = species
+        .iter()
+        .cloned()
+        .collect::&lt;std::collections::HashSet&lt;_&gt;&gt;()
+        .into_iter()
+        .collect();
+
+    for (i, species_name) in unique_species.iter().enumerate() {
+        let mut x = Vec::new();
+        let mut y = Vec::new();
+
+        for (j, s) in species.iter().enumerate() {
+            if s == species_name {
+                x.push(sepal_width[j]);
+                y.push(sepal_length[j]);
+            }
+        }
+
+        let trace = Scatter::new(x, y)
+            .name(species_name)
+            .mode(plotly::common::Mode::Markers)
+            .x_axis(format!("x{}", i + 1))
+            .y_axis(format!("y{}", i + 1));
+        traces.push(trace);
+    }
+
+    let mut plot = Plot::new();
+    for trace in traces {
+        plot.add_trace(trace);
+    }
+
+    // Create layout with subplots
+    let mut layout = Layout::new()
+        .title("Iris Dataset - Subplots by Species")
+        .grid(
+            LayoutGrid::new()
+                .rows(1)
+                .columns(3)
+                .pattern(plotly::layout::GridPattern::Independent),
+        );
+
+    // Set x-axis range for all subplots: [None, 4.5]
+    layout = layout
+        .x_axis(
+            Axis::new()
+                .title("sepal_width")
+                // Can be set using a vec! of two optional values
+                .range(vec![None, Some(4.5)]),
+        )
+        .x_axis2(
+            Axis::new()
+                .title("sepal_width")
+                // Or can be set using AxisRange::upper(4.5)
+                .range(AxisRange::upper(4.5)),
+        )
+        .x_axis3(
+            Axis::new()
+                .title("sepal_width")
+                // Or can be set using AxisRange::upper(4.5)
+                .range(AxisRange::upper(4.5)),
+        );
+
+    // Set y-axis range for all subplots: [3, None]
+    layout = layout
+        .y_axis(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        )
+        .y_axis2(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        )
+        .y_axis3(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        );
+
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&amp;plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<div id="set_lower_or_upper_bound_on_axis" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("set_lower_or_upper_bound_on_axis", {"data":[{"type":"scatter","name":"virginica","mode":"markers","x":[3.3,2.7,3.0,2.9,3.0,3.0,2.5,2.9,2.5,3.6,3.2,2.7,3.0,2.5,2.8,3.2,3.0,3.8,2.6,2.2,3.2,2.8,2.8,2.7,3.3,3.2,2.8,3.0,2.8,3.0,2.8,3.8,2.8,2.8,2.6,3.0,3.4,3.1,3.0,3.1,3.1,3.1,2.7,3.2,3.3,3.0,2.5,3.0,3.4,3.0],"y":[6.3,5.8,7.1,6.3,6.5,7.6,4.9,7.3,6.7,7.2,6.5,6.4,6.8,5.7,5.8,6.4,6.5,7.7,7.7,6.0,6.9,5.6,7.7,6.3,6.7,7.2,6.2,6.1,6.4,7.2,7.4,7.9,6.4,6.3,6.1,7.7,6.3,6.4,6.0,6.9,6.7,6.9,5.8,6.8,6.7,6.7,6.3,6.5,6.2,5.9],"xaxis":"x1","yaxis":"y1"},{"type":"scatter","name":"setosa","mode":"markers","x":[3.5,3.0,3.2,3.1,3.6,3.9,3.4,3.4,2.9,3.1,3.7,3.4,3.0,3.0,4.0,4.4,3.9,3.5,3.8,3.8,3.4,3.7,3.6,3.3,3.4,3.0,3.4,3.5,3.4,3.2,3.1,3.4,4.1,4.2,3.1,3.2,3.5,3.6,3.0,3.4,3.5,2.3,3.2,3.5,3.8,3.0,3.8,3.2,3.7,3.3],"y":[5.1,4.9,4.7,4.6,5.0,5.4,4.6,5.0,4.4,4.9,5.4,4.8,4.8,4.3,5.8,5.7,5.4,5.1,5.7,5.1,5.4,5.1,4.6,5.1,4.8,5.0,5.0,5.2,5.2,4.7,4.8,5.4,5.2,5.5,4.9,5.0,5.5,4.9,4.4,5.1,5.0,4.5,4.4,5.0,5.1,4.8,5.1,4.6,5.3,5.0],"xaxis":"x2","yaxis":"y2"},{"type":"scatter","name":"versicolor","mode":"markers","x":[3.2,3.2,3.1,2.3,2.8,2.8,3.3,2.4,2.9,2.7,2.0,3.0,2.2,2.9,2.9,3.1,3.0,2.7,2.2,2.5,3.2,2.8,2.5,2.8,2.9,3.0,2.8,3.0,2.9,2.6,2.4,2.4,2.7,2.7,3.0,3.4,3.1,2.3,3.0,2.5,2.6,3.0,2.6,2.3,2.7,3.0,2.9,2.9,2.5,2.8],"y":[7.0,6.4,6.9,5.5,6.5,5.7,6.3,4.9,6.6,5.2,5.0,5.9,6.0,6.1,5.6,6.7,5.6,5.8,6.2,5.6,5.9,6.1,6.3,6.1,6.4,6.6,6.8,6.7,6.0,5.7,5.5,5.5,5.8,6.0,5.4,6.0,6.7,6.3,5.6,5.5,5.5,6.1,5.8,5.0,5.6,5.7,5.7,6.2,5.1,5.7],"xaxis":"x3","yaxis":"y3"}],"layout":{"title":{"text":"Iris Dataset - Subplots by Species"},"grid":{"rows":1,"columns":3,"pattern":"independent"},"xaxis":{"title":{"text":"sepal_width"},"range":[null,4.5]},"yaxis":{"title":{"text":"sepal_length"},"range":[3.0,null]},"xaxis2":{"title":{"text":"sepal_width"},"range":[null,4.5]},"yaxis2":{"title":{"text":"sepal_length"},"range":[3.0,null]},"xaxis3":{"title":{"text":"sepal_width"},"range":[null,4.5]},"yaxis3":{"title":{"text":"sepal_length"},"range":[3.0,null]}},"config":{}});
 </script>
                     </main>
 
