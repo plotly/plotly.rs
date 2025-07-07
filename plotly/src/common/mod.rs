@@ -1060,7 +1060,7 @@ pub enum PatternShape {
     #[serde(rename = "")]
     None,
     #[serde(rename = "-")]
-    HorizonalLine,
+    HorizontalLine,
     #[serde(rename = "|")]
     VerticalLine,
     #[serde(rename = "/")]
@@ -2263,7 +2263,7 @@ mod tests {
     #[test]
     fn serialize_pattern_shape() {
         assert_eq!(to_value(PatternShape::None).unwrap(), json!(""));
-        assert_eq!(to_value(PatternShape::HorizonalLine).unwrap(), json!("-"));
+        assert_eq!(to_value(PatternShape::HorizontalLine).unwrap(), json!("-"));
         assert_eq!(to_value(PatternShape::VerticalLine).unwrap(), json!("|"));
         assert_eq!(
             to_value(PatternShape::RightDiagonalLine).unwrap(),
@@ -2294,7 +2294,7 @@ mod tests {
     fn serialize_pattern() {
         let pattern = Pattern::new()
             .shape_array(vec![
-                PatternShape::HorizonalLine,
+                PatternShape::HorizontalLine,
                 PatternShape::VerticalLine,
             ])
             .fill_mode(PatternFillMode::Overlay)

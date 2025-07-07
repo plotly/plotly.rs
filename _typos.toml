@@ -1,0 +1,10 @@
+[files]
+extend-exclude = [
+    "**/*.js",
+    "**/*min.js",
+] 
+
+
+[default.extend-words]
+# Don't correct the scene projection type "Winkel tripel"
+tripel = "tripel"

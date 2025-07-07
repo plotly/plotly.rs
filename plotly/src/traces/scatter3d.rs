@@ -155,7 +155,7 @@ where
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
     /// Sets hover text elements associated with each (x, y, z) triplet. The
-    /// same text will be associated with all datas points. To be seen, the
+    /// same text will be associated with all data points. To be seen, the
     /// trace `hover_info` must contain a "Text" flag.
     #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,

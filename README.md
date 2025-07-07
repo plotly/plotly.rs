@@ -148,7 +148,7 @@ Alternatively, enable only the `kaleido` feature and manually install Kaleido.
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.12", features = ["kaleido"] }
+plotly = { version = "0.13", features = ["kaleido"] }
 ```
 
 With the feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
@@ -167,7 +167,7 @@ plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 
 ## Usage Within a Wasm Environment
 
-`Plotly.rs` can be used with a Wasm-based frontend framework. The needed dependencies are automatically enabled on `wasm32` targets. Note that the `kaleido` feature is not supported in Wasm enviroments and will throw a compilation error if enabled. 
+`Plotly.rs` can be used with a Wasm-based frontend framework. The needed dependencies are automatically enabled on `wasm32` targets. Note that the `kaleido` feature is not supported in Wasm environments and will throw a compilation error if enabled. 
 
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
 
