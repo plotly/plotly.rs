@@ -24,7 +24,7 @@ jobs:
     - run: sleep 10
     - run: cargo publish --allow-dirty -p plotly_kaleido
     - run: sleep 10
-    - run: cargo publish --allow-dirty -p plotly_static --features webdriver_downlaod,chromedriver
+    - run: cargo publish --allow-dirty -p plotly_static --features webdriver_download,chromedriver
     - run: sleep 10
     - run: cargo publish --allow-dirty -p plotly
 
