@@ -8,7 +8,7 @@ workspace = ".."
 homepage = "https://github.com/plotly/plotly.rs"
 repository = "https://github.com/plotly/plotly.rs"
 edition = "2021"
-keywords = ["plot", "static", "image", "export", "chart", "plotly", "ndarray"]
+keywords = ["plotly", "static", "image", "export", "webdriver"]
 
 exclude = ["target/*"]
 
