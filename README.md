@@ -3,7 +3,7 @@
   <p><strong>Plotly for Rust</strong></p>
   <p>
     <a href="https://github.com/plotly/plotly.rs/actions?query=branch%3Amain" style="text-decoration: none!important;">
-        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/ci.yml?branch=main" alt="Build status">
+        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/build.yml?branch=main" alt="Build status">
     </a>
     <a href="https://crates.io/crates/plotly" style="text-decoration: none!important;">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
