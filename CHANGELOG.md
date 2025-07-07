@@ -6,14 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.13.0] - 2025-xx-xx
 ### Changed
-- [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put evrything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
+- [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put everything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
 - [[#281](https://github.com/plotly/plotly.rs/pull/281)] Update to askama 0.13.0
 - [[#287](https://github.com/plotly/plotly.rs/pull/287)] Added functionality for callbacks (using wasm)
 - [[#289](https://github.com/plotly/plotly.rs/pull/289)] Fixes Kaleido static export for MacOS targets by removing `--disable-gpu` flag for MacOS 
 - [[#291](https://github.com/plotly/plotly.rs/pull/291)] Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
 - [[#299](https://github.com/plotly/plotly.rs/pull/299)] Added customdata field to HeatMap
 - [[#303](https://github.com/plotly/plotly.rs/pull/303)] Split layout mod.rs into modules
-- [[#304](https://github.com/plotly/plotly.rs/pull/304)] Refactored examples to allow fo generation of full html files 
+- [[#304](https://github.com/plotly/plotly.rs/pull/304)] Refactored examples to allow for generation of full html files 
 - [[#320](https://github.com/plotly/plotly.rs/pull/320)] Make offline_js_sources function `pub`
 - [[#321](https://github.com/plotly/plotly.rs/pull/321)] Make 'online_cdn_js' function also `pub` for consistenccy
 
@@ -86,7 +86,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#154](https://github.com/plotly/plotly.rs/pull/154)] Improve ergonomics of `Title` and `LegendGroupTitle` structs: `new` method now takes no arguments as per other structs, whilst a new `with_text()` constructor is added for convenience. Where other structs contain a `Title` (and `LegendGroupTitle`), users  can now call the `title()` (and `legend_group_title()`) method with anything that `impl`s `Into<Title>`, viz. `String`, `&String`, `&str` and `Title`.
 - [[#157](https://github.com/plotly/plotly.rs/pull/157)] Fix `HeatMap`'s setters for correctly setting `zmin`, `zmax` and `zmin` independent of `Z` input type.
 - [[#159](https://github.com/plotly/plotly.rs/pull/159)] Make `heat_map` module public to expose `Smoothing enum`.
-- [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` settter.
+- [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` setter.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
 - [[#166](https://github.com/plotly/plotly.rs/pull/166)] Added subplot example with multiple titles.
 - [[#178](https://github.com/plotly/plotly.rs/pull/178)] Fix setter for `Axis::matches` to take string arg.
@@ -119,7 +119,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.8.1] - 2022-09-25
 ### Added
-- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/plotly/plotly.rs/pull/99).
+- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contributed by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/plotly/plotly.rs/pull/99).
 - Internally, there is now a `plotly-derive` crate which defines a `FieldSetter` procedural macro. This massively cuts down the amount of code duplication by generating the setter methods based on the struct fields. Again thanks to @sreenathkrishnan for this effort.
 
 ## [0.8.0] - 2022-08-26

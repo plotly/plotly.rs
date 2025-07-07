@@ -791,7 +791,7 @@ impl Plot {
     }
 
     #[cfg(target_family = "wasm")]
-    /// Convert a `Plot` to a native Javasript `js_sys::Object`.
+    /// Convert a `Plot` to a native JavaScript `js_sys::Object`.
     pub fn to_js_object(&self) -> wasm_bindgen_futures::js_sys::Object {
         use wasm_bindgen_futures::js_sys;
         use wasm_bindgen_futures::wasm_bindgen::JsCast;
