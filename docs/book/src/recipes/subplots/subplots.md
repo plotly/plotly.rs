@@ -24,7 +24,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/subplots/src/main.rs:subplots_with_multiple_traces}}
 ```
 
-{{#include ../../../../../examples/subplots/output/inline_subplot_with_multiple_traces.html}}
+{{#include ../../../../../examples/subplots/output/inline_subplots_with_multiple_traces.html}}
 
 
 ## Custom Sized Subplot
