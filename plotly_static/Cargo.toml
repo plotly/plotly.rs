@@ -40,6 +40,6 @@ clap = { version = "4.0", features = ["derive"] }
 [build-dependencies]
 tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
-dirs = "5.0"
+dirs = "6.0"
 zip = "4.0"
 webdriver-downloader = "0.16"
