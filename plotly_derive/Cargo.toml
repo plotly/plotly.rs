@@ -14,7 +14,7 @@ keywords = ["plot", "chart", "plotly"]
 quote = "1"
 syn = "2"
 proc-macro2 = "1"
-darling = "0.20"
+darling = "0.21"
 
 [lib]
 proc-macro = true
