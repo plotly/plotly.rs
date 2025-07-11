@@ -6,7 +6,7 @@ This example is based on [GitHub Issue #171](https://github.com/plotly/plotly.rs
 
 For consistent font rendering across browsers and export formats, always set the `font.family` property explicitly in your plot configuration. Relying on default or generic font settings can lead to differences in appearance, especially for font size and legend layout, depending on the browser or export backend.
 
-The issue reported in [#171](https://github.com/plotly/plotly.rs/issues/171)is solved when the `font.family` property is set explicitly (e.g., to `"Times New Roman, serif"`) for all text elements (titles, axes, legends) which ensures consistent results in all output formats accross different browsers.
+The issue reported in [#171](https://github.com/plotly/plotly.rs/issues/171)is solved when the `font.family` property is set explicitly (e.g., to `"Times New Roman, serif"`) for all text elements (titles, axes, legends) which ensures consistent results in all output formats across different browsers.
 
 ## Running the Example
 
