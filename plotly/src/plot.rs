@@ -13,7 +13,7 @@ use rand::{
 };
 use serde::Serialize;
 
-use crate::{Configuration, Layout};
+use crate::{layout::Frame, Configuration, Layout};
 
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
@@ -158,6 +158,8 @@ pub struct Plot {
     layout: Layout,
     #[serde(rename = "config")]
     configuration: Configuration,
+    /// Animation frames
+    frames: Option<Vec<Frame>>,
     #[serde(skip)]
     js_scripts: String,
 }
@@ -217,6 +219,43 @@ impl Plot {
     /// Get the configuration specification of the plot.
     pub fn configuration(&self) -> &Configuration {
         &self.configuration
+    }
+
+    /// Add a single frame to the animation sequence.
+    pub fn add_frame(&mut self, frame: Frame) -> &mut Self {
+        if self.frames.is_none() {
+            self.frames = Some(Vec::new());
+        }
+        self.frames.as_mut().unwrap().push(frame);
+        self
+    }
+
+    /// Add multiple frames to the animation sequence.
+    pub fn add_frames(&mut self, frames: &[Frame]) -> &mut Self {
+        if self.frames.is_none() {
+            self.frames = Some(frames.to_vec());
+        }
+        self.frames.as_mut().unwrap().extend(frames.iter().cloned());
+        self
+    }
+
+    pub fn clear_frames(&mut self) -> &mut Self {
+        self.frames = None;
+        self
+    }
+
+    pub fn frame_count(&self) -> usize {
+        self.frames.as_ref().map(|f| f.len()).unwrap_or(0)
+    }
+
+    /// Get the animation frames as mutable reference
+    pub fn frames_mut(&mut self) -> Option<&mut Vec<Frame>> {
+        self.frames.as_mut()
+    }
+
+    /// Get the animation frames.
+    pub fn frames(&self) -> Option<&[Frame]> {
+        self.frames.as_deref()
     }
 
     /// Display the fully rendered HTML `Plot` in the default system browser.
@@ -901,6 +940,7 @@ mod tests {
             ],
             "layout": {},
             "config": {},
+            "frames": null,
         });
 
         assert_eq!(to_value(plot).unwrap(), expected);
@@ -927,6 +967,7 @@ mod tests {
                 }
             },
             "config": {},
+            "frames": null,
         });
 
         assert_eq!(to_value(plot).unwrap(), expected);

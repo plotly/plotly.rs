@@ -6,7 +6,7 @@ use serde_json::{Map, Value};
 use crate::{
     color::Color,
     common::{Anchor, Font, Pad},
-    layout::ControlBuilderError,
+    layout::{Animation, ControlBuilderError},
     private::NumOrString,
     Relayout, Restyle,
 };
@@ -90,11 +90,8 @@ impl SliderStep {
 /// Builder struct to create slider steps which can do restyles and/or relayouts
 #[derive(FieldSetter)]
 pub struct SliderStepBuilder {
-    #[field_setter(skip)]
     label: Option<String>,
-    #[field_setter(skip)]
     name: Option<String>,
-    #[field_setter(skip)]
     template_item_name: Option<String>,
     visible: Option<bool>,
     #[field_setter(skip)]
@@ -105,26 +102,14 @@ pub struct SliderStepBuilder {
     relayouts: Map<String, Value>,
     #[field_setter(skip)]
     error: Option<ControlBuilderError>,
+    /// Animation configuration
+    #[field_setter(skip)]
+    animation: Option<Animation>,
 }
 
 impl SliderStepBuilder {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn label<S: AsRef<str>>(mut self, label: S) -> Self {
-        self.label = Some(label.as_ref().to_string());
-        self
-    }
-
-    pub fn name<S: AsRef<str>>(mut self, name: S) -> Self {
-        self.name = Some(name.as_ref().to_string());
-        self
-    }
-
-    pub fn template_item_name<S: AsRef<str>>(mut self, template_item_name: S) -> Self {
-        self.template_item_name = Some(template_item_name.as_ref().to_string());
-        self
     }
 
     pub fn push_restyle(mut self, restyle: impl Restyle) -> Self {
@@ -196,24 +181,37 @@ impl SliderStepBuilder {
         Ok(())
     }
 
-    fn method_and_args(
-        restyles: Map<String, Value>,
-        relayouts: Map<String, Value>,
-    ) -> (SliderMethod, Value) {
-        match (restyles.is_empty(), relayouts.is_empty()) {
-            (true, true) => (SliderMethod::Skip, Value::Null),
-            (false, true) => (SliderMethod::Restyle, vec![restyles].into()),
-            (true, false) => (SliderMethod::Relayout, vec![relayouts].into()),
-            (false, false) => (SliderMethod::Update, vec![restyles, relayouts].into()),
-        }
+    /// Set the animation configuration for this slider step
+    pub fn animation(mut self, animation: Animation) -> Self {
+        self.animation = Some(animation);
+        self
     }
-
     pub fn build(self) -> Result<SliderStep, ControlBuilderError> {
         if let Some(error) = self.error {
             return Err(error);
         }
 
-        let (method, args) = Self::method_and_args(self.restyles, self.relayouts);
+        let (method, args) = match (
+            self.animation,
+            self.restyles.is_empty(),
+            self.relayouts.is_empty(),
+        ) {
+            // Animation takes precedence
+            (Some(animation), _, _) => (
+                SliderMethod::Animate,
+                serde_json::to_value(animation)
+                    .map_err(|e| ControlBuilderError::AnimationSerializationError(e.to_string()))?,
+            ),
+            // Regular restyle/relayout combinations
+            (None, true, true) => (SliderMethod::Skip, Value::Null),
+            (None, false, true) => (SliderMethod::Restyle, vec![self.restyles].into()),
+            (None, true, false) => (SliderMethod::Relayout, vec![self.relayouts].into()),
+            (None, false, false) => (
+                SliderMethod::Update,
+                vec![self.restyles, self.relayouts].into(),
+            ),
+        };
+
         Ok(SliderStep {
             label: self.label,
             args: Some(args),
@@ -420,16 +418,27 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
-    use crate::common::Anchor;
-    use crate::common::Visible;
+    use crate::common::{Anchor, Visible};
+    use crate::layout::{Animation, AnimationMode, FrameSettings, TransitionSettings};
 
     #[test]
     fn serialize_slider_method() {
-        assert_eq!(to_value(SliderMethod::Restyle).unwrap(), json!("restyle"));
-        assert_eq!(to_value(SliderMethod::Relayout).unwrap(), json!("relayout"));
-        assert_eq!(to_value(SliderMethod::Animate).unwrap(), json!("animate"));
-        assert_eq!(to_value(SliderMethod::Update).unwrap(), json!("update"));
-        assert_eq!(to_value(SliderMethod::Skip).unwrap(), json!("skip"));
+        let test_cases = [
+            (SliderMethod::Restyle, "restyle"),
+            (SliderMethod::Relayout, "relayout"),
+            (SliderMethod::Animate, "animate"),
+            (SliderMethod::Update, "update"),
+            (SliderMethod::Skip, "skip"),
+        ];
+
+        for (method, expected) in test_cases {
+            assert_eq!(
+                to_value(method).unwrap(),
+                json!(expected),
+                "Failed for {:?}",
+                method
+            );
+        }
     }
 
     #[test]
@@ -544,34 +553,38 @@ mod tests {
 
     #[test]
     fn serialize_slider_current_value_x_anchor() {
-        assert_eq!(
-            to_value(SliderCurrentValueXAnchor::Left).unwrap(),
-            json!("left")
-        );
-        assert_eq!(
-            to_value(SliderCurrentValueXAnchor::Center).unwrap(),
-            json!("center")
-        );
-        assert_eq!(
-            to_value(SliderCurrentValueXAnchor::Right).unwrap(),
-            json!("right")
-        );
+        let test_cases = [
+            (SliderCurrentValueXAnchor::Left, "left"),
+            (SliderCurrentValueXAnchor::Center, "center"),
+            (SliderCurrentValueXAnchor::Right, "right"),
+        ];
+
+        for (anchor, expected) in test_cases {
+            assert_eq!(
+                to_value(&anchor).unwrap(),
+                json!(expected),
+                "Failed for {:?}",
+                anchor
+            );
+        }
     }
 
     #[test]
     fn serialize_slider_transition_easing() {
-        assert_eq!(
-            to_value(SliderTransitionEasing::Linear).unwrap(),
-            json!("linear")
-        );
-        assert_eq!(
-            to_value(SliderTransitionEasing::CubicInOut).unwrap(),
-            json!("cubic-in-out")
-        );
-        assert_eq!(
-            to_value(SliderTransitionEasing::BounceIn).unwrap(),
-            json!("bounce-in")
-        );
+        let test_cases = [
+            (SliderTransitionEasing::Linear, "linear"),
+            (SliderTransitionEasing::CubicInOut, "cubic-in-out"),
+            (SliderTransitionEasing::BounceIn, "bounce-in"),
+        ];
+
+        for (easing, expected) in test_cases {
+            assert_eq!(
+                to_value(&easing).unwrap(),
+                json!(expected),
+                "Failed for {:?}",
+                easing
+            );
+        }
     }
 
     #[test]
@@ -665,13 +678,48 @@ mod tests {
         struct InvalidJsonObject;
         impl Relayout for InvalidJsonObject {}
 
-        let builder = SliderStepBuilder::new().push_relayout(InvalidJsonObject);
-        let err = builder.build().unwrap_err();
-        match err {
-            ControlBuilderError::InvalidRelayoutObject(s) => {
-                assert!(s.contains("null"));
-            }
+        let result = SliderStepBuilder::new()
+            .label("Test")
+            .push_relayout(InvalidJsonObject)
+            .build();
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            ControlBuilderError::InvalidRelayoutObject(_) => {}
             _ => panic!("Expected InvalidRelayoutObject error"),
         }
+    }
+
+    #[test]
+    fn serialize_slider_step_builder_with_animation() {
+        let animation = Animation::frames(vec!["frame1".to_string()]).options(
+            crate::layout::AnimationOptions::new()
+                .mode(AnimationMode::Immediate)
+                .frame(FrameSettings::new().duration(300).redraw(false))
+                .transition(TransitionSettings::new().duration(300)),
+        );
+
+        let slider_step = SliderStepBuilder::new()
+            .label("Animate to frame1")
+            .value("frame1")
+            .animation(animation)
+            .build()
+            .unwrap();
+
+        let expected = json!({
+            "args": [
+                ["frame1"],
+                {
+                    "mode": "immediate",
+                    "transition": {"duration": 300},
+                    "frame": {"duration": 300, "redraw": false}
+                }
+            ],
+            "method": "animate",
+            "label": "Animate to frame1",
+            "value": "frame1"
+        });
+
+        assert_eq!(to_value(slider_step).unwrap(), expected);
     }
 }

@@ -35,3 +35,4 @@
     - [Custom Controls](./recipes/custom_controls.md)
         - [Dropdowns](./recipes/custom_controls/dropdowns.md)
         - [Sliders](./recipes/custom_controls/sliders.md)
+        - [Animations](./recipes/custom_controls/animations.md)

@@ -198,11 +198,6 @@ let mut exporter = StaticExporterBuilder::default()
 - **Exporter Reuse**: Create a single `StaticExporter` and reuse it for multiple plots
 - **Parallel Usage**: Use unique ports for parallel operations (tests, etc.)
 - **Resource Management**: The exporter automatically manages WebDriver lifecycle
-- **Format Selection**: Choose appropriate formats for your use case:
-  - PNG: Good quality, lossless
-  - JPEG: Smaller files, lossy
-  - SVG: Scalable, good for web
-  - PDF: Good for printing
 
 ## Complete Example
 

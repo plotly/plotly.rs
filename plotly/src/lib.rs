@@ -56,7 +56,7 @@ pub mod traces;
 pub use common::color;
 pub use configuration::Configuration;
 pub use layout::Layout;
-pub use plot::{Plot, Trace};
+pub use plot::{Plot, Trace, Traces};
 #[cfg(feature = "kaleido")]
 pub use plotly_kaleido::ImageFormat;
 #[cfg(feature = "plotly_static")]
