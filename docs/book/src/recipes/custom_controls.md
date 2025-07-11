@@ -6,3 +6,4 @@ This section covers interactive controls that can be added to plots to modify da
 |--------------|---------|
 | [Dropdown Menus and Buttons](./custom_controls/dropdowns.md) | ![Dropdown Example](./img/dropdown.png) |
 | [Sliders](./custom_controls/sliders.md) | ![Slider Example](./img/sliders.png) |
+| [Animations](./custom_controls/animations.md) | ![Animation Example](./img/animation.png) |

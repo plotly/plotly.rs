@@ -7,8 +7,8 @@ use plotly::{
     common::{Anchor, ColorScalePalette, Font, Mode, Pad, Title, Visible},
     layout::{
         update_menu::{ButtonBuilder, UpdateMenu, UpdateMenuDirection, UpdateMenuType},
-        Axis, BarMode, Layout, Slider, SliderCurrentValue, SliderCurrentValueXAnchor, SliderStep,
-        SliderStepBuilder,
+        AnimationOptions, Axis, BarMode, Layout, Slider, SliderCurrentValue,
+        SliderCurrentValueXAnchor, SliderStep, SliderStepBuilder,
     },
     Bar, HeatMap, Plot, Scatter,
 };
@@ -388,7 +388,7 @@ fn gdp_life_expectancy_slider_example(show: bool, file_name: &str) {
             visible[start..end].fill(Visible::True);
 
             SliderStepBuilder::new()
-                .label(format!("year = {year}"))
+                .label(year.to_string())
                 .value(year)
                 .push_restyle(Scatter::<f64, f64>::modify_visible(visible))
                 .push_relayout(Layout::modify_title(format!(
@@ -409,8 +409,18 @@ fn gdp_life_expectancy_slider_example(show: bool, file_name: &str) {
                 .title(Title::with_text("gdpPercap"))
                 .type_(plotly::layout::AxisType::Log),
         )
-        .y_axis(Axis::new().title(Title::with_text("lifeExp")))
-        .sliders(vec![Slider::new().active(0).steps(steps)]);
+        .y_axis(
+            Axis::new()
+                .title(Title::with_text("lifeExp"))
+                .range(vec![30.0, 85.0]), // Fixed range for Life Expectancy
+        )
+        .sliders(vec![Slider::new().active(0).steps(steps).current_value(
+            SliderCurrentValue::new()
+                .visible(true)
+                .prefix("Year: ")
+                .x_anchor(SliderCurrentValueXAnchor::Right)
+                .font(Font::new().size(20).color("rgb(102, 102, 102)")),
+        )]);
     plot.set_layout(layout);
     let path = write_example_to_html(&plot, file_name);
     if show {
@@ -418,6 +428,291 @@ fn gdp_life_expectancy_slider_example(show: bool, file_name: &str) {
     }
 }
 // ANCHOR_END: gdp_life_expectancy_slider_example
+
+// ANCHOR: gdp_life_expectancy_animation_example
+// GDP per Capita/Life Expectancy Animation (animated version of the slider
+// example)
+fn gdp_life_expectancy_animation_example(show: bool, file_name: &str) {
+    use plotly::{
+        common::Font,
+        common::Pad,
+        common::Title,
+        layout::Axis,
+        layout::{
+            update_menu::{ButtonBuilder, UpdateMenu, UpdateMenuDirection, UpdateMenuType},
+            Animation, AnimationMode, Frame, FrameSettings, Slider, SliderCurrentValue,
+            SliderCurrentValueXAnchor, SliderStepBuilder, TransitionSettings,
+        },
+        Layout, Plot, Scatter,
+    };
+
+    let data = load_gapminder_data();
+
+    // Get unique years and sort them
+    let years: Vec<i32> = data
+        .iter()
+        .map(|d| d.year)
+        .collect::<std::collections::HashSet<_>>()
+        .into_iter()
+        .sorted()
+        .collect();
+
+    // Create color mapping for continents to match the Python plotly example
+    let continent_colors = HashMap::from([
+        ("Asia".to_string(), "rgb(99, 110, 250)"),
+        ("Europe".to_string(), "rgb(239, 85, 59)"),
+        ("Africa".to_string(), "rgb(0, 204, 150)"),
+        ("Americas".to_string(), "rgb(171, 99, 250)"),
+        ("Oceania".to_string(), "rgb(255, 161, 90)"),
+    ]);
+    let continents: Vec<String> = continent_colors.keys().cloned().sorted().collect();
+
+    let mut plot = Plot::new();
+    let mut initial_traces = Vec::new();
+
+    for (frame_index, &year) in years.iter().enumerate() {
+        let mut frame_traces = plotly::Traces::new();
+
+        for continent in &continents {
+            let records: Vec<&GapminderData> = data
+                .iter()
+                .filter(|d| d.continent == *continent && d.year == year)
+                .collect();
+
+            if !records.is_empty() {
+                let x: Vec<f64> = records.iter().map(|r| r.gdp_per_cap).collect();
+                let y: Vec<f64> = records.iter().map(|r| r.life_exp).collect();
+                let size: Vec<f64> = records.iter().map(|r| r.pop).collect();
+                let hover: Vec<String> = records.iter().map(|r| r.country.clone()).collect();
+
+                let trace = Scatter::new(x, y)
+                    .name(continent)
+                    .mode(Mode::Markers)
+                    .hover_text_array(hover)
+                    .marker(
+                        plotly::common::Marker::new()
+                            .color(*continent_colors.get(continent).unwrap())
+                            .size_array(size.into_iter().map(|s| s as usize).collect())
+                            .size_mode(plotly::common::SizeMode::Area)
+                            .size_ref(200000)
+                            .size_min(4),
+                    );
+
+                frame_traces.push(trace.clone());
+
+                // Store traces from first year for initial plot
+                if frame_index == 0 {
+                    initial_traces.push(trace);
+                }
+            }
+        }
+
+        // Create layout for this frame
+        let frame_layout = Layout::new()
+            .title(Title::with_text(format!(
+                "GDP vs. Life Expectancy ({year})"
+            )))
+            .x_axis(
+                Axis::new()
+                    .title(Title::with_text("gdpPercap"))
+                    .type_(plotly::layout::AxisType::Log),
+            )
+            .y_axis(
+                Axis::new()
+                    .title(Title::with_text("lifeExp"))
+                    .range(vec![30.0, 85.0]), // Fixed range for Life Expectancy
+            );
+
+        // Add frame with all traces for this year
+        plot.add_frame(
+            Frame::new()
+                .name(format!("frame{frame_index}"))
+                .data(frame_traces)
+                .layout(frame_layout),
+        );
+    }
+
+    // Add initial traces to the plot (all traces from first year)
+    for trace in initial_traces {
+        plot.add_trace(trace);
+    }
+
+    // Create animation configuration for playing all frames
+    let play_animation = Animation::all_frames().options(
+        AnimationOptions::new()
+            .mode(AnimationMode::Immediate)
+            .frame(FrameSettings::new().duration(500).redraw(false))
+            .transition(TransitionSettings::new().duration(300))
+            .fromcurrent(true),
+    );
+
+    let play_button = ButtonBuilder::new()
+        .label("Play")
+        .animation(play_animation)
+        .build()
+        .unwrap();
+
+    let pause_animation = Animation::pause();
+
+    let pause_button = ButtonBuilder::new()
+        .label("Pause")
+        .animation(pause_animation)
+        .build()
+        .unwrap();
+
+    let updatemenu = UpdateMenu::new()
+        .ty(UpdateMenuType::Buttons)
+        .direction(UpdateMenuDirection::Right)
+        .buttons(vec![play_button, pause_button])
+        .x(0.1)
+        .y(1.15)
+        .show_active(true)
+        .visible(true);
+
+    // Create slider steps for each year
+    let mut slider_steps = Vec::new();
+    for (i, &year) in years.iter().enumerate() {
+        let frame_animation = Animation::frames(vec![format!("frame{}", i)]).options(
+            AnimationOptions::new()
+                .mode(AnimationMode::Immediate)
+                .frame(FrameSettings::new().duration(300).redraw(false))
+                .transition(TransitionSettings::new().duration(300)),
+        );
+        let step = SliderStepBuilder::new()
+            .label(year.to_string())
+            .value(year)
+            .animation(frame_animation)
+            .build()
+            .unwrap();
+        slider_steps.push(step);
+    }
+
+    let slider = Slider::new()
+        .pad(Pad::new(55, 0, 130))
+        .current_value(
+            SliderCurrentValue::new()
+                .visible(true)
+                .prefix("Year: ")
+                .x_anchor(SliderCurrentValueXAnchor::Right)
+                .font(Font::new().size(20).color("rgb(102, 102, 102)")),
+        )
+        .steps(slider_steps);
+
+    // Set the layout with initial title, buttons, and slider
+    let layout = Layout::new()
+        .title(Title::with_text(format!(
+            "GDP vs. Life Expectancy ({}) - Click 'Play' to animate",
+            years[0]
+        )))
+        .x_axis(
+            Axis::new()
+                .title(Title::with_text("gdpPercap"))
+                .type_(plotly::layout::AxisType::Log),
+        )
+        .y_axis(
+            Axis::new()
+                .title(Title::with_text("lifeExp"))
+                .range(vec![30.0, 85.0]), // Fixed range for Life Expectancy
+        )
+        .update_menus(vec![updatemenu])
+        .sliders(vec![slider]);
+
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: gdp_life_expectancy_animation_example
+
+// ANCHOR: animation_randomize_example
+/// Animation example based on the Plotly.js "Randomize" animation.
+/// This demonstrates the new builder API for animation configuration.
+fn animation_randomize_example(show: bool, file_name: &str) {
+    use plotly::{
+        layout::update_menu::{ButtonBuilder, UpdateMenu, UpdateMenuDirection, UpdateMenuType},
+        layout::{
+            Animation, AnimationEasing, AnimationMode, Frame, FrameSettings, TransitionSettings,
+        },
+        Plot, Scatter,
+    };
+
+    // Initial data
+    let x = vec![1, 2, 3];
+    let y0 = vec![0.0, 0.5, 1.0];
+    let y1 = vec![0.2, 0.8, 0.3];
+    let y2 = vec![0.9, 0.1, 0.7];
+
+    let mut plot = Plot::new();
+    let base =
+        Scatter::new(x.clone(), y0.clone()).line(plotly::common::Line::new().simplify(false));
+    plot.add_trace(base.clone());
+
+    // Add frames with different y-values and auto-adjusting layouts
+    let mut trace0 = plotly::Traces::new();
+    trace0.push(base);
+
+    let mut trace1 = plotly::Traces::new();
+    trace1.push(Scatter::new(x.clone(), y1.clone()));
+
+    let mut trace2 = plotly::Traces::new();
+    trace2.push(Scatter::new(x.clone(), y2.clone()));
+
+    let animation = Animation::new().options(
+        AnimationOptions::new()
+            .mode(AnimationMode::Immediate)
+            .frame(FrameSettings::new().duration(500))
+            .transition(
+                TransitionSettings::new()
+                    .duration(500)
+                    .easing(AnimationEasing::CubicInOut),
+            ),
+    );
+
+    let layout0 = plotly::Layout::new()
+        .title(Title::with_text("First frame"))
+        .y_axis(plotly::layout::Axis::new().range(vec![0.0, 1.0]));
+    let layout1 = plotly::Layout::new()
+        .title(Title::with_text("Second frame"))
+        .y_axis(plotly::layout::Axis::new().range(vec![0.0, 1.0]));
+    let layout2 = plotly::Layout::new()
+        .title(Title::with_text("Third frame"))
+        .y_axis(plotly::layout::Axis::new().range(vec![0.0, 1.0]));
+
+    // Add frames using the new API
+    plot.add_frame(Frame::new().name("frame0").data(trace0).layout(layout0))
+        .add_frame(Frame::new().name("frame1").data(trace1).layout(layout1))
+        .add_frame(Frame::new().name("frame2").data(trace2).layout(layout2));
+
+    let randomize_button = ButtonBuilder::new()
+        .label("Animate")
+        .animation(animation)
+        .build()
+        .unwrap();
+
+    let updatemenu = UpdateMenu::new()
+        .ty(UpdateMenuType::Buttons)
+        .direction(UpdateMenuDirection::Right)
+        .buttons(vec![randomize_button])
+        .x(0.1)
+        .y(1.15)
+        .show_active(true)
+        .visible(true);
+
+    plot.set_layout(
+        Layout::new()
+            .title("Animation Example - Click 'Animate'")
+            .y_axis(Axis::new().title("Y Axis").range(vec![0.0, 1.0]))
+            .update_menus(vec![updatemenu]),
+    );
+
+    let path = plotly_utils::write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: animation_randomize_example
 
 fn main() {
     // Change false to true on any of these lines to display the example.
@@ -429,4 +724,7 @@ fn main() {
     bar_chart_with_slider_customization(false, "bar_chart_with_slider_customization");
     sinusoidal_slider_example(false, "sinusoidal_slider_example");
     gdp_life_expectancy_slider_example(false, "gdp_life_expectancy_slider_example");
+    // Animation examples
+    animation_randomize_example(false, "animation_randomize_example");
+    gdp_life_expectancy_animation_example(false, "gdp_life_expectancy_animation_example");
 }

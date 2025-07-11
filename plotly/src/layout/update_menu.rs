@@ -7,7 +7,7 @@ use serde_json::{Map, Value};
 use crate::{
     color::Color,
     common::{Anchor, Font, Pad},
-    layout::ControlBuilderError,
+    layout::{Animation, ControlBuilderError},
     Relayout, Restyle,
 };
 
@@ -92,11 +92,8 @@ impl Button {
 /// Builder struct to create buttons which can do restyles and/or relayouts
 #[derive(FieldSetter)]
 pub struct ButtonBuilder {
-    #[field_setter(skip)]
     label: Option<String>,
-    #[field_setter(skip)]
     name: Option<String>,
-    #[field_setter(skip)]
     template_item_name: Option<String>,
     visible: Option<bool>,
     #[field_setter(default = "Map::new()")]
@@ -105,26 +102,14 @@ pub struct ButtonBuilder {
     relayouts: Map<String, Value>,
     #[field_setter(skip)]
     error: Option<ControlBuilderError>,
+    // Animation configuration
+    #[field_setter(skip)]
+    animation: Option<Animation>,
 }
 
 impl ButtonBuilder {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn label<S: AsRef<str>>(mut self, label: S) -> Self {
-        self.label = Some(label.as_ref().to_string());
-        self
-    }
-
-    pub fn name<S: AsRef<str>>(mut self, name: S) -> Self {
-        self.name = Some(name.as_ref().to_string());
-        self
-    }
-
-    pub fn template_item_name<S: AsRef<str>>(mut self, template_item_name: S) -> Self {
-        self.template_item_name = Some(template_item_name.as_ref().to_string());
-        self
     }
 
     pub fn push_restyle(mut self, restyle: impl Restyle) -> Self {
@@ -172,16 +157,10 @@ impl ButtonBuilder {
         Ok(())
     }
 
-    fn method_and_args(
-        restyles: Map<String, Value>,
-        relayouts: Map<String, Value>,
-    ) -> (ButtonMethod, Value) {
-        match (restyles.is_empty(), relayouts.is_empty()) {
-            (true, true) => (ButtonMethod::Skip, Value::Null),
-            (false, true) => (ButtonMethod::Restyle, vec![restyles].into()),
-            (true, false) => (ButtonMethod::Relayout, vec![relayouts].into()),
-            (false, false) => (ButtonMethod::Update, vec![restyles, relayouts].into()),
-        }
+    /// Sets the animation configuration for the button
+    pub fn animation(mut self, animation: Animation) -> Self {
+        self.animation = Some(animation);
+        self
     }
 
     pub fn build(self) -> Result<Button, ControlBuilderError> {
@@ -189,7 +168,27 @@ impl ButtonBuilder {
             return Err(error);
         }
 
-        let (method, args) = Self::method_and_args(self.restyles, self.relayouts);
+        let (method, args) = match (
+            self.animation,
+            self.restyles.is_empty(),
+            self.relayouts.is_empty(),
+        ) {
+            // Animation takes precedence
+            (Some(animation), _, _) => {
+                let animation_args = serde_json::to_value(animation)
+                    .map_err(|e| ControlBuilderError::AnimationSerializationError(e.to_string()))?;
+                (ButtonMethod::Animate, animation_args)
+            }
+            // Regular restyle/relayout combinations
+            (None, true, true) => (ButtonMethod::Skip, Value::Null),
+            (None, false, true) => (ButtonMethod::Restyle, vec![self.restyles].into()),
+            (None, true, false) => (ButtonMethod::Relayout, vec![self.relayouts].into()),
+            (None, false, false) => (
+                ButtonMethod::Update,
+                vec![self.restyles, self.relayouts].into(),
+            ),
+        };
+
         Ok(Button {
             label: self.label,
             args: Some(args),
@@ -453,5 +452,27 @@ mod tests {
             ControlBuilderError::InvalidRelayoutObject(_) => {}
             _ => panic!("Expected InvalidRelayoutObject error"),
         }
+    }
+
+    #[test]
+    fn serialize_animation_button_args() {
+        let animation = Animation::all_frames();
+
+        let button = ButtonBuilder::new()
+            .label("Animate")
+            .animation(animation)
+            .build()
+            .unwrap();
+
+        let args = button.args.unwrap();
+        assert!(args.is_array(), "Animation button args must be an array");
+
+        // Verify the structure: [frameArg, options]
+        assert_eq!(args[0], json!(null)); // Should be null for all_frames
+        assert!(
+            args[1].is_object(),
+            "Second arg should be animation options object"
+        );
+        assert_eq!(to_value(button.method.unwrap()).unwrap(), json!("animate"));
     }
 }

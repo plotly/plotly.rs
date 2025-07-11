@@ -11,6 +11,7 @@ use crate::common::{Calendar, ColorScale, Font, Label, Orientation, Title};
 pub mod themes;
 pub mod update_menu;
 
+mod animation;
 mod annotation;
 mod axis;
 mod geo;
@@ -24,6 +25,10 @@ mod shape;
 mod slider;
 
 // Re-export layout sub-module types
+pub use self::animation::{
+    Animation, AnimationDirection, AnimationEasing, AnimationMode, AnimationOptions, Frame,
+    FrameSettings, TransitionOrdering, TransitionSettings,
+};
 pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
 pub use self::axis::{
     ArrayShow, Axis, AxisConstrain, AxisRange, AxisType, CategoryOrder, ColorAxis,
@@ -59,6 +64,7 @@ pub enum ControlBuilderError {
     ValueSerializationError(String),
     InvalidRestyleObject(String),
     InvalidRelayoutObject(String),
+    AnimationSerializationError(String),
 }
 
 impl std::fmt::Display for ControlBuilderError {
@@ -78,6 +84,9 @@ impl std::fmt::Display for ControlBuilderError {
             }
             ControlBuilderError::InvalidRelayoutObject(s) => {
                 write!(f, "Invalid relayout object: expected object but got {s}")
+            }
+            ControlBuilderError::AnimationSerializationError(e) => {
+                write!(f, "Failed to serialize animation: {e}")
             }
         }
     }
