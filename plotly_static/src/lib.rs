@@ -74,7 +74,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! plotly_static = { version = "0.0.1", features = ["chromedriver", "webdriver_download"] }
+//! plotly_static = { version = "0.0.2", features = ["chromedriver", "webdriver_download"] }
 //! ```
 //!
 //! ## Advanced Usage

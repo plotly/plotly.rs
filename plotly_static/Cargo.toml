@@ -1,6 +1,6 @@
 [package]
 name = "plotly_static"
-version = "0.0.1"
+version = "0.0.2"
 description = "Export Plotly graphs to static images using WebDriver"
 authors = ["Andrei Gherghescu andrei-ng@protonmail.com"]
 license = "MIT"
@@ -43,3 +43,7 @@ anyhow = "1.0"
 dirs = "6.0"
 zip = "4.0"
 webdriver-downloader = "0.16"
+
+# Needed for docs.rs to build the documentation
+[package.metadata.docs.rs]
+features = ["chromedriver"]
