@@ -25,8 +25,9 @@ jobs:
     - run: cargo publish --allow-dirty -p plotly_kaleido
     - run: sleep 10
     - run: cargo publish --allow-dirty -p plotly
-    - run: sleep 10
-    - run: cargo publish --allow-dirty -p plotly_static --features webdriver_download,chromedriver
+    # plotly_static is not part of the same ecosystem yet so it doesn't use the same TOKEN
+    # - run: sleep 10
+    # - run: cargo publish --allow-dirty -p plotly_static --features webdriver_download,chromedriver
 
   create-gh-release:
     name: Deploy to GH Releases

@@ -3,12 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.3] - 2025-xx-xx
 
-## [0.13.2] - 2025-xx-xx
+### Fixed  
+### Changed
+
+## [0.13.2] - 2025-07-12
+
+### Fixed  
+- [[#336](https://github.com/plotly/plotly.rs/pull/336)] Fix `plotly_static` docs.rs build
 - [[#327](https://github.com/plotly/plotly.rs/pull/327)] Fix book broken link
-
-### Fixed
-- [[#326](https://github.com/plotly/plotly.rs/pull/326)] Fix book badges
 
 ## [0.13.1] - 2025-07-07
 
