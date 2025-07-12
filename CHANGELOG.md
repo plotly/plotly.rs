@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [0.13.3] - 2025-xx-xx
 
 ### Fixed  
+
 ### Changed
+
+## [0.13.3] - 2025-07-12
+
+### Changed
+- [[#335](https://github.com/plotly/plotly.rs/pull/335)] Add minimal animation support 
 
 ## [0.13.2] - 2025-07-12
 
