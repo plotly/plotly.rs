@@ -56,7 +56,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly_static = { version = "0.0.2", features = ["chromedriver", "webdriver_download"] }
+plotly_static = { version = "0.0.3", features = ["chromedriver", "webdriver_download"] }
 serde_json = "1.0"
 ```
 
@@ -151,7 +151,7 @@ Similar examples are available in the [Plotly.rs package](https://github.com/plo
 ## Documentation
 
 - [API Documentation](https://docs.rs/plotly_static/)
-- [Static Image Export Guide](../../docs/book/src/fundamentals/static_image_export.md)
+- [Static Image Export Guide](https://github.com/plotly/plotly.rs/tree/main/docs/book/src/fundamentals/static_image_export.md)
 
 ## License
 
