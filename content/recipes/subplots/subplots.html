@@ -263,7 +263,10 @@ use plotly::{Plot, Rgb, Scatter};
     }
 }
 <span class="boring">}</span></code></pre></pre>
-<p>{{#include ../../../../../examples/subplots/output/inline_subplot_with_multiple_traces.html}}</p>
+<div id="subplots_with_multiple_traces" class="plotly-graph-div" style="height:100%; width:100%;"></div>
+<script type="text/javascript">
+    Plotly.newPlot("subplots_with_multiple_traces", {"data":[{"type":"scatter","name":"Line 1","mode":"lines+markers","x":[1,2,3,4],"y":[10,11,12,13]},{"type":"scatter","name":"Line 2","mode":"lines+markers","x":[1,2,3,4],"y":[8,9,10,11]},{"type":"scatter","name":"Line 3","mode":"lines+markers","x":[1,2,3,4],"y":[12,13,14,15]},{"type":"scatter","name":"Dots 1","mode":"markers","x":[1,2,3,4],"y":[20,25,30,35],"xaxis":"x2","yaxis":"y2"},{"type":"scatter","name":"Dots 2","mode":"markers","x":[1,2,3,4],"y":[15,20,25,30],"xaxis":"x2","yaxis":"y2"}],"layout":{"title":{"text":"Subplots with Multiple Traces"},"grid":{"rows":1,"columns":2,"pattern":"independent"}},"config":{}});
+</script>
 <h2 id="custom-sized-subplot"><a class="header" href="#custom-sized-subplot">Custom Sized Subplot</a></h2>
 <pre><pre class="playground"><code class="language-rust no_run"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
