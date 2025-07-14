@@ -864,8 +864,8 @@ impl Plot {
     #[cfg(target_os = "windows")]
     fn show_with_default_app(temp_path: &str) {
         use std::process::Command;
-        Command::new("cmd")
-            .args(&["/C", "start", &format!(r#"{}"#, temp_path)])
+        Command::new("explorer")
+            .arg(temp_path)
             .spawn()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
