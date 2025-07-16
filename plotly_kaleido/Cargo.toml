@@ -1,6 +1,6 @@
 [package]
 name = "plotly_kaleido"
-version = "0.13.3"
+version = "0.13.4"
 description = "Additional output format support for plotly using Kaleido"
 authors = [
     "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
