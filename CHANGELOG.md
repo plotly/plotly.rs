@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed  
 
-- [[#340](https://github.com/plotly/plotly.rs/pull/340)] Fix documentation related to `wasm` support 
+- [[#341](https://github.com/plotly/plotly.rs/pull/341)] Fix documentation related to `wasm` support 
 
 ### Changed
 - [[#339](https://github.com/plotly/plotly.rs/pull/339)] Replace default Windows app with `explorer`
