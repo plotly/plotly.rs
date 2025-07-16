@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.13.3"
+version = "0.13.4"
 description = "A plotting library powered by Plotly.js"
 authors = [
     "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
@@ -17,11 +17,6 @@ keywords = ["plot", "chart", "plotly"]
 exclude = ["target/*"]
 
 [features]
-# DEPRECATED: kaleido feature will be removed in version 0.14.0. Use `static_export_*` features instead.
-kaleido = ["plotly_kaleido"]
-# DEPRECATED: kaleido_download feature will be removed in version 0.14.0. Use `static_export_wd_download` instead.
-kaleido_download = ["plotly_kaleido/download"]
-
 static_export_chromedriver = ["plotly_static", "plotly_static/chromedriver"]
 static_export_geckodriver = ["plotly_static", "plotly_static/geckodriver"]
 static_export_wd_download = ["plotly_static/webdriver_download"]
@@ -30,6 +25,10 @@ static_export_default = [
     "plotly_static/chromedriver",
     "plotly_static/webdriver_download",
 ]
+
+plotly_ndarray = ["ndarray"]
+plotly_image = ["image"]
+plotly_embed_js = []
 
 # All non-conflicting features
 all = [
@@ -41,9 +40,11 @@ all = [
 # This is used for enabling extra debugging messages and debugging functionality
 debug = ["plotly_static?/debug"]
 
-plotly_ndarray = ["ndarray"]
-plotly_image = ["image"]
-plotly_embed_js = []
+# DEPRECATED: kaleido feature will be removed in version 0.14.0. Use `static_export_*` features instead.
+kaleido = ["plotly_kaleido"]
+# DEPRECATED: kaleido_download feature will be removed in version 0.14.0. Use `static_export_wd_download` instead.
+kaleido_download = ["plotly_kaleido/download"]
+
 
 [dependencies]
 askama = { version = "0.14.0", features = ["serde_json"] }

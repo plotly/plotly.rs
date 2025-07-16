@@ -39,9 +39,10 @@
 
 * [Introduction](#introduction)
 * [Basic Usage](#basic-usage)
-    * [Exporting an Interactive Plot](#exporting-an-interactive-plot)
-    * [Exporting Static Images with Kaleido](#exporting-static-images-with-kaleido)
-    * [Usage Within a Wasm Environment](#usage-within-a-wasm-environment)
+    * [Exporting a single Interactive Plot](#exporting-a-single-interactive-plot)
+    * [Exporting Static Images with plotly_static (Recommended)](#exporting-static-images-with-plotly_static-recommended)
+    * [Exporting Static Images with Kaleido (legacy)](#exporting-static-images-with-kaleido-legacy)
+    * [Usage Within a WASM Environment](#usage-within-a-wasm-environment)
 * [Crate Feature Flags](#crate-feature-flags)
 * [Contributing](#contributing)
 * [Code of Conduct](#code-of-conduct)
@@ -95,18 +96,6 @@ If you only want to view the plot in the browser quickly, use the `Plot.show()` 
 plot.show(); // The default web browser will open, displaying an interactive plot
 ```
 
-## Exporting Static Images with Kaleido
-
-To save a plot as a static image, the `kaleido` feature is required as well as installing an **external dependency**.
-
-### Kaleido external dependency
-
-When developing applications for your host, enabling both `kaleido` and `kaleido_download` features will ensure that the `kaleido` binary is downloaded for your system's architecture at compile time. After download, it is unpacked into a specific path, e.g., on Linux this is `/home/USERNAME/.config/kaleido`. With these two features enabled, static images can be exported as described in the next section as long as the application runs on the same machine where it has been compiled on.
-
-When the applications developed with `plotly.rs` are intended for other targets or when the user wants to control where the `kaleido` binary is installed then Kaleido must be manually downloaded and installed. Setting the environment variable `KALEIDO_PATH=/path/installed/kaleido/` will ensure that applications that were built with the `kaleido` feature enabled can locate the `kaleido` executable and use it to generate static images.
-
-Kaleido binaries are available on Github [release page](https://github.com/plotly/Kaleido/releases). It currently supports Linux(`x86_64`), Windows(`x86_64`) and MacOS(`x86_64`/`aarch64`).
-
 ## Exporting Static Images with plotly_static (Recommended)
 
 The recommended way to export static images is using the `plotly_static` backend, which uses a headless browser via WebDriver (Chrome or Firefox) for rendering. This is available via the `static_export_default` feature:
@@ -132,7 +121,7 @@ let svg_string = plot.to_svg(800, 600, 1.0)?;
 
 **Note:** This feature requires a WebDriver-compatible browser (Chrome or Firefox) as well as a Webdriver (chromedriver/geckodriver) to be available on the system. For advanced usage, see the [`plotly_static` crate documentation](https://docs.rs/plotly_static/).
 
-## Exporting Static Images with Kaleido (to be deprecated)
+## Exporting Static Images with Kaleido (legacy)
 
 Enable the `kaleido` feature and opt in for automatic downloading of the `kaleido` binaries by doing the following
 
@@ -165,9 +154,17 @@ plot.add_trace(trace);
 plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
 ```
 
-## Usage Within a Wasm Environment
+### Kaleido external dependency
 
-`Plotly.rs` can be used with a Wasm-based frontend framework. The needed dependencies are automatically enabled on `wasm32` targets. Note that the `kaleido` feature is not supported in Wasm environments and will throw a compilation error if enabled. 
+When developing applications for your host, enabling both `kaleido` and `kaleido_download` features will ensure that the `kaleido` binary is downloaded for your system's architecture at compile time. After download, it is unpacked into a specific path, e.g., on Linux this is `/home/USERNAME/.config/kaleido`. With these two features enabled, static images can be exported as described in the next section as long as the application runs on the same machine where it has been compiled on.
+
+When the applications developed with `plotly.rs` are intended for other targets or when the user wants to control where the `kaleido` binary is installed then Kaleido must be manually downloaded and installed. Setting the environment variable `KALEIDO_PATH=/path/installed/kaleido/` will ensure that applications that were built with the `kaleido` feature enabled can locate the `kaleido` executable and use it to generate static images.
+
+Kaleido binaries are available on Github [release page](https://github.com/plotly/Kaleido/releases). It currently supports Linux(`x86_64`), Windows(`x86_64`) and MacOS(`x86_64`/`aarch64`).
+
+## Usage Within a WASM Environment
+
+`Plotly.rs` can be used with a WASM-based frontend framework. The needed dependencies are automatically enabled for `wasm32` targets at compile time and there is no longer a need for the custom `wasm` flag in this crate. Note that the `kaleido` and `plotly_static` features are not supported in WASM environments and will throw a compilation error if enabled. 
 
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
 
@@ -189,7 +186,6 @@ A simple `Plot` component would look as follows, using `Yew` as an example front
 ```rust
 use plotly::{Plot, Scatter};
 use yew::prelude::*;
-
 
 #[function_component(PlotComponent)]
 pub fn plot_component() -> Html {
@@ -218,22 +214,23 @@ pub fn plot_component() -> Html {
 }
 ```
 
-More detailed standalone examples can be found in the [examples/](https://github.com/plotly/plotly.rs/tree/main/examples) directory.
+More detailed standalone examples can be found in the [examples/wasm-yew](https://github.com/plotly/plotly.rs/tree/main/examples/wasm-yew) directory.
 
 # Crate Feature Flags
 
 The following feature flags are available:
 
-### `kaleido`
+### `static_export_default`
 
-Adds plot save functionality to the following formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
+Since version `0.13.0` support for exporting to static images is based on using a new crate called `plotly_static` that uses WebDriver and browser automation for static export functionality.
 
-Requires `Kaleido` to have been previously installed on the host machine. See the following feature flag and [Kaleido external dependency](#kaleido-external-dependency).
+This feature flag automatically enables the usage of the `plotly_static` dependency as well as the `chromedriver` and `webdriver_download` features of that crate. For more details about these feature flags, refer to the `plotly_static` [documentation](plotly_static/README.md).   
 
-### `kaleido_download`
+The other related features allow controlling other aspects of the `plotly_static` crate
+ - `static_export_chromedriver`
+ - `static_export_geckodriver`
+ - `static_export_wd_download`
 
-Enable download and install of Kaleido binary at build time from [Kaleido releases](https://github.com/plotly/Kaleido/releases/) on the host machine.
-See [Kaleido external dependency](#kaleido-external-dependency) for more details.
 
 ### `plotly_image`
 
@@ -253,9 +250,16 @@ When the feature is enabled, users can still opt in for the CDN version by using
 
 Note that when using `Plot::to_inline_html()`, it is assumed that the `plotly.js` library is already in scope within the HTML file, so enabling this feature flag will have no effect.
 
-### `wasm`
+### `kaleido` (legacy)
 
-Enables compilation for the `wasm32-unknown-unknown` target and provides access to a `bindings` module containing wrappers around functions exported by the plotly.js library.
+Adds plot save functionality to the following formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
+
+Requires `Kaleido` to have been previously installed on the host machine. See the following feature flag and [Kaleido external dependency](#kaleido-external-dependency).
+
+### `kaleido_download` (legacy)
+
+Enable download and install of Kaleido binary at build time from [Kaleido releases](https://github.com/plotly/Kaleido/releases/) on the host machine.
+See [Kaleido external dependency](#kaleido-external-dependency) for more details.
 
 # Contributing
 
