@@ -57,8 +57,7 @@ plotly = { version = "0.13", features = ["static_export_default"] }
 ### Simple Export
 
 ```rust
-use plotly::{Plot, Scatter};
-use plotly::plotly_static::ImageFormat;
+use plotly::{Plot, Scatter, ImageFormat};
 
 let mut plot = Plot::new();
 plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
