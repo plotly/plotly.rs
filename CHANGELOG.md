@@ -3,10 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.13.5] - 2025-07-30
+## [0.13.5] - 2025-07-31
 
 ### Fixed  
 
+- [[#346](https://github.com/plotly/plotly.rs/pull/346)] Remove usage of `getrandom` for `rand` dependency and for this crate
 - [[#345](https://github.com/plotly/plotly.rs/pull/345)] Re-export `ImageFormat` from `plotly_static` into `plotly` 
 
 ## [0.13.4] - 2025-07-17
