@@ -8,17 +8,17 @@ This example demonstrates how to use the `plotly_static` crate with `clap` to cr
 
 Export a plot from a JSON file (using Chrome driver):
 ```bash
-cargo run --example main --features chromedriver -- -i sample_plot.json -o my_plot -f png
+cargo run --example generate_static --features chromedriver -- -i sample_plot.json -o my_plot -f png
 ```
 
 Export a plot from a JSON file (using Firefox/Gecko driver):
 ```bash
-cargo run --example main --features geckodriver -- -i sample_plot.json -o my_plot -f png
+cargo run --example generate_static --features geckodriver -- -i sample_plot.json -o my_plot -f png
 ```
 
 Export a plot from stdin:
 ```bash
-cat sample_plot.json | cargo run --example main --features chromedriver -- -f svg -o output
+cat sample_plot.json | cargo run --example generate_static --features chromedriver -- -f svg -o output
 ```
 
 ### Web Driver Options
@@ -31,10 +31,10 @@ The example supports two different web drivers for rendering plots:
 You must specify one of these features when running the example. For example:
 ```bash
 # Use Chrome driver
-cargo run --example main --features chromedriver -- -i plot.json -o output.png
+cargo run --example generate_static --features chromedriver -- -i plot.json -o output.png
 
 # Use Firefox driver  
-cargo run --example main --features geckodriver -- -i plot.json -o output.png
+cargo run --example generate_static --features geckodriver -- -i plot.json -o output.png
 ```
 
 ### Logging
@@ -43,13 +43,13 @@ The example uses `env_logger` for logging. You can enable different log levels u
 
 ```bash
 # Enable info level logging
-RUST_LOG=info cargo run --example main --features chromedriver -- -i sample_plot.json -o my_plot -f png
+RUST_LOG=info cargo run --example generate_static --features chromedriver -- -i sample_plot.json -o my_plot -f png
 
 # Enable debug level logging for more verbose output
-RUST_LOG=debug cargo run --example main --features geckodriver -- -i sample_plot.json -o my_plot -f png
+RUST_LOG=debug cargo run --example generate_static --features geckodriver -- -i sample_plot.json -o my_plot -f png
 
 # Enable all logging levels
-RUST_LOG=trace cargo run --example main --features chromedriver -- -i sample_plot.json -o my_plot -f png
+RUST_LOG=trace cargo run --example generate_static --features chromedriver -- -i sample_plot.json -o my_plot -f png
 ```
 
 ### Command Line Options
@@ -66,18 +66,18 @@ RUST_LOG=trace cargo run --example main --features chromedriver -- -i sample_plo
 
 Export to PNG with custom dimensions:
 ```bash
-cargo run --example main --features chromedriver -- -i sample_plot.json -o plot -f png --width 1200 --height 800
+cargo run --example generate_static --features chromedriver -- -i sample_plot.json -o plot -f png --width 1200 --height 800
 ```
 
 Export to SVG from stdin:
 ```bash
 echo '{"data":[{"type":"scatter","x":[1,2,3],"y":[4,5,6]}],"layout":{}}' | \
-cargo run --example main --features geckodriver -- -f svg -o scatter_plot
+cargo run --example generate_static --features geckodriver -- -f svg -o scatter_plot
 ```
 
 Export to PDF with high resolution:
 ```bash
-cargo run --example main --features chromedriver -- -i sample_plot.json -o report -f pdf --width 1600 --height 1200 -s 2.0
+cargo run --example generate_static --features chromedriver -- -i sample_plot.json -o report -f pdf --width 1600 --height 1200 -s 2.0
 ```
 
 ### JSON Format

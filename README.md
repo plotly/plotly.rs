@@ -108,7 +108,7 @@ plotly = { version = "0.13", features = ["static_export_default"] }
 This supports PNG, JPEG, WEBP, SVG, and PDF formats:
 
 ```rust
-use plotly::{Plot, Scatter, ImageFormat};
+use plotly::{Plot, Scatter,ImageFormat};
 
 let mut plot = Plot::new();
 plot.add_trace(Scatter::new(vec![0, 1, 2], vec![2, 1, 0]));
@@ -164,7 +164,9 @@ Kaleido binaries are available on Github [release page](https://github.com/plotl
 
 ## Usage Within a WASM Environment
 
-`Plotly.rs` can be used with a WASM-based frontend framework. The needed dependencies are automatically enabled for `wasm32` targets at compile time and there is no longer a need for the custom `wasm` flag in this crate. Note that the `kaleido` and `plotly_static` features are not supported in WASM environments and will throw a compilation error if enabled. 
+`Plotly.rs` can be used with a WASM-based frontend framework. Note that the `kaleido` and `plotly_static` static export features are not supported in WASM environments and will throw a compilation error if used. 
+
+The needed dependencies are automatically enabled for `wasm32` targets at compile time and there is no longer a need for the custom `wasm` flag in this crate.
 
 First, make sure that you have the Plotly JavaScript library in your base HTML template:
 
