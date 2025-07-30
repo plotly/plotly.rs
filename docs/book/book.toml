@@ -9,13 +9,13 @@ src = "src"
 [build]
 build-dir = "../../gh-pages/content"
 create-missing = false
+extra-watch-dirs = ["../../examples"]
 
 [output.html]
 default-theme = "Ayu"
 mathjax-support = true
 additional-css = ["ferris.css"]
 additional-js = ["ferris.js", "plotly.min.js"]
-
 
 [output.html.fold]
 enable = true

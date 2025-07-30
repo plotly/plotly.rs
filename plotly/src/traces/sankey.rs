@@ -59,10 +59,14 @@ pub struct Node {
     hover_template: Option<Dim<String>>,
     label: Option<Vec<String>>,
     line: Option<Line>,
+    /// Sets the padding (in px) between the `nodes`.
     pad: Option<usize>,
+    /// Sets the thickness (in px) of the `nodes`.
     thickness: Option<usize>,
-    x: Option<f64>,
-    y: Option<f64>,
+    /// The normalized horizontal position of the node.
+    x: Option<Vec<f64>>,
+    /// The normalized vertical position of the node.
+    y: Option<Vec<f64>>,
 }
 
 impl Node {
@@ -115,12 +119,12 @@ impl Node {
         self
     }
 
-    pub fn x(mut self, x: f64) -> Self {
+    pub fn x(mut self, x: Vec<f64>) -> Self {
         self.x = Some(x);
         self
     }
 
-    pub fn y(mut self, y: f64) -> Self {
+    pub fn y(mut self, y: Vec<f64>) -> Self {
         self.y = Some(y);
         self
     }
@@ -332,7 +336,7 @@ where
     #[serde(rename = "textfont")]
     text_font: Option<Font>,
     /// Sets the value formatting rule using d3 formatting mini-languages which
-    /// are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format.
+    /// are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>.
     #[serde(rename = "valueformat")]
     value_format: Option<String>,
     /// Adds a unit to follow the value in the hover tooltip. Add a space if a
@@ -372,7 +376,7 @@ mod tests {
     use crate::color::NamedColor;
 
     #[test]
-    fn test_serialize_default_sankey() {
+    fn serialize_default_sankey() {
         let trace = Sankey::<i32>::default();
         let expected = json!({"type": "sankey"});
 
@@ -380,7 +384,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_basic_sankey_trace() {
+    fn serialize_basic_sankey_trace() {
         // Mimic the plot here, minus the layout:
         // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
         let trace = Sankey::new()
@@ -431,7 +435,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_full_sankey_trace() {
+    fn serialize_full_sankey_trace() {
         let trace = Sankey::<i32>::new()
             .name("sankey")
             .visible(true)
@@ -474,7 +478,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_arrangement() {
+    fn serialize_arrangement() {
         assert_eq!(to_value(Arrangement::Snap).unwrap(), json!("snap"));
         assert_eq!(
             to_value(Arrangement::Perpendicular).unwrap(),
@@ -485,7 +489,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_line() {
+    fn serialize_line() {
         let line = Line::new()
             .color_array(vec![NamedColor::Black, NamedColor::Blue])
             .color(NamedColor::Black)
@@ -499,7 +503,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_node() {
+    fn serialize_node() {
         let node = Node::new()
             .color(NamedColor::Blue)
             .color_array(vec![NamedColor::Blue])
@@ -509,8 +513,8 @@ mod tests {
             .line(Line::new())
             .pad(5)
             .thickness(10)
-            .x(0.5)
-            .y(0.25);
+            .x(vec![0.5])
+            .y(vec![0.25]);
         let expected = json!({
             "color": ["blue"],
             "hoverinfo": "all",
@@ -519,15 +523,15 @@ mod tests {
             "line": {},
             "pad": 5,
             "thickness": 10,
-            "x": 0.5,
-            "y": 0.25
+            "x": [0.5],
+            "y": [0.25]
         });
 
         assert_eq!(to_value(node).unwrap(), expected)
     }
 
     #[test]
-    fn test_serialize_link() {
+    fn serialize_link() {
         let link = Link::new()
             .color_array(vec![NamedColor::Blue])
             .color(NamedColor::Blue)

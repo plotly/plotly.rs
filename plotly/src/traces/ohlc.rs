@@ -110,7 +110,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_serialize_default_ohlc() {
+    fn serialize_default_ohlc() {
         let trace = Ohlc::<u32, u32>::default();
         let expected = json!({"type": "ohlc"});
 
@@ -118,7 +118,7 @@ mod test {
     }
 
     #[test]
-    fn test_serialize_ohlc() {
+    fn serialize_ohlc() {
         let trace = Ohlc::new(
             vec![0, 1],
             vec![5.0, 6.0],

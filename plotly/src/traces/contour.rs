@@ -53,7 +53,7 @@ pub struct Contours {
     r#type: Option<ContoursType>,
     start: Option<f64>,
     end: Option<f64>,
-    size: Option<usize>,
+    size: Option<f64>,
     coloring: Option<Coloring>,
     #[serde(rename = "showlines")]
     show_lines: Option<bool>,
@@ -484,13 +484,13 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_contours_type() {
+    fn serialize_contours_type() {
         assert_eq!(to_value(ContoursType::Levels).unwrap(), json!("levels"));
         assert_eq!(to_value(ContoursType::Constraint).unwrap(), json!("constraint"));
     }
 
     #[test]
-    fn test_serialize_coloring() {
+    fn serialize_coloring() {
         assert_eq!(to_value(Coloring::Fill).unwrap(), json!("fill"));
         assert_eq!(to_value(Coloring::HeatMap).unwrap(), json!("heatmap"));
         assert_eq!(to_value(Coloring::Lines).unwrap(), json!("lines"));
@@ -499,7 +499,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_operation() {
+    fn serialize_operation() {
         assert_eq!(to_value(Operation::Equals).unwrap(), json!("="));
         assert_eq!(to_value(Operation::LessThan).unwrap(), json!("<"));
         assert_eq!(to_value(Operation::LessThanOrEqual).unwrap(), json!("<="));
@@ -510,19 +510,19 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_default_contours() {
+    fn serialize_default_contours() {
         let contours = Contours::new();
         let expected = json!({});
 
         assert_eq!(to_value(contours).unwrap(), expected);
     }
     #[test]
-    fn test_serialize_contours() {
+    fn serialize_contours() {
         let contours = Contours::new()
             .type_(ContoursType::Levels)
             .start(0.0)
             .end(10.0)
-            .size(5)
+            .size(5.0)
             .coloring(Coloring::HeatMap)
             .show_lines(true)
             .show_labels(false)
@@ -535,7 +535,7 @@ mod tests {
             "type": "levels",
             "start": 0.0,
             "end": 10.0,
-            "size": 5,
+            "size": 5.0,
             "coloring": "heatmap",
             "showlines": true,
             "showlabels": false,
@@ -549,7 +549,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_default_contour() {
+    fn serialize_default_contour() {
         let trace: Contour<f64, f64, f64> = Contour::default();
         let expected = json!({"type": "contour"}).to_string();
 
@@ -557,7 +557,7 @@ mod tests {
     }
 
     #[test]
-    fn test_new_z_contour() {
+    fn new_z_contour() {
         let trace = Contour::new_z(vec![1.0]);
         let expected = json!({
             "type": "contour",
@@ -568,7 +568,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_contour() {
+    fn serialize_contour() {
         let trace = Contour::new(vec![0., 1.], vec![2., 3.], vec![4., 5.])
             .auto_color_scale(true)
             .auto_contour(true)

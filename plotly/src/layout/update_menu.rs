@@ -7,6 +7,7 @@ use serde_json::{Map, Value};
 use crate::{
     color::Color,
     common::{Anchor, Font, Pad},
+    layout::{Animation, ControlBuilderError},
     Relayout, Restyle,
 };
 
@@ -23,10 +24,15 @@ pub enum ButtonMethod {
     /// The relayout method should be used when modifying the layout attributes
     /// of the graph.
     Relayout,
-    Animate,
     /// The update method should be used when modifying the data and layout
     /// sections of the graph.
     Update,
+    /// Animates a sequence of frames
+    Animate,
+    /// With `skip` method, the API updatemenu will function as normal but will
+    /// perform no API calls and will not bind automatically to state updates.
+    /// This may be used to create a component interface and attach to
+    /// updatemenu events manually via JavaScript.
     Skip,
 }
 
@@ -94,43 +100,96 @@ pub struct ButtonBuilder {
     restyles: Map<String, Value>,
     #[field_setter(default = "Map::new()")]
     relayouts: Map<String, Value>,
+    #[field_setter(skip)]
+    error: Option<ControlBuilderError>,
+    // Animation configuration
+    #[field_setter(skip)]
+    animation: Option<Animation>,
 }
 
 impl ButtonBuilder {
     pub fn new() -> Self {
         Default::default()
     }
+
     pub fn push_restyle(mut self, restyle: impl Restyle) -> Self {
-        let restyle = serde_json::to_value(&restyle).unwrap();
-        for (k, v) in restyle.as_object().unwrap() {
-            self.restyles.insert(k.clone(), v.clone());
+        if self.error.is_none() {
+            if let Err(e) = self.try_push_restyle(restyle) {
+                self.error = Some(e);
+            }
         }
         self
+    }
+
+    fn try_push_restyle(&mut self, restyle: impl Restyle) -> Result<(), ControlBuilderError> {
+        let restyle_value = serde_json::to_value(&restyle)
+            .map_err(|e| ControlBuilderError::RestyleSerializationError(e.to_string()))?;
+        let restyle_obj = restyle_value
+            .as_object()
+            .ok_or_else(|| ControlBuilderError::InvalidRestyleObject(restyle_value.to_string()))?;
+        for (k, v) in restyle_obj {
+            self.restyles.insert(k.clone(), v.clone());
+        }
+        Ok(())
     }
 
     pub fn push_relayout(mut self, relayout: impl Relayout + Serialize) -> Self {
-        let relayout = serde_json::to_value(&relayout).unwrap();
-        for (k, v) in relayout.as_object().unwrap() {
-            self.relayouts.insert(k.clone(), v.clone());
+        if self.error.is_none() {
+            if let Err(e) = self.try_push_relayout(relayout) {
+                self.error = Some(e);
+            }
         }
         self
     }
 
-    fn method_and_args(
-        restyles: Map<String, Value>,
-        relayouts: Map<String, Value>,
-    ) -> (ButtonMethod, Value) {
-        match (restyles.is_empty(), relayouts.is_empty()) {
-            (true, true) => (ButtonMethod::Skip, Value::Null),
-            (false, true) => (ButtonMethod::Restyle, vec![restyles].into()),
-            (true, false) => (ButtonMethod::Relayout, vec![relayouts].into()),
-            (false, false) => (ButtonMethod::Update, vec![restyles, relayouts].into()),
+    fn try_push_relayout(
+        &mut self,
+        relayout: impl Relayout + Serialize,
+    ) -> Result<(), ControlBuilderError> {
+        let relayout_value = serde_json::to_value(&relayout)
+            .map_err(|e| ControlBuilderError::RelayoutSerializationError(e.to_string()))?;
+        let relayout_obj = relayout_value.as_object().ok_or_else(|| {
+            ControlBuilderError::InvalidRelayoutObject(relayout_value.to_string())
+        })?;
+        for (k, v) in relayout_obj {
+            self.relayouts.insert(k.clone(), v.clone());
         }
+        Ok(())
     }
 
-    pub fn build(self) -> Button {
-        let (method, args) = Self::method_and_args(self.restyles, self.relayouts);
-        Button {
+    /// Sets the animation configuration for the button
+    pub fn animation(mut self, animation: Animation) -> Self {
+        self.animation = Some(animation);
+        self
+    }
+
+    pub fn build(self) -> Result<Button, ControlBuilderError> {
+        if let Some(error) = self.error {
+            return Err(error);
+        }
+
+        let (method, args) = match (
+            self.animation,
+            self.restyles.is_empty(),
+            self.relayouts.is_empty(),
+        ) {
+            // Animation takes precedence
+            (Some(animation), _, _) => {
+                let animation_args = serde_json::to_value(animation)
+                    .map_err(|e| ControlBuilderError::AnimationSerializationError(e.to_string()))?;
+                (ButtonMethod::Animate, animation_args)
+            }
+            // Regular restyle/relayout combinations
+            (None, true, true) => (ButtonMethod::Skip, Value::Null),
+            (None, false, true) => (ButtonMethod::Restyle, vec![self.restyles].into()),
+            (None, true, false) => (ButtonMethod::Relayout, vec![self.relayouts].into()),
+            (None, false, false) => (
+                ButtonMethod::Update,
+                vec![self.restyles, self.relayouts].into(),
+            ),
+        };
+
+        Ok(Button {
             label: self.label,
             args: Some(args),
             method: Some(method),
@@ -138,7 +197,7 @@ impl ButtonBuilder {
             template_item_name: self.template_item_name,
             visible: self.visible,
             ..Default::default()
-        }
+        })
     }
 }
 
@@ -249,7 +308,7 @@ mod tests {
     use crate::{common::Visible, Layout};
 
     #[test]
-    fn test_serialize_button_method() {
+    fn serialize_button_method() {
         assert_eq!(to_value(ButtonMethod::Restyle).unwrap(), json!("restyle"));
         assert_eq!(to_value(ButtonMethod::Relayout).unwrap(), json!("relayout"));
         assert_eq!(to_value(ButtonMethod::Animate).unwrap(), json!("animate"));
@@ -258,7 +317,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_button() {
+    fn serialize_button() {
         let button = Button::new()
             .args(json!([
                 { "visible": [true, false] },
@@ -290,7 +349,7 @@ mod tests {
     }
 
     #[test]
-    fn test_button_builder() {
+    fn serialize_button_builder() {
         let expected = json!({
             "args": [
                 { "visible": [true, false] },
@@ -314,8 +373,106 @@ mod tests {
             ]))
             .push_relayout(Layout::modify_title("Hello"))
             .push_relayout(Layout::modify_width(20))
-            .build();
+            .build()
+            .unwrap();
 
         assert_eq!(to_value(button).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_button_builder_push_restyle_valid() {
+        let button = ButtonBuilder::new()
+            .label("Test Button")
+            .push_restyle(crate::Bar::<i32, i32>::modify_visible(vec![
+                Visible::True,
+                Visible::False,
+            ]))
+            .build()
+            .unwrap();
+
+        let expected = json!({
+            "args": [{ "visible": [true, false] }],
+            "label": "Test Button",
+            "method": "restyle",
+        });
+
+        assert_eq!(to_value(button).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_button_builder_push_relayout_valid() {
+        let button = ButtonBuilder::new()
+            .label("Test Button")
+            .push_relayout(Layout::modify_title("Test Title"))
+            .build()
+            .unwrap();
+
+        let expected = json!({
+            "args": [{ "title": {"text": "Test Title"} }],
+            "label": "Test Button",
+            "method": "relayout",
+        });
+
+        assert_eq!(to_value(button).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_button_builder_push_restyle_invalid() {
+        // Create a dummy struct that implements Restyle but serializes to null
+        #[derive(Serialize)]
+        struct InvalidRestyle;
+        impl Restyle for InvalidRestyle {}
+
+        let result = ButtonBuilder::new()
+            .label("Test Button")
+            .push_restyle(InvalidRestyle)
+            .build();
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            ControlBuilderError::InvalidRestyleObject(_) => {}
+            _ => panic!("Expected InvalidRestyleObject error"),
+        }
+    }
+
+    #[test]
+    fn test_button_builder_push_relayout_invalid() {
+        // Create a dummy struct that implements Relayout but serializes to null
+        #[derive(Serialize)]
+        struct InvalidRelayout;
+        impl Relayout for InvalidRelayout {}
+
+        let result = ButtonBuilder::new()
+            .label("Test Button")
+            .push_relayout(InvalidRelayout)
+            .build();
+
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            ControlBuilderError::InvalidRelayoutObject(_) => {}
+            _ => panic!("Expected InvalidRelayoutObject error"),
+        }
+    }
+
+    #[test]
+    fn serialize_animation_button_args() {
+        let animation = Animation::all_frames();
+
+        let button = ButtonBuilder::new()
+            .label("Animate")
+            .animation(animation)
+            .build()
+            .unwrap();
+
+        let args = button.args.unwrap();
+        assert!(args.is_array(), "Animation button args must be an array");
+
+        // Verify the structure: [frameArg, options]
+        assert_eq!(args[0], json!(null)); // Should be null for all_frames
+        assert!(
+            args[1].is_object(),
+            "Second arg should be animation options object"
+        );
+        assert_eq!(to_value(button.method.unwrap()).unwrap(), json!("animate"));
     }
 }

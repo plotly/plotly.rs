@@ -190,12 +190,12 @@ where
     /// inserted using %{variable}, for example "y: %{y}". Numbers are
     /// formatted using d3-format's syntax %{variable:d3-format}, for example
     /// "Price: %{y:$.2f}".
-    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format for details
+    /// <https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format> for details
     /// on the formatting syntax. Dates are formatted using d3-time-format's
     /// syntax %{variable|d3-time-format}, for example "Day:
-    /// %{2019-01-01|%A}". https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format for details
+    /// %{2019-01-01|%A}". <https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format> for details
     /// on the date formatting syntax. The variables available in
-    /// `hovertemplate` are the ones emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event-data.
+    /// `hovertemplate` are the ones emitted as event data described at this link <https://plotly.com/javascript/plotlyjs-events/#event-data>.
     /// Additionally, every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available. Anything contained in tag
     /// `<extra>` is displayed in the secondary box, for example
@@ -204,8 +204,8 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     /// Sets the hover text formatting rulefor `x` using d3 formatting
-    /// mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates
-    /// see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date
+    /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for dates
+    /// see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's date
     /// formatter: "%h" for half of the year as a decimal number as well as
     /// "%{n}f" for fractional seconds with n digits. For example,
     /// "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
@@ -214,8 +214,8 @@ where
     #[serde(rename = "xhoverformat")]
     x_hover_format: Option<String>,
     /// Sets the hover text formatting rulefor `y` using d3 formatting
-    /// mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates
-    /// see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date
+    /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for dates
+    /// see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's date
     /// formatter: "%h" for half of the year as a decimal number as well as
     /// "%{n}f" for fractional seconds with n digits. For example,
     /// "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
@@ -286,8 +286,8 @@ where
     reverse_scale: Option<bool>,
 
     /// Sets the hover text formatting rulefor `z` using d3 formatting
-    /// mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for dates
-    /// see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's date
+    /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for dates
+    /// see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's date
     /// formatter: "%h" for half of the year as a decimal number as well as
     /// "%{n}f" for fractional seconds with n digits. For example,
     /// "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
@@ -389,17 +389,17 @@ where
         x: Vec<X>,
         y: Vec<Y>,
         z: Vec<Z>,
-        i: Vec<usize>,
-        j: Vec<usize>,
-        k: Vec<usize>,
+        i: Option<Vec<usize>>,
+        j: Option<Vec<usize>>,
+        k: Option<Vec<usize>>,
     ) -> Box<Self> {
         Box::new(Self {
             x: Some(x),
             y: Some(y),
             z: Some(z),
-            i: Some(i),
-            j: Some(j),
-            k: Some(k),
+            i,
+            j,
+            k,
             ..Default::default()
         })
     }
@@ -424,20 +424,20 @@ mod tests {
     use crate::common::ColorScalePalette;
 
     #[test]
-    fn test_serialize_intensity_mode() {
+    fn serialize_intensity_mode() {
         assert_eq!(to_value(IntensityMode::Vertex).unwrap(), json!("vertex"));
         assert_eq!(to_value(IntensityMode::Cell).unwrap(), json!("cell"));
     }
 
     #[test]
-    fn test_serialize_delaunay_axis() {
+    fn serialize_delaunay_axis() {
         assert_eq!(to_value(DelaunayAxis::X).unwrap(), json!("x"));
         assert_eq!(to_value(DelaunayAxis::Y).unwrap(), json!("y"));
         assert_eq!(to_value(DelaunayAxis::Z).unwrap(), json!("z"));
     }
 
     #[test]
-    fn test_serialize_contour() {
+    fn serialize_contour() {
         let contour = Contour::new().color("#123456").show(true).width(6);
         let expected = json!({"color": "#123456", "show": true, "width": 6});
 
@@ -445,7 +445,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_lighting() {
+    fn serialize_lighting() {
         let lighting = Lighting::new()
             .ambient(0.1)
             .diffuse(0.2)
@@ -468,7 +468,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_light_position() {
+    fn serialize_light_position() {
         let light_position = LightPosition::new()
             .x(vec![10.0])
             .y(vec![20.0])
@@ -479,14 +479,14 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_mesh3d() {
+    fn serialize_mesh3d() {
         let mesh3d = Mesh3D::new(
             vec![0.0, 1.0, 2.0],
             vec![3.0, 4.0, 5.0],
             vec![6.0, 7.0, 8.0],
-            vec![0],
-            vec![1],
-            vec![2],
+            Some(vec![0]),
+            Some(vec![1]),
+            Some(vec![2]),
         )
         .name("trace_name")
         .visible(Visible::True)

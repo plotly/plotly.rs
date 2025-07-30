@@ -55,8 +55,8 @@ where
     legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     ids: Option<Vec<String>>,
-    width: Option<usize>,
-    offset: Option<Dim<usize>>,
+    width: Option<f64>,
+    offset: Option<Dim<f64>>,
     text: Option<Dim<String>>,
     #[serde(rename = "textposition")]
     text_position: Option<Dim<TextPosition>>,
@@ -134,7 +134,7 @@ mod tests {
     use crate::common::ErrorType;
 
     #[test]
-    fn test_default_bar() {
+    fn default_bar() {
         let trace: Bar<i32, i32> = Bar::default();
         let expected = json!({"type": "bar"}).to_string();
 
@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_bar() {
+    fn serialize_bar() {
         let bar = Bar::new(vec![1, 2], vec![3, 4])
             .alignment_group("alignment_group")
             .clip_on_axis(true)
@@ -162,8 +162,8 @@ mod tests {
             .legend_group_title("legend-group-title")
             .marker(Marker::new())
             .name("Bar")
-            .offset(5)
-            .offset_array(vec![5, 5])
+            .offset(5.0)
+            .offset_array(vec![5.0, 5.0])
             .offset_group("offset_group")
             .opacity(0.5)
             .orientation(Orientation::Vertical)
@@ -178,7 +178,7 @@ mod tests {
             .text_template("text_template")
             .text_template_array(vec!["text_template"])
             .visible(Visible::LegendOnly)
-            .width(999)
+            .width(999.0)
             .x_axis("xaxis")
             .x_calendar(Calendar::Nanakshahi)
             .y_axis("yaxis")
@@ -197,8 +197,8 @@ mod tests {
             "legendgrouptitle": {"text": "legend-group-title"},
             "opacity": 0.5,
             "ids": ["1"],
-            "width": 999,
-            "offset": [5, 5],
+            "width": 999.0,
+            "offset": [5.0, 5.0],
             "text": ["text"],
             "textposition": ["none"],
             "texttemplate": ["text_template"],

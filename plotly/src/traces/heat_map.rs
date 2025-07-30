@@ -7,6 +7,7 @@ use crate::{
     common::{
         Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
     },
+    private::NumOrStringCollection,
     Trace,
 };
 
@@ -71,6 +72,11 @@ where
     color_scale: Option<ColorScale>,
     #[serde(rename = "connectgaps")]
     connect_gaps: Option<bool>,
+    /// Assigns extra data each datum. This may be useful when listening to
+    /// hover, click and selection events. Note that, "scatter" traces also
+    /// appends customdata items in the markers DOM elements
+    #[serde(rename = "customdata")]
+    custom_data: Option<NumOrStringCollection>,
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
     #[serde(rename = "hoverlabel")]
@@ -163,14 +169,14 @@ mod tests {
     use crate::common::ColorScalePalette;
 
     #[test]
-    fn test_serialize_smoothing() {
+    fn serialize_smoothing() {
         assert_eq!(to_value(Smoothing::Fast).unwrap(), json!("fast"));
         assert_eq!(to_value(Smoothing::Best).unwrap(), json!("best"));
         assert_eq!(to_value(Smoothing::False).unwrap(), json!(false));
     }
 
     #[test]
-    fn test_serialize_default_heat_map() {
+    fn serialize_default_heat_map() {
         let trace = HeatMap::<f64, f64, f64>::default();
         let expected = json!({"type": "heatmap"}).to_string();
 
@@ -178,7 +184,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_heat_map_z() {
+    fn serialize_heat_map_z() {
         let trace = HeatMap::new_z(vec![vec![1.0]]);
         let expected = json!({
             "type": "heatmap",
@@ -189,7 +195,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_heat_map() {
+    fn serialize_heat_map() {
         let trace = HeatMap::new(
             vec![0.0, 1.0],
             vec![2.0, 3.0],

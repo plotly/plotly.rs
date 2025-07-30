@@ -10,7 +10,6 @@ pub enum ImageButtonFormats {
     Webp,
 }
 
-// TODO: should this be behind the plotly-kaleido feature?
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Default, Clone)]
 pub struct ToImageButtonOptions {
@@ -212,7 +211,7 @@ impl Configuration {
     /// When set it determines base URL for the "Edit in Chart Studio"
     /// `show_edit_in_chart_studio`/`show_send_to_cloud` mode bar button and
     /// the show_link/send_data on-graph link. To enable sending your data to
-    /// Chart Studio Cloud, you need to set both `plotly_server_url` to "https://chart-studio.plotly.com" and
+    /// Chart Studio Cloud, you need to set both `plotly_server_url` to <https://chart-studio.plotly.com> and
     /// also set `showSendToCloud` to `true`.
     pub fn plotly_server_url(mut self, plotly_server_url: &str) -> Self {
         self.plotly_server_url = Some(plotly_server_url.to_string());
@@ -437,14 +436,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_image_button_formats() {
+    fn serialize_image_button_formats() {
         assert_eq!(to_value(ImageButtonFormats::Png).unwrap(), json!("png"));
         assert_eq!(to_value(ImageButtonFormats::Svg).unwrap(), json!("svg"));
         assert_eq!(to_value(ImageButtonFormats::Jpeg).unwrap(), json!("jpeg"));
         assert_eq!(to_value(ImageButtonFormats::Webp).unwrap(), json!("webp"));
     }
     #[test]
-    fn test_serialize_to_image_button_options() {
+    fn serialize_to_image_button_options() {
         let options = ToImageButtonOptions::new()
             .format(ImageButtonFormats::Jpeg)
             .filename("filename")
@@ -463,7 +462,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_display_mode_bar() {
+    fn serialize_display_mode_bar() {
         assert_eq!(to_value(DisplayModeBar::Hover).unwrap(), json!("hover"));
         assert_eq!(to_value(DisplayModeBar::True).unwrap(), json!(true));
         assert_eq!(to_value(DisplayModeBar::False).unwrap(), json!(false));
@@ -471,7 +470,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_mode_bar_button_name() {
+    fn serialize_mode_bar_button_name() {
         assert_eq!(to_value(ModeBarButtonName::Zoom2d).unwrap(), json!("zoom2d"));
         assert_eq!(to_value(ModeBarButtonName::Pan2d).unwrap(), json!("pan2d"));
         assert_eq!(to_value(ModeBarButtonName::Select2d).unwrap(), json!("select2d"));
@@ -507,7 +506,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_double_click() {
+    fn serialize_double_click() {
         assert_eq!(to_value(DoubleClick::False).unwrap(), json!(false));
         assert_eq!(to_value(DoubleClick::Reset).unwrap(), json!("reset"));
         assert_eq!(to_value(DoubleClick::AutoSize).unwrap(), json!("autosize"));
@@ -515,7 +514,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_plot_gl_pixel_ratio() {
+    fn serialize_plot_gl_pixel_ratio() {
         assert_eq!(to_value(PlotGLPixelRatio::One).unwrap(), json!(1));
         assert_eq!(to_value(PlotGLPixelRatio::Two).unwrap(), json!(2));
         assert_eq!(to_value(PlotGLPixelRatio::Three).unwrap(), json!(3));
@@ -523,7 +522,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_configuration() {
+    fn serialize_configuration() {
         let config = Configuration::new()
             .static_plot(true)
             .typeset_math(true)

@@ -2,8 +2,9 @@
 
 use ndarray::arr2;
 use plotly::{color::Rgb, image::ColorModel, Image, Plot};
+use plotly_utils::write_example_to_html;
 
-fn basic_image() {
+fn basic_image(show: bool, file_name: &str) {
     let w = Rgb::new(255, 255, 255);
     let b = Rgb::new(0, 0, 0);
     let r = Rgb::new(240, 8, 5);
@@ -36,30 +37,39 @@ fn basic_image() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show()
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn trace_from_image_crate_rgb() {
+fn trace_from_image_crate_rgb(show: bool, file_name: &str) {
     let im = image::open("assets/mario.png").unwrap().into_rgb8();
     let trace = Image::new(im).color_model(ColorModel::RGB);
 
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show()
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn trace_from_image_crate_rgba() {
+fn trace_from_image_crate_rgba(show: bool, file_name: &str) {
     let im = image::open("assets/mario.png").unwrap().into_rgba8();
     let trace = Image::new(im).color_model(ColorModel::RGBA);
 
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show()
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn trace_from_ndarray_rgb() {
+fn trace_from_ndarray_rgb(show: bool, file_name: &str) {
     let pixels = arr2(&[
         [(255, 255, 255), (0, 0, 0)],
         [(0, 0, 0), (255, 255, 255)],
@@ -70,10 +80,13 @@ fn trace_from_ndarray_rgb() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show()
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn trace_from_ndarray_rgba() {
+fn trace_from_ndarray_rgba(show: bool, file_name: &str) {
     let pixels = arr2(&[
         [(255, 255, 255, 1.), (0, 0, 0, 0.25)],
         [(0, 0, 0, 0.5), (255, 255, 255, 1.)],
@@ -84,15 +97,17 @@ fn trace_from_ndarray_rgba() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show()
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
-
-    // basic_image();
-    // trace_from_image_crate_rgb();
-    // trace_from_image_crate_rgba();
-    // trace_from_ndarray_rgb();
-    // trace_from_ndarray_rgba();
+    // Change false to true on any of these lines to display the example.
+    basic_image(false, "basic_image");
+    trace_from_image_crate_rgb(false, "trace_from_image_rgb");
+    trace_from_image_crate_rgba(false, "trace_from_image_rgba");
+    trace_from_ndarray_rgb(false, "trace_from_ndarray_rgb");
+    trace_from_ndarray_rgba(false, "trace_from_ndrarray_rgba");
 }

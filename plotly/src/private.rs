@@ -132,7 +132,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_num_or_string() {
+    fn num_or_string() {
         let x: NumOrString = "String".to_string().into();
         assert_eq!(x, NumOrString::S("String".to_string()));
 
@@ -168,7 +168,7 @@ mod tests {
     }
 
     #[test]
-    fn test_num_or_string_collection() {
+    fn num_or_string_collection() {
         let x: NumOrStringCollection = vec!["&str"].into();
         let expected = NumOrStringCollection(vec![NumOrString::S("&str".to_string())]);
         assert_eq!(x, expected);
@@ -188,7 +188,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_num_or_string() {
+    fn serialize_num_or_string() {
         assert_eq!(to_value(NumOrString::S("&str".to_string())).unwrap(), json!("&str"));
         assert_eq!(to_value(NumOrString::F(100.)).unwrap(), json!(100.0));
         assert_eq!(to_value(NumOrString::I(-50)).unwrap(), json!(-50));
@@ -197,7 +197,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_num_or_string_collection() {
+    fn serialize_num_or_string_collection() {
         assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::S("&str".to_string())])).unwrap(), json!(["&str"]));
         assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::F(100.)])).unwrap(), json!([100.0]));
         assert_eq!(to_value(NumOrStringCollection(vec![NumOrString::I(-50)])).unwrap(), json!([-50]));

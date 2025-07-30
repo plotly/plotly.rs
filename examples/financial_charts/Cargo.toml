@@ -5,6 +5,10 @@ authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-csv = "1.1.6"
+csv = "1.1"
 plotly = { path = "../../plotly" }
-serde = "1.0.147"
+plotly_utils = { path = "../plotly_utils" }
+serde = "1.0"
+chrono = "0.4"
+rand = "0.8"
+rand_chacha = "0.3"

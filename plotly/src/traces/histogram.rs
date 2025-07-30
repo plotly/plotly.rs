@@ -200,15 +200,13 @@ where
     /// `ndarray` feature.
     ///
     /// # Arguments
-    /// * `x`             - One dimensional array (or view) that represents the
-    ///   `x` axis coordinates.
+    /// * `x`- One dimensional array (or view) that represents the `x` axis
+    ///   coordinates.
     /// * `traces_matrix` - Two dimensional array (or view) containing the `y`
-    ///   axis coordinates of
-    /// the traces.
+    ///   axis coordinates of the traces.
     /// * `array_traces`  - Determines whether the traces are arranged in the
-    ///   matrix over the
-    /// columns (`ArrayTraces::OverColumns`) or over the rows
-    /// (`ArrayTraces::OverRows`).
+    ///   matrix over the columns (`ArrayTraces::OverColumns`) or over the rows
+    ///   (`ArrayTraces::OverRows`).
     ///
     /// # Examples
     ///
@@ -222,7 +220,7 @@ where
     ///
     /// fn ndarray_to_traces() {
     ///     let n: usize = 1_250;
-    ///     let mut rng = rand::thread_rng();
+    ///     let mut rng = rand::rng();
     ///     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     ///     let mut ys: Array<f64, Ix2> = Array::zeros((n, 4));
     ///     let mut count = 0.;
@@ -301,7 +299,7 @@ mod tests {
     use crate::common::ErrorType;
 
     #[test]
-    fn test_serialize_bins() {
+    fn serialize_bins() {
         let bins = Bins::new(0.0, 10.0, 5.0);
         let expected = json!({
             "start": 0.0,
@@ -313,7 +311,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_cumulative() {
+    fn serialize_cumulative() {
         let cumulative = Cumulative::new()
             .enabled(true)
             .direction(HistDirection::Decreasing)
@@ -329,7 +327,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_current_bin() {
+    fn serialize_current_bin() {
         assert_eq!(to_value(CurrentBin::Include).unwrap(), json!("include"));
         assert_eq!(to_value(CurrentBin::Exclude).unwrap(), json!("exclude"));
         assert_eq!(to_value(CurrentBin::Half).unwrap(), json!("half"));
@@ -337,13 +335,13 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_hist_direction() {
+    fn serialize_hist_direction() {
         assert_eq!(to_value(HistDirection::Increasing).unwrap(), json!("increasing"));
         assert_eq!(to_value(HistDirection::Decreasing).unwrap(), json!("decreasing"));
     }
 
     #[test]
-    fn test_serialize_hist_func() {
+    fn serialize_hist_func() {
         assert_eq!(to_value(HistFunc::Count).unwrap(), json!("count"));
         assert_eq!(to_value(HistFunc::Sum).unwrap(), json!("sum"));
         assert_eq!(to_value(HistFunc::Average).unwrap(), json!("avg"));
@@ -352,7 +350,7 @@ mod tests {
     }
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_hist_norm() {
+    fn serialize_hist_norm() {
         assert_eq!(to_value(HistNorm::Default).unwrap(), json!(""));
         assert_eq!(to_value(HistNorm::Percent).unwrap(), json!("percent"));
         assert_eq!(to_value(HistNorm::Probability).unwrap(), json!("probability"));
@@ -361,7 +359,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_default_histogram() {
+    fn serialize_default_histogram() {
         let trace = Histogram::<i32>::default();
         let expected = json!({"type": "histogram"});
 
@@ -369,7 +367,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_new_xy_histogram() {
+    fn serialize_new_xy_histogram() {
         let trace = Histogram::new_xy(vec![0, 1, 2, 3], vec![4, 5, 6, 7]);
         let expected = json!({
             "type": "histogram",
@@ -381,7 +379,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_new_vertical_histogram() {
+    fn serialize_new_vertical_histogram() {
         let trace = Histogram::new_vertical(vec![0, 1, 2, 3]);
         let expected = json!({
             "type": "histogram",
@@ -392,7 +390,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_histogram() {
+    fn serialize_histogram() {
         let trace = Histogram::new(vec![0, 1, 2])
             .alignment_group("alignmentgroup")
             .auto_bin_x(true)

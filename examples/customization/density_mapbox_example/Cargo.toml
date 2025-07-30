@@ -1,0 +1,8 @@
+[package]
+name = "density_mapbox_example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+plotly = { path = "../../../plotly" }
+plotly_utils = { path = "../../plotly_utils" } 

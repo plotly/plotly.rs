@@ -1,0 +1,22 @@
+name: Publish plotly-static
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-crates-io-release:
+    name: Deploy to crates.io
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+    - name: Setup Chrome (for static_export)
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: 'latest'
+        install-chromedriver: true
+    
+    - run: cargo login ${{ env.CRATES_IO_TOKEN }}
+      env:
+        CRATES_IO_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+    - run: cargo publish --allow-dirty -p plotly_static --features webdriver_download,chromedriver

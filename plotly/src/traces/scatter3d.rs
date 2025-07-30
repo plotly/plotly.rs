@@ -155,7 +155,7 @@ where
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
     /// Sets hover text elements associated with each (x, y, z) triplet. The
-    /// same text will be associated with all datas points. To be seen, the
+    /// same text will be associated with all data points. To be seen, the
     /// trace `hover_info` must contain a "Text" flag.
     #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
@@ -169,13 +169,12 @@ where
     /// box. Note that this will override `HoverInfo`. Variables are
     /// inserted using %{variable}, for example "y: %{y}". Numbers are
     /// formatted using d3-format's syntax %{variable:d3-format}, for example
-    /// "Price: %{y:$.2f}".
-    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format for details
+    /// "Price: %{y:$.2f}". <https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format> for details
     /// on the formatting syntax. Dates are formatted using d3-time-format's
     /// syntax %{variable|d3-time-format}, for example "Day:
-    /// %{2019-01-01|%A}". https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format for details
+    /// %{2019-01-01|%A}". <https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format> for details
     /// on the date formatting syntax. The variables available in
-    /// `hovertemplate` are the ones emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event-data.
+    /// `hovertemplate` are the ones emitted as event data described at this link <https://plotly.com/javascript/plotlyjs-events/#event-data>.
     /// Additionally, every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available. Anything contained in tag
     /// `<extra>` is displayed in the secondary box, for example
@@ -184,8 +183,8 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     /// Sets the hover text formatting rulefor `x` using d3 formatting
-    /// mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for
-    /// dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's
+    /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for
+    /// dates see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's
     /// date formatter: "%h" for half of the year as a decimal number as well as
     /// "%{n}f" for fractional seconds with n digits. For example,
     /// "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
@@ -194,8 +193,8 @@ where
     #[serde(rename = "xhoverformat")]
     x_hover_format: Option<String>,
     /// Sets the hover text formatting rulefor `y` using d3 formatting
-    /// mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for
-    /// dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's
+    /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for
+    /// dates see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's
     /// date formatter: "%h" for half of the year as a decimal number as well as
     /// "%{n}f" for fractional seconds with n digits. For example,
     /// "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
@@ -204,8 +203,8 @@ where
     #[serde(rename = "yhoverformat")]
     y_hover_format: Option<String>,
     /// Sets the hover text formatting rulefor `z` using d3 formatting
-    /// mini-languages which are very similar to those in Python. For numbers, see: https://github.com/d3/d3-format/tree/v1.4.5#d3-format. And for
-    /// dates see: https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format. We add two items to d3's
+    /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for
+    /// dates see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's
     /// date formatter: "%h" for half of the year as a decimal number as well as
     /// "%{n}f" for fractional seconds with n digits. For example,
     /// "2016-10-13 09:15:23.456" with tickformat "%H~%M~%S.%2f" would display
@@ -316,7 +315,7 @@ mod tests {
     use crate::common::ErrorType;
 
     #[test]
-    fn test_serialize_projection() {
+    fn serialize_projection() {
         let projection = Projection::new()
             .x(ProjectionCoord::new())
             .y(ProjectionCoord::new())
@@ -327,7 +326,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_projection_coord() {
+    fn serialize_projection_coord() {
         let projection_coord = ProjectionCoord::new().opacity(0.75).scale(5.0).show(false);
         let expected = json!({"opacity": 0.75, "scale": 5.0, "show": false});
 
@@ -335,7 +334,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_surface_axis() {
+    fn serialize_surface_axis() {
         assert_eq!(to_value(SurfaceAxis::MinusOne).unwrap(), json!("-1"));
         assert_eq!(to_value(SurfaceAxis::Zero).unwrap(), json!("0"));
         assert_eq!(to_value(SurfaceAxis::One).unwrap(), json!("1"));
@@ -343,7 +342,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_default_scatter3d() {
+    fn serialize_default_scatter3d() {
         let trace = Scatter3D::<f64, f64, f64>::default();
         let expected = json!({"type": "scatter3d"}).to_string();
 
@@ -351,7 +350,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatter3d() {
+    fn serialize_scatter3d() {
         let trace = Scatter3D::new(vec![0, 1], vec![2, 3], vec![4, 5])
             .connect_gaps(true)
             .custom_data(vec!["custom_data"])

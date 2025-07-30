@@ -1,0 +1,50 @@
+name: Book
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '[0-9]+.[0-9]+.[0-9]+'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUST_BACKTRACE: full
+
+jobs:
+  build:
+    name: Build and deploy book
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Chrome (for static_export)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 'latest'
+          install-chromedriver: true
+      - run: cargo install mdbook --no-default-features --features search --vers "^0.4" --locked --quiet
+      - name: Build examples
+        run: .github/scripts/build-book-examples.sh ${{ github.workspace }}/examples
+      - run: mdbook build docs/book
+      - name: Checkout gh-pages branch
+        run: |
+            git fetch origin gh-pages:gh-pages
+            git checkout gh-pages
+      - name: Overwrite book content
+        run: |
+            rm -rf content
+            cp -r gh-pages/content .
+      - name: Trigger GitHub Pages Bot
+        run: |
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+            git add content
+            if [ "${{ github.ref_type }}" == "tag" ]; then
+              git commit --allow-empty -m "update book for release ${{ github.ref }}"
+            else
+              git commit --allow-empty -m 'update book from commit ${{ github.sha }}'
+            fi
+            git push origin gh-pages

@@ -6,8 +6,11 @@ use plotly::layout::{
 };
 use plotly::Configuration;
 use plotly::{color::Rgb, Plot, Scatter};
+use plotly_utils::write_example_to_html;
+
 // Subplots
-fn simple_subplot() {
+// ANCHOR: simple_subplot
+fn simple_subplot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -26,10 +29,15 @@ fn simple_subplot() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: simple_subplot
 
-fn simple_subplot_matches_x_axis() {
+// ANCHOR: simple_subplot_matches_x_axis
+fn simple_subplot_matches_x_axis(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -48,10 +56,15 @@ fn simple_subplot_matches_x_axis() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: simple_subplot_matches_x_axis
 
-fn simple_subplot_matches_y_axis() {
+// ANCHOR: simple_subplot_matches_y_axis
+fn simple_subplot_matches_y_axis(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -70,10 +83,15 @@ fn simple_subplot_matches_y_axis() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: simple_subplot_matches_y_axis
 
-fn custom_sized_subplot() {
+// ANCHOR: custom_sized_subplot
+fn custom_sized_subplot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -90,10 +108,15 @@ fn custom_sized_subplot() {
         .x_axis2(Axis::new().domain(&[0.8, 1.]));
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: custom_sized_subplot
 
-fn multiple_subplots() {
+// ANCHOR: multiple_subplots
+fn multiple_subplots(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -120,10 +143,15 @@ fn multiple_subplots() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: multiple_subplots
 
-fn stacked_subplots() {
+// ANCHOR: stacked_subplots
+fn stacked_subplots(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -147,10 +175,15 @@ fn stacked_subplots() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: stacked_subplots
 
-fn stacked_subplots_with_shared_x_axis() {
+// ANCHOR: stacked_subplots_with_shared_x_axis
+fn stacked_subplots_with_shared_x_axis(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![0, 1, 2], vec![10, 11, 12]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![100, 110, 120])
         .name("trace2")
@@ -169,10 +202,15 @@ fn stacked_subplots_with_shared_x_axis() {
         .y_axis3(Axis::new().domain(&[0.66, 1.]));
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: stacked_subplots_with_shared_x_axis
 
-fn multiple_custom_sized_subplots() {
+// ANCHOR: multiple_custom_sized_subplots
+fn multiple_custom_sized_subplots(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2], vec![1, 2]).name("(1,1)");
     let trace2 = Scatter::new(vec![1, 2], vec![1, 2])
         .name("(1,2,1)")
@@ -205,11 +243,16 @@ fn multiple_custom_sized_subplots() {
         .y_axis4(Axis::new().domain(&[0., 0.45]).anchor("x4"));
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: multiple_custom_sized_subplots
 
 // Multiple Axes
-fn two_y_axes() {
+// ANCHOR: two_y_axes
+fn two_y_axes(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![40, 50, 60]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![4, 5, 6])
         .name("trace2")
@@ -231,10 +274,15 @@ fn two_y_axes() {
         );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: two_y_axes
 
-fn multiple_axes() {
+// ANCHOR: multiple_axes
+fn multiple_axes(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![40, 50, 60])
         .name("trace2")
@@ -285,10 +333,15 @@ fn multiple_axes() {
         );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: multiple_axes
 
-fn many_subplots_with_titles() {
+// ANCHOR: many_subplots_with_titles
+fn many_subplots_with_titles(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2], vec![4, 5]);
 
     let number_of_plots = 10;
@@ -307,16 +360,16 @@ fn many_subplots_with_titles() {
         plot.add_trace(
             trace1
                 .clone()
-                .y_axis(format!("y{}", i))
-                .x_axis(format!("x{}", i)),
+                .y_axis(format!("y{i}"))
+                .x_axis(format!("x{i}")),
         );
         layout.add_annotation(
             Annotation::new()
-                .y_ref(format!("y{} domain", i))
+                .y_ref(format!("y{i} domain"))
                 .y_anchor(Anchor::Bottom)
                 .y(1)
-                .text(format!("Title {}", i))
-                .x_ref(format!("x{} domain", i))
+                .text(format!("Title {i}"))
+                .x_ref(format!("x{i} domain"))
                 .x_anchor(Anchor::Center)
                 .x(0.5)
                 .show_arrow(false),
@@ -325,24 +378,88 @@ fn many_subplots_with_titles() {
 
     plot.set_layout(layout);
     plot.set_configuration(Configuration::new().responsive(true));
-    plot.show();
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: many_subplots_with_titles
+
+// ANCHOR: subplots_with_multiple_traces
+fn subplots_with_multiple_traces(show: bool, file_name: &str) {
+    // Create multiple traces for the first subplot (left side)
+    let trace1 = Scatter::new(vec![1, 2, 3, 4], vec![10, 11, 12, 13])
+        .name("Line 1")
+        .mode(plotly::common::Mode::LinesMarkers);
+
+    let trace2 = Scatter::new(vec![1, 2, 3, 4], vec![8, 9, 10, 11])
+        .name("Line 2")
+        .mode(plotly::common::Mode::LinesMarkers);
+
+    let trace3 = Scatter::new(vec![1, 2, 3, 4], vec![12, 13, 14, 15])
+        .name("Line 3")
+        .mode(plotly::common::Mode::LinesMarkers);
+
+    // Create traces for the second subplot (right side)
+    let trace4 = Scatter::new(vec![1, 2, 3, 4], vec![20, 25, 30, 35])
+        .name("Dots 1")
+        .x_axis("x2")
+        .y_axis("y2")
+        .mode(plotly::common::Mode::Markers);
+
+    let trace5 = Scatter::new(vec![1, 2, 3, 4], vec![15, 20, 25, 30])
+        .name("Dots 2")
+        .x_axis("x2")
+        .y_axis("y2")
+        .mode(plotly::common::Mode::Markers);
+
+    let mut plot = Plot::new();
+    // Add traces to first subplot (default axes)
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+    plot.add_trace(trace3);
+    // Add traces to second subplot (x2, y2 axes)
+    plot.add_trace(trace4);
+    plot.add_trace(trace5);
+
+    let layout = Layout::new().title("Subplots with Multiple Traces").grid(
+        LayoutGrid::new()
+            .rows(1)
+            .columns(2)
+            .pattern(GridPattern::Independent),
+    );
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: subplots_with_multiple_traces
 
 fn main() {
-    // Uncomment any of these lines to display the example.
-
+    // Change false to true on any of these lines to display the example.
     // Subplots
-    // simple_subplot();
-    // simple_subplot_matches_x_axis();
-    // simple_subplot_matches_y_axis();
-    // custom_sized_subplot();
-    // multiple_subplots();
-    // stacked_subplots();
-    // stacked_subplots_with_shared_x_axis();
-    // multiple_custom_sized_subplots();
-    // many_subplots_with_titles();
+    simple_subplot(false, "simple_subplot");
+
+    simple_subplot_matches_x_axis(false, "simple_subplot_matches_x_axis");
+
+    simple_subplot_matches_y_axis(false, "simple_subplot_matches_y_axis");
+    custom_sized_subplot(false, "custom_sized_subplot");
+    multiple_subplots(false, "multiple_subplots");
+    stacked_subplots(false, "stacked_subplots");
+
+    stacked_subplots_with_shared_x_axis(false, "stacked_subplots_with_shared_x_axis");
+
+    multiple_custom_sized_subplots(false, "multiple_custom_sized_subplots");
+
+    many_subplots_with_titles(false, "many_subplots_with_titles");
+
+    // Multiple traces in subplots
+    subplots_with_multiple_traces(false, "subplots_with_multiple_traces");
 
     // Multiple Axes
-    // two_y_axes();
-    // multiple_axes();
+    two_y_axes(false, "two_y_axes");
+    multiple_axes(false, "multiple_axes");
 }
