@@ -235,8 +235,7 @@ export BROWSER_PATH=/path/to/chrome
 <h3 id="simple-export"><a class="header" href="#simple-export">Simple Export</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>use plotly::{Plot, Scatter};
-use plotly::plotly_static::ImageFormat;
+</span>use plotly::{Plot, Scatter, ImageFormat};
 
 let mut plot = Plot::new();
 plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
