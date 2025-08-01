@@ -1,3 +1,5 @@
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::time::{SystemTime, UNIX_EPOCH};
 use std::{fs::File, io::Write, path::Path};
 
 use askama::Template;
@@ -15,6 +17,8 @@ use rand::{
 use serde::Serialize;
 
 use crate::{layout::Frame, Configuration, Layout};
+
+static SEED_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Template)]
 #[template(path = "plot.html", escape = "none")]
@@ -270,7 +274,8 @@ impl Plot {
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(42), 22);
+        let mut plot_name =
+            Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(Self::generate_seed()), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{plot_name}");
         temp.push(plot_name);
@@ -313,7 +318,8 @@ impl Plot {
 
         // Set up the temp file with a unique filename.
         let mut temp = env::temp_dir();
-        let mut plot_name = Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(42), 22);
+        let mut plot_name =
+            Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(Self::generate_seed()), 22);
         plot_name.push_str(".html");
         plot_name = format!("plotly_{plot_name}");
         temp.push(plot_name);
@@ -371,13 +377,16 @@ impl Plot {
     pub fn to_inline_html(&self, plot_div_id: Option<&str>) -> String {
         let plot_div_id = match plot_div_id {
             Some(id) => id.to_string(),
-            None => Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(42), 20),
+            None => {
+                Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(Self::generate_seed()), 20)
+            }
         };
         self.render_inline(&plot_div_id)
     }
 
     fn to_jupyter_notebook_html(&self) -> String {
-        let plot_div_id = Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(42), 20);
+        let plot_div_id =
+            Alphanumeric.sample_string(&mut SmallRng::seed_from_u64(Self::generate_seed()), 20);
 
         let tmpl = JupyterNotebookPlotTemplate {
             plot: self,
@@ -868,6 +877,17 @@ impl Plot {
             .arg(temp_path)
             .spawn()
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
+    }
+
+    /// Generate unique seeds for SmallRng such that file names and div names
+    /// are unique random for each call
+    pub(crate) fn generate_seed() -> u64 {
+        let time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos() as u64;
+        let counter = SEED_COUNTER.fetch_add(1, Ordering::Relaxed);
+        time ^ counter
     }
 }
 
