@@ -1180,7 +1180,10 @@ pub struct Marker {
     size_mode: Option<SizeMode>,
     line: Option<Line>,
     gradient: Option<Gradient>,
+    /// Marker option specific for Scatter and other common traces
     color: Option<Dim<Box<dyn Color>>>,
+    /// Marker option specific for Pie charts to set the colors of the sectors
+    colors: Option<Vec<Box<dyn Color>>>,
     cauto: Option<bool>,
     cmin: Option<f64>,
     cmax: Option<f64>,
@@ -1257,6 +1260,11 @@ impl Marker {
 
     pub fn color<C: Color>(mut self, color: C) -> Self {
         self.color = Some(Dim::Scalar(Box::new(color)));
+        self
+    }
+
+    pub fn colors<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.colors = Some(ColorArray(colors).into());
         self
     }
 
@@ -2330,6 +2338,7 @@ mod tests {
             .line(Line::new())
             .gradient(Gradient::new(GradientType::Radial, "#FFFFFF"))
             .color(NamedColor::Blue)
+            .colors(vec![NamedColor::Black, NamedColor::Blue])
             .color_array(vec![NamedColor::Black, NamedColor::Blue])
             .cauto(true)
             .cmin(0.0)
@@ -2359,6 +2368,7 @@ mod tests {
             "line": {},
             "gradient": {"type": "radial", "color": "#FFFFFF"},
             "color": ["black", "blue"],
+            "colors": ["black", "blue"],
             "colorbar": {},
             "cauto": true,
             "cmin": 0.0,
