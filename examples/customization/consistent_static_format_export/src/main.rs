@@ -3,6 +3,7 @@ use plotly::color::{NamedColor, Rgb};
 use plotly::common::{Anchor, Font, Line, Marker, MarkerSymbol, Mode, Title};
 use plotly::layout::{Axis, ItemSizing, Legend, Margin, Shape, ShapeLine, ShapeType};
 use plotly::plotly_static::{ImageFormat, StaticExporterBuilder};
+use plotly::prelude::*;
 use plotly::{Layout, Plot, Scatter};
 
 fn line_and_scatter_plot(
@@ -149,19 +150,25 @@ fn line_and_scatter_plot(
         .unwrap();
 
     info!("Exporting to PNG format...");
-    plot.write_image_with_exporter(&mut exporter, file_name, ImageFormat::PNG, 1280, 960, 1.0)
+    exporter
+        .write_image(&plot, file_name, ImageFormat::PNG, 1280, 960, 1.0)
         .unwrap();
     info!("Exporting to SVG format...");
-    plot.write_image_with_exporter(&mut exporter, file_name, ImageFormat::SVG, 1280, 960, 1.0)
+    exporter
+        .write_image(&plot, file_name, ImageFormat::SVG, 1280, 960, 1.0)
         .unwrap();
     info!("Exporting to PDF format...");
-    plot.write_image_with_exporter(&mut exporter, file_name, ImageFormat::PDF, 1280, 960, 1.0)
+    exporter
+        .write_image(&plot, file_name, ImageFormat::PDF, 1280, 960, 1.0)
         .unwrap();
 
     info!("Export complete. Check the output files:");
     info!("  - {file_name}.pdf");
     info!("  - {file_name}.svg");
     info!("  - {file_name}.png");
+
+    // Always close the exporter to ensure proper release of WebDriver resources
+    exporter.close();
 }
 
 fn read_from_file(file_path: &str) -> Vec<Vec<f64>> {

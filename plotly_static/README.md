@@ -8,6 +8,7 @@ Export Plotly plots to static images using WebDriver and headless browsers.
 
 ## Features
 
+- **Async/Sync API Support**: Support for both async and sync contexts
 - **Multiple Formats**: PNG, JPEG, WEBP, SVG, PDF
 - **Browser Support**: Chrome/Chromium (chromedriver) and Firefox (geckodriver)
 - **Efficient**: Reuse `StaticExporter` instances for multiple exports
@@ -56,7 +57,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly_static = { version = "0.0.4", features = ["chromedriver", "webdriver_download"] }
+plotly_static = { version = "0.1", features = ["chromedriver", "webdriver_download"] }
 serde_json = "1.0"
 ```
 
@@ -71,6 +72,22 @@ serde_json = "1.0"
 1. **Browser**: Chrome/Chromium or Firefox installed
 2. **WebDriver**: Manually installed or automatically downloaded and installed with the `webdriver_download` feature
 3. **Internet Connectivity**: Required for WebDriver download when using the auto-download and install feature
+
+## Async Support
+
+The library supports async operations. To use the async API you need to call `build_async` instead of `build` on the `StaticExporterBuilder` . This will
+ return an `AsyncStaticExporter` instance where the `write_fig` and `write_to_string` methods are async.
+
+ ```rust
+ use plotly_static::StaticExporterBuilder;
+
+ let exporter = StaticExporterBuilder::default()
+     .build_async()
+     .expect("Failed to build AsyncStaticExporter");
+ ```
+
+ Never use the `sync` API in `async` contexts. The `sync` API wraps the `async` API and uses a `tokio::runtime::Runtime` instance internally.  Using the `sync` API in an async context will cause runtime errors such as e.g., "Cannot drop a runtime in a context where blocking is not allowed. This happens when a runtime is dropped from within an
+ asynchronous context." or similar ones.
 
 ## Advanced Usage
 

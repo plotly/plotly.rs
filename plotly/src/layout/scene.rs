@@ -357,7 +357,7 @@ impl Rotation {
 pub struct Projection {
     #[serde(rename = "type")]
     projection_type: Option<ProjectionType>,
-    /// Sets the rotation of the map projection. See https://plotly.com/python/reference/layout/geo/#layout-geo-projection-rotation
+    // Sets the rotation of the map projection. See https://plotly.com/python/reference/layout/geo/#layout-geo-projection-rotation
     #[serde(rename = "rotation")]
     rotation: Option<Rotation>,
 }

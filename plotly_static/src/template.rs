@@ -233,7 +233,6 @@ pub(crate) fn html_body(js_source: &str) -> String {
 }
 
 /// Save the html file to a temporary file
-#[allow(unused)]
 pub(crate) fn to_file(data: &str) -> Result<PathBuf> {
     use std::env;
     // Set up the temp file with a unique filename.

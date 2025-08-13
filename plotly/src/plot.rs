@@ -518,8 +518,9 @@ impl Plot {
     /// **Note:** This method creates a new `StaticExporter` (and thus a new
     /// WebDriver instance) for each call, which is not performant for
     /// repeated operations. For better performance and resource management,
-    /// consider using `write_image_with_exporter` to reuse a single
-    /// `StaticExporter` instance across multiple operations.
+    /// consider using the [`ExporterSyncExt`] or [`ExporterAsyncExt`] extension
+    /// methods to reuse a single `StaticExporter` instance across multiple
+    /// operations.
     #[cfg(feature = "plotly_static")]
     pub fn write_image<P: AsRef<Path>>(
         &self,
@@ -529,10 +530,13 @@ impl Plot {
         height: usize,
         scale: f64,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        use crate::prelude::*;
         let mut exporter = plotly_static::StaticExporterBuilder::default()
             .build()
             .map_err(|e| format!("Failed to create StaticExporter: {e}"))?;
-        self.write_image_with_exporter(&mut exporter, filename, format, width, height, scale)
+        let result = exporter.write_image(self, filename, format, width, height, scale);
+        exporter.close();
+        result
     }
 
     /// Convert the `Plot` to a static image and return the image as a `base64`
@@ -545,10 +549,11 @@ impl Plot {
     ///
     ///
     /// **Note:** This method creates a new `StaticExporter` (and thus a new
-    /// WebDriver instance) for each call, which is not performant for
-    /// repeated operations. For better performance and resource management,
-    /// consider using `to_base64_with_exporter` to reuse a single
-    /// `StaticExporter` instance across multiple operations.
+    /// WebDriver instance) for each call, which is not performant for repeated
+    /// operations. For better performance and resource management, consider
+    /// using the [`ExporterSyncExt`] or [`ExporterAsyncExt`] extension methods
+    /// to reuse a single `StaticExporter` instance across multiple
+    /// operations.
     #[cfg(feature = "plotly_static")]
     pub fn to_base64(
         &self,
@@ -557,10 +562,13 @@ impl Plot {
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
+        use crate::prelude::*;
         let mut exporter = plotly_static::StaticExporterBuilder::default()
             .build()
             .map_err(|e| format!("Failed to create StaticExporter: {e}"))?;
-        self.to_base64_with_exporter(&mut exporter, format, width, height, scale)
+        let result = exporter.to_base64(self, format, width, height, scale);
+        exporter.close();
+        result
     }
 
     /// Convert the `Plot` to SVG and return it as a String using plotly_static.
@@ -571,8 +579,9 @@ impl Plot {
     /// **Note:** This method creates a new `StaticExporter` (and thus a new
     /// WebDriver instance) for each call, which is not performant for
     /// repeated operations. For better performance and resource management,
-    /// consider using `to_svg_with_exporter` to reuse a single
-    /// `StaticExporter` instance across multiple operations.
+    /// consider using the [`ExporterSyncExt`] or [`ExporterAsyncExt`] extension
+    /// methods to reuse a single `StaticExporter` instance across multiple
+    /// operations.
     #[cfg(feature = "plotly_static")]
     pub fn to_svg(
         &self,
@@ -580,48 +589,19 @@ impl Plot {
         height: usize,
         scale: f64,
     ) -> Result<String, Box<dyn std::error::Error>> {
+        use crate::prelude::*;
         let mut exporter = plotly_static::StaticExporterBuilder::default()
             .build()
             .map_err(|e| format!("Failed to create StaticExporter: {e}"))?;
-        self.to_svg_with_exporter(&mut exporter, width, height, scale)
+        let result = exporter.to_svg(self, width, height, scale);
+        exporter.close();
+        result
     }
 
-    /// Convert the `Plot` to a static image of the given image format and save
-    /// at the given location using a provided StaticExporter.
-    ///
-    /// This method allows you to reuse a StaticExporter instance across
-    /// multiple plots, which is more efficient than creating a new one for
-    /// each operation.
-    ///
-    /// This method requires the usage of the `plotly_static` crate using one of
-    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
-    ///
-    /// # Arguments
-    ///
-    /// * `exporter` - A mutable reference to a StaticExporter instance
-    /// * `filename` - The destination path for the output file
-    /// * `format` - The desired output image format
-    /// * `width` - The width of the output image in pixels
-    /// * `height` - The height of the output image in pixels
-    /// * `scale` - The scale factor for the image (1.0 = normal size)
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use plotly::{Plot, Scatter};
-    /// use plotly_static::{StaticExporterBuilder, ImageFormat};
-    ///
-    /// let mut plot = Plot::new();
-    /// plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
-    ///
-    /// let mut exporter = StaticExporterBuilder::default()
-    ///     .build()
-    ///     .expect("Failed to create StaticExporter");
-    ///
-    /// // Export multiple plots using the same exporter
-    /// plot.write_image_with_exporter(&mut exporter, "plot1", ImageFormat::PNG, 800, 600, 1.0)
-    ///     .expect("Failed to export plot");
-    /// ```
+    /// Deprecated: use [crate::export::sync::ExporterSyncExt::write_image].
+    #[deprecated(
+        note = "Use exporter.write_image(&plot, ...) from plotly::export::sync::ExporterSyncExt"
+    )]
     #[cfg(feature = "plotly_static")]
     pub fn write_image_with_exporter<P: AsRef<Path>>(
         &self,
@@ -642,41 +622,10 @@ impl Plot {
         )
     }
 
-    /// Convert the `Plot` to a static image and return the image as a `base64`
-    /// String using a provided StaticExporter. Supported formats are
-    /// [ImageFormat::JPEG], [ImageFormat::PNG] and [ImageFormat::WEBP].
-    ///
-    /// This method allows you to reuse a StaticExporter instance across
-    /// multiple plots, which is more efficient than creating a new one for
-    /// each operation.
-    ///
-    /// This method requires the usage of the `plotly_static` crate using one of
-    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
-    ///
-    /// # Arguments
-    ///
-    /// * `exporter` - A mutable reference to a StaticExporter instance
-    /// * `format` - The desired output image format
-    /// * `width` - The width of the output image in pixels
-    /// * `height` - The height of the output image in pixels
-    /// * `scale` - The scale factor for the image (1.0 = normal size)
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use plotly::{Plot, Scatter};
-    /// use plotly_static::{StaticExporterBuilder, ImageFormat};
-    ///
-    /// let mut plot = Plot::new();
-    /// plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
-    ///
-    /// let mut exporter = StaticExporterBuilder::default()
-    ///     .build()
-    ///     .expect("Failed to create StaticExporter");
-    ///
-    /// let base64_data = plot.to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 800, 600, 1.0)
-    ///     .expect("Failed to export plot");
-    /// ```
+    /// Deprecated: use [crate::export::sync::ExporterSyncExt::to_base64].
+    #[deprecated(
+        note = "Use exporter.to_base64(&plot, ...) from plotly::export::sync::ExporterSyncExt"
+    )]
     #[cfg(feature = "plotly_static")]
     pub fn to_base64_with_exporter(
         &self,
@@ -702,39 +651,10 @@ impl Plot {
         }
     }
 
-    /// Convert the `Plot` to SVG and return it as a String using a provided
-    /// StaticExporter.
-    ///
-    /// This method allows you to reuse a StaticExporter instance across
-    /// multiple plots, which is more efficient than creating a new one for
-    /// each operation.
-    ///
-    /// This method requires the usage of the `plotly_static` crate using one of
-    /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
-    ///
-    /// # Arguments
-    ///
-    /// * `exporter` - A mutable reference to a StaticExporter instance
-    /// * `width` - The width of the output image in pixels
-    /// * `height` - The height of the output image in pixels
-    /// * `scale` - The scale factor for the image (1.0 = normal size)
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use plotly::{Plot, Scatter};
-    /// use plotly_static::StaticExporterBuilder;
-    ///
-    /// let mut plot = Plot::new();
-    /// plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
-    ///
-    /// let mut exporter = StaticExporterBuilder::default()
-    ///     .build()
-    ///     .expect("Failed to create StaticExporter");
-    ///
-    /// let svg_data = plot.to_svg_with_exporter(&mut exporter, 800, 600, 1.0)
-    ///     .expect("Failed to export plot");
-    /// ```
+    /// Deprecated: use [crate::export::sync::ExporterSyncExt::to_svg].
+    #[deprecated(
+        note = "Use exporter.to_svg(&plot, ...) from plotly::export::sync::ExporterSyncExt"
+    )]
     #[cfg(feature = "plotly_static")]
     pub fn to_svg_with_exporter(
         &self,
@@ -900,7 +820,6 @@ impl PartialEq for Plot {
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
-    use std::sync::atomic::{AtomicU32, Ordering};
 
     #[cfg(feature = "kaleido")]
     use plotly_kaleido::ImageFormat;
@@ -1065,12 +984,11 @@ mod tests {
         assert!(std::fs::remove_file(&dst).is_ok());
     }
 
-    #[cfg(feature = "plotly_static")]
     // Helper to generate unique ports for parallel tests
-    static PORT_COUNTER: AtomicU32 = AtomicU32::new(4444);
-
     #[cfg(feature = "plotly_static")]
     fn get_unique_port() -> u32 {
+        use std::sync::atomic::{AtomicU32, Ordering};
+        static PORT_COUNTER: AtomicU32 = AtomicU32::new(5144);
         PORT_COUNTER.fetch_add(1, Ordering::SeqCst)
     }
 
@@ -1091,6 +1009,7 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
+        exporter.close();
     }
 
     #[test]
@@ -1110,6 +1029,7 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
+        exporter.close();
     }
 
     #[test]
@@ -1129,6 +1049,7 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
+        exporter.close();
     }
 
     #[test]
@@ -1156,6 +1077,7 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
+        exporter.close();
     }
 
     #[test]
@@ -1175,6 +1097,7 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
+        exporter.close();
     }
 
     #[test]
@@ -1200,6 +1123,7 @@ mod tests {
         // Limit the comparison to the first characters;
         // As image contents seem to be slightly inconsistent across platforms
         assert_eq!(expected_decoded[..2], result_decoded[..2]);
+        exporter.close();
     }
 
     #[test]
@@ -1221,6 +1145,7 @@ mod tests {
         // seem to contain uniquely generated IDs
         const LEN: usize = 10;
         assert_eq!(expected[..LEN], image_svg[..LEN]);
+        exporter.close();
     }
 
     #[test]
@@ -1261,5 +1186,6 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(&dst).is_ok());
+        exporter.close();
     }
 }

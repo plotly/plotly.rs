@@ -17,13 +17,22 @@ keywords = ["plot", "chart", "plotly"]
 exclude = ["target/*"]
 
 [features]
-static_export_chromedriver = ["plotly_static", "plotly_static/chromedriver"]
-static_export_geckodriver = ["plotly_static", "plotly_static/geckodriver"]
+static_export_chromedriver = [
+    "plotly_static",
+    "plotly_static/chromedriver",
+    "async-trait",
+]
+static_export_geckodriver = [
+    "plotly_static",
+    "plotly_static/geckodriver",
+    "async-trait",
+]
 static_export_wd_download = ["plotly_static/webdriver_download"]
 static_export_default = [
     "plotly_static",
     "plotly_static/chromedriver",
     "plotly_static/webdriver_download",
+    "async-trait",
 ]
 
 plotly_ndarray = ["ndarray"]
@@ -52,7 +61,7 @@ dyn-clone = "1"
 erased-serde = "0.4"
 image = { version = "0.25", optional = true }
 plotly_derive = { version = "0.13", path = "../plotly_derive" }
-plotly_static = { version = "0.0", path = "../plotly_static", optional = true }
+plotly_static = { version = "0.1", path = "../plotly_static", optional = true }
 plotly_kaleido = { version = "0.13", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.16", optional = true }
 once_cell = "1"
@@ -64,6 +73,7 @@ rand = { version = "0.9", default-features = false, features = [
     "small_rng",
     "alloc",
 ] }
+async-trait = { version = "0.1", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen-futures = { version = "0.4" }

@@ -5,8 +5,10 @@ authors = ["Andrei Gherghescu andrei-ng@protonmail.com"]
 edition = "2021"
 description = "Example demonstrating static image export using plotly_static with WebDriver"
 readme = "README.md"
+default-run = "sync"
 
 [dependencies]
 plotly = { path = "../../plotly", features = ["static_export_default"] }
-env_logger = "0.10"
-log = "0.4" 
+env_logger = "0.11"
+log = "0.4"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
