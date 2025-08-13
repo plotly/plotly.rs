@@ -1,5 +1,6 @@
 use log::info;
 use plotly::plotly_static::{ImageFormat, StaticExporterBuilder};
+use plotly::prelude::*;
 use plotly::{Plot, Scatter};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -28,36 +29,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         1.0,
     )?;
     plot3.write_image("./output/plot3_legacy_api", ImageFormat::SVG, 800, 600, 1.0)?;
-    plot1.write_image("./output/plot3_legacy_api", ImageFormat::PDF, 800, 600, 1.0)?;
+
+    plot1.write_image("./output/plot1_legacy_api", ImageFormat::PDF, 800, 600, 1.0)?;
 
     // Create a single StaticExporter to reuse across all plots
     // This is more efficient than creating a new exporter for each plot which
     // happens implicitly in the calls above using the old API
     info!("Creating StaticExporter with default configuration...");
     let mut exporter = StaticExporterBuilder::default()
+        .webdriver_port(5112)
         .build()
         .expect("Failed to create StaticExporter");
 
     info!("Exporting multiple plots using a single StaticExporter...");
-    // Export all plots using the same exporter
-    plot1.write_image_with_exporter(
-        &mut exporter,
+    // Export all plots using the same exporter (new unified naming via extension
+    // trait)
+    exporter.write_image(
+        &plot1,
         "./output/plot1_new_api",
         ImageFormat::PNG,
         800,
         600,
         1.0,
     )?;
-    plot2.write_image_with_exporter(
-        &mut exporter,
+    exporter.write_image(
+        &plot2,
         "./output/plot2_new_api",
         ImageFormat::JPEG,
         800,
         600,
         1.0,
     )?;
-    plot3.write_image_with_exporter(
-        &mut exporter,
+    exporter.write_image(
+        &plot3,
         "./output/plot3_new_api",
         ImageFormat::SVG,
         800,
@@ -65,8 +69,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         1.0,
     )?;
 
-    plot1.write_image_with_exporter(
-        &mut exporter,
+    exporter.write_image(
+        &plot1,
         "./output/plot1_new_api",
         ImageFormat::PDF,
         800,
@@ -77,11 +81,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Demonstrate string-based export
     info!("Exporting to base64 and SVG strings...");
     // Get base64 data (useful for embedding in HTML or APIs)
-    let base64_data =
-        plot1.to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 400, 300, 1.0)?;
+    let base64_data = exporter.to_base64(&plot1, ImageFormat::PNG, 400, 300, 1.0)?;
     info!("Base64 data length: {}", base64_data.len());
 
-    let svg_data = plot1.to_svg_with_exporter(&mut exporter, 400, 300, 1.0)?;
+    let svg_data = exporter.to_svg(&plot1, 400, 300, 1.0)?;
     info!("SVG data starts with: {}", &svg_data[..50]);
 
     info!("All exports completed successfully!");
@@ -107,6 +110,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .expect("Failed to create custom StaticExporter");
     */
+
+    // Always close the exporter to ensure proper release of WebDriver resources
+    exporter.close();
 
     Ok(())
 }

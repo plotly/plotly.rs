@@ -119,7 +119,13 @@ let base64_data = plot.to_base64(ImageFormat::PNG, 800, 600, 1.0)?;
 let svg_string = plot.to_svg(800, 600, 1.0)?;
 ```
 
-**Note:** This feature requires a WebDriver-compatible browser (Chrome or Firefox) as well as a Webdriver (chromedriver/geckodriver) to be available on the system. For advanced usage, see the [`plotly_static` crate documentation](https://docs.rs/plotly_static/).
+**Note:** This feature requires a WebDriver-compatible browser (Chrome or Firefox) as well as a Webdriver (chromedriver/geckodriver) to be available on the system.
+
+The above example uses the legacy API that is backwards compatible with the Kaleido API. However, for more efficient workflows a `StaticExporter` object can be built and reused between calls to `write_image`. 
+
+More specificallt, enabling any of the `plotly` features `static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default` gives access to both the synchronous `StaticExporter` and the asynchronous `AsyncStaticExporter` (available via `plotly::plotly_static`). For exporter reuse and up-to-date sync/async usage patterns, please see the dedicated example in `examples/static_export`, which demonstrates both synchronous and asynchronous exporters and how to reuse a single exporter instance across multiple exports.
+
+ For further details see [`plotly_static` crate documentation](https://docs.rs/plotly_static/).
 
 ## Exporting Static Images with Kaleido (legacy)
 

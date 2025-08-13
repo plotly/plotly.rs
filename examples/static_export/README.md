@@ -6,13 +6,13 @@ The `plotly_static` provides a interface for converting Plotly plots into variou
 
 In this example it is shown how to use the `StaticExporter` with the old style Kaleido API and also with the new style API. Using the former API is fine for one time static exports, but that API will crate an instance of the `StaticExporter` for each `write_image` call. The new style API is recommended for performance as the same instance of the `StaticExporter` can be reused across multiple exports.  
 
-See also the `Static Image Export` section in the book for a more detailed description.
+When any of the `plotly` static export features are enabled (`static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default`), both `StaticExporter` (sync) and `AsyncStaticExporter` (async) are available via `plotly::plotly_static`. This example includes separate `sync` and `async` bins demonstrating both.  Refer to the [`plotly_static` API Documentation](https://docs.rs/plotly_static/) a more detailed description.
 
 ## Overview
 
-
 ## Features 
 
+- **Async/Sync API**
 - **Multiple Export Formats**: PNG, JPEG, SVG, PDF
 - **Exporter Reuse (new API)**: Efficient reuse of a single `StaticExporter` instance
 - **String Export**: Base64 and SVG string output for web applications
@@ -45,17 +45,32 @@ plotly = { version = "0.13", features = ["static_export_geckodriver"] }
 plotly = { version = "0.13", features = ["static_export_chromedriver"] }
 ```
 
-## Running the Example
+## Running the Example(s)
+
+To run the `sync` API example 
 
 ```bash
 # Basic run
-cargo run
+cargo run --bin sync
 
 # With debug logging
-RUST_LOG=debug cargo run
+RUST_LOG=debug cargo run --bin sync
 
 # With custom WebDriver path
-WEBDRIVER_PATH=/path/to/chromedriver cargo run
+WEBDRIVER_PATH=/path/to/chromedriver cargo run --bin sync
+```
+
+To run the `async` API example  
+
+```bash
+# Basic run
+cargo run --bin async
+
+# With debug logging
+RUST_LOG=debug cargo run --bin async
+
+# With custom WebDriver path
+WEBDRIVER_PATH=/path/to/chromedriver cargo run --bin async
 ```
 
 ## Output

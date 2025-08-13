@@ -34,11 +34,13 @@ plotly = { version = "0.13", features = ["static_export_chromedriver", "static_e
 plotly = { version = "0.13", features = ["static_export_default"] }
 ```
 
+> Enabling any of the static export features in `plotly` (`static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default`) enables both APIs from `plotly_static`: the sync `StaticExporter` and the async `AsyncStaticExporter` (reachable as `plotly::plotly_static::AsyncStaticExporter`). Prefer the async API inside async code.
+
 ## Prerequisites
 
 1. **WebDriver Installation**: You need either chromedriver or geckodriver installed
-   - Chrome: Download from https://chromedriver.chromium.org/
-   - Firefox: Download from https://github.com/mozilla/geckodriver/releases
+   - Chrome: Download from [https://chromedriver.chromium.org/](https://chromedriver.chromium.org/)
+   - Firefox: Download from [https://github.com/mozilla/geckodriver/releases](https://github.com/mozilla/geckodriver/releases)
    - Or use the `static_export_wd_download` feature for automatic download
 
 2. **Browser Installation**: You need Chrome/Chromium or Firefox installed
@@ -74,6 +76,7 @@ For better performance when exporting multiple plots, reuse a single `StaticExpo
 ```rust
 use plotly::{Plot, Scatter};
 use plotly::plotly_static::{StaticExporterBuilder, ImageFormat};
+use plotly::prelude::*;
 
 let mut plot1 = Plot::new();
 plot1.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
@@ -87,10 +90,13 @@ let mut exporter = StaticExporterBuilder::default()
     .expect("Failed to create StaticExporter");
 
 // Export multiple plots using the same exporter
-plot1.write_image_with_exporter(&mut exporter, "plot1", ImageFormat::PNG, 800, 600, 1.0)
+exporter.write_image(&plot1, "plot1", ImageFormat::PNG, 800, 600, 1.0)
     .expect("Failed to export plot1");
-plot2.write_image_with_exporter(&mut exporter, "plot2", ImageFormat::JPEG, 800, 600, 1.0)
+exporter.write_image(&plot2, "plot2", ImageFormat::JPEG, 800, 600, 1.0)
     .expect("Failed to export plot2");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 ```
 
 ## Supported Formats
@@ -114,6 +120,7 @@ For web applications or APIs, you can export to strings:
 ```rust
 use plotly::{Plot, Scatter};
 use plotly::plotly_static::{StaticExporterBuilder, ImageFormat};
+use plotly::prelude::*;
 
 let mut plot = Plot::new();
 plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
@@ -123,13 +130,18 @@ let mut exporter = StaticExporterBuilder::default()
     .expect("Failed to create StaticExporter");
 
 // Get base64 data (useful for embedding in HTML)
-let base64_data = plot.to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 400, 300, 1.0)
+let base64_data = exporter.to_base64(&plot, ImageFormat::PNG, 400, 300, 1.0)
     .expect("Failed to export plot");
 
 // Get SVG data (vector format, scalable)
-let svg_data = plot.to_svg_with_exporter(&mut exporter, 400, 300, 1.0)
+let svg_data = exporter.to_svg(&plot, 400, 300, 1.0)
     .expect("Failed to export plot");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 ```
+
+Always call `close()` on the exporter to ensure proper release of WebDriver resources. Due to the nature of WebDriver implementation, close has to be called as resources cannot be automatically dropped or released.
 
 ## Advanced Configuration
 
@@ -150,6 +162,10 @@ let mut exporter = StaticExporterBuilder::default()
     ])
     .build()
     .expect("Failed to create StaticExporter");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
+
 ```
 
 ### Parallel Usage
@@ -172,7 +188,18 @@ let mut exporter = StaticExporterBuilder::default()
     .webdriver_port(get_unique_port())
     .build()
     .expect("Failed to build StaticExporter");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 ```
+
+### Async support
+
+`plotly_static` package offers an `async` API which is exposed in `plotly` via the `write_image_async`, `to_base64_async` and `to_svg_async` functions. However, the user must pass an `AsyncStaticExporter` asynchronous exporter instead of a synchronous one by building it via `StaticExportBuilder`'s `build_async` method. 
+
+> Note: Both sync and async exporters are available whenever a `static_export_*` feature is enabled in `plotly`.
+
+For more details check the [`plotly_static` API Documentation](https://docs.rs/plotly_static/)
 
 ## Logging Support
 
@@ -190,6 +217,9 @@ env_logger::init();
 let mut exporter = StaticExporterBuilder::default()
     .build()
     .expect("Failed to create StaticExporter");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 ```
 
 ## Performance Considerations
@@ -200,7 +230,7 @@ let mut exporter = StaticExporterBuilder::default()
 
 ## Complete Example
 
-See the [static export example](../../../examples/static_export/) for a complete working example that demonstrates:
+See the [static export example](https://github.com/plotly/plotly.rs/tree/main/examples/static_export) for a complete working example that demonstrates:
 
 - Multiple export formats
 - Exporter reuse

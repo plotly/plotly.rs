@@ -6,7 +6,7 @@
 //!
 //! The `kaleido` and `kaleido_download` features are deprecated since version
 //! 0.13.0 and will be removed in version 0.14.0. Please migrate to the
-//! `plotly_static` and `plotly_static_download` features instead.
+//! `plotly_static` and `static_export_*` features instead.
 #![recursion_limit = "256"] // lets us use a large serde_json::json! macro for testing crate::layout::Axis
 extern crate askama;
 extern crate rand;
@@ -49,6 +49,7 @@ pub mod callbacks;
 
 pub mod common;
 pub mod configuration;
+pub mod export;
 pub mod layout;
 pub mod plot;
 pub mod traces;
@@ -75,6 +76,16 @@ pub trait Relayout {}
 pub use plotly_kaleido::ImageFormat;
 #[cfg(feature = "plotly_static")]
 pub use plotly_static::{self, ImageFormat};
+
+// Public prelude for ergonomic imports in examples and user code
+pub mod prelude {
+    #[cfg(feature = "plotly_static")]
+    pub use crate::export::r#async::ExporterAsyncExt;
+    #[cfg(feature = "plotly_static")]
+    pub use crate::export::sync::ExporterSyncExt;
+    #[cfg(feature = "plotly_static")]
+    pub use crate::plotly_static::ImageFormat;
+}
 
 // Not public API.
 #[doc(hidden)]

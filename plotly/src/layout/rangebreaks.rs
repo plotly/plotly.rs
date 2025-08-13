@@ -4,7 +4,7 @@ use serde::Serialize;
 use crate::private::NumOrString;
 
 /// Struct representing a rangebreak for Plotly axes.
-/// See: https://plotly.com/python/reference/layout/xaxis/#layout-xaxis-rangebreaks
+/// See: <https://plotly.com/python/reference/layout/xaxis/#layout-xaxis-rangebreaks>
 #[derive(Debug, Clone, Serialize, PartialEq, FieldSetter)]
 pub struct RangeBreak {
     /// Sets the lower and upper bounds for this range break, e.g. ["sat",

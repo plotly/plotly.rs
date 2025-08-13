@@ -9,6 +9,7 @@
 //!
 //! ## Features
 //!
+//! - **Async/Sync API Support**: Support for both async and sync contexts
 //! - **Multiple Formats**: Support for PNG, JPEG, WEBP, SVG, and PDF export
 //! - **Headless Rendering**: Uses headless browsers for rendering
 //! - **WebDriver Support**: Supports both Chrome (chromedriver) and Firefox
@@ -74,14 +75,38 @@
 //!
 //! ```toml
 //! [dependencies]
-//! plotly_static = { version = "0.0.4", features = ["chromedriver", "webdriver_download"] }
+//! plotly_static = { version = "0.1", features = ["chromedriver", "webdriver_download"] }
 //! ```
+//!
+//! ## Async Support
+//!
+//! The library supports async operations. To use the async API you need to call
+//! `build_async` instead of `build` on the `StaticExporterBuilder` . This will
+//! return an `AsyncStaticExporter` instance where the `write_fig` and
+//! `write_to_string` methods are async.
+//!
+//! ```no_run
+//! use plotly_static::StaticExporterBuilder;
+//!
+//! let exporter = StaticExporterBuilder::default()
+//!     .build_async()
+//!     .expect("Failed to build AsyncStaticExporter");
+//! ```
+//!
+//! Never use the `sync` API in async contexts. The `sync` API wraps the `async`
+//! API and uses a `tokio::runtime::Runtime` instance internally.  Using the
+//! `sync` API in an async context will cause runtime errors such as e.g.,
+//! "Cannot drop a runtime in a context where blocking is not allowed. This
+//! happens when a runtime is dropped from within an asynchronous context." or
+//! similar ones.
 //!
 //! ## Advanced Usage
 //!
 //! ### Custom Configuration
 //!
 //! ```no_run
+//! // This example requires a running WebDriver (chromedriver/geckodriver) and a browser.
+//! // It cannot be run as a doc test.
 //! use plotly_static::StaticExporterBuilder;
 //!
 //! let exporter = StaticExporterBuilder::default()
@@ -191,10 +216,12 @@
 //! - **Process Spawning**: Automatically spawns WebDriver if not already
 //!   running
 //! - **Connection Reuse**: Reuses existing WebDriver sessions when possible
-//! - **Cleanup**: Automatically terminates WebDriver processes when
-//!   `StaticExporter` is dropped
 //! - **External Sessions**: Can connect to externally managed WebDriver
 //!   sessions
+//!
+//! Due to the underlying WebDriver implementation, the library cannot
+//! automatically close WebDriver processes when `StaticExporter` is dropped.
+//! You must call `close` manually to ensure proper cleanup.
 //!
 //! ### WebDriver Configuration
 //!
@@ -231,8 +258,6 @@
 //! - **Parallel Usage**: Use unique ports for parallel operations
 //! - **WebDriver Reuse**: The library automatically reuses WebDriver sessions
 //!   when possible
-//! - **Resource Cleanup**: WebDriver processes are automatically cleaned up on
-//!   drop
 //!
 //! ## Comparison with Kaleido
 //!
@@ -581,10 +606,12 @@ impl StaticExporterBuilder {
         self
     }
 
-    /// Builds a `StaticExporter` instance with the current configuration.
+    /// Builds a synchronous `StaticExporter` instance with the current
+    /// configuration.
     ///
-    /// This method creates a new `StaticExporter` instance with all the
-    /// configured settings. The method manages WebDriver:
+    /// The synchronous API is blocking and should not be used in async
+    /// contexts. Use `build_async` instead and the associated
+    /// `AsyncStaticExporter` instance.
     ///
     /// - If `spawn_webdriver` is enabled, it first tries to connect to an
     ///   existing WebDriver session on the specified port, and only spawns a
@@ -599,7 +626,7 @@ impl StaticExporterBuilder {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,no_run
     /// use plotly_static::StaticExporterBuilder;
     ///
     /// let exporter = StaticExporterBuilder::default()
@@ -608,8 +635,6 @@ impl StaticExporterBuilder {
     ///     .expect("Failed to build StaticExporter");
     /// ```
     pub fn build(&self) -> Result<StaticExporter> {
-        let wd = self.create_webdriver()?;
-
         let runtime = std::sync::Arc::new(
             tokio::runtime::Builder::new_multi_thread()
                 .enable_all()
@@ -617,33 +642,74 @@ impl StaticExporterBuilder {
                 .expect("Failed to create Tokio runtime"),
         );
 
-        Ok(StaticExporter {
+        let inner = Self::build_async(self)?;
+
+        Ok(StaticExporter { runtime, inner })
+    }
+
+    /// Create a new WebDriver instance based on the spawn_webdriver flag
+    fn create_webdriver(&self) -> Result<WebDriver> {
+        let port = self.webdriver_port;
+        let in_async = tokio::runtime::Handle::try_current().is_ok();
+
+        let run_create_fn = |spawn: bool| -> Result<WebDriver> {
+            let work = move || {
+                if spawn {
+                    WebDriver::connect_or_spawn(port)
+                } else {
+                    WebDriver::new(port)
+                }
+            };
+            if in_async {
+                std::thread::spawn(work)
+                    .join()
+                    .map_err(|_| anyhow!("failed to join webdriver thread"))?
+            } else {
+                work()
+            }
+        };
+
+        run_create_fn(self.spawn_webdriver)
+    }
+
+    /// Build an async exporter for use within async contexts.
+    ///
+    /// This method creates an `AsyncStaticExporter` instance with the current
+    /// configuration. The async API is non-blocking and can be used in async
+    /// contexts.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// use plotly_static::StaticExporterBuilder;
+    ///
+    /// let exporter = StaticExporterBuilder::default()
+    ///     .build_async()
+    ///     .expect("Failed to build AsyncStaticExporter");
+    /// ```
+    pub fn build_async(&self) -> Result<AsyncStaticExporter> {
+        let wd = self.create_webdriver()?;
+        Ok(AsyncStaticExporter {
             webdriver_port: self.webdriver_port,
             webdriver_url: self.webdriver_url.clone(),
             webdriver: wd,
             offline_mode: self.offline_mode,
             pdf_export_timeout: self.pdf_export_timeout,
             webdriver_browser_caps: self.webdriver_browser_caps.clone(),
-            runtime,
             webdriver_client: None,
         })
     }
-
-    /// Create a new WebDriver instance based on the spawn_webdriver flag
-    fn create_webdriver(&self) -> Result<WebDriver> {
-        match self.spawn_webdriver {
-            // Try to connect to existing WebDriver or spawn new if not available
-            true => WebDriver::connect_or_spawn(self.webdriver_port),
-            // Create the WebDriver instance without spawning
-            false => WebDriver::new(self.webdriver_port),
-        }
-    }
 }
 
-/// Main struct for exporting Plotly plots to static images.
+/// Synchronous exporter for exporting Plotly plots to static images.
 ///
-/// This struct provides methods to convert Plotly JSON plots into various
+/// This object provides methods to convert Plotly JSON plots into various
 /// static image formats using a headless browser via WebDriver.
+/// The synchronous API is blocking and should not be used in async contexts.
+/// Use `build_async` instead and the associated `AsyncStaticExporter` object.
+///
+/// Always call `close` when you are done with the exporter to ensure proper
+/// cleanup of the WebDriver process.
 ///
 /// # Examples
 ///
@@ -678,6 +744,9 @@ impl StaticExporterBuilder {
 ///     600,
 ///     1.0
 /// ).expect("Failed to export plot");
+///
+/// // Close the exporter
+/// exporter.close();
 /// ```
 ///
 /// # Features
@@ -688,58 +757,11 @@ impl StaticExporterBuilder {
 /// - Offline mode support
 /// - Automatic WebDriver management
 pub struct StaticExporter {
-    /// WebDriver server port (default: 4444)
-    webdriver_port: u32,
-
-    /// WebDriver server base URL (default: "http://localhost")
-    webdriver_url: String,
-
-    /// WebDriver process manager for spawning and cleanup
-    webdriver: WebDriver,
-
-    /// Use bundled JS libraries instead of CDN
-    offline_mode: bool,
-
-    /// PDF export timeout in milliseconds
-    pdf_export_timeout: u32,
-
-    /// Browser command-line flags (e.g., "--headless", "--no-sandbox")
-    webdriver_browser_caps: Vec<String>,
-
     /// Tokio runtime for async operations
     runtime: std::sync::Arc<tokio::runtime::Runtime>,
 
-    /// Cached WebDriver client for session reuse
-    webdriver_client: Option<Client>,
-}
-
-impl Drop for StaticExporter {
-    /// Automatically cleans up WebDriver resources when the `StaticExporter`
-    /// instance is dropped.
-    ///
-    /// This ensures that the WebDriver process is properly terminated and
-    /// resources are released, even if the instance goes out of scope
-    /// unexpectedly.
-    ///
-    /// - Only terminates WebDriver processes that were spawned by this instance
-    /// - Leaves externally managed WebDriver sessions running
-    /// - Logs errors but doesn't panic if cleanup fails
-    fn drop(&mut self) {
-        // Close the WebDriver client if it exists
-        if let Some(client) = self.webdriver_client.take() {
-            let runtime = self.runtime.clone();
-            runtime.block_on(async {
-                if let Err(e) = client.close().await {
-                    error!("Failed to close WebDriver client: {e}");
-                }
-            });
-        }
-
-        // Stop the WebDriver process
-        if let Err(e) = self.webdriver.stop() {
-            error!("Failed to stop WebDriver: {e}");
-        }
-    }
+    /// Async inner exporter
+    inner: AsyncStaticExporter,
 }
 
 impl StaticExporter {
@@ -749,13 +771,17 @@ impl StaticExporter {
     /// browser and saves the result as an image file in the specified
     /// format.
     ///
-    /// Returns `Ok(())` on success, or an error if the export fails.
+    /// Returns `Ok()` on success, or an error if the export fails.
+    ///
+    /// The file extension is automatically added based on the format
     ///
     /// # Examples
     ///
     /// ```no_run
+    /// 
     /// // This example requires a running WebDriver (chromedriver/geckodriver) and a browser.
     /// // It cannot be run as a doc test.
+    ///
     /// use plotly_static::{StaticExporterBuilder, ImageFormat};
     /// use serde_json::json;
     /// use std::path::Path;
@@ -767,6 +793,7 @@ impl StaticExporter {
     ///
     /// let mut exporter = StaticExporterBuilder::default().build().unwrap();
     ///
+    /// // Creates "my_plot.png" with 1200x800 pixels at 2x scale
     /// exporter.write_fig(
     ///     Path::new("my_plot"),
     ///     &plot,
@@ -775,14 +802,10 @@ impl StaticExporter {
     ///     800,
     ///     2.0
     /// ).expect("Failed to export plot");
-    /// // Creates "my_plot.png" with 1200x800 pixels at 2x scale
+    ///
+    /// // Close the exporter
+    /// exporter.close();
     /// ```
-    ///
-    /// # Notes
-    ///
-    /// - The file extension is automatically added based on the format
-    /// - SVG format outputs plain text, others output binary data
-    /// - PDF format uses browser JavaScript for generation
     pub fn write_fig(
         &mut self,
         dst: &Path,
@@ -792,42 +815,34 @@ impl StaticExporter {
         height: usize,
         scale: f64,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let mut dst = PathBuf::from(dst);
-        dst.set_extension(format.to_string());
-
-        let plot_data = PlotData {
-            format: format.clone(),
-            width,
-            height,
-            scale,
-            data: plot,
-        };
-
-        let image_data = self.export(plot_data)?;
-        let data = match format {
-            ImageFormat::SVG => image_data.as_bytes(),
-            _ => &general_purpose::STANDARD.decode(image_data)?,
-        };
-        let mut file = File::create(dst.as_path())?;
-        file.write_all(data)?;
-        file.flush()?;
-
-        Ok(())
+        if tokio::runtime::Handle::try_current().is_ok() {
+            return Err(anyhow!(
+                "StaticExporter sync methods cannot be used inside an async context. \
+             Use StaticExporterBuilder::build_async() and the associated AsyncStaticExporter::write_fig(...)."
+            )
+            .into());
+        }
+        let rt = self.runtime.clone();
+        rt.block_on(
+            self.inner
+                .write_fig(dst, plot, format, width, height, scale),
+        )
     }
 
     /// Exports a Plotly plot to a string representation.
     ///
-    /// This method renders the provided Plotly JSON plot and returns the result
-    /// as a string. The format of the string depends on the image format:
-    /// - SVG: Returns plain SVG text
-    /// - PNG/JPEG/WEBP/PDF: Returns base64-encoded data
+    /// Renders the provided Plotly JSON plot and returns the result as a
+    /// string. or an error if the export fails.
     ///
-    /// Returns the image data as a string on success, or an error if the export
-    /// fails.
+    /// The format of the string depends on the image format. For
+    /// ImageFormat::SVG the function will generate plain SVG text, for
+    /// other formats it will return base64-encoded data.
+    ///
     ///
     /// # Examples
     ///
     /// ```no_run
+    /// 
     /// // This example requires a running WebDriver (chromedriver/geckodriver) and a browser.
     /// // It cannot be run as a doc test.
     /// use plotly_static::{StaticExporterBuilder, ImageFormat};
@@ -848,17 +863,117 @@ impl StaticExporter {
     ///     1.0
     /// ).expect("Failed to export plot");
     ///
+    /// // Close the exporter
+    /// exporter.close();
+    ///
     /// // svg_data contains the SVG markup as a string
     /// assert!(svg_data.starts_with("<svg"));
     /// ```
-    ///
-    /// # Notes
-    ///
-    /// - SVG format returns plain text that can be embedded in HTML
-    /// - Other formats return base64-encoded data that can be used in data URLs
-    /// - This method is useful when you need the image data as a string rather
-    ///   than a file
     pub fn write_to_string(
+        &mut self,
+        plot: &serde_json::Value,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<String, Box<dyn std::error::Error>> {
+        if tokio::runtime::Handle::try_current().is_ok() {
+            return Err(anyhow!(
+                "StaticExporter sync methods cannot be used inside an async context. \
+             Use StaticExporterBuilder::build_async() and the associated AsyncStaticExporter::write_to_string(...)."
+            )
+            .into());
+        }
+        let rt = self.runtime.clone();
+        rt.block_on(
+            self.inner
+                .write_to_string(plot, format, width, height, scale),
+        )
+    }
+
+    /// Get diagnostic information about the underlying WebDriver process.
+    ///
+    /// This method provides detailed information about the WebDriver process
+    /// for debugging purposes, including process status, port information,
+    /// and connection details.
+    pub fn get_webdriver_diagnostics(&self) -> String {
+        self.inner.get_webdriver_diagnostics()
+    }
+
+    /// Explicitly close the WebDriver session and stop the driver.
+    ///
+    /// Always call close to ensure proper cleanup.
+    pub fn close(&mut self) {
+        let runtime = self.runtime.clone();
+        runtime.block_on(self.inner.close());
+    }
+}
+
+/// Async StaticExporter for async contexts. Keeps the same API as the sync
+/// StaticExporter for compatibility.
+pub struct AsyncStaticExporter {
+    /// WebDriver server port (default: 4444)
+    webdriver_port: u32,
+
+    /// WebDriver server base URL (default: "http://localhost")
+    webdriver_url: String,
+
+    /// WebDriver process manager for spawning and cleanup
+    webdriver: WebDriver,
+
+    /// Use bundled JS libraries instead of CDN
+    offline_mode: bool,
+
+    /// PDF export timeout in milliseconds
+    pdf_export_timeout: u32,
+
+    /// Browser command-line flags (e.g., "--headless", "--no-sandbox")
+    webdriver_browser_caps: Vec<String>,
+
+    /// Cached WebDriver client for session reuse
+    webdriver_client: Option<Client>,
+}
+
+impl AsyncStaticExporter {
+    /// Exports a Plotly plot to a static image file
+    ///
+    /// Same as [`StaticExporter::write_fig`] but async.
+    pub async fn write_fig(
+        &mut self,
+        dst: &Path,
+        plot: &serde_json::Value,
+        format: ImageFormat,
+        width: usize,
+        height: usize,
+        scale: f64,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let mut dst = PathBuf::from(dst);
+        dst.set_extension(format.to_string());
+
+        let plot_data = PlotData {
+            format: format.clone(),
+            width,
+            height,
+            scale,
+            data: plot,
+        };
+
+        let image_data = self.static_export(&plot_data).await?;
+        let data = match format {
+            ImageFormat::SVG => image_data.as_bytes().to_vec(),
+            _ => general_purpose::STANDARD.decode(image_data)?,
+        };
+        let mut file = File::create(dst.as_path())?;
+        file.write_all(&data)?;
+        file.flush()?;
+
+        Ok(())
+    }
+
+    /// Exports a Plotly plot to a string representation.
+    ///
+    /// Same as [`StaticExporter::write_to_string`] but async.
+    pub async fn write_to_string(
         &mut self,
         plot: &serde_json::Value,
         format: ImageFormat,
@@ -873,29 +988,47 @@ impl StaticExporter {
             scale,
             data: plot,
         };
-        let image_data = self.export(plot_data)?;
+        let image_data = self.static_export(&plot_data).await?;
         Ok(image_data)
     }
 
-    /// Convert the Plotly graph to a static image using Kaleido and return the
-    /// result as a String
-    pub(crate) fn export(&mut self, plot: PlotData) -> Result<String> {
-        let data = self.static_export(&plot)?;
-        Ok(data)
+    /// Close the WebDriver session and stop the driver if it was spawned.
+    ///
+    /// Always call close to ensure proper cleanup.
+    pub async fn close(&mut self) {
+        if let Some(client) = self.webdriver_client.take() {
+            if let Err(e) = client.close().await {
+                error!("Failed to close WebDriver client: {e}");
+            }
+        }
+        if let Err(e) = self.webdriver.stop() {
+            error!("Failed to stop WebDriver: {e}");
+        }
     }
 
-    fn static_export(&mut self, plot: &PlotData<'_>) -> Result<String> {
+    /// Get diagnostic information about the underlying WebDriver process.
+    pub fn get_webdriver_diagnostics(&self) -> String {
+        self.webdriver.get_diagnostics()
+    }
+
+    /// Export the Plotly plot image to a string representation calling the
+    /// Plotly.toImage function.
+    async fn static_export(&mut self, plot: &PlotData<'_>) -> Result<String> {
         let html_content = template::get_html_body(self.offline_mode);
-        let runtime = self.runtime.clone();
-        runtime
-            .block_on(self.extract(&html_content, plot))
+        self.extract(&html_content, plot)
+            .await
             .with_context(|| "Failed to extract static image from browser session")
     }
 
+    /// Extract a static image from a browser session.
     async fn extract(&mut self, html_content: &str, plot: &PlotData<'_>) -> Result<String> {
         let caps = self.build_webdriver_caps()?;
-        debug!("Use WebDriver and headless browser to export static plot");
-        let webdriver_url = format!("{}:{}", self.webdriver_url, self.webdriver_port,);
+        debug!(
+            "Use WebDriver and headless browser to export static plot (offline_mode={}, port={})",
+            self.offline_mode, self.webdriver_port
+        );
+        let webdriver_url = format!("{}:{}", self.webdriver_url, self.webdriver_port);
+        debug!("Connecting to WebDriver at {webdriver_url}");
 
         // Reuse existing client or create new one
         let client = if let Some(ref client) = self.webdriver_client {
@@ -926,6 +1059,19 @@ impl StaticExporter {
         // Open the HTML
         client.goto(&url).await?;
 
+        #[cfg(target_os = "windows")]
+        Self::wait_for_document_ready(&client, std::time::Duration::from_secs(10)).await?;
+
+        // Wait for Plotly container element
+        #[cfg(target_os = "windows")]
+        Self::wait_for_plotly_container(&client, std::time::Duration::from_secs(10)).await?;
+
+        // In online mode, ensure Plotly is loaded
+        if !self.offline_mode {
+            #[cfg(target_os = "windows")]
+            Self::wait_for_plotly_loaded(&client, std::time::Duration::from_secs(15)).await?;
+        }
+
         let (js_script, args) = match plot.format {
             ImageFormat::PDF => {
                 // Always use SVG for PDF export
@@ -954,9 +1100,6 @@ impl StaticExporter {
 
         let data = client.execute_async(&js_script, args).await?;
 
-        // Don't close the client - keep it for reuse
-        // client.close().await?;
-
         let result = data.as_str().ok_or(anyhow!(
             "Failed to execute Plotly.toImage in browser session"
         ))?;
@@ -966,22 +1109,133 @@ impl StaticExporter {
         }
 
         match plot.format {
-            ImageFormat::SVG => Self::extract_plain(result, &plot.format),
+            ImageFormat::SVG => common::extract_plain(result, &plot.format),
             ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP | ImageFormat::PDF => {
-                Self::extract_encoded(result, &plot.format)
+                common::extract_encoded(result, &plot.format)
             }
             #[allow(deprecated)]
             ImageFormat::EPS => {
                 error!("EPS format is deprecated. Use SVG or PDF instead.");
-                Self::extract_encoded(result, &plot.format)
+                common::extract_encoded(result, &plot.format)
             }
         }
     }
 
-    fn extract_plain(payload: &str, format: &ImageFormat) -> Result<String> {
+    fn build_webdriver_caps(&self) -> Result<Capabilities> {
+        // Define browser capabilities (copied to avoid reordering existing code)
+        let mut caps = JsonMap::new();
+        let mut browser_opts = JsonMap::new();
+        let browser_args = self.webdriver_browser_caps.clone();
+
+        browser_opts.insert("args".to_string(), serde_json::json!(browser_args));
+
+        // Add Chrome binary capability if BROWSER_PATH is set
+        #[cfg(feature = "chromedriver")]
+        if let Ok(chrome_path) = std::env::var("BROWSER_PATH") {
+            browser_opts.insert("binary".to_string(), serde_json::json!(chrome_path));
+            debug!("Added Chrome binary capability: {chrome_path}");
+        }
+        // Add Firefox binary capability if BROWSER_PATH is set
+        #[cfg(feature = "geckodriver")]
+        if let Ok(firefox_path) = std::env::var("BROWSER_PATH") {
+            browser_opts.insert("binary".to_string(), serde_json::json!(firefox_path));
+            debug!("Added Firefox binary capability: {firefox_path}");
+        }
+
+        // Add Firefox-specific preferences for CI environments
+        #[cfg(feature = "geckodriver")]
+        {
+            let prefs = common::get_firefox_ci_preferences();
+            browser_opts.insert("prefs".to_string(), serde_json::json!(prefs));
+            debug!("Added Firefox preferences for CI compatibility");
+        }
+
+        caps.insert(
+            "browserName".to_string(),
+            serde_json::json!(get_browser_name()),
+        );
+        caps.insert(
+            get_options_key().to_string(),
+            serde_json::json!(browser_opts),
+        );
+
+        debug!("WebDriver capabilities: {caps:?}");
+
+        Ok(caps)
+    }
+
+    #[cfg(target_os = "windows")]
+    async fn wait_for_document_ready(client: &Client, timeout: std::time::Duration) -> Result<()> {
+        let start = std::time::Instant::now();
+        loop {
+            let state = client
+                .execute("return document.readyState;", vec![])
+                .await
+                .unwrap_or(serde_json::Value::Null);
+            if state.as_str().map(|s| s == "complete").unwrap_or(false) {
+                return Ok(());
+            }
+            if start.elapsed() > timeout {
+                return Err(anyhow!(
+                    "Timeout waiting for document.readyState === 'complete'"
+                ));
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    async fn wait_for_plotly_container(
+        client: &Client,
+        timeout: std::time::Duration,
+    ) -> Result<()> {
+        let start = std::time::Instant::now();
+        loop {
+            let has_el = client
+                .execute(
+                    "return !!document.getElementById('plotly-html-element');",
+                    vec![],
+                )
+                .await
+                .unwrap_or(serde_json::Value::Bool(false));
+            if has_el.as_bool().unwrap_or(false) {
+                return Ok(());
+            }
+        }
+        if start.elapsed() > timeout {
+            return Err(anyhow!(
+                "Timeout waiting for #plotly-html-element to appear in DOM"
+            ));
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+    }
+
+    #[cfg(target_os = "windows")]
+    async fn wait_for_plotly_loaded(client: &Client, timeout: std::time::Duration) -> Result<()> {
+        let start = std::time::Instant::now();
+        loop {
+            let has_plotly = client
+                .execute("return !!window.Plotly;", vec![])
+                .await
+                .unwrap_or(serde_json::Value::Bool(false));
+            if has_plotly.as_bool().unwrap_or(false) {
+                return Ok(());
+            }
+            if start.elapsed() > timeout {
+                return Err(anyhow!("Timeout waiting for Plotly library to load"));
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+        }
+    }
+}
+
+mod common {
+    use super::*;
+
+    pub(crate) fn extract_plain(payload: &str, format: &ImageFormat) -> Result<String> {
         match payload.split_once(",") {
             Some((type_info, data)) => {
-                Self::extract_type_info(type_info, format);
+                extract_type_info(type_info, format);
                 let decoded = urlencoding::decode(data)?;
                 Ok(decoded.to_string())
             }
@@ -989,18 +1243,18 @@ impl StaticExporter {
         }
     }
 
-    fn extract_encoded(payload: &str, format: &ImageFormat) -> Result<String> {
+    pub(crate) fn extract_encoded(payload: &str, format: &ImageFormat) -> Result<String> {
         match payload.split_once(";") {
             Some((type_info, encoded_data)) => {
-                Self::extract_type_info(type_info, format);
-                Self::extract_encoded_data(encoded_data)
+                extract_type_info(type_info, format);
+                extract_encoded_data(encoded_data)
                     .ok_or(anyhow!("No valid image data found in 'src' attribute"))
             }
             None => Err(anyhow!("'src' attribute has invalid base64 data")),
         }
     }
 
-    fn extract_type_info(type_info: &str, format: &ImageFormat) {
+    pub(crate) fn extract_type_info(type_info: &str, format: &ImageFormat) {
         let val = type_info.split_once("/").map(|d| d.1.to_string());
         match val {
             Some(ext) => {
@@ -1012,7 +1266,7 @@ impl StaticExporter {
         }
     }
 
-    fn extract_encoded_data(data: &str) -> Option<String> {
+    pub(crate) fn extract_encoded_data(data: &str) -> Option<String> {
         data.split_once(",").map(|d| d.1.to_string())
     }
 
@@ -1021,7 +1275,7 @@ impl StaticExporter {
     /// These preferences force software rendering and enable WebGL in headless
     /// mode to work around graphics/WebGL issues in CI environments.
     #[cfg(feature = "geckodriver")]
-    fn get_firefox_ci_preferences() -> serde_json::Map<String, serde_json::Value> {
+    pub(crate) fn get_firefox_ci_preferences() -> serde_json::Map<String, serde_json::Value> {
         let mut prefs = serde_json::Map::new();
 
         // Force software rendering and enable WebGL in headless mode
@@ -1068,58 +1322,6 @@ impl StaticExporter {
 
         prefs
     }
-
-    fn build_webdriver_caps(&self) -> Result<Capabilities> {
-        // Define browser capabilities
-        let mut caps = JsonMap::new();
-        let mut browser_opts = JsonMap::new();
-        let browser_args = self.webdriver_browser_caps.clone();
-
-        browser_opts.insert("args".to_string(), serde_json::json!(browser_args));
-
-        // Add Chrome binary capability if BROWSER_PATH is set
-        #[cfg(feature = "chromedriver")]
-        if let Ok(chrome_path) = std::env::var("BROWSER_PATH") {
-            browser_opts.insert("binary".to_string(), serde_json::json!(chrome_path));
-            debug!("Added Chrome binary capability: {chrome_path}");
-        }
-        // Add Firefox binary capability if BROWSER_PATH is set
-        #[cfg(feature = "geckodriver")]
-        if let Ok(firefox_path) = std::env::var("BROWSER_PATH") {
-            browser_opts.insert("binary".to_string(), serde_json::json!(firefox_path));
-            debug!("Added Firefox binary capability: {firefox_path}");
-        }
-
-        // Add Firefox-specific preferences for CI environments
-        #[cfg(feature = "geckodriver")]
-        {
-            let prefs = Self::get_firefox_ci_preferences();
-            browser_opts.insert("prefs".to_string(), serde_json::json!(prefs));
-            debug!("Added Firefox preferences for CI compatibility");
-        }
-
-        caps.insert(
-            "browserName".to_string(),
-            serde_json::json!(get_browser_name()),
-        );
-        caps.insert(
-            get_options_key().to_string(),
-            serde_json::json!(browser_opts),
-        );
-
-        debug!("WebDriver capabilities: {caps:?}");
-
-        Ok(caps)
-    }
-
-    /// Get diagnostic information about the underlying WebDriver process.
-    ///
-    /// This method provides detailed information about the WebDriver process
-    /// for debugging purposes, including process status, port information,
-    /// and connection details.
-    pub fn get_webdriver_diagnostics(&self) -> String {
-        self.webdriver.get_diagnostics()
-    }
 }
 
 #[cfg(test)]
@@ -1134,10 +1336,27 @@ mod tests {
     }
 
     // Helper to generate unique ports for parallel tests
-    static PORT_COUNTER: AtomicU32 = AtomicU32::new(4444);
-
+    #[cfg(not(feature = "debug"))]
     fn get_unique_port() -> u32 {
+        static PORT_COUNTER: AtomicU32 = AtomicU32::new(4844);
         PORT_COUNTER.fetch_add(1, Ordering::SeqCst)
+    }
+
+    // In CI which may run on slow machines, we run a different strategy to generate
+    // the unique port.
+    #[cfg(feature = "debug")]
+    fn get_unique_port() -> u32 {
+        static PORT_COUNTER: AtomicU32 = AtomicU32::new(4844);
+
+        // Sometimes the webdriver process is not stopped immediately
+        // and we get port conflicts. We try to give some time for other
+        // webdriver processes to stop so that we don't get port conflicts.
+        loop {
+            let p = PORT_COUNTER.fetch_add(1, Ordering::SeqCst);
+            if !webdriver::WebDriver::is_webdriver_running(p) {
+                return p;
+            }
+        }
     }
 
     fn create_test_plot() -> serde_json::Value {
@@ -1208,13 +1427,13 @@ mod tests {
         init();
         let test_plot = create_test_plot();
 
-        let mut export = StaticExporterBuilder::default()
+        let mut exporter = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
         let dst = PathBuf::from("static_example.png");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::PNG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
@@ -1223,19 +1442,21 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close();
     }
 
     #[test]
     fn save_jpeg() {
         init();
         let test_plot = create_test_plot();
-        let mut export = StaticExporterBuilder::default()
+        let mut exporter = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
         let dst = PathBuf::from("static_example.jpeg");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
@@ -1244,19 +1465,21 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close();
     }
 
     #[test]
     fn save_svg() {
         init();
         let test_plot = create_test_plot();
-        let mut export = StaticExporterBuilder::default()
+        let mut exporter = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
         let dst = PathBuf::from("static_example.svg");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::SVG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
@@ -1265,19 +1488,21 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close();
     }
 
     #[test]
     fn save_webp() {
         init();
         let test_plot = create_test_plot();
-        let mut export = StaticExporterBuilder::default()
+        let mut exporter = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
         let dst = PathBuf::from("static_example.webp");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::WEBP, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
@@ -1286,6 +1511,35 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close();
+    }
+
+    #[tokio::test]
+    async fn save_png_async() {
+        init();
+        let test_plot = create_test_plot();
+
+        let mut exporter = StaticExporterBuilder::default()
+            .spawn_webdriver(true)
+            .webdriver_port(5444)
+            .build_async()
+            .unwrap();
+
+        let dst = PathBuf::from("static_example_async.png");
+        exporter
+            .write_fig(dst.as_path(), &test_plot, ImageFormat::PNG, 1200, 900, 4.5)
+            .await
+            .unwrap();
+
+        assert!(dst.exists());
+        let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
+        let file_size = metadata.len();
+        assert!(file_size > 0,);
+        #[cfg(not(feature = "debug"))]
+        assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close().await;
     }
 
     #[test]
@@ -1317,20 +1571,22 @@ mod tests {
         assert!(file_size > 600000,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close();
     }
 
     #[test]
     fn save_jpeg_sequentially() {
         init();
         let test_plot = create_test_plot();
-        let mut export = StaticExporterBuilder::default()
+        let mut exporter = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
 
         let dst = PathBuf::from("static_example.jpeg");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
@@ -1341,7 +1597,7 @@ mod tests {
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
 
         let dst = PathBuf::from("example2.jpeg");
-        export
+        exporter
             .write_fig(dst.as_path(), &test_plot, ImageFormat::JPEG, 1200, 900, 4.5)
             .unwrap();
         assert!(dst.exists());
@@ -1350,6 +1606,8 @@ mod tests {
         assert!(file_size > 0,);
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst.as_path()).is_ok());
+
+        exporter.close();
     }
 
     #[test]
@@ -1364,7 +1622,7 @@ mod tests {
         let test_port = get_unique_port();
 
         // Create first exporter - this should spawn a new WebDriver
-        let mut export1 = StaticExporterBuilder::default()
+        let mut exporter1 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
             .build()
@@ -1372,16 +1630,17 @@ mod tests {
 
         // Export first image
         let dst1 = PathBuf::from("process_reuse_1.png");
-        export1
+        exporter1
             .write_fig(dst1.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst1.exists());
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst1.as_path()).is_ok());
+        exporter1.close();
 
         // Create second exporter on the same port - this should connect to existing
         // WebDriver process (but create a new session)
-        let mut export2 = StaticExporterBuilder::default()
+        let mut exporter2 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
             .build()
@@ -1389,16 +1648,17 @@ mod tests {
 
         // Export second image using a new session on the same WebDriver process
         let dst2 = PathBuf::from("process_reuse_2.png");
-        export2
+        exporter2
             .write_fig(dst2.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst2.exists());
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst2.as_path()).is_ok());
+        exporter2.close();
 
         // Create third exporter on the same port - should also connect to existing
         // WebDriver process
-        let mut export3 = StaticExporterBuilder::default()
+        let mut exporter3 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
             .build()
@@ -1406,12 +1666,13 @@ mod tests {
 
         // Export third image using another new session on the same WebDriver process
         let dst3 = PathBuf::from("process_reuse_3.png");
-        export3
+        exporter3
             .write_fig(dst3.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst3.exists());
         #[cfg(not(feature = "debug"))]
         assert!(std::fs::remove_file(dst3.as_path()).is_ok());
+        exporter3.close();
     }
 }
 

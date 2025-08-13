@@ -32,7 +32,7 @@ const WEBDRIVER_BIN: &str = "chromedriver";
 /// Default WebDriver port
 pub(crate) const WEBDRIVER_PORT: u32 = 4444;
 /// Default WebDriver URL
-pub(crate) const WEBDRIVER_URL: &str = "http://localhost";
+pub(crate) const WEBDRIVER_URL: &str = "http://127.0.0.1";
 
 #[cfg(all(feature = "chromedriver", not(target_os = "windows")))]
 pub(crate) fn chrome_default_caps() -> Vec<&'static str> {
@@ -608,7 +608,7 @@ impl WebDriver {
 
     /// Check if a WebDriver is already running on the specified port.
     ///
-    /// This method performs a WebDriver standard-compliant check by:
+    /// This method performs a WebDriver check by:
     /// 1. Making an HTTP GET request to `/status` endpoint
     /// 2. Checking for HTTP 200 response
     /// 3. Verifying the response contains "ready" indicating the service is
