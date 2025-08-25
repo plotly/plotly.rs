@@ -163,6 +163,6 @@ fn density_mapbox(show: bool, file_name: &str) {
 fn main() {
     // Change false to true on any of these lines to display the example.
     scatter_mapbox(false, "scatter_mapbox");
-    scatter_geo(false, "scatter_geo");
+    scatter_geo(true, "scatter_geo");
     density_mapbox(false, "density_mapbox");
 }
