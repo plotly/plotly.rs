@@ -2,7 +2,7 @@
 
 use plotly::{
     color::Rgb,
-    common::{Line, Marker, Mode},
+    common::{Domain, Line, Marker, Mode},
     layout::{
         Axis, Center, DragMode, LayoutGeo, Mapbox, MapboxStyle, Margin, Projection, Rotation,
     },
@@ -105,6 +105,7 @@ fn scatter_geo(show: bool, file_name: &str) {
         .margin(Margin::new().top(0).left(0).bottom(0).right(0))
         .geo(
             LayoutGeo::new()
+                .domain(Domain::new().x(&[0.0, 0.8]).y(&[0.0, 1.0]))  // Leave 20% on right for legend
                 .showocean(true)
                 .showlakes(true)
                 .showcountries(true)
@@ -163,6 +164,6 @@ fn density_mapbox(show: bool, file_name: &str) {
 fn main() {
     // Change false to true on any of these lines to display the example.
     scatter_mapbox(false, "scatter_mapbox");
-    scatter_geo(true, "scatter_geo");
+    scatter_geo(false, "scatter_geo");
     density_mapbox(false, "density_mapbox");
 }
