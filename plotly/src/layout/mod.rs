@@ -19,6 +19,7 @@ mod grid;
 mod legend;
 mod mapbox;
 mod modes;
+mod polar;
 mod rangebreaks;
 mod scene;
 mod shape;
@@ -42,6 +43,7 @@ pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
     AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
 };
+pub use self::polar::LayoutPolar;
 pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
     AspectRatio, Camera, CameraCenter, DragMode, DragMode3D, Eye, HoverMode, LayoutScene,
@@ -330,7 +332,7 @@ pub struct LayoutFields {
     // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
     geo: Option<LayoutGeo>,
-    // polar: Option<LayoutPolar>,
+    polar: Option<LayoutPolar>,
     annotations: Option<Vec<Annotation>>,
     shapes: Option<Vec<Shape>>,
     #[serde(rename = "newshape")]
