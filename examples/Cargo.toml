@@ -1,11 +1,12 @@
 [workspace]
 members = [
     "3d_charts",
-    "basic_charts", 
+    "basic_charts",
     "custom_controls",
     "customization/consistent_static_format_export",
     "customization/density_mapbox_example",
     "customization/multiple_plots_example",
+    "downsampling",
     "financial_charts",
     "images",
     "kaleido",
@@ -17,6 +18,6 @@ members = [
     "statistical_charts",
     "static_export",
     "subplots",
-    "themes"
+    "themes",
 ]
 resolver = "2"

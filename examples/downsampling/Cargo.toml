@@ -1,0 +1,12 @@
+[package]
+name = "downsampling"
+version = "0.1.0"
+authors = ["Andrei Gherghescu andrei-ng@protonmail.com"]
+edition = "2021"
+
+[dependencies]
+ndarray = "0.16"
+minmaxlttb = "0.1"
+csv = "1.3"
+plotly = { path = "../../plotly" }
+plotly_utils = { path = "../plotly_utils" }

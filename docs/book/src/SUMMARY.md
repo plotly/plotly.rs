@@ -8,6 +8,7 @@
     - [Shapes](./fundamentals/shapes.md)
     - [Themes](./fundamentals/themes.md)
     - [Static Image Export](./fundamentals/static_image_export.md)
+    - [Timeseries Downsampling](./fundamentals/timeseries_downsampling.md)
 - [Recipes](./recipes.md)
     - [Basic Charts](./recipes/basic_charts.md)
         - [Scatter Plots](./recipes/basic_charts/scatter_plots.md)

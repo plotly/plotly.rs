@@ -43,6 +43,7 @@
     * [Exporting Static Images with plotly_static (Recommended)](#exporting-static-images-with-plotly_static-recommended)
     * [Exporting Static Images with Kaleido (legacy)](#exporting-static-images-with-kaleido-legacy)
     * [Usage Within a WASM Environment](#usage-within-a-wasm-environment)
+    * [Timeseries Downsampling](#timeseries-downsampling)
 * [Crate Feature Flags](#crate-feature-flags)
 * [Contributing](#contributing)
 * [Code of Conduct](#code-of-conduct)
@@ -222,7 +223,11 @@ pub fn plot_component() -> Html {
 }
 ```
 
-More detailed standalone examples can be found in the [examples/wasm-yew](https://github.com/plotly/plotly.rs/tree/main/examples/wasm-yew) directory.
+## Timeseries Downsampling 
+
+In situations where the number of points of a timeseries is extremely large, generating a plot and visualizing it using plotly will be slow or not possible. 
+
+For such cases, it is ideal to use a downsampling method that preserves the visual characteristics of the timeseries. One such method is to use the Largest Triangle Three Bucket (LTTB) method. The MinMaxLTTB or classical LTTB method can be used to downsample the timeseries prior to generating the static HTML plots. An example of how this can be achieved can be found in [examples/downsampling](https://github.com/plotly/plotly.rs/tree/main/examples/downsampling) directory using the [minmaxlttb-rs](https://github.com/andrei-ng/minmaxlttb-rs) crate.
 
 # Crate Feature Flags
 

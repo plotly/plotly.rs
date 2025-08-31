@@ -27,3 +27,4 @@ Functionality that applies to the library as a whole is described in the next se
 - **[Shapes](./fundamentals/shapes.md)**: Adding shapes and annotations to plots
 - **[Themes](./fundamentals/themes.md)**: Customizing plot appearance with themes
 - **[Static Image Export](./fundamentals/static_image_export.md)**: Exporting plots to static images (PNG, JPEG, SVG, PDF) using WebDriver
+- **[Timeseries Downsampling](./fundamentals/timeseries_downsampling.md)**: Downsampling Timeseries for Visualization 
