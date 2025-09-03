@@ -66,22 +66,22 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
         .plot_background_color("#FFFFFF")
         .title(Title::new().x(0.05))
         .x_axis(
-            Axis::new()
+            Vec::from([Some(Box::new(Axis::new()
                 .auto_margin(true)
                 .grid_color("#EBF0F8")
                 .line_color("#EBF0F8")
                 // missing title.standoff = 15
                 .zero_line_color("#EBF0F8")
-                .zero_line_width(2),
+                .zero_line_width(2)))])
         )
         .y_axis(
-            Axis::new()
+            Vec::from([Some(Box::new(Axis::new()
                 .auto_margin(true)
                 .grid_color("#EBF0F8")
                 .line_color("#EBF0F8")
                 // missing title.standoff = 15
                 .zero_line_color("#EBF0F8")
-                .zero_line_width(2),
+                .zero_line_width(2)))])
         );
     Template::new().layout(layout_template)
 });
@@ -142,22 +142,26 @@ pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
         .plot_background_color("#111111")
         .title(Title::new().x(0.05))
         .x_axis(
-            Axis::new()
-                .auto_margin(true)
-                .grid_color("#283442")
-                .line_color("#506784")
-                // missing title.standoff = 15
-                .zero_line_color("#283442")
-                .zero_line_width(2),
+            Vec::from(
+                [Some(Box::new(Axis::new()
+                    .auto_margin(true)
+                    .grid_color("#283442")
+                    .line_color("#506784")
+                    // missing title.standoff = 15
+                    .zero_line_color("#283442")
+                    .zero_line_width(2)))]
+            )
         )
         .y_axis(
-            Axis::new()
-                .auto_margin(true)
-                .grid_color("#283442")
-                .line_color("#506784")
-                // missing title.standoff = 15
-                .zero_line_color("#283442")
-                .zero_line_width(2),
+            Vec::from(
+                [Some(Box::new(Axis::new()
+                    .auto_margin(true)
+                    .grid_color("#283442")
+                    .line_color("#506784")
+                    // missing title.standoff = 15
+                    .zero_line_color("#283442")
+                    .zero_line_width(2)))]
+            )
         );
     Template::new().layout(layout_template)
 });

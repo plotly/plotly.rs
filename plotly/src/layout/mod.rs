@@ -1,12 +1,18 @@
-use std::borrow::Cow;
-
-use plotly_derive::layout_structs;
 use plotly_derive::FieldSetter;
-use serde::Serialize;
+use serde::{Serialize, Serializer};
+use std::borrow::Cow;
+use std::collections::HashMap;
 use update_menu::UpdateMenu;
 
-use crate::color::Color;
-use crate::common::{Calendar, ColorScale, Font, Label, Orientation, Title};
+use crate::common::Domain;
+use crate::{
+    color::Color,
+    common::{
+        Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font, Label,
+        Orientation, TickFormatStop, TickMode, Title,
+    },
+    private::{NumOrString, NumOrStringCollection},
+};
 
 pub mod themes;
 pub mod update_menu;
@@ -23,6 +29,48 @@ mod rangebreaks;
 mod scene;
 mod shape;
 mod slider;
+
+fn serialize_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S, axis_prefix: &str) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let mut map = HashMap::new();
+    let axes = axes.as_ref().unwrap();
+
+    for (i, axis) in axes.iter().enumerate() {
+        let axe = axis.as_ref().unwrap();
+        let key = if i == 0 {
+            axis_prefix.to_string()
+        } else {
+            format!("{}{}", axis_prefix, i + 1)
+        };
+        map.insert(key, axe);
+    }
+
+    map.serialize(serializer)
+}
+
+fn serialize_x_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serialize_axes(axes, serializer, "xaxis")
+}
+
+fn serialize_y_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serialize_axes(axes, serializer, "yaxis")
+}
+
+
+fn serialize_z_axes<S>(axes: &Option<Vec<Option<Box<Axis>>>>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serialize_axes(axes, serializer, "zaxis")
+}
 
 // Re-export layout sub-module types
 pub use self::animation::{
@@ -279,54 +327,14 @@ pub struct LayoutFields {
     hover_label: Option<Label>,
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
-    #[serde(rename = "xaxis")]
-    x_axis: Option<Box<Axis>>,
-    #[serde(rename = "yaxis")]
-    y_axis: Option<Box<Axis>>,
-    #[serde(rename = "zaxis")]
-    z_axis: Option<Box<Axis>>,
-    #[serde(rename = "xaxis2")]
-    x_axis2: Option<Box<Axis>>,
-    #[serde(rename = "yaxis2")]
-    y_axis2: Option<Box<Axis>>,
-    #[serde(rename = "zaxis2")]
-    z_axis2: Option<Box<Axis>>,
-    #[serde(rename = "xaxis3")]
-    x_axis3: Option<Box<Axis>>,
-    #[serde(rename = "yaxis3")]
-    y_axis3: Option<Box<Axis>>,
-    #[serde(rename = "zaxis3")]
-    z_axis3: Option<Box<Axis>>,
-    #[serde(rename = "xaxis4")]
-    x_axis4: Option<Box<Axis>>,
-    #[serde(rename = "yaxis4")]
-    y_axis4: Option<Box<Axis>>,
-    #[serde(rename = "zaxis4")]
-    z_axis4: Option<Box<Axis>>,
-    #[serde(rename = "xaxis5")]
-    x_axis5: Option<Box<Axis>>,
-    #[serde(rename = "yaxis5")]
-    y_axis5: Option<Box<Axis>>,
-    #[serde(rename = "zaxis5")]
-    z_axis5: Option<Box<Axis>>,
-    #[serde(rename = "xaxis6")]
-    x_axis6: Option<Box<Axis>>,
-    #[serde(rename = "yaxis6")]
-    y_axis6: Option<Box<Axis>>,
-    #[serde(rename = "zaxis6")]
-    z_axis6: Option<Box<Axis>>,
-    #[serde(rename = "xaxis7")]
-    x_axis7: Option<Box<Axis>>,
-    #[serde(rename = "yaxis7")]
-    y_axis7: Option<Box<Axis>>,
-    #[serde(rename = "zaxis7")]
-    z_axis7: Option<Box<Axis>>,
-    #[serde(rename = "xaxis8")]
-    x_axis8: Option<Box<Axis>>,
-    #[serde(rename = "yaxis8")]
-    y_axis8: Option<Box<Axis>>,
-    #[serde(rename = "zaxis8")]
-    z_axis8: Option<Box<Axis>>,
+
+    #[serde(flatten, serialize_with = "serialize_x_axes")]
+    x_axis: Option<Vec<Option<Box<Axis>>>>,
+    #[serde(flatten, serialize_with = "serialize_y_axes")]
+    y_axis: Option<Vec<Option<Box<Axis>>>>,
+    #[serde(flatten, serialize_with = "serialize_z_axes")]
+    z_axis: Option<Vec<Option<Box<Axis>>>>,
+
     // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
     geo: Option<LayoutGeo>,
@@ -494,30 +502,8 @@ mod tests {
             .hover_label(Label::new())
             .grid(LayoutGrid::new())
             .calendar(Calendar::Jalali)
-            .x_axis(Axis::new())
-            .x_axis2(Axis::new())
-            .x_axis3(Axis::new())
-            .x_axis4(Axis::new())
-            .x_axis5(Axis::new())
-            .x_axis6(Axis::new())
-            .x_axis7(Axis::new())
-            .x_axis8(Axis::new())
-            .y_axis(Axis::new())
-            .y_axis2(Axis::new())
-            .y_axis3(Axis::new())
-            .y_axis4(Axis::new())
-            .y_axis5(Axis::new())
-            .y_axis6(Axis::new())
-            .y_axis7(Axis::new())
-            .y_axis8(Axis::new())
-            .z_axis(Axis::new())
-            .z_axis2(Axis::new())
-            .z_axis3(Axis::new())
-            .z_axis4(Axis::new())
-            .z_axis5(Axis::new())
-            .z_axis6(Axis::new())
-            .z_axis7(Axis::new())
-            .z_axis8(Axis::new())
+            .x_axis(xaxis)
+            .y_axis(yaxis)
             .annotations(vec![Annotation::new()])
             .shapes(vec![Shape::new()])
             .new_shape(NewShape::new())
@@ -661,22 +647,8 @@ mod tests {
             .template(Template::new())
             .grid(LayoutGrid::new())
             .calendar(Calendar::Jalali)
-            .x_axis(Axis::new())
-            .x_axis2(Axis::new())
-            .x_axis3(Axis::new())
-            .x_axis4(Axis::new())
-            .x_axis5(Axis::new())
-            .x_axis6(Axis::new())
-            .x_axis7(Axis::new())
-            .x_axis8(Axis::new())
-            .y_axis(Axis::new())
-            .y_axis2(Axis::new())
-            .y_axis3(Axis::new())
-            .y_axis4(Axis::new())
-            .y_axis5(Axis::new())
-            .y_axis6(Axis::new())
-            .y_axis7(Axis::new())
-            .y_axis8(Axis::new())
+            .x_axis(xaxis)
+            .y_axis(yaxis)
             .annotations(vec![Annotation::new()])
             .shapes(vec![Shape::new()])
             .new_shape(NewShape::new())
@@ -698,7 +670,7 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
-            .z_axis(Axis::new())
+            .z_axis(Vec::from([Some(Box::new(Axis::new()))]))
             .scene(LayoutScene::new());
 
         let expected = json!({

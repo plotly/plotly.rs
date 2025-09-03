@@ -61,10 +61,8 @@ fn simple_subplot_matches_x_axis(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
-// ANCHOR_END: simple_subplot_matches_x_axis
 
-// ANCHOR: simple_subplot_matches_y_axis
-fn simple_subplot_matches_y_axis(show: bool, file_name: &str) {
+fn simple_subplot_matches_y_axis() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -88,10 +86,8 @@ fn simple_subplot_matches_y_axis(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
-// ANCHOR_END: simple_subplot_matches_y_axis
 
-// ANCHOR: custom_sized_subplot
-fn custom_sized_subplot(show: bool, file_name: &str) {
+fn custom_sized_subplot() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
     let trace2 = Scatter::new(vec![20, 30, 40], vec![50, 60, 70])
         .name("trace2")
@@ -251,8 +247,7 @@ fn multiple_custom_sized_subplots(show: bool, file_name: &str) {
 // ANCHOR_END: multiple_custom_sized_subplots
 
 // Multiple Axes
-// ANCHOR: two_y_axes
-fn two_y_axes(show: bool, file_name: &str) {
+fn two_y_axes() {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![40, 50, 60]).name("trace1");
     let trace2 = Scatter::new(vec![2, 3, 4], vec![4, 5, 6])
         .name("trace2")
