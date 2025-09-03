@@ -10,7 +10,7 @@ pub(crate) fn field_setter_impl(input: DeriveInput) -> proc_macro::TokenStream {
         Ok(r) => r,
         Err(e) => {
             return proc_macro::TokenStream::from(
-                darling::Error::custom(format!("{}. {}", UNSUPPORTED_ERROR, e)).write_errors(),
+                darling::Error::custom(format!("{UNSUPPORTED_ERROR}. {e}")).write_errors(),
             )
         }
     };
@@ -213,7 +213,7 @@ impl FieldType {
         // Not the best implementation but works in practice
 
         let (type_str_parts, types) = _type_str_parts(field_ty);
-        if type_str_parts.first().map_or(false, |t| t != "Option") {
+        if type_str_parts.first().is_some_and(|t| t != "Option") {
             return FieldType::NotOption;
         }
 
@@ -263,8 +263,7 @@ impl FieldReceiver {
                 // Require a default
                 assert!(
                     self.default.is_some(),
-                    "Please provide #[field_setter(default=\"..\") for the field {}",
-                    field_ident
+                    "Please provide #[field_setter(default=\"..\") for the field {field_ident}"
                 );
                 let val: proc_macro2::TokenStream = self.default.as_ref().unwrap().parse().unwrap();
                 quote![
@@ -380,7 +379,7 @@ impl FieldReceiver {
                     }
                 }
                 let variant_name = Ident::new(
-                    &format!("Modify{}", variant_name),
+                    &format!("Modify{variant_name}"),
                     proc_macro2::Span::call_site(),
                 );
                 let serde_attrs = self.serde();
@@ -425,13 +424,13 @@ impl FieldReceiver {
         }) = &modify_enum
         {
             let modify_ident = Ident::new(
-                &format!("modify_{}", field_ident),
+                &format!("modify_{field_ident}"),
                 proc_macro2::Span::call_site(),
             );
             match kind {
                 Kind::Trace => {
                     let modify_all_ident = Ident::new(
-                        &format!("modify_all_{}", field_ident),
+                        &format!("modify_all_{field_ident}"),
                         proc_macro2::Span::call_site(),
                     );
 
@@ -467,7 +466,7 @@ impl FieldReceiver {
         let array_setter = match field_type {
             FieldType::OptionDimString | FieldType::OptionDimOther(..) => {
                 let array_ident = Ident::new(
-                    &format!("{}_array", field_ident),
+                    &format!("{field_ident}_array"),
                     proc_macro2::Span::call_site(),
                 );
                 quote! {
@@ -507,7 +506,7 @@ impl FieldReceiver {
                 attr.path()
                     .segments
                     .first()
-                    .map_or(false, |p| p.ident == name)
+                    .is_some_and(|p| p.ident == name)
             })
             .map(|attr| {
                 quote![

@@ -215,7 +215,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_box_mean() {
+    fn serialize_box_mean() {
         assert_eq!(to_value(BoxMean::True).unwrap(), json!(true));
         assert_eq!(to_value(BoxMean::False).unwrap(), json!(false));
         assert_eq!(to_value(BoxMean::StandardDeviation).unwrap(), json!("sd"));
@@ -223,7 +223,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_box_points() {
+    fn serialize_box_points() {
         assert_eq!(to_value(BoxPoints::All).unwrap(), json!("all"));
         assert_eq!(to_value(BoxPoints::Outliers).unwrap(), json!("outliers"));
         assert_eq!(to_value(BoxPoints::SuspectedOutliers).unwrap(), json!("suspectedoutliers"));
@@ -232,7 +232,7 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_quartile_method() {
+    fn serialize_quartile_method() {
         assert_eq!(to_value(QuartileMethod::Linear).unwrap(), json!("linear"));
         assert_eq!(to_value(QuartileMethod::Exclusive).unwrap(), json!("exclusive"));
         assert_eq!(to_value(QuartileMethod::Inclusive).unwrap(), json!("inclusive"));
@@ -240,14 +240,14 @@ mod tests {
 
     #[test]
     #[rustfmt::skip]
-    fn test_serialize_hover_on() {
+    fn serialize_hover_on() {
         assert_eq!(to_value(HoverOn::Boxes).unwrap(), json!("boxes"));
         assert_eq!(to_value(HoverOn::Points).unwrap(), json!("points"));
         assert_eq!(to_value(HoverOn::BoxesAndPoints).unwrap(), json!("boxes+points"));
     }
 
     #[test]
-    fn test_default_box_plot() {
+    fn default_box_plot() {
         let trace: BoxPlot<i32, i32> = BoxPlot::default();
         let expected = json!({"type": "box"}).to_string();
 
@@ -255,7 +255,7 @@ mod tests {
     }
 
     #[test]
-    fn test_box_plot_new() {
+    fn box_plot_new() {
         let trace = BoxPlot::new(vec![0.0, 0.1]);
         let expected = json!({
             "type": "box",
@@ -266,7 +266,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_box_plot() {
+    fn serialize_box_plot() {
         let trace = BoxPlot::new_xy(vec![1, 2, 3], vec![4, 5, 6])
             .alignment_group("alignment_group")
             .box_mean(BoxMean::StandardDeviation)

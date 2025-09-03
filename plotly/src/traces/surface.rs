@@ -207,7 +207,7 @@ mod tests {
     use crate::common::ColorScalePalette;
 
     #[test]
-    fn test_serialize_lighting() {
+    fn serialize_lighting() {
         let lighting = Lighting::new()
             .ambient(0.0)
             .diffuse(1.0)
@@ -227,7 +227,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_position() {
+    fn serialize_position() {
         let position = Position::new(0, 1, 2);
         let expected = json!({
             "x": 0,
@@ -239,7 +239,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_plane_project() {
+    fn serialize_plane_project() {
         let plane_project = PlaneProject::new().x(true).y(false).z(true);
         let expected = json!({
             "x": true,
@@ -251,7 +251,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_plane_contours() {
+    fn serialize_plane_contours() {
         let plane_contours = PlaneContours::new()
             .color("#123456")
             .highlight(true)
@@ -283,7 +283,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_surface_contours() {
+    fn serialize_surface_contours() {
         let surface_contours = SurfaceContours::new()
             .x(PlaneContours::new())
             .y(PlaneContours::new())
@@ -299,7 +299,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_default_surface() {
+    fn serialize_default_surface() {
         let trace = Surface::<i32, i32, i32>::default();
         let expected = json!({"type": "surface"});
 
@@ -307,7 +307,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_surface() {
+    fn serialize_surface() {
         let trace = Surface::new(vec![vec![0, 1]])
             .x(vec![2, 3])
             .y(vec![4, 5])

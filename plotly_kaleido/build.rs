@@ -30,14 +30,11 @@ const KALEIDO_URL: &str =
 const KALEIDO_URL: &str =
     "https://github.com/plotly/Kaleido/releases/download/v0.2.1/kaleido_mac_arm64.zip";
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 const KALEIDO_BIN: &str = "kaleido";
 
 #[cfg(target_os = "windows")]
 const KALEIDO_BIN: &str = "kaleido.exe";
-
-#[cfg(target_os = "macos")]
-const KALEIDO_BIN: &str = "kaleido";
 
 fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
     let file = fs::File::open(zip_file).unwrap();
@@ -47,12 +44,12 @@ fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
         let mut file = archive.by_index(i).unwrap();
         let outpath = file.mangled_name();
         let outpath = p.join(outpath);
-        println!("outpath: {:?}", outpath);
+        println!("outpath: {outpath:?}");
 
         {
             let comment = file.comment();
             if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
+                println!("File {i} comment: {comment}");
             }
         }
 
@@ -95,35 +92,57 @@ fn extract_zip(p: &Path, zip_file: &Path) -> Result<()> {
 }
 
 fn main() -> Result<()> {
-    let project_dirs = ProjectDirs::from("org", "plotly", "kaleido")
-        .expect("Could not create plotly_kaleido config directory.");
-    let dst: PathBuf = project_dirs.config_dir().into();
+    if cfg!(feature = "download") {
+        let project_dirs = ProjectDirs::from("org", "plotly", "kaleido")
+            .expect("Could not create Kaleido config directory path.");
+        let dst: PathBuf = project_dirs.config_dir().into();
 
-    let kaleido_binary = dst.join("bin").join(KALEIDO_BIN);
-    if kaleido_binary.exists() {
-        return Ok(());
+        let kaleido_binary = dst.join("bin").join(KALEIDO_BIN);
+
+        println!("cargo:rerun-if-changed=src/lib.rs");
+        println!(
+            "cargo::rerun-if-changed={}",
+            kaleido_binary.to_string_lossy()
+        );
+
+        println!(
+            "cargo:rustc-env=KALEIDO_COMPILE_TIME_DLD_PATH={}",
+            dst.to_string_lossy()
+        );
+
+        if kaleido_binary.exists() {
+            return Ok(());
+        }
+
+        let msg = format!(
+            "Downloaded Plotly Kaleido from {KALEIDO_URL} to '{}'",
+            dst.to_string_lossy()
+        );
+        println!("cargo::warning={msg}");
+
+        let p = PathBuf::from(env::var("OUT_DIR").unwrap());
+        let kaleido_zip_file = p.join("kaleido.zip");
+
+        let mut cmd = Command::new("cargo")
+            .args(["install", "ruget"])
+            .spawn()
+            .unwrap();
+        cmd.wait()?;
+
+        let mut cmd = Command::new("ruget")
+            .args([
+                KALEIDO_URL,
+                "-o",
+                kaleido_zip_file.as_path().to_str().unwrap(),
+            ])
+            .spawn()
+            .unwrap();
+        cmd.wait()?;
+
+        extract_zip(&dst, &kaleido_zip_file)?;
+    } else {
+        let msg = "'download' feature disabled. Please install Kaleido manually and make the environment variable 'KALEIDO_PATH' point to it.".to_string();
+        println!("cargo::warning={msg}");
     }
-
-    let p = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let kaleido_zip_file = p.join("kaleido.zip");
-
-    let mut cmd = Command::new("cargo")
-        .args(["install", "ruget"])
-        .spawn()
-        .unwrap();
-    cmd.wait()?;
-
-    let mut cmd = Command::new("ruget")
-        .args([
-            KALEIDO_URL,
-            "-o",
-            kaleido_zip_file.as_path().to_str().unwrap(),
-        ])
-        .spawn()
-        .unwrap();
-    cmd.wait()?;
-
-    extract_zip(&dst, &kaleido_zip_file)?;
-    println!("cargo:rerun-if-changed=src/lib.rs");
     Ok(())
 }

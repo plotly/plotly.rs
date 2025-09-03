@@ -3,9 +3,11 @@
 use std::env;
 use std::path::PathBuf;
 
+use chrono::{DateTime, Duration};
 use plotly::common::TickFormatStop;
 use plotly::layout::{Axis, RangeSelector, RangeSlider, SelectorButton, SelectorStep, StepMode};
 use plotly::{Candlestick, Layout, Ohlc, Plot, Scatter};
+use plotly_utils::write_example_to_html;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -38,7 +40,8 @@ fn load_apple_data() -> Vec<FinData> {
 }
 
 // Time Series and Date Axes
-fn time_series_plot_with_custom_date_range() {
+// ANCHOR: time_series_plot_with_custom_date_range
+fn time_series_plot_with_custom_date_range(show: bool, file_name: &str) {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -53,10 +56,15 @@ fn time_series_plot_with_custom_date_range() {
         .title("Manually Set Date Range");
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: time_series_plot_with_custom_date_range
 
-fn time_series_with_range_slider() {
+// ANCHOR: time_series_with_range_slider
+fn time_series_with_range_slider(show: bool, file_name: &str) {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -71,10 +79,15 @@ fn time_series_with_range_slider() {
         .title("Manually Set Date Range");
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: time_series_with_range_slider
 
-fn time_series_with_range_selector_buttons() {
+// ANCHOR: time_series_with_range_selector_buttons
+fn time_series_with_range_selector_buttons(show: bool, file_name: &str) {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -113,10 +126,15 @@ fn time_series_with_range_selector_buttons() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: time_series_with_range_selector_buttons
 
-fn customizing_tick_label_formatting_by_zoom_level() {
+// ANCHOR: customizing_tick_label_formatting_by_zoom_level
+fn customizing_tick_label_formatting_by_zoom_level(show: bool, file_name: &str) {
     let data = load_apple_data();
     let date: Vec<String> = data.iter().map(|d| d.date.clone()).collect();
     let high: Vec<f64> = data.iter().map(|d| d.high).collect();
@@ -152,11 +170,16 @@ fn customizing_tick_label_formatting_by_zoom_level() {
     );
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: customizing_tick_label_formatting_by_zoom_level
 
 // Candlestick Charts
-fn simple_candlestick_chart() {
+// ANCHOR: simple_candlestick_chart
+fn simple_candlestick_chart(show: bool, file_name: &str) {
     let x = vec![
         "2017-01-04",
         "2017-01-05",
@@ -219,11 +242,16 @@ fn simple_candlestick_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: simple_candlestick_chart
 
 // OHLC Charts
-fn simple_ohlc_chart() {
+// ANCHOR: simple_ohlc_chart
+fn simple_ohlc_chart(show: bool, file_name: &str) {
     let x = vec![
         "2017-01-04",
         "2017-01-05",
@@ -286,21 +314,204 @@ fn simple_ohlc_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: simple_ohlc_chart
+
+// ANCHOR: series_with_gaps_for_weekends_and_holidays
+fn series_with_gaps_for_weekends_and_holidays(show: bool, file_name: &str) {
+    let data = load_apple_data();
+
+    // Filter data for the specific date range as in the Python example
+    let filtered_data: Vec<&FinData> = data
+        .iter()
+        .filter(|d| d.date.as_str() >= "2015-12-01" && d.date.as_str() <= "2016-01-15")
+        .collect();
+
+    let date: Vec<String> = filtered_data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec<f64> = filtered_data.iter().map(|d| d.high).collect();
+
+    let trace = Scatter::new(date, high).mode(plotly::common::Mode::Markers);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let layout = Layout::new()
+        .title("Series with Weekend and Holiday Gaps")
+        .x_axis(
+            Axis::new()
+                .range(vec!["2015-12-01", "2016-01-15"])
+                .title("Date"),
+        )
+        .y_axis(Axis::new().title("Price"));
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: series_with_gaps_for_weekends_and_holidays
+
+// ANCHOR: hiding_weekends_and_holidays_with_rangebreaks
+fn hiding_weekends_and_holidays_with_rangebreaks(show: bool, file_name: &str) {
+    let data = load_apple_data();
+
+    // Filter data for the specific date range as in the Python example
+    let filtered_data: Vec<&FinData> = data
+        .iter()
+        .filter(|d| d.date.as_str() >= "2015-12-01" && d.date.as_str() <= "2016-01-15")
+        .collect();
+
+    let date: Vec<String> = filtered_data.iter().map(|d| d.date.clone()).collect();
+    let high: Vec<f64> = filtered_data.iter().map(|d| d.high).collect();
+
+    let trace = Scatter::new(date, high).mode(plotly::common::Mode::Markers);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let layout = Layout::new()
+        .title("Hide Weekend and Holiday Gaps with rangebreaks")
+        .x_axis(
+            Axis::new()
+                .range(vec!["2015-12-01", "2016-01-15"])
+                .title("Date")
+                .range_breaks(vec![
+                    plotly::layout::RangeBreak::new()
+                        .bounds("sat", "mon"), // hide weekends
+                    plotly::layout::RangeBreak::new()
+                        .values(vec!["2015-12-25", "2016-01-01"]), // hide Christmas and New Year's
+                ]),
+        )
+        .y_axis(Axis::new().title("Price"));
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: hiding_weekends_and_holidays_with_rangebreaks
+
+// Helper to generate random walk data for all hours in a week
+fn generate_business_hours_data() -> (Vec<String>, Vec<f64>) {
+    use rand::Rng;
+    use rand::SeedableRng;
+    use rand_chacha::ChaCha8Rng;
+
+    let mut dates = Vec::new();
+    let mut values = Vec::new();
+    let mut current_value = 0.0;
+    let mut rng = ChaCha8Rng::seed_from_u64(42);
+    let start_date = DateTime::parse_from_rfc3339("2020-03-02T00:00:00Z").unwrap();
+    for day in 0..5 {
+        // Monday to Friday
+        for hour in 0..24 {
+            let current_date = start_date + Duration::days(day) + Duration::hours(hour);
+            dates.push(current_date.format("%Y-%m-%d %H:%M:%S").to_string());
+            current_value += (rng.gen::<f64>() - 0.5) * 2.0;
+            values.push(current_value);
+        }
+    }
+    (dates, values)
 }
 
+// ANCHOR: series_with_non_business_hours_gaps
+fn series_with_non_business_hours_gaps(show: bool, file_name: &str) {
+    use chrono::NaiveDateTime;
+    use chrono::Timelike;
+    let (dates, all_values) = generate_business_hours_data();
+    let mut values = Vec::with_capacity(all_values.len());
+
+    for (date_str, v) in dates.iter().zip(all_values.iter()) {
+        // Parse the date string to extract hour
+        // Format is "2020-03-02 09:00:00"
+        if let Ok(datetime) = NaiveDateTime::parse_from_str(date_str, "%Y-%m-%d %H:%M:%S") {
+            let hour = datetime.hour();
+            if (9..17).contains(&hour) {
+                values.push(*v);
+            } else {
+                values.push(f64::NAN);
+            }
+        } else {
+            values.push(f64::NAN);
+        }
+    }
+
+    let trace = Scatter::new(dates, values).mode(plotly::common::Mode::Markers);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    let layout = Layout::new()
+        .title("Series with Non-Business Hour Gaps")
+        .x_axis(Axis::new().title("Time").tick_format("%b %d, %Y %H:%M"))
+        .y_axis(Axis::new().title("Value"));
+    plot.set_layout(layout);
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: series_with_non_business_hours_gaps
+
+// ANCHOR: hiding_non_business_hours_with_rangebreaks
+fn hiding_non_business_hours_with_rangebreaks(show: bool, file_name: &str) {
+    let (dates, values) = generate_business_hours_data();
+    let trace = Scatter::new(dates, values).mode(plotly::common::Mode::Markers);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    let layout = Layout::new()
+        .title("Hide Non-Business Hour Gaps with rangebreaks")
+        .x_axis(
+            Axis::new()
+                .title("Time")
+                .tick_format("%b %d, %Y %H:%M")
+                .range_breaks(vec![
+                    plotly::layout::RangeBreak::new()
+                        .bounds(17, 9)
+                        .pattern("hour"), // hide hours outside of 9am-5pm
+                ]),
+        )
+        .y_axis(Axis::new().title("Value"));
+    plot.set_layout(layout);
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: hiding_non_business_hours_with_rangebreaks
+
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
     // Time Series and Date Axes
-    // time_series_plot_with_custom_date_range();
-    // time_series_with_range_slider();
-    // time_series_with_range_selector_buttons();
-    // customizing_tick_label_formatting_by_zoom_level();
+
+    time_series_plot_with_custom_date_range(false, "time_series_plot_with_custom_date_range");
+
+    time_series_with_range_slider(false, "time_series_with_range_slider");
+
+    time_series_with_range_selector_buttons(false, "time_series_with_range_selector_buttons");
+
+    customizing_tick_label_formatting_by_zoom_level(
+        false,
+        "customizing_tick_label_formatting_by_zoom_level",
+    );
 
     // Candlestick Charts
-    // simple_candlestick_chart();
+    simple_candlestick_chart(false, "simple_candlestick_chart");
 
     // OHLC Charts
-    // simple_ohlc_chart();
+    simple_ohlc_chart(false, "simple_ohlc_chart");
+
+    // Rangebreaks usage
+    series_with_gaps_for_weekends_and_holidays(false, "series_with_gaps_for_weekends_and_holidays");
+    hiding_weekends_and_holidays_with_rangebreaks(
+        false,
+        "hiding_weekends_and_holidays_with_rangebreaks",
+    );
+    series_with_non_business_hours_gaps(false, "series_with_non_business_hours_gaps");
+    hiding_non_business_hours_with_rangebreaks(false, "hiding_non_business_hours_with_rangebreaks");
 }

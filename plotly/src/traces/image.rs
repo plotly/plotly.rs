@@ -217,7 +217,7 @@ pub struct Image {
     dy: Option<f64>,
 
     /// Specifies the data URI of the image to be visualized. The URI consists
-    /// of "data:image/[<media subtype>][;base64],<data>".
+    /// of "data:image/[\<media subtype\>]\[;base64\],\<data\>".
     source: Option<String>,
 
     /// Sets text elements associated with each (x,y) pair. If a single string,
@@ -245,12 +245,12 @@ pub struct Image {
     /// inserted using %{variable}, for example "y: %{y}". Numbers are
     /// formatted using d3-format's syntax %{variable:d3-format}, for example
     /// "Price: %{y:$.2f}".
-    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format for details
+    /// <https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format> for details
     /// on the formatting syntax. Dates are formatted using d3-time-format's
     /// syntax %{variable|d3-time-format}, for example "Day:
-    /// %{2019-01-01|%A}". https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format for details
+    /// %{2019-01-01|%A}". <https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format> for details
     /// on the date formatting syntax. The variables available in
-    /// `hovertemplate` are the ones emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event-data.
+    /// `hovertemplate` are the ones emitted as event data described at this link <https://plotly.com/javascript/plotlyjs-events/#event-data>.
     /// Additionally, every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available. Anything contained in tag
     /// `<extra>` is displayed in the secondary box, for example
@@ -374,7 +374,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_pixel_color() {
+    fn serialize_pixel_color() {
         assert_eq!(
             to_value(PixelColor::Color3(255, 100, 150)).unwrap(),
             json!([255, 100, 150])
@@ -386,7 +386,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_color_model() {
+    fn serialize_color_model() {
         assert_eq!(to_value(ColorModel::RGB).unwrap(), json!("rgb"));
         assert_eq!(to_value(ColorModel::RGBA).unwrap(), json!("rgba"));
         assert_eq!(to_value(ColorModel::RGBA256).unwrap(), json!("rgba256"));
@@ -395,13 +395,13 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_z_smooth() {
+    fn serialize_z_smooth() {
         assert_eq!(to_value(ZSmooth::Fast).unwrap(), json!("fast"));
         assert_eq!(to_value(ZSmooth::False).unwrap(), json!(false));
     }
 
     #[test]
-    fn test_serialize_image() {
+    fn serialize_image() {
         let b = Rgba::new(0, 0, 0, 0.5);
         let w = Rgba::new(255, 255, 255, 1.0);
         let image = Image::new(vec![vec![b, w, b, w, b], vec![w, b, w, b, w]])

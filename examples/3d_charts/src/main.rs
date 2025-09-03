@@ -7,10 +7,12 @@ use plotly::{
     layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
     Mesh3D, Plot, Scatter3D, Surface,
 };
+use plotly_utils::write_example_to_html;
 use rand::Rng;
 
 // 3D Scatter Plots
-fn simple_scatter3d_plot() {
+// ANCHOR: simple_scatter3d_plot
+fn simple_scatter3d_plot(show: bool, file_name: &str) {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -20,10 +22,15 @@ fn simple_scatter3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: simple_scatter3d_plot
 
-fn customized_scatter3d_plot() {
+// ANCHOR: customized_scatter3d_plot
+fn customized_scatter3d_plot(show: bool, file_name: &str) {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -108,11 +115,16 @@ fn customized_scatter3d_plot() {
         .height(500);
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: customized_scatter3d_plot
 
 // 3D Line Plots
-fn simple_line3d_plot() {
+// ANCHOR: simple_line3d_plot
+fn simple_line3d_plot(show: bool, file_name: &str) {
     let n: usize = 100;
     let t: Vec<f64> = Array::linspace(0., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = t.iter().map(|x| x.sin()).collect();
@@ -122,18 +134,23 @@ fn simple_line3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: simple_line3d_plot
 
 // 3D Surface Plot
-fn surface_plot() {
+// ANCHOR: surface_plot
+fn surface_plot(show: bool, file_name: &str) {
     let n: usize = 100;
     let x: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
     let y: Vec<f64> = Array::linspace(-10., 10., n).into_raw_vec_and_offset().0;
-    let z: Vec<Vec<f64>> = x
+    let z: Vec<Vec<f64>> = y
         .iter()
         .map(|i| {
-            y.iter()
+            x.iter()
                 .map(|j| 1.0 / (j * j + 5.0) * j.sin() + 1.0 / (i * i + 5.0) * i.cos())
                 .collect()
         })
@@ -143,17 +160,22 @@ fn surface_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: surface_plot
 
-fn mesh_3d_plot() {
+// ANCHOR: mesh_3d_plot
+fn mesh_3d_plot(show: bool, file_name: &str) {
     let trace = Mesh3D::new(
         vec![0, 1, 2, 0],
         vec![0, 0, 1, 2],
         vec![0, 2, 0, 1],
-        vec![0, 0, 0, 1],
-        vec![1, 2, 3, 2],
-        vec![2, 3, 1, 3],
+        Some(vec![0, 0, 0, 1]),
+        Some(vec![1, 2, 3, 2]),
+        Some(vec![2, 3, 1, 3]),
     )
     .intensity(vec![0.0, 0.33, 0.66, 1.0])
     .color_scale(ColorScale::Palette(ColorScalePalette::Rainbow));
@@ -161,10 +183,15 @@ fn mesh_3d_plot() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: mesh_3d_plot
 
-fn colorscale_plot() {
+// ANCHOR: colorscale_plot
+fn colorscale_plot(show: bool, file_name: &str) {
     let mut plot = Plot::new();
 
     let x = (0..100)
@@ -192,8 +219,8 @@ fn colorscale_plot() {
     let _color: Vec<usize> = (0..z.len()).collect();
     let _color: Vec<u8> = (0..z.len()).map(|x| x as u8).collect();
     let _color: Vec<i16> = {
-        let mut rng = rand::thread_rng();
-        (0..z.len()).map(|_| rng.gen_range(0..100)).collect()
+        let mut rng = rand::rng();
+        (0..z.len()).map(|_| rng.random_range(0..100)).collect()
     };
 
     let color_max = color.iter().fold(f64::MIN, |acc, x| acc.max(*x as f64));
@@ -226,21 +253,24 @@ fn colorscale_plot() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: colorscale_plot
 
 fn main() {
-    // Uncomment any of these lines to display the example.
-
+    // Change false to true on any of these lines to display the example.
     // Scatter3D Plots
-    // simple_scatter3d_plot();
-    // simple_line3d_plot();
-    // customized_scatter3d_plot();
-    // colorscale_plot();
+    simple_scatter3d_plot(false, "simple_scatter3d_plot");
+    simple_line3d_plot(false, "simple_line3d_plot");
+    customized_scatter3d_plot(false, "customized_scatter3d_plot");
+    colorscale_plot(false, "colorscale_plot");
 
     // Surface Plots
-    // surface_plot();
+    surface_plot(false, "surface_plot");
 
     // Mesh Plots
-    // mesh_3d_plot();
+    mesh_3d_plot(false, "mesh_3d_plot");
 }

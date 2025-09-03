@@ -3,7 +3,7 @@
         <img src="https://img.shields.io/badge/Plotly.rs-main-brightgreen" alt="build status">
     </a>
     <a href="https://github.com/plotly/plotly.rs/actions?query=branch%3Amain" style="text-decoration: none!important;">
-        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/ci.yml?branch=main" alt="Build status">
+        <img src="https://img.shields.io/github/actions/workflow/status/plotly/plotly.rs/build.yml?branch=main" alt="Build status">
     </a>
     <a href="https://crates.io/crates/plotly">
         <img src="https://img.shields.io/crates/v/plotly.svg" alt="Crates.io">
@@ -33,4 +33,4 @@ Contributions are always welcomed, no matter how large or small. Refer to the [c
 
 Plotly.rs is distributed under the terms of the MIT license.
 
-See [LICENSE-MIT](https://github.com/plotly/plotly.rs/tree/main/LICENSE-MIT), and [COPYRIGHT](https://github.com/plotly/plotly.rs/tree/main/COPYRIGHT) for details.
+See [LICENSE](https://github.com/plotly/plotly.rs/tree/main/LICENSE)

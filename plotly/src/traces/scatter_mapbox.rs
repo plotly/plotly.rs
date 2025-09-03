@@ -148,12 +148,12 @@ where
     /// inserted using %{variable}, for example "y: %{y}". Numbers are
     /// formatted using d3-format's syntax %{variable:d3-format}, for example
     /// "Price: %{y:$.2f}".
-    /// https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format for details
+    /// <https://github.com/d3/d3-3.x-api-reference/blob/master/Formatting.md#d3_format> for details
     /// on the formatting syntax. Dates are formatted using d3-time-format's
     /// syntax %{variable|d3-time-format}, for example "Day:
-    /// %{2019-01-01|%A}". https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format for details
+    /// %{2019-01-01|%A}". <https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md#format> for details
     /// on the date formatting syntax. The variables available in
-    /// `hovertemplate` are the ones emitted as event data described at this link https://plotly.com/javascript/plotlyjs-events/#event-data.
+    /// `hovertemplate` are the ones emitted as event data described at this link <https://plotly.com/javascript/plotlyjs-events/#event-data>.
     /// Additionally, every attributes that can be specified per-point (the ones
     /// that are `arrayOk: true`) are available. Anything contained in tag
     /// `<extra>` is displayed in the secondary box, for example
@@ -290,13 +290,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_serialize_fill() {
+    fn serialize_fill() {
         assert_eq!(to_value(Fill::None).unwrap(), json!("none"));
         assert_eq!(to_value(Fill::ToSelf).unwrap(), json!("toself"));
     }
 
     #[test]
-    fn test_serialize_selection() {
+    fn serialize_selection() {
         let selection = Selection::new().color("#123456").opacity(0.5).size(6);
         let expected = json!({"marker": {"color": "#123456", "opacity": 0.5, "size": 6}});
 
@@ -304,7 +304,7 @@ mod tests {
     }
 
     #[test]
-    fn test_serialize_scatter_mapbox() {
+    fn serialize_scatter_mapbox() {
         let scatter_mapbox = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
             .name("name")
             .visible(Visible::True)

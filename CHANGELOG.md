@@ -3,6 +3,93 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.4] - 2025-07-17
+
+### Fixed  
+
+- [[#341](https://github.com/plotly/plotly.rs/pull/341)] Fix documentation related to `wasm` support 
+
+### Changed
+- [[#339](https://github.com/plotly/plotly.rs/pull/339)] Replace default Windows app with `explorer`
+
+## [0.13.3] - 2025-07-12
+
+### Changed
+- [[#335](https://github.com/plotly/plotly.rs/pull/335)] Add minimal animation support 
+
+## [0.13.2] - 2025-07-12
+
+### Fixed  
+- [[#336](https://github.com/plotly/plotly.rs/pull/336)] Fix `plotly_static` docs.rs build
+- [[#327](https://github.com/plotly/plotly.rs/pull/327)] Fix book broken link
+
+## [0.13.1] - 2025-07-07
+
+### Fixed
+- [[#326](https://github.com/plotly/plotly.rs/pull/326)] Fix book badges
+
+
+## [0.13.0] - 2025-07-07
+
+### Changed
+- [[#277](https://github.com/plotly/plotly.rs/pull/277)] Removed `wasm` feature flag and put everything behind target specific dependencies. Added `.cargo/config.toml` for configuration flags needed by `getrandom` version 0.3 on `wasm` targets.
+- [[#281](https://github.com/plotly/plotly.rs/pull/281)] Update to askama 0.13.0
+- [[#287](https://github.com/plotly/plotly.rs/pull/287)] Added functionality for callbacks (using wasm)
+- [[#289](https://github.com/plotly/plotly.rs/pull/289)] Fixes Kaleido static export for MacOS targets by removing `--disable-gpu` flag for MacOS 
+- [[#291](https://github.com/plotly/plotly.rs/pull/291)] Remove `--disable-gpu` flag for Kaleido static-image generation for all targets. 
+- [[#299](https://github.com/plotly/plotly.rs/pull/299)] Added customdata field to HeatMap
+- [[#303](https://github.com/plotly/plotly.rs/pull/303)] Split layout mod.rs into modules
+- [[#304](https://github.com/plotly/plotly.rs/pull/304)] Refactored examples to allow for generation of full html files 
+- [[#320](https://github.com/plotly/plotly.rs/pull/320)] Make offline_js_sources function `pub`
+- [[#321](https://github.com/plotly/plotly.rs/pull/321)] Make 'online_cdn_js' function also `pub` for consistenccy
+
+### Added
+- [[#311](https://github.com/plotly/plotly.rs/pull/311)] Add extra themes
+- [[#312](https://github.com/plotly/plotly.rs/pull/312)] Add rangebreak to axis
+- [[#313](https://github.com/plotly/plotly.rs/pull/313)] Add example of subplots with multiple traces
+- [[#314](https://github.com/plotly/plotly.rs/pull/314)] Add axis range bounds support
+- [[#317](https://github.com/plotly/plotly.rs/pull/317)] Show rangebreak usage with ints
+- [[#318](https://github.com/plotly/plotly.rs/pull/318)] Add slider support
+- [[#319](https://github.com/plotly/plotly.rs/pull/319)] Introduce `plotly_static` package for static export of plots using WebDriver driven browsers 
+
+
+### Fixed
+- [[#284](https://github.com/plotly/plotly.rs/pull/284)]  Allow plotly package to be compiled for android 
+- [[#298](https://github.com/plotly/plotly.rs/pull/298)]  Added support for layout axis scaleratio
+- [[#301](https://github.com/plotly/plotly.rs/pull/301)]  Added ScatterGeo trace and LayoutGeo support 
+
+## [0.12.1] - 2025-01-02
+### Fixed
+- [[#269](https://github.com/plotly/plotly.rs/pull/269)] Fix publishing to crates.io issue
+
+## [0.12.0] - 2025-01-02
+### Changed
+- [[#256](https://github.com/plotly/plotly.rs/pull/256)] Bump Cargo.toml edition to 2021
+- [[#261](https://github.com/plotly/plotly.rs/pull/261)] Updated code of conduct
+
+### Fixed
+- [[#265](https://github.com/plotly/plotly.rs/pull/265)] Add Pie Chart trace
+- [[#264](https://github.com/plotly/plotly.rs/issues/264)] Derive Deserialize on NamedColor, Rgb and Rgba
+- [[#216](https://github.com/plotly/plotly.rs/issues/216)] Opt out of downloading Kaleido binaries and allow users to set Kaleido path via environment variable
+- [[#259](https://github.com/plotly/plotly.rs/issues/259)] Mesh3d::new() has wrong signature
+- [[#175](https://github.com/plotly/plotly.rs/issues/175)] Put multiple subplots in the same html - added an example using `build_html` crate.
+- [[#228](https://github.com/plotly/plotly.rs/issues/228)] Redraw function seems to be broken - added example on generating responsive plots.
+
+## [0.11.0] - 2024-12-06
+### Changed
+- [[#251](https://github.com/plotly/plotly.rs/pull/251)] Expose image data as String with `to_base64` and `to_svg` using Kaleido
+- [[#245](https://github.com/plotly/plotly.rs/pull/245)] Change Contours size to be `f64` instead of `usize`
+- [[#243](https://github.com/plotly/plotly.rs/pull/243)] Made `plotly_embed_js` embed all JS scripts when enabled.
+   Renamed `use_cdn_plotly` to `use_cdn_js`.
+
+### Fixed
+- [[#248](https://github.com/plotly/plotly.rs/issues/248)] Book recipes do not render graphs
+- [[#247](https://github.com/plotly/plotly.rs/issues/247)] Add function to export image (with Kaleido) as a b64 string
+- [[#246](https://github.com/plotly/plotly.rs/pull/246)] Expose pattern fill api for histograms and bar charts
+- [[#244](https://github.com/plotly/plotly.rs/pull/244)] Fix swapped x and y in the examples.
+- [[#242](https://github.com/plotly/plotly.rs/issues/242)] Disable request for tex-svg.js file
+- [[#237](https://github.com/plotly/plotly.rs/issues/237)] Add Categorical Axis ordering.
+
 ## [0.10.0] - 2024-09-16
 ### Added
 - [[#231](https://github.com/plotly/plotly.rs/pull/231)] Added new `plotly_embed_js` feature to reduce binary sizes by not embedding `plotly.min.js` in the library unless explicitly enabled via the feature flag. Deprecates `use_local_plotly` in favor of explicit opt-in via the feature flag and introduce method `use_cdn_plotly` to allow users to use CDN version even behind the `plotly_embed_js` feature flag.
@@ -10,7 +97,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 - [[#230](https://github.com/plotly/plotly.rs/pull/230)] Make Bar chart `width` and `offset` use `f64` values.
 
-## [0.10.0] - 2024-09-06
+## [0.9.1] - 2024-09-06
 ### Added
 - [[#217](https://github.com/plotly/plotly.rs/pull/217)] Added show_html(filename) method to bypass situations where accessing default `/tmp` is not possible, e.g., with in SNAP Firefox
 - [[#227](https://github.com/plotly/plotly.rs/pull/227)] Switch from HTML template render from `askama` to `rinja`
@@ -25,7 +112,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#154](https://github.com/plotly/plotly.rs/pull/154)] Improve ergonomics of `Title` and `LegendGroupTitle` structs: `new` method now takes no arguments as per other structs, whilst a new `with_text()` constructor is added for convenience. Where other structs contain a `Title` (and `LegendGroupTitle`), users  can now call the `title()` (and `legend_group_title()`) method with anything that `impl`s `Into<Title>`, viz. `String`, `&String`, `&str` and `Title`.
 - [[#157](https://github.com/plotly/plotly.rs/pull/157)] Fix `HeatMap`'s setters for correctly setting `zmin`, `zmax` and `zmin` independent of `Z` input type.
 - [[#159](https://github.com/plotly/plotly.rs/pull/159)] Make `heat_map` module public to expose `Smoothing enum`.
-- [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` settter.
+- [[#161](https://github.com/plotly/plotly.rs/pull/161)] Added `Axis` `scaleanchor` setter.
 - [[#163](https://github.com/plotly/plotly.rs/pull/163)] Added `DensityMapbox`.
 - [[#166](https://github.com/plotly/plotly.rs/pull/166)] Added subplot example with multiple titles.
 - [[#178](https://github.com/plotly/plotly.rs/pull/178)] Fix setter for `Axis::matches` to take string arg.
@@ -58,7 +145,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [0.8.1] - 2022-09-25
 ### Added
-- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contibuted by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/plotly/plotly.rs/pull/99).
+- Button support (i.e. [updatemenus](https://plotly.com/javascript/reference/layout/updatemenus/)) contributed by [@sreenathkrishnan](https://github.com/sreenathkrishnan). Details and examples in this well written PR [#99](https://github.com/plotly/plotly.rs/pull/99).
 - Internally, there is now a `plotly-derive` crate which defines a `FieldSetter` procedural macro. This massively cuts down the amount of code duplication by generating the setter methods based on the struct fields. Again thanks to @sreenathkrishnan for this effort.
 
 ## [0.8.0] - 2022-08-26

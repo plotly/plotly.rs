@@ -4,8 +4,9 @@ use ndarray::{Array, Ix1, Ix2};
 use plotly::common::Mode;
 use plotly::ndarray::ArrayTraces;
 use plotly::{Plot, Scatter};
+use plotly_utils::write_example_to_html;
 
-fn single_ndarray_trace() {
+fn single_ndarray_trace(show: bool, file_name: &str) {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let ys: Array<f64, Ix1> = t.iter().map(|v| (*v).powf(2.)).collect();
@@ -15,10 +16,13 @@ fn single_ndarray_trace() {
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn multiple_ndarray_traces_over_columns() {
+fn multiple_ndarray_traces_over_columns(show: bool, file_name: &str) {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
@@ -38,10 +42,13 @@ fn multiple_ndarray_traces_over_columns() {
     let mut plot = Plot::new();
     plot.add_traces(traces);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
-fn multiple_ndarray_traces_over_rows() {
+fn multiple_ndarray_traces_over_rows(show: bool, file_name: &str) {
     let n: usize = 11;
     let t: Array<f64, Ix1> = Array::range(0., 10., 10. / n as f64);
     let mut ys: Array<f64, Ix2> = Array::zeros((11, 11));
@@ -61,13 +68,15 @@ fn multiple_ndarray_traces_over_rows() {
     let mut plot = Plot::new();
     plot.add_traces(traces);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
 
 fn main() {
-    // Uncomment any of these lines to display the example.
-
-    // single_ndarray_trace();
-    // multiple_ndarray_traces_over_columns();
-    // multiple_ndarray_traces_over_rows();
+    // Change false to true on any of these lines to display the example.
+    single_ndarray_trace(false, "single_ndarray_trace");
+    multiple_ndarray_traces_over_columns(false, "multiple_ndarray_traces_over_columns");
+    multiple_ndarray_traces_over_rows(false, "multiple_ndarray_traces_over_rows");
 }

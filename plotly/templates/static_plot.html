@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="en">
+
     <head>
         <meta charset="utf-8" />
+    {{js_scripts}}
     </head>
+
     <body>
         <div>
-            <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-
-           {{plotly_js_source}}
 
             <div id="plotly-html-element" hidden></div>
-            <img id="plotly-img-element"></img>
+            <img class="plotly-img-element" id="plotly-img-element"></img>
 
             <script type="module">
                 const graph_div = document.getElementById("plotly-html-element");
                 await Plotly.newPlot(graph_div, {{ plot|tojson|safe }});
-                
+
                 const img_element = document.getElementById("plotly-img-element");
                 const data_url = await Plotly.toImage(
                     graph_div,
@@ -30,4 +30,5 @@
             </script>
         </div>
     </body>
+
 </html>

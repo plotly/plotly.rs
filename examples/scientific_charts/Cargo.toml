@@ -6,3 +6,4 @@ edition = "2021"
 
 [dependencies]
 plotly = { path = "../../plotly" }
+plotly_utils = { path = "../plotly_utils" }

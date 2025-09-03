@@ -9,10 +9,11 @@ use plotly::{
     },
     Bar, Plot, Scatter,
 };
-use rand::thread_rng;
+use plotly_utils::write_example_to_html;
 use rand_distr::{num_traits::Float, Distribution, Normal};
 
-fn filled_area_chart() {
+// ANCHOR: filled_area_chart
+fn filled_area_chart(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![0, 1, 2, 0], vec![0, 2, 0, 0]).fill(Fill::ToSelf);
     let trace2 =
         Scatter::new(vec![3, 3, 5, 5, 3], vec![0.5, 1.5, 1.5, 0.5, 0.5]).fill(Fill::ToSelf);
@@ -20,12 +21,16 @@ fn filled_area_chart() {
     let mut plot = Plot::new();
     plot.add_trace(trace1);
     plot.add_trace(trace2);
-    println!("{}", plot.to_json());
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: filled_area_chart
 
-fn vertical_and_horizontal_lines_positioned_relative_to_axes() {
+// ANCHOR: vertical_and_horizontal_lines_positioned_relative_to_axes
+fn vertical_and_horizontal_lines_positioned_relative_to_axes(show: bool, file_name: &str) {
     let trace = Scatter::new(vec![2.0, 3.5, 6.0], vec![1.0, 1.5, 1.0])
         .text_array(vec![
             "Vertical Line",
@@ -83,10 +88,15 @@ fn vertical_and_horizontal_lines_positioned_relative_to_axes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: vertical_and_horizontal_lines_positioned_relative_to_axes
 
-fn lines_positioned_relative_to_the_plot_and_to_the_axes() {
+// ANCHOR: lines_positioned_relative_to_the_plot_and_to_the_axes
+fn lines_positioned_relative_to_the_plot_and_to_the_axes(show: bool, file_name: &str) {
     let trace = Scatter::new(vec![2.0, 6.0], vec![1.0, 1.0])
         .text_array(vec![
             "Line positioned relative to the plot",
@@ -126,10 +136,15 @@ fn lines_positioned_relative_to_the_plot_and_to_the_axes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: lines_positioned_relative_to_the_plot_and_to_the_axes
 
-fn creating_tangent_lines_with_shapes() {
+// ANCHOR: creating_tangent_lines_with_shapes
+fn creating_tangent_lines_with_shapes(show: bool, file_name: &str) {
     let x0 = Array::linspace(1.0, 3.0, 200).into_raw_vec_and_offset().0;
     let y0 = x0.iter().map(|v| *v * (v.powf(2.)).sin() + 1.).collect();
 
@@ -181,10 +196,15 @@ fn creating_tangent_lines_with_shapes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: creating_tangent_lines_with_shapes
 
-fn rectangles_positioned_relative_to_the_axes() {
+// ANCHOR: rectangles_positioned_relative_to_the_axes
+fn rectangles_positioned_relative_to_the_axes(show: bool, file_name: &str) {
     let trace = Scatter::new(vec![1.5, 4.5], vec![0.75, 0.75])
         .text_array(vec!["Unfilled Rectangle", "Filled Rectangle"])
         .mode(Mode::Text);
@@ -222,10 +242,15 @@ fn rectangles_positioned_relative_to_the_axes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: rectangles_positioned_relative_to_the_axes
 
-fn rectangle_positioned_relative_to_the_plot_and_to_the_axes() {
+// ANCHOR: rectangle_positioned_relative_to_the_plot_and_to_the_axes
+fn rectangle_positioned_relative_to_the_plot_and_to_the_axes(show: bool, file_name: &str) {
     let trace = Scatter::new(vec![1.5, 3.], vec![2.5, 2.5])
         .text_array(vec![
             "Rectangle reference to the plot",
@@ -268,10 +293,15 @@ fn rectangle_positioned_relative_to_the_plot_and_to_the_axes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: rectangle_positioned_relative_to_the_plot_and_to_the_axes
 
-fn highlighting_time_series_regions_with_rectangle_shapes() {
+// ANCHOR: highlighting_time_series_regions_with_rectangle_shapes
+fn highlighting_time_series_regions_with_rectangle_shapes(show: bool, file_name: &str) {
     let x = vec![
         "2015-02-01",
         "2015-02-02",
@@ -345,10 +375,15 @@ fn highlighting_time_series_regions_with_rectangle_shapes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: highlighting_time_series_regions_with_rectangle_shapes
 
-fn circles_positioned_relative_to_the_axes() {
+// ANCHOR: circles_positioned_relative_to_the_axes
+fn circles_positioned_relative_to_the_axes(show: bool, file_name: &str) {
     let trace = Scatter::new(vec![1.5, 3.5], vec![0.75, 2.5])
         .text_array(vec!["Unfilled Circle", "Filled Circle"])
         .mode(Mode::Text);
@@ -389,11 +424,16 @@ fn circles_positioned_relative_to_the_axes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: circles_positioned_relative_to_the_axes
 
-fn highlighting_clusters_of_scatter_points_with_circle_shapes() {
-    let mut rng = thread_rng();
+// ANCHOR: highlighting_clusters_of_scatter_points_with_circle_shapes
+fn highlighting_clusters_of_scatter_points_with_circle_shapes(show: bool, file_name: &str) {
+    let mut rng = rand::rng();
     let x0 = Normal::new(2., 0.45)
         .unwrap()
         .sample_iter(&mut rng)
@@ -501,10 +541,15 @@ fn highlighting_clusters_of_scatter_points_with_circle_shapes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: highlighting_clusters_of_scatter_points_with_circle_shapes
 
-fn venn_diagram_with_circle_shapes() {
+// ANCHOR: venn_diagram_with_circle_shapes
+fn venn_diagram_with_circle_shapes(show: bool, file_name: &str) {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![1., 1.75, 2.5], vec![1., 1., 1.])
@@ -567,10 +612,15 @@ fn venn_diagram_with_circle_shapes() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: venn_diagram_with_circle_shapes
 
-fn adding_shapes_to_subplots() {
+// ANCHOR: adding_shapes_to_subplots
+fn adding_shapes_to_subplots(show: bool, file_name: &str) {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![2, 6], vec![1, 1])
@@ -653,10 +703,15 @@ fn adding_shapes_to_subplots() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: adding_shapes_to_subplots
 
-fn svg_paths() {
+// ANCHOR: svg_paths
+fn svg_paths(show: bool, file_name: &str) {
     let mut plot = Plot::new();
     plot.add_trace(
         Scatter::new(vec![2, 1, 8, 8], vec![0.25, 9., 2., 6.])
@@ -711,22 +766,51 @@ fn svg_paths() {
 
     plot.set_layout(layout);
 
-    plot.show();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
 }
+// ANCHOR_END: svg_paths
 
 fn main() {
-    // Uncomment any of these lines to display the example.
+    // Change false to true on any of these lines to display the example.
 
-    filled_area_chart();
-    // vertical_and_horizontal_lines_positioned_relative_to_axes();
-    // lines_positioned_relative_to_the_plot_and_to_the_axes();
-    // creating_tangent_lines_with_shapes();
-    // rectangles_positioned_relative_to_the_axes();
-    // rectangle_positioned_relative_to_the_plot_and_to_the_axes();
-    // highlighting_time_series_regions_with_rectangle_shapes();
-    // circles_positioned_relative_to_the_axes();
-    // highlighting_clusters_of_scatter_points_with_circle_shapes();
-    // venn_diagram_with_circle_shapes();
-    // adding_shapes_to_subplots();
-    // svg_paths();
+    filled_area_chart(false, "filled_area_chart");
+
+    vertical_and_horizontal_lines_positioned_relative_to_axes(
+        false,
+        "vertical_and_horizontal_lines_positioned_relative_to_axes",
+    );
+
+    lines_positioned_relative_to_the_plot_and_to_the_axes(
+        false,
+        "lines_positioned_relative_to_the_plot_and_to_the_axes",
+    );
+
+    creating_tangent_lines_with_shapes(false, "creating_tangent_lines_with_shapes");
+
+    rectangles_positioned_relative_to_the_axes(false, "rectangles_positioned_relative_to_the_axes");
+
+    rectangle_positioned_relative_to_the_plot_and_to_the_axes(
+        false,
+        "rectangle_positioned_relative_to_the_plot_and_to_the_axes",
+    );
+
+    highlighting_time_series_regions_with_rectangle_shapes(
+        false,
+        "highlighting_time_series_regions_with_rectangle_shapes",
+    );
+
+    circles_positioned_relative_to_the_axes(false, "circles_positioned_relative_to_the_axes");
+
+    highlighting_clusters_of_scatter_points_with_circle_shapes(
+        false,
+        "highlighting_clusters_of_scatter_points_with_circle_shapes",
+    );
+
+    venn_diagram_with_circle_shapes(false, "venn_diagram_with_circle_shapes");
+
+    adding_shapes_to_subplots(false, "adding_shapes_to_subplots");
+    svg_paths(false, "svg_paths");
 }
