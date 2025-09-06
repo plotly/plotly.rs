@@ -10,6 +10,7 @@ https://github.com/plotly/plotly.rs/pull/350
 ### Fixed  
 
 - [[#348](https://github.com/plotly/plotly.rs/pull/348)] Fix Pie chart color setting 
+- [[#355](https://github.com/plotly/plotly.rs/pull/355)] Add LayoutPolar support 
 
 ### Changed
 

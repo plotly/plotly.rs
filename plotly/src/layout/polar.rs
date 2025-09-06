@@ -358,13 +358,6 @@ pub struct AutoRangeOptions {
     include: Option<Vec<NumOrString>>,
 }
 
-impl AutoRangeOptions {
-    /// Create a new set of autorange options with default settings.
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
-
 /// Setting [`AutoTypeNumbers::Strict`] prevents Plotly from coercing numeric
 /// strings in trace data into numbers. This may affect the inferred
 /// [`axis_type`](RadialAxis::axis_type). Coercing/converting is the default
@@ -477,9 +470,10 @@ pub enum PolarTickMode {
         /// [`axis_type`](RadialAxis::axis_type) is [`RadialAxisType::Log`] then
         /// you must take the log of your starting tick. For example, to set the
         /// starting tick to 100, set [`tick_0`](PolarTickMode::Linear::tick_0)
-        /// to 2 (except when [`d_tick`](PolarTickMode::Linear::d_tick) = *L<f>*
-        /// (see [`d_tick`](PolarTickMode::Linear::d_tick) for more
-        /// information). If the [`axis_type`](RadialAxis::axis_type) is
+        /// to 2 (except when [`d_tick`](PolarTickMode::Linear::d_tick) =
+        /// "L\<f\>" (see [`d_tick`](PolarTickMode::Linear::d_tick) for
+        /// more information). If the
+        /// [`axis_type`](RadialAxis::axis_type) is
         /// [`RadialAxisType::Date`], it should be a date string. If the
         /// [`axis_type`](RadialAxis::axis_type) is [`RadialAxisType::Category`]
         /// or [`AngularAxisType::Category`] then supply an integer, which will
@@ -496,7 +490,7 @@ pub enum PolarTickMode {
         ///
         /// [`RadialAxisType::Log`] has several special values:
         ///
-        /// - *L<f>*, where `f` is a positive number, gives ticks linearly
+        /// - "L\<f\>", where `f` is a positive number, gives ticks linearly
         ///   spaced in value (but not position). For example,
         ///   [`tick_0`](PolarTickMode::Linear::tick_0) = 0.1,
         ///   [`d_tick`](PolarTickMode::Linear::d_tick) = *L0.5* will put ticks
@@ -511,7 +505,7 @@ pub enum PolarTickMode {
         ///
         /// [`RadialAxisType::Date`] also has special values:
         ///
-        /// - *M<n>* gives ticks spaced by a number of months, where `n` is a
+        /// - "M\<n\>" gives ticks spaced by a number of months, where `n` is a
         ///   positive integer. To set ticks on the 15th of every third month,
         ///   set [`tick_0`](PolarTickMode::Linear::tick_0) to *2000-01-15* and
         ///   [`d_tick`](PolarTickMode::Linear::d_tick) to *M3*. To set ticks
@@ -582,7 +576,7 @@ mod tests {
             .visible(true)
             .axis_type(RadialAxisType::Linear)
             .auto_type_numbers(AutoTypeNumbers::Strict)
-            .auto_range_options(AutoRangeOptions::new().min_allowed(1))
+            .auto_range_options(AutoRangeOptions::default().min_allowed(1))
             .auto_range(AutoRange::Bool(true))
             .range_mode(RangeMode::Normal)
             .min_allowed(0_u32)

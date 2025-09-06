@@ -36,6 +36,13 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 
 {{#include ../../../../../examples/basic_charts/output/inline_bubble_scatter_plots.html}}
 
+## Polar Scatter Plots
+```rust,no_run
+{{#include ../../../../../examples/basic_charts/src/main.rs:polar_scatter_plot}}
+```
+
+{{#include ../../../../../examples/basic_charts/output/inline_polar_scatter_plot.html}}
+
 
 ## Data Labels Hover
 ```rust,no_run

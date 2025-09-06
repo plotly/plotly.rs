@@ -104,6 +104,7 @@ fn bubble_scatter_plots(show: bool, file_name: &str) {
 }
 // ANCHOR_END: bubble_scatter_plots
 
+// ANCHOR: polar_scatter_plot
 fn polar_scatter_plot(show: bool, file_name: &str) {
     let n: usize = 400;
     let theta: Vec<f64> = Array::linspace(0., 360., n).into_raw_vec_and_offset().0;
@@ -148,6 +149,7 @@ fn polar_scatter_plot(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
+// ANCHOR_END: polar_scatter_plot
 
 // ANCHOR: data_labels_hover
 fn data_labels_hover(show: bool, file_name: &str) {
