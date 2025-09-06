@@ -19,6 +19,7 @@ mod grid;
 mod legend;
 mod mapbox;
 mod modes;
+mod polar;
 mod rangebreaks;
 mod scene;
 mod shape;
@@ -41,6 +42,11 @@ pub use self::legend::{GroupClick, ItemClick, ItemSizing, Legend, TraceOrder};
 pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
     AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
+};
+pub use self::polar::{
+    AngularAxis, AngularAxisType, AutoRange, AutoRangeOptions, AutoTypeNumbers, AxisLayer,
+    GridShape, Hole, LayoutPolar, MinorLogLabels, PolarAxisAttributes, PolarAxisTicks,
+    PolarDirection, PolarTickMode, RadialAxis, RadialAxisType, ThetaUnit,
 };
 pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
@@ -330,7 +336,7 @@ pub struct LayoutFields {
     // ternary: Option<LayoutTernary>,
     scene: Option<LayoutScene>,
     geo: Option<LayoutGeo>,
-    // polar: Option<LayoutPolar>,
+    polar: Option<LayoutPolar>,
     annotations: Option<Vec<Annotation>>,
     shapes: Option<Vec<Shape>>,
     #[serde(rename = "newshape")]

@@ -8,7 +8,8 @@ use plotly::{
         Marker, Mode, Orientation, Pattern, PatternShape,
     },
     layout::{
-        Annotation, Axis, AxisRange, BarMode, CategoryOrder, Layout, LayoutGrid, Legend,
+        AngularAxis, Annotation, Axis, AxisRange, BarMode, CategoryOrder, Layout, LayoutGrid,
+        LayoutPolar, Legend, PolarAxisAttributes, PolarAxisTicks, PolarDirection, RadialAxis,
         TicksDirection, TraceOrder,
     },
     sankey::{Line as SankeyLine, Link, Node},
@@ -118,6 +119,29 @@ fn polar_scatter_plot(show: bool, file_name: &str) {
     let trace = ScatterPolar::new(theta, r).mode(Mode::Lines);
     let mut plot = Plot::new();
     plot.add_trace(trace);
+
+    let ticks = PolarAxisTicks::new().tick_color("#222222");
+
+    let axis_attributes = PolarAxisAttributes::new()
+        .grid_color("#888888")
+        .ticks(ticks);
+
+    let radial_axis = RadialAxis::new()
+        .title("My Title")
+        .axis_attributes(axis_attributes.clone());
+
+    let angular_axis = AngularAxis::new()
+        .direction(PolarDirection::Clockwise)
+        .rotation(45.0)
+        .axis_attributes(axis_attributes);
+
+    let layout_polar = LayoutPolar::new()
+        .bg_color("#eeeeee")
+        .radial_axis(radial_axis)
+        .angular_axis(angular_axis);
+
+    let layout = Layout::new().polar(layout_polar);
+    plot.set_layout(layout);
 
     let path = write_example_to_html(&plot, file_name);
     if show {
