@@ -195,11 +195,9 @@ impl FieldType {
     fn inner_type_quote(&self) -> TokenStream {
         match self {
             FieldType::NotOption => unreachable!(),
-            FieldType::OptionDimString => quote![crate::common::Dim<String>],
-            FieldType::OptionDimOther(inner) => quote![crate::common::Dim<#inner>],
-            FieldType::OptionDimBoxColor => {
-                quote![crate::common::Dim<Box<dyn crate::color::Color>>]
-            }
+            FieldType::OptionDimString => quote![String],
+            FieldType::OptionDimOther(inner) => quote![#inner],
+            FieldType::OptionDimBoxColor => quote![Box<dyn crate::color::Color>],
             FieldType::OptionVecString => quote![Vec<String>],
             FieldType::OptionBoxColor => quote![Box<dyn crate::color::Color>],
             FieldType::OptionVecBoxColor => quote![Vec<Box<dyn crate::color::Color>>],
@@ -308,6 +306,16 @@ impl FieldReceiver {
 
         let field_type = FieldType::infer(field_ty);
 
+        let method_generics = match &field_type {
+            FieldType::OptionBoxColor
+            | FieldType::OptionVecBoxColor
+            | FieldType::OptionDimBoxColor => quote![<C: crate::color::Color>],
+            FieldType::OptionNumOrStringCollection => {
+                quote![<V: Into<crate::private::NumOrString> + Clone>]
+            }
+            _ => quote![],
+        };
+
         let (value_type, value_convert, array_value_convert) = match &field_type {
             FieldType::NotOption => {
                 return (quote![], quote![]);
@@ -325,8 +333,7 @@ impl FieldReceiver {
                 quote![crate::common::Dim::Vector(value)],
             ),
             FieldType::OptionDimBoxColor => (
-                // scalar setter takes a Color impl
-                quote![impl crate::color::Color],
+                quote![C], // scalar setter takes a C: Color
                 // store as Dim::Scalar(Box<dyn Color>)
                 quote![crate::common::Dim::Scalar(
                     Box::new(value) as Box<dyn crate::color::Color>
@@ -348,7 +355,7 @@ impl FieldReceiver {
                 quote![],
             ),
             FieldType::OptionBoxColor => (
-                quote![impl crate::color::Color],
+                quote![C], // scalar setter takes a C: Color
                 quote![Box::new(value) as Box<dyn crate::color::Color>],
                 quote![],
             ),
@@ -356,7 +363,7 @@ impl FieldReceiver {
                 (quote![#inner_ty], quote![Box::new(value)], quote![])
             }
             FieldType::OptionVecBoxColor => (
-                quote![Vec<impl crate::color::Color>],
+                quote![Vec<C>], // array setter takes a Vec<C: Color>
                 quote![crate::color::ColorArray(value).into()],
                 quote![],
             ),
@@ -366,7 +373,7 @@ impl FieldReceiver {
                 quote![],
             ),
             FieldType::OptionNumOrStringCollection => (
-                quote![Vec<impl Into<crate::private::NumOrString> + Clone>],
+                quote![Vec<V>], // array setter takes a Vec<V: Into<NumOrString> + Clone>
                 quote![value.into()],
                 quote![],
             ),
@@ -432,7 +439,7 @@ impl FieldReceiver {
 
         let mut setter = quote! {
             #field_docs
-            pub fn #field_ident(mut self, value: #value_type) -> #return_ty {
+            pub fn #field_ident #method_generics(mut self, value: #value_type) -> #return_ty {
                 self.#field_ident = Some(#value_convert);
                 #return_stmt
             }
@@ -455,25 +462,47 @@ impl FieldReceiver {
                         proc_macro2::Span::call_site(),
                     );
 
-                    setter.append_all(quote![
+                    // For fields that are Option<Dim<_>>, we must convert to the inner T when building
+                    // Dim::Scalar(T) and Dim::Vector(Vec<T>) for modify enums. Using #value_convert would
+                    // wrap again (Dim::Scalar(..)), causing type mismatches.
+                    let (scalar_inner_convert, vector_elem_convert) = match &field_type {
+                        FieldType::OptionDimString => (
+                            quote![value.as_ref().to_owned()],
+                            quote![value.as_ref().to_owned()],
+                        ),
+                        FieldType::OptionDimOther(_) => (quote![value], quote![value]),
+                        FieldType::OptionDimBoxColor => (
+                            quote![Box::new(value) as Box<dyn crate::color::Color>],
+                            quote![Box::new(value) as Box<dyn crate::color::Color>],
+                        ),
+                        _ => (quote![#value_convert], quote![#value_convert]),
+                    };
+
+                    let modify_all_fn = quote![
                         /// Apply the same restyling to all the traces
-                        pub fn #modify_all_ident(value: #value_type) -> #enum_name #ty_generics {
+                        pub fn #modify_all_ident #method_generics(value: #value_type) -> #enum_name #ty_generics {
                             #enum_name::#variant_name {
-                                #field_ident: Some(crate::common::Dim::Scalar(#value_convert))
+                                #field_ident: Some(crate::common::Dim::Scalar({ #scalar_inner_convert }))
                             }
                         }
+                    ];
+
+                    let modify_each_fn = quote![
                         /// Apply the restyling individually to each trace. Caller is responsible to set the length of the vector
                         /// to be equal to the number of traces
-                        pub fn #modify_ident(values: Vec<#value_type>) -> #enum_name #ty_generics {
+                        pub fn #modify_ident #method_generics(values: Vec<#value_type>) -> #enum_name #ty_generics {
                             #enum_name::#variant_name {
-                                #field_ident: Some(crate::common::Dim::Vector(values.into_iter().map(|value| #value_convert).collect()))
+                                #field_ident: Some(crate::common::Dim::Vector(values.into_iter().map(|value| { #vector_elem_convert }).collect()))
                             }
                         }
-                    ]);
+                    ];
+
+                    setter.append_all(modify_all_fn);
+                    setter.append_all(modify_each_fn);
                 }
                 Kind::Layout => {
                     setter.append_all(quote![
-                        pub fn #modify_ident(value: #value_type) -> #enum_name #ty_generics {
+                        pub fn #modify_ident #method_generics (value: #value_type) -> #enum_name #ty_generics {
                             #enum_name::#variant_name {
                                 #field_ident: Some(#value_convert)
                             }
@@ -494,7 +523,7 @@ impl FieldReceiver {
                 );
                 quote! {
                     #field_docs
-                    pub fn #array_ident(mut self, value: Vec<#value_type>) -> #return_ty {
+                    pub fn #array_ident #method_generics(mut self, value: Vec<#value_type>) -> #return_ty {
                         self.#field_ident = Some(#array_value_convert);
                         #return_stmt
                     }
@@ -527,7 +556,7 @@ impl FieldReceiver {
                 // Matrix of Box<dyn Color> with ergonomic C: Color
                 FieldType::OptionDimBoxColor => quote! {
                     #field_docs
-                    pub fn #matrix_ident<C: crate::color::Color>(mut self, value: Vec<Vec<C>>) -> #return_ty {
+                    pub fn #matrix_ident #method_generics(mut self, value: Vec<Vec<C>>) -> #return_ty {
                         let mm = value.into_iter()
                             .map(|row| row.into_iter().map(|c| Box::new(c) as Box<dyn crate::color::Color>).collect())
                             .collect();
