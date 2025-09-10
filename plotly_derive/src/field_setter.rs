@@ -133,6 +133,7 @@ enum FieldType {
     NotOption,
     OptionDimString,
     OptionDimOther(syn::Type),
+    OptionDimBoxColor,
     OptionVecString,
     OptionBoxColor,
     OptionVecBoxColor,
@@ -196,6 +197,9 @@ impl FieldType {
             FieldType::NotOption => unreachable!(),
             FieldType::OptionDimString => quote![crate::common::Dim<String>],
             FieldType::OptionDimOther(inner) => quote![crate::common::Dim<#inner>],
+            FieldType::OptionDimBoxColor => {
+                quote![crate::common::Dim<Box<dyn crate::color::Color>>]
+            }
             FieldType::OptionVecString => quote![Vec<String>],
             FieldType::OptionBoxColor => quote![Box<dyn crate::color::Color>],
             FieldType::OptionVecBoxColor => quote![Vec<Box<dyn crate::color::Color>>],
@@ -221,6 +225,7 @@ impl FieldType {
 
         match remaining.as_slice() {
             ["Dim", "String"] => FieldType::OptionDimString,
+            ["Dim", "Box", "Color"] => FieldType::OptionDimBoxColor,
             ["Dim", ..] => FieldType::OptionDimOther(types.get(2).cloned().unwrap()),
             ["Vec", "String"] => FieldType::OptionVecString,
             ["String"] => FieldType::OptionString,
@@ -253,6 +258,10 @@ struct FieldReceiver {
 
     #[darling(default)]
     default: Option<String>,
+
+    // If true, derive the 2D array / matrix setter for the field
+    #[darling(default)]
+    with_matrix: bool,
 }
 
 impl FieldReceiver {
@@ -314,6 +323,18 @@ impl FieldReceiver {
                 quote![#inner_ty],
                 quote![crate::common::Dim::Scalar(value)],
                 quote![crate::common::Dim::Vector(value)],
+            ),
+            FieldType::OptionDimBoxColor => (
+                // scalar setter takes a Color impl
+                quote![impl crate::color::Color],
+                // store as Dim::Scalar(Box<dyn Color>)
+                quote![crate::common::Dim::Scalar(
+                    Box::new(value) as Box<dyn crate::color::Color>
+                )],
+                // array setter takes Vec<impl Color> and converts via helper
+                quote![crate::common::Dim::Vector(
+                    crate::color::ColorArray(value).into()
+                )],
             ),
             FieldType::OptionString => (
                 quote![impl AsRef<str>],
@@ -464,7 +485,9 @@ impl FieldReceiver {
         }
 
         let array_setter = match field_type {
-            FieldType::OptionDimString | FieldType::OptionDimOther(..) => {
+            FieldType::OptionDimString
+            | FieldType::OptionDimOther(..)
+            | FieldType::OptionDimBoxColor => {
                 let array_ident = Ident::new(
                     &format!("{field_ident}_array"),
                     proc_macro2::Span::call_site(),
@@ -480,12 +503,58 @@ impl FieldReceiver {
             _ => quote![],
         };
 
+        // Optional matrix setter for Dim<_> when #[field_setter(with_matrix)] is present
+        let matrix_setter = if self.with_matrix {
+            let matrix_ident = Ident::new(
+                &format!("{}_matrix", field_ident),
+                proc_macro2::Span::call_site(),
+            );
+
+            match &field_type {
+                // Matrix of strings
+                FieldType::OptionDimString => quote! {
+                    #field_docs
+                    pub fn #matrix_ident(mut self, value: Vec<Vec<impl AsRef<str>>>) -> #return_ty {
+                        self.#field_ident = Some(crate::common::Dim::Matrix(
+                            value.into_iter()
+                                .map(|row| row.into_iter().map(|v| v.as_ref().to_owned()).collect())
+                                .collect()
+                        ));
+                        #return_stmt
+                    }
+                },
+                // Matrix of Box<dyn Color> with ergonomic C: Color
+                FieldType::OptionDimBoxColor => quote! {
+                    #field_docs
+                    pub fn #matrix_ident<C: crate::color::Color>(mut self, value: Vec<Vec<C>>) -> #return_ty {
+                        let mm = value.into_iter()
+                            .map(|row| row.into_iter().map(|c| Box::new(c) as Box<dyn crate::color::Color>).collect())
+                            .collect();
+                        self.#field_ident = Some(crate::common::Dim::Matrix(mm));
+                        #return_stmt
+                    }
+                },
+                // Generic matrix for other inner types that are already concrete (f64, enums, etc.)
+                FieldType::OptionDimOther(inner_ty) => quote! {
+                    #field_docs
+                    pub fn #matrix_ident(mut self, value: Vec<Vec<#inner_ty>>) -> #return_ty {
+                        self.#field_ident = Some(crate::common::Dim::Matrix(value));
+                        #return_stmt
+                    }
+                },
+                _ => quote! {},
+            }
+        } else {
+            quote! {}
+        };
+
         let enum_variant = modify_enum.map(|m| m.enum_variant).unwrap_or_default();
 
         (
             quote![
                 #setter
                 #array_setter
+                #matrix_setter
             ],
             enum_variant,
         )
