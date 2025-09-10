@@ -46,6 +46,7 @@ BOOK_EXAMPLES=(
     "statistical_charts"
     "subplots"
     "themes"
+    "downsampling"
 )
 
 # Build each example
