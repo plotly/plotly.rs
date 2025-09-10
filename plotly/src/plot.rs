@@ -829,10 +829,9 @@ mod tests {
     #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
     use {base64::engine::general_purpose, base64::Engine};
 
+    use super::*;
     #[cfg(feature = "plotly_static")]
     use crate::export::sync::ExporterSyncExt;
-
-    use super::*;
     use crate::Scatter;
 
     fn create_test_plot() -> Plot {

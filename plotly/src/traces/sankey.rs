@@ -4,7 +4,7 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
-    color::{Color, ColorArray},
+    color::Color,
     common::{Dim, Domain, Font, HoverInfo, Label, LegendGroupTitle, Orientation, PlotType},
     Trace,
 };
@@ -19,7 +19,7 @@ pub enum Arrangement {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Default)]
+#[derive(Serialize, Clone, FieldSetter)]
 pub struct Line {
     color: Option<Dim<Box<dyn Color>>>,
     width: Option<f64>,
@@ -29,25 +29,10 @@ impl Line {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn width(mut self, width: f64) -> Self {
-        self.width = Some(width);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Default, Clone)]
+#[derive(Serialize, Clone, FieldSetter)]
 pub struct Node {
     // Missing: customdata, groups
     color: Option<Dim<Box<dyn Color>>>,
@@ -57,6 +42,7 @@ pub struct Node {
     hover_label: Option<Label>,
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[field_setter(skip)]
     label: Option<Vec<String>>,
     line: Option<Line>,
     /// Sets the padding (in px) between the `nodes`.
@@ -74,64 +60,14 @@ impl Node {
         Default::default()
     }
 
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Self {
-        self.hover_info = Some(hover_info);
-        self
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Self {
-        self.hover_label = Some(hover_label);
-        self
-    }
-
-    pub fn hover_template(mut self, hover_template: &str) -> Self {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
-        self
-    }
-
     pub fn label(mut self, label: Vec<&str>) -> Self {
         self.label = Some(label.iter().map(|&el| el.to_string()).collect());
-        self
-    }
-
-    pub fn line(mut self, line: Line) -> Self {
-        self.line = Some(line);
-        self
-    }
-
-    pub fn pad(mut self, pad: usize) -> Self {
-        self.pad = Some(pad);
-        self
-    }
-
-    pub fn thickness(mut self, thickness: usize) -> Self {
-        self.thickness = Some(thickness);
-        self
-    }
-
-    pub fn x(mut self, x: Vec<f64>) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn y(mut self, y: Vec<f64>) -> Self {
-        self.y = Some(y);
         self
     }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Clone, FieldSetter)]
 pub struct Link<V>
 where
     V: Serialize + Clone,
@@ -150,75 +86,12 @@ where
     value: Option<Vec<V>>,
 }
 
-impl<V> Default for Link<V>
-where
-    V: Serialize + Clone,
-{
-    fn default() -> Self {
-        Self {
-            color: None,
-            hover_info: None,
-            hover_label: None,
-            hover_template: None,
-            line: None,
-            source: None,
-            target: None,
-            value: None,
-        }
-    }
-}
-
 impl<V> Link<V>
 where
     V: Serialize + Clone,
 {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn hover_info(mut self, hover_info: HoverInfo) -> Self {
-        self.hover_info = Some(hover_info);
-        self
-    }
-
-    pub fn hover_label(mut self, hover_label: Label) -> Self {
-        self.hover_label = Some(hover_label);
-        self
-    }
-
-    pub fn hover_template(mut self, hover_template: &str) -> Self {
-        self.hover_template = Some(Dim::Scalar(hover_template.to_string()));
-        self
-    }
-
-    pub fn line(mut self, line: Line) -> Self {
-        self.line = Some(line);
-        self
-    }
-
-    pub fn source(mut self, source: Vec<usize>) -> Self {
-        self.source = Some(source);
-        self
-    }
-
-    pub fn target(mut self, target: Vec<usize>) -> Self {
-        self.target = Some(target);
-        self
-    }
-
-    pub fn value(mut self, target: Vec<V>) -> Self {
-        self.value = Some(target);
-        self
     }
 }
 

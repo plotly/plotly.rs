@@ -1,5 +1,6 @@
 pub mod color;
 
+use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 
 use crate::{
@@ -56,7 +57,7 @@ pub enum HoverInfo {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct LegendGroupTitle {
     text: Option<String>,
     font: Option<Font>,
@@ -90,11 +91,6 @@ impl LegendGroupTitle {
             text: Some(text.into()),
             ..Default::default()
         }
-    }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
     }
 }
 
@@ -530,7 +526,7 @@ pub enum LineShape {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Line {
     width: Option<f64>,
     shape: Option<LineShape>,
@@ -557,81 +553,6 @@ pub struct Line {
 impl Line {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn width(mut self, width: f64) -> Self {
-        self.width = Some(width);
-        self
-    }
-
-    pub fn shape(mut self, shape: LineShape) -> Self {
-        self.shape = Some(shape);
-        self
-    }
-
-    pub fn smoothing(mut self, smoothing: f64) -> Self {
-        self.smoothing = Some(smoothing);
-        self
-    }
-
-    pub fn dash(mut self, dash: DashType) -> Self {
-        self.dash = Some(dash);
-        self
-    }
-
-    pub fn simplify(mut self, simplify: bool) -> Self {
-        self.simplify = Some(simplify);
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
-    }
-
-    pub fn cauto(mut self, cauto: bool) -> Self {
-        self.cauto = Some(cauto);
-        self
-    }
-
-    pub fn cmin(mut self, cmin: f64) -> Self {
-        self.cmin = Some(cmin);
-        self
-    }
-
-    pub fn cmax(mut self, cmax: f64) -> Self {
-        self.cmax = Some(cmax);
-        self
-    }
-
-    pub fn cmid(mut self, cmid: f64) -> Self {
-        self.cmid = Some(cmid);
-        self
-    }
-
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
-        self.color_scale = Some(color_scale);
-        self
-    }
-
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Self {
-        self.auto_color_scale = Some(auto_color_scale);
-        self
-    }
-
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Self {
-        self.reverse_scale = Some(reverse_scale);
-        self
-    }
-
-    pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Self {
-        self.outlier_color = Some(Box::new(outlier_color));
-        self
-    }
-
-    pub fn outlier_width(mut self, outlier_width: usize) -> Self {
-        self.outlier_width = Some(outlier_width);
-        self
     }
 }
 
@@ -716,8 +637,9 @@ impl Gradient {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct TickFormatStop {
+    #[field_setter(default = "true")]
     enabled: bool,
     #[serde(rename = "dtickrange")]
     dtick_range: Option<private::NumOrStringCollection>,
@@ -739,26 +661,6 @@ impl TickFormatStop {
         self.enabled = enabled;
         self
     }
-
-    pub fn dtick_range<V: Into<private::NumOrString> + Clone>(mut self, range: Vec<V>) -> Self {
-        self.dtick_range = Some(range.into());
-        self
-    }
-
-    pub fn value(mut self, value: &str) -> Self {
-        self.value = Some(value.to_string());
-        self
-    }
-
-    pub fn name(mut self, name: &str) -> Self {
-        self.name = Some(name.to_string());
-        self
-    }
-
-    pub fn template_item_name(mut self, name: &str) -> Self {
-        self.template_item_name = Some(name.to_string());
-        self
-    }
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -771,7 +673,7 @@ pub enum Show {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct ColorBar {
     #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
@@ -802,7 +704,6 @@ pub struct ColorBar {
     show_tick_prefix: Option<Show>,
     #[serde(rename = "showticksuffix")]
     show_tick_suffix: Option<Show>,
-
     thickness: Option<usize>,
     #[serde(rename = "thicknessmode")]
     thickness_mode: Option<ThicknessMode>,
@@ -849,202 +750,6 @@ impl ColorBar {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
-    pub fn border_width(mut self, border_width: usize) -> Self {
-        self.border_width = Some(border_width);
-        self
-    }
-
-    pub fn dtick(mut self, dtick: f64) -> Self {
-        self.dtick = Some(dtick);
-        self
-    }
-
-    pub fn exponent_format(mut self, exponent_format: ExponentFormat) -> Self {
-        self.exponent_format = Some(exponent_format);
-        self
-    }
-
-    pub fn len(mut self, len: usize) -> Self {
-        self.len = Some(len);
-        self
-    }
-
-    pub fn len_mode(mut self, len_mode: ThicknessMode) -> Self {
-        self.len_mode = Some(len_mode);
-        self
-    }
-
-    pub fn n_ticks(mut self, n_ticks: usize) -> Self {
-        self.n_ticks = Some(n_ticks);
-        self
-    }
-
-    pub fn orientation(mut self, orientation: Orientation) -> Self {
-        self.orientation = Some(orientation);
-        self
-    }
-
-    pub fn outline_color<C: Color>(mut self, outline_color: C) -> Self {
-        self.outline_color = Some(Box::new(outline_color));
-        self
-    }
-
-    pub fn outline_width(mut self, outline_width: usize) -> Self {
-        self.outline_width = Some(outline_width);
-        self
-    }
-
-    pub fn separate_thousands(mut self, separate_thousands: bool) -> Self {
-        self.separate_thousands = Some(separate_thousands);
-        self
-    }
-
-    pub fn show_exponent(mut self, show_exponent: Show) -> Self {
-        self.show_exponent = Some(show_exponent);
-        self
-    }
-
-    pub fn show_tick_labels(mut self, show_tick_labels: bool) -> Self {
-        self.show_tick_labels = Some(show_tick_labels);
-        self
-    }
-
-    pub fn show_tick_prefix(mut self, show_tick_prefix: Show) -> Self {
-        self.show_tick_prefix = Some(show_tick_prefix);
-        self
-    }
-
-    pub fn show_tick_suffix(mut self, show_tick_suffix: Show) -> Self {
-        self.show_tick_suffix = Some(show_tick_suffix);
-        self
-    }
-
-    pub fn thickness(mut self, thickness: usize) -> Self {
-        self.thickness = Some(thickness);
-        self
-    }
-
-    pub fn thickness_mode(mut self, thickness_mode: ThicknessMode) -> Self {
-        self.thickness_mode = Some(thickness_mode);
-        self
-    }
-
-    pub fn tick_angle(mut self, tick_angle: f64) -> Self {
-        self.tick_angle = Some(tick_angle);
-        self
-    }
-
-    pub fn tick_color<C: Color>(mut self, tick_color: C) -> Self {
-        self.tick_color = Some(Box::new(tick_color));
-        self
-    }
-
-    pub fn tick_font(mut self, tick_font: Font) -> Self {
-        self.tick_font = Some(tick_font);
-        self
-    }
-
-    pub fn tick_format(mut self, tick_format: &str) -> Self {
-        self.tick_format = Some(tick_format.to_string());
-        self
-    }
-
-    pub fn tick_format_stops(mut self, tick_format_stops: Vec<TickFormatStop>) -> Self {
-        self.tick_format_stops = Some(tick_format_stops);
-        self
-    }
-
-    pub fn tick_len(mut self, tick_len: usize) -> Self {
-        self.tick_len = Some(tick_len);
-        self
-    }
-
-    pub fn tick_mode(mut self, tick_mode: TickMode) -> Self {
-        self.tick_mode = Some(tick_mode);
-        self
-    }
-
-    pub fn tick_prefix(mut self, tick_prefix: &str) -> Self {
-        self.tick_prefix = Some(tick_prefix.to_string());
-        self
-    }
-
-    pub fn tick_suffix(mut self, tick_suffix: &str) -> Self {
-        self.tick_suffix = Some(tick_suffix.to_string());
-        self
-    }
-
-    pub fn tick_text<S: AsRef<str>>(mut self, tick_text: Vec<S>) -> Self {
-        let tick_text = private::owned_string_vector(tick_text);
-        self.tick_text = Some(tick_text);
-        self
-    }
-
-    pub fn tick_vals(mut self, tick_vals: Vec<f64>) -> Self {
-        self.tick_vals = Some(tick_vals);
-        self
-    }
-
-    pub fn tick_width(mut self, tick_width: usize) -> Self {
-        self.tick_width = Some(tick_width);
-        self
-    }
-
-    pub fn tick0(mut self, tick0: f64) -> Self {
-        self.tick0 = Some(tick0);
-        self
-    }
-
-    pub fn ticks(mut self, ticks: Ticks) -> Self {
-        self.ticks = Some(ticks);
-        self
-    }
-
-    pub fn title<T: Into<Title>>(mut self, title: T) -> Self {
-        self.title = Some(title.into());
-        self
-    }
-
-    pub fn x(mut self, x: f64) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn x_anchor(mut self, x_anchor: Anchor) -> Self {
-        self.x_anchor = Some(x_anchor);
-        self
-    }
-
-    pub fn x_pad(mut self, x_pad: f64) -> Self {
-        self.x_pad = Some(x_pad);
-        self
-    }
-
-    pub fn y(mut self, y: f64) -> Self {
-        self.y = Some(y);
-        self
-    }
-
-    pub fn y_anchor(mut self, y_anchor: Anchor) -> Self {
-        self.y_anchor = Some(y_anchor);
-        self
-    }
-
-    pub fn y_pad(mut self, y_pad: f64) -> Self {
-        self.y_pad = Some(y_pad);
-        self
-    }
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -1084,7 +789,7 @@ pub enum PatternFillMode {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Pattern {
     shape: Option<Dim<PatternShape>>,
     #[serde(rename = "fillmode")]
@@ -1103,70 +808,10 @@ impl Pattern {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn shape(mut self, shape: PatternShape) -> Self {
-        self.shape = Some(Dim::Scalar(shape));
-        self
-    }
-
-    pub fn shape_array(mut self, shape: Vec<PatternShape>) -> Self {
-        self.shape = Some(Dim::Vector(shape));
-        self
-    }
-
-    pub fn fill_mode(mut self, fill_mode: PatternFillMode) -> Self {
-        self.fill_mode = Some(fill_mode);
-        self
-    }
-
-    pub fn background_color<C: Color>(mut self, color: C) -> Self {
-        self.background_color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn background_color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.background_color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn foreground_color<C: Color>(mut self, color: C) -> Self {
-        self.foreground_color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn foreground_color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.foreground_color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn foreground_opacity(mut self, opacity: f64) -> Self {
-        self.foreground_opacity = Some(opacity);
-        self
-    }
-
-    pub fn size(mut self, size: f64) -> Self {
-        self.size = Some(Dim::Scalar(size));
-        self
-    }
-
-    pub fn size_array(mut self, size: Vec<f64>) -> Self {
-        self.size = Some(Dim::Vector(size));
-        self
-    }
-
-    pub fn solidity(mut self, solidity: f64) -> Self {
-        self.solidity = Some(Dim::Scalar(solidity));
-        self
-    }
-
-    pub fn solidity_array(mut self, solidity: Vec<f64>) -> Self {
-        self.solidity = Some(Dim::Vector(solidity));
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Marker {
     symbol: Option<MarkerSymbol>,
     opacity: Option<f64>,
@@ -1184,6 +829,7 @@ pub struct Marker {
     /// Marker option specific for Scatter and other common traces
     color: Option<Dim<Box<dyn Color>>>,
     /// Marker option specific for Pie charts to set the colors of the sectors
+    #[field_setter(skip)]
     colors: Option<Vec<Box<dyn Color>>>,
     cauto: Option<bool>,
     cmin: Option<f64>,
@@ -1209,129 +855,14 @@ impl Marker {
         Default::default()
     }
 
-    pub fn symbol(mut self, symbol: MarkerSymbol) -> Self {
-        self.symbol = Some(symbol);
-        self
-    }
-
-    pub fn opacity(mut self, opacity: f64) -> Self {
-        self.opacity = Some(opacity);
-        self
-    }
-
-    pub fn size(mut self, size: usize) -> Self {
-        self.size = Some(Dim::Scalar(size));
-        self
-    }
-
-    pub fn size_array(mut self, size: Vec<usize>) -> Self {
-        self.size = Some(Dim::Vector(size));
-        self
-    }
-
-    pub fn max_displayed(mut self, size: usize) -> Self {
-        self.max_displayed = Some(size);
-        self
-    }
-
-    pub fn size_ref(mut self, size: usize) -> Self {
-        self.size_ref = Some(size);
-        self
-    }
-
-    pub fn size_min(mut self, size: usize) -> Self {
-        self.size_min = Some(size);
-        self
-    }
-
-    pub fn size_mode(mut self, mode: SizeMode) -> Self {
-        self.size_mode = Some(mode);
-        self
-    }
-
-    pub fn line(mut self, line: Line) -> Self {
-        self.line = Some(line);
-        self
-    }
-
-    pub fn gradient(mut self, gradient: Gradient) -> Self {
-        self.gradient = Some(gradient);
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
     pub fn colors<C: Color>(mut self, colors: Vec<C>) -> Self {
         self.colors = Some(ColorArray(colors).into());
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn cauto(mut self, cauto: bool) -> Self {
-        self.cauto = Some(cauto);
-        self
-    }
-
-    pub fn cmin(mut self, cmin: f64) -> Self {
-        self.cmin = Some(cmin);
-        self
-    }
-
-    pub fn cmax(mut self, cmax: f64) -> Self {
-        self.cmax = Some(cmax);
-        self
-    }
-
-    pub fn cmid(mut self, cmid: f64) -> Self {
-        self.cmid = Some(cmid);
-        self
-    }
-
-    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
-        self.color_scale = Some(color_scale);
-        self
-    }
-
-    pub fn auto_color_scale(mut self, auto_color_scale: bool) -> Self {
-        self.auto_color_scale = Some(auto_color_scale);
-        self
-    }
-
-    pub fn reverse_scale(mut self, reverse_scale: bool) -> Self {
-        self.reverse_scale = Some(reverse_scale);
-        self
-    }
-
-    pub fn show_scale(mut self, show_scale: bool) -> Self {
-        self.show_scale = Some(show_scale);
-        self
-    }
-
-    pub fn color_bar(mut self, colorbar: ColorBar) -> Self {
-        self.color_bar = Some(colorbar);
-        self
-    }
-
-    pub fn outlier_color<C: Color>(mut self, outlier_color: C) -> Self {
-        self.outlier_color = Some(Box::new(outlier_color));
-        self
-    }
-
-    pub fn pattern(mut self, pattern: Pattern) -> Self {
-        self.pattern = Some(pattern);
         self
     }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Font {
     family: Option<String>,
     size: Option<usize>,
@@ -1341,21 +872,6 @@ pub struct Font {
 impl Font {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn family(mut self, family: &str) -> Self {
-        self.family = Some(family.to_owned());
-        self
-    }
-
-    pub fn size(mut self, size: usize) -> Self {
-        self.size = Some(size);
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
     }
 }
 
@@ -1391,7 +907,7 @@ impl Pad {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Title {
     text: Option<String>,
     font: Option<Font>,
@@ -1438,55 +954,10 @@ impl Title {
             ..Default::default()
         }
     }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
-    pub fn side(mut self, side: Side) -> Self {
-        self.side = Some(side);
-        self
-    }
-
-    pub fn x_ref(mut self, xref: Reference) -> Self {
-        self.x_ref = Some(xref);
-        self
-    }
-
-    pub fn y_ref(mut self, yref: Reference) -> Self {
-        self.y_ref = Some(yref);
-        self
-    }
-
-    pub fn x(mut self, x: f64) -> Self {
-        self.x = Some(x);
-        self
-    }
-
-    pub fn y(mut self, y: f64) -> Self {
-        self.y = Some(y);
-        self
-    }
-
-    pub fn x_anchor(mut self, anchor: Anchor) -> Self {
-        self.x_anchor = Some(anchor);
-        self
-    }
-
-    pub fn y_anchor(mut self, anchor: Anchor) -> Self {
-        self.y_anchor = Some(anchor);
-        self
-    }
-
-    pub fn pad(mut self, pad: Pad) -> Self {
-        self.pad = Some(pad);
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Label {
     #[serde(rename = "bgcolor")]
     background_color: Option<Box<dyn Color>>,
@@ -1502,36 +973,6 @@ impl Label {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn background_color<C: Color>(mut self, background_color: C) -> Self {
-        self.background_color = Some(Box::new(background_color));
-        self
-    }
-
-    pub fn border_color<C: Color>(mut self, border_color: C) -> Self {
-        self.border_color = Some(Box::new(border_color));
-        self
-    }
-
-    pub fn font(mut self, font: Font) -> Self {
-        self.font = Some(font);
-        self
-    }
-
-    pub fn align(mut self, align: &str) -> Self {
-        self.align = Some(align.to_owned());
-        self
-    }
-
-    pub fn name_length(mut self, name_length: i32) -> Self {
-        self.name_length = Some(Dim::Scalar(name_length));
-        self
-    }
-
-    pub fn name_length_array(mut self, name_length: Vec<i32>) -> Self {
-        self.name_length = Some(Dim::Vector(name_length));
-        self
-    }
 }
 
 #[derive(Serialize, Clone, Debug, Default)]
@@ -1546,8 +987,9 @@ pub enum ErrorType {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct ErrorData {
+    #[field_setter(default = "ErrorType::Percent")]
     r#type: ErrorType,
     array: Option<Vec<f64>>,
     visible: Option<bool>,
@@ -1573,66 +1015,6 @@ impl ErrorData {
             r#type: error_type,
             ..Default::default()
         }
-    }
-
-    pub fn array(mut self, array: Vec<f64>) -> Self {
-        self.array = Some(array);
-        self
-    }
-
-    pub fn visible(mut self, visible: bool) -> Self {
-        self.visible = Some(visible);
-        self
-    }
-
-    pub fn symmetric(mut self, symmetric: bool) -> Self {
-        self.symmetric = Some(symmetric);
-        self
-    }
-
-    pub fn array_minus(mut self, array_minus: Vec<f64>) -> Self {
-        self.array_minus = Some(array_minus);
-        self
-    }
-
-    pub fn value(mut self, value: f64) -> Self {
-        self.value = Some(value);
-        self
-    }
-
-    pub fn value_minus(mut self, value_minus: f64) -> Self {
-        self.value_minus = Some(value_minus);
-        self
-    }
-
-    pub fn trace_ref(mut self, trace_ref: usize) -> Self {
-        self.trace_ref = Some(trace_ref);
-        self
-    }
-
-    pub fn trace_ref_minus(mut self, trace_ref_minus: usize) -> Self {
-        self.trace_ref_minus = Some(trace_ref_minus);
-        self
-    }
-
-    pub fn copy_ystyle(mut self, copy_ystyle: bool) -> Self {
-        self.copy_ystyle = Some(copy_ystyle);
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Box::new(color));
-        self
-    }
-
-    pub fn thickness(mut self, thickness: f64) -> Self {
-        self.thickness = Some(thickness);
-        self
-    }
-
-    pub fn width(mut self, width: usize) -> Self {
-        self.width = Some(width);
-        self
     }
 }
 

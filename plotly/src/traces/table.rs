@@ -4,7 +4,7 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::{
-    color::{Color, ColorArray},
+    color::Color,
     common::{Dim, PlotType, Visible},
     Trace,
 };
@@ -85,7 +85,7 @@ pub struct Header<T> {
     /// Suffix for cell values.
     suffix: Option<Dim<String>>,
     height: Option<f64>,
-    #[field_setter(skip)]
+    #[field_setter(with_matrix)]
     align: Option<Dim<Align>>,
     line: Option<Line>,
     /// Sets the cell fill color. It accepts either a specific color,
@@ -104,16 +104,6 @@ where
             ..Default::default()
         }
     }
-
-    pub fn align(mut self, align: Align) -> Self {
-        self.align = Some(Dim::Scalar(align));
-        self
-    }
-
-    pub fn align_array(mut self, aligns: Vec<Align>) -> Self {
-        self.align = Some(Dim::Vector(aligns));
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
@@ -129,7 +119,7 @@ pub struct Cells<N> {
     ///Suffix for cell values.
     suffix: Option<Dim<String>>,
     height: Option<f64>,
-    #[field_setter(skip)]
+    #[field_setter(with_matrix)]
     align: Option<Dim<Align>>,
     line: Option<Line>,
     ///Sets the cell fill color. It accepts either a specific color,
@@ -149,27 +139,14 @@ where
             ..Default::default()
         }
     }
-
-    pub fn align(mut self, align: Align) -> Self {
-        self.align = Some(Dim::Scalar(align));
-        self
-    }
-
-    pub fn align_array(mut self, aligns: Vec<Align>) -> Self {
-        self.align = Some(Dim::Vector(aligns));
-        self
-    }
-
-    pub fn align_matrix(mut self, aligns: Vec<Vec<Align>>) -> Self {
-        self.align = Some(Dim::Matrix(aligns));
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Line {
+    #[field_setter(with_matrix)]
     color: Option<Dim<Box<dyn Color>>>,
+    #[field_setter(with_matrix)]
     width: Option<Dim<f64>>,
 }
 
@@ -177,83 +154,18 @@ impl Line {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn color_matrix<C: Color>(mut self, colors: Vec<Vec<C>>) -> Self {
-        let mm = colors
-            .into_iter()
-            .map(|row| {
-                row.into_iter()
-                    .map(|c| Box::new(c) as Box<dyn Color>)
-                    .collect()
-            })
-            .collect();
-        self.color = Some(Dim::Matrix(mm));
-        self
-    }
-
-    pub fn width(mut self, width: f64) -> Self {
-        self.width = Some(Dim::Scalar(width));
-        self
-    }
-
-    pub fn width_array(mut self, widths: Vec<f64>) -> Self {
-        self.width = Some(Dim::Vector(widths));
-        self
-    }
-
-    pub fn width_matrix(mut self, widths: Vec<Vec<f64>>) -> Self {
-        let mm = widths
-            .into_iter()
-            .map(|row| row.into_iter().collect())
-            .collect();
-        self.width = Some(Dim::Matrix(mm));
-        self
-    }
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Fill {
+    #[field_setter(with_matrix)]
     color: Option<Dim<Box<dyn Color>>>,
 }
 
 impl Fill {
     pub fn new() -> Self {
         Default::default()
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    ///  Set a 2D color matrix for cells
-    pub fn color_matrix<C: Color>(mut self, m: Vec<Vec<C>>) -> Self {
-        let mm = m
-            .into_iter()
-            .map(|row| {
-                row.into_iter()
-                    .map(|c| Box::new(c) as Box<dyn Color>)
-                    .collect()
-            })
-            .collect();
-        self.color = Some(Dim::Matrix(mm));
-        self
     }
 }
 
@@ -320,15 +232,23 @@ pub enum LinePosition {
 }
 
 #[serde_with::skip_serializing_none]
-#[derive(Serialize, Clone, Debug, Default)]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Font {
+    #[field_setter(with_matrix)]
     color: Option<Dim<Box<dyn Color>>>,
+    #[field_setter(with_matrix)]
     family: Option<Dim<String>>,
+    #[field_setter(with_matrix)]
     size: Option<Dim<f64>>,
+    #[field_setter(with_matrix)]
     style: Option<Dim<FontStyle>>,
+    #[field_setter(with_matrix)]
     textcase: Option<Dim<TextCase>>,
+    #[field_setter(with_matrix)]
     variant: Option<Dim<TextVariant>>,
+    #[field_setter(with_matrix)]
     weight: Option<Dim<f64>>,
+    #[field_setter(with_matrix)]
     lineposition: Option<Dim<LinePosition>>,
 }
 
@@ -336,137 +256,14 @@ impl Font {
     pub fn new() -> Self {
         Default::default()
     }
-
-    pub fn family(mut self, family: &str) -> Self {
-        self.family = Some(Dim::Scalar(family.to_owned()));
-        self
-    }
-
-    pub fn family_array(mut self, families: Vec<String>) -> Self {
-        self.family = Some(Dim::Vector(families));
-        self
-    }
-
-    pub fn family_matrix(mut self, families: Vec<Vec<String>>) -> Self {
-        self.family = Some(Dim::Matrix(families));
-        self
-    }
-
-    pub fn size(mut self, size: f64) -> Self {
-        self.size = Some(Dim::Scalar(size));
-        self
-    }
-
-    pub fn size_array(mut self, sizes: Vec<f64>) -> Self {
-        self.size = Some(Dim::Vector(sizes));
-        self
-    }
-
-    pub fn size_matrix(mut self, sizes: Vec<Vec<f64>>) -> Self {
-        self.size = Some(Dim::Matrix(sizes));
-        self
-    }
-
-    pub fn weight(mut self, weight: f64) -> Self {
-        self.weight = Some(Dim::Scalar(weight));
-        self
-    }
-
-    pub fn weight_array(mut self, weights: Vec<f64>) -> Self {
-        self.weight = Some(Dim::Vector(weights));
-        self
-    }
-
-    pub fn weight_matrix(mut self, weights: Vec<Vec<f64>>) -> Self {
-        self.weight = Some(Dim::Matrix(weights));
-        self
-    }
-
-    pub fn style(mut self, style: FontStyle) -> Self {
-        self.style = Some(Dim::Scalar(style));
-        self
-    }
-
-    pub fn style_array(mut self, styles: Vec<FontStyle>) -> Self {
-        self.style = Some(Dim::Vector(styles));
-        self
-    }
-
-    pub fn style_matrix(mut self, styles: Vec<Vec<FontStyle>>) -> Self {
-        self.style = Some(Dim::Matrix(styles));
-        self
-    }
-
-    pub fn textcase(mut self, textcase: TextCase) -> Self {
-        self.textcase = Some(Dim::Scalar(textcase));
-        self
-    }
-
-    pub fn textcase_array(mut self, textcases: Vec<TextCase>) -> Self {
-        self.textcase = Some(Dim::Vector(textcases));
-        self
-    }
-
-    pub fn textcase_matrix(mut self, textcases: Vec<Vec<TextCase>>) -> Self {
-        self.textcase = Some(Dim::Matrix(textcases));
-        self
-    }
-
-    pub fn color<C: Color>(mut self, color: C) -> Self {
-        self.color = Some(Dim::Scalar(Box::new(color)));
-        self
-    }
-
-    pub fn color_array<C: Color>(mut self, colors: Vec<C>) -> Self {
-        self.color = Some(Dim::Vector(ColorArray(colors).into()));
-        self
-    }
-
-    pub fn color_matrix<C: Color>(mut self, m: Vec<Vec<C>>) -> Self {
-        let mm = m
-            .into_iter()
-            .map(|row| {
-                row.into_iter()
-                    .map(|c| Box::new(c) as Box<dyn Color>)
-                    .collect()
-            })
-            .collect();
-        self.color = Some(Dim::Matrix(mm));
-        self
-    }
-
-    pub fn lineposition(mut self, lineposition: LinePosition) -> Self {
-        self.lineposition = Some(Dim::Scalar(lineposition));
-        self
-    }
-
-    pub fn lineposition_array(mut self, linepositions: Vec<LinePosition>) -> Self {
-        self.lineposition = Some(Dim::Vector(linepositions));
-        self
-    }
-
-    pub fn lineposition_matrix(mut self, linepositions: Vec<Vec<LinePosition>>) -> Self {
-        self.lineposition = Some(Dim::Matrix(linepositions));
-        self
-    }
-
-    pub fn variant(mut self, variant: TextVariant) -> Self {
-        self.variant = Some(Dim::Scalar(variant));
-        self
-    }
-
-    pub fn variant_array(mut self, variants: Vec<TextVariant>) -> Self {
-        self.variant = Some(Dim::Vector(variants));
-        self
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::color::NamedColor;
     use serde_json::{json, to_value};
 
     use super::*;
+    use crate::color::NamedColor;
 
     #[test]
     fn serialize_simple_table() {

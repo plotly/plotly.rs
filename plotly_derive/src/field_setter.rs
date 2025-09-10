@@ -503,10 +503,11 @@ impl FieldReceiver {
             _ => quote![],
         };
 
-        // Optional matrix setter for Dim<_> when #[field_setter(with_matrix)] is present
+        // Optional matrix setter for Dim<_> when #[field_setter(with_matrix)] is
+        // present
         let matrix_setter = if self.with_matrix {
             let matrix_ident = Ident::new(
-                &format!("{}_matrix", field_ident),
+                &format!("{field_ident}_matrix"),
                 proc_macro2::Span::call_site(),
             );
 
