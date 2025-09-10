@@ -13,7 +13,9 @@ use plotly::{
         TicksDirection, TraceOrder,
     },
     sankey::{Line as SankeyLine, Link, Node},
-    traces::table::{Cells, Header},
+    traces::table::{
+        Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
+    },
     Bar, Pie, Plot, Sankey, Scatter, ScatterPolar, Table,
 };
 use plotly_utils::write_example_to_html;
@@ -878,8 +880,26 @@ fn custom_node_sankey_diagram(show: bool, file_name: &str) {
 // ANCHOR: table_chart
 fn table_chart(show: bool, file_name: &str) {
     let trace = Table::new(
-        Header::new(vec![String::from("col1"), String::from("col2")]),
-        Cells::new(vec![vec![1, 2], vec![2, 3]]),
+        Header::new(vec![String::from("col1"), String::from("col2")])
+            .font(TableFont::new().color_array(vec![NamedColor::Black, NamedColor::Blue]))
+            .align_array(vec![TableAlign::Left, TableAlign::Right]),
+        Cells::new(vec![vec![1, 2], vec![2, 3]])
+            .align_matrix(vec![
+                vec![TableAlign::Left, TableAlign::Right],
+                vec![TableAlign::Right, TableAlign::Left],
+            ])
+            .fill(TableFill::new().color_matrix(vec![
+                vec![NamedColor::LightBlue, NamedColor::LightCoral],
+                vec![NamedColor::LightGreen, NamedColor::LightYellow],
+            ]))
+            .line(
+                TableLine::new()
+                    .color_matrix(vec![
+                        vec![NamedColor::Black, NamedColor::Blue],
+                        vec![NamedColor::Green, NamedColor::Yellow],
+                    ])
+                    .width_matrix(vec![vec![2.5, 3.3], vec![4.5, 5.3]]),
+            ),
     );
     let mut plot = Plot::new();
     plot.add_trace(trace);
