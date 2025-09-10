@@ -549,7 +549,7 @@ pub enum ThetaUnit {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{common::Mode, Layout, Plot, ScatterPolar};
+    use crate::Layout;
 
     // The focus of the test is serialization, so we test all options for
     // [`LayoutPolar`], even though some of those options would normally be mutually

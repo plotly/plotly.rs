@@ -829,6 +829,9 @@ mod tests {
     #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
     use {base64::engine::general_purpose, base64::Engine};
 
+    #[cfg(feature = "plotly_static")]
+    use crate::export::sync::ExporterSyncExt;
+
     use super::*;
     use crate::Scatter;
 
@@ -1001,7 +1004,8 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
-        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PNG, 1024, 680, 1.0)
+        exporter
+            .write_image(&plot, &dst, ImageFormat::PNG, 1024, 680, 1.0)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -1021,7 +1025,8 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
-        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::JPEG, 1024, 680, 1.0)
+        exporter
+            .write_image(&plot, &dst, ImageFormat::JPEG, 1024, 680, 1.0)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -1041,7 +1046,8 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
-        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::SVG, 1024, 680, 1.0)
+        exporter
+            .write_image(&plot, &dst, ImageFormat::SVG, 1024, 680, 1.0)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -1069,7 +1075,8 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
-        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PDF, 1024, 680, 1.0)
+        exporter
+            .write_image(&plot, &dst, ImageFormat::PDF, 1024, 680, 1.0)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -1089,7 +1096,8 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
-        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::WEBP, 1024, 680, 1.0)
+        exporter
+            .write_image(&plot, &dst, ImageFormat::WEBP, 1024, 680, 1.0)
             .unwrap();
         assert!(dst.exists());
         let metadata = std::fs::metadata(&dst).expect("Could not retrieve file metadata");
@@ -1109,8 +1117,8 @@ mod tests {
             .build()
             .unwrap();
 
-        let image_base64 = plot
-            .to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 200, 150, 1.0)
+        let image_base64 = exporter
+            .to_base64(&plot, ImageFormat::PNG, 200, 150, 1.0)
             .unwrap();
 
         assert!(!image_base64.is_empty());
@@ -1134,9 +1142,7 @@ mod tests {
             .webdriver_port(get_unique_port())
             .build()
             .unwrap();
-        let image_svg = plot
-            .to_svg_with_exporter(&mut exporter, 200, 150, 1.0)
-            .unwrap();
+        let image_svg = exporter.to_svg(&plot, 200, 150, 1.0).unwrap();
 
         assert!(!image_svg.is_empty());
 
@@ -1172,12 +1178,13 @@ mod tests {
             .build()
             .unwrap();
 
-        assert!(!plot
-            .to_base64_with_exporter(&mut exporter, ImageFormat::PNG, 1024, 680, 1.0)
+        assert!(!exporter
+            .to_base64(&plot, ImageFormat::PNG, 1024, 680, 1.0)
             .unwrap()
             .is_empty());
 
-        plot.write_image_with_exporter(&mut exporter, &dst, ImageFormat::PNG, 800, 600, 1.0)
+        exporter
+            .write_image(&plot, &dst, ImageFormat::PNG, 800, 600, 1.0)
             .unwrap();
         assert!(dst.exists());
 

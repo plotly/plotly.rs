@@ -206,6 +206,7 @@ where
 {
     Scalar(T),
     Vector(Vec<T>),
+    Matrix(Vec<Vec<T>>),
 }
 
 #[derive(Serialize, Clone, Debug, PartialEq, Eq)]
