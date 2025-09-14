@@ -8,7 +8,7 @@ use plotly::Configuration;
 use plotly::{color::Rgb, Plot, Scatter};
 use plotly_utils::write_example_to_html;
 
-// Subplots
+// SubplotsBuilder
 // ANCHOR: simple_subplot
 fn simple_subplot(show: bool, file_name: &str) {
     let trace1 = Scatter::new(vec![1, 2, 3], vec![4, 5, 6]).name("trace1");
@@ -232,7 +232,7 @@ fn multiple_custom_sized_subplots(show: bool, file_name: &str) {
     plot.add_trace(trace4);
 
     let layout = Layout::new()
-        .title("Multiple Custom Sized Subplots")
+        .title("Multiple Custom Sized SubplotsBuilder")
         .x_axis(Axis::new().domain(&[0., 0.45]).anchor("y1"))
         .y_axis(Axis::new().domain(&[0.5, 1.]).anchor("x1"))
         .x_axis2(Axis::new().domain(&[0.55, 1.]).anchor("y2"))
@@ -423,12 +423,14 @@ fn subplots_with_multiple_traces(show: bool, file_name: &str) {
     plot.add_trace(trace4);
     plot.add_trace(trace5);
 
-    let layout = Layout::new().title("Subplots with Multiple Traces").grid(
-        LayoutGrid::new()
-            .rows(1)
-            .columns(2)
-            .pattern(GridPattern::Independent),
-    );
+    let layout = Layout::new()
+        .title("SubplotsBuilder with Multiple Traces")
+        .grid(
+            LayoutGrid::new()
+                .rows(1)
+                .columns(2)
+                .pattern(GridPattern::Independent),
+        );
     plot.set_layout(layout);
 
     let path = write_example_to_html(&plot, file_name);
@@ -438,9 +440,88 @@ fn subplots_with_multiple_traces(show: bool, file_name: &str) {
 }
 // ANCHOR_END: subplots_with_multiple_traces
 
+// ANCHOR: make_subplots_api
+fn make_subplots_api(show: bool, file_name: &str) {
+    use plotly::subplot::SubplotsBuilder;
+    let mut fig = SubplotsBuilder::new(1, 2)
+        .subplot_titles(vec!["Plot 1", "Plot 2"])
+        .x_axis_titles(vec!["X Axis 1", "X Axis 2"])
+        .y_axis_titles(vec!["Y Axis 1", "Y Axis 2"])
+        .x_title_at(1, 1, "X Axis 1")
+        .y_title_at(1, 2, "Y Axis 2")
+        .horizontal_spacing(0.1);
+    fig.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]), 1, 1);
+    fig.add_trace(Scatter::new(vec![20, 30, 40], vec![50, 60, 70]), 1, 2);
+
+    let plot = fig.make_subplots();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+
+// ANCHOR: make_subplots_large_grid
+fn make_subplots_large_grid(show: bool, file_name: &str) {
+    use plotly::subplot::SubplotsBuilder;
+
+    // Create a 4x4 grid (16 subplots) to test beyond the 8-axis hardcoded limit
+    let titles = vec![
+        "Subplot 1",
+        "Subplot 2",
+        "Subplot 3",
+        "Subplot 4",
+        "Subplot 5",
+        "Subplot 6",
+        "Subplot 7",
+        "Subplot 8",
+        "Subplot 9",
+        "Subplot 10",
+        "Subplot 11",
+        "Subplot 12",
+        "Subplot 13",
+        "Subplot 14",
+        "Subplot 15",
+        "Subplot 16",
+    ];
+
+    let rows = 4;
+    let cols = 4;
+    let mut fig = SubplotsBuilder::new(rows, cols)
+        .subplot_titles(titles)
+        .x_axis_titles(vec!["X Axis 1", "X Axis 2", "X Axis 3", "X Axis 4"])
+        .y_axis_titles(vec!["Y Axis 1", "Y Axis 2", "Y Axis 3", "Y Axis 4"])
+        .x_title_at(1, 1, "X Axis 1")
+        .y_title_at(1, 2, "Y Axis 2")
+        .horizontal_spacing(0.05)
+        .vertical_spacing(0.5);
+
+    for row in 1..=rows {
+        for col in 1..=cols {
+            let subplot_num = (row - 1) * cols + col;
+            let x_data: Vec<i32> = (1..=5).map(|i| (i as i32) * subplot_num as i32).collect();
+            let y_data: Vec<i32> = (1..=5)
+                .map(|i| (i as i32) * subplot_num as i32 + 10)
+                .collect();
+
+            fig.add_trace(
+                Scatter::new(x_data, y_data).name(&format!("Trace {}", subplot_num)),
+                row as usize,
+                col as usize,
+            );
+        }
+    }
+
+    let plot = fig.make_subplots();
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: make_subplots_large_grid
+
 fn main() {
     // Change false to true on any of these lines to display the example.
-    // Subplots
+    // SubplotsBuilder
     simple_subplot(false, "simple_subplot");
 
     simple_subplot_matches_x_axis(false, "simple_subplot_matches_x_axis");
@@ -462,4 +543,7 @@ fn main() {
     // Multiple Axes
     two_y_axes(false, "two_y_axes");
     multiple_axes(false, "multiple_axes");
+
+    make_subplots_api(false, "make_subplots_api");
+    make_subplots_large_grid(false, "make_subplots_large_grid");
 }

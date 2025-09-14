@@ -1100,7 +1100,7 @@ fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &str) {
 
     // Create layout with subplots
     let mut layout = Layout::new()
-        .title("Iris Dataset - Subplots by Species")
+        .title("Iris Dataset - SubplotsBuilder by Species")
         .grid(
             LayoutGrid::new()
                 .rows(1)

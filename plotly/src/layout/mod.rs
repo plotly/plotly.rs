@@ -285,6 +285,10 @@ pub struct LayoutFields {
     hover_label: Option<Label>,
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
+    #[serde(flatten)]
+    #[field_setter(skip)]
+    axes: Option<std::collections::BTreeMap<String, Box<Axis>>>,
+    // Keeping these hardcoded axes for backward compatibility
     #[serde(rename = "xaxis")]
     x_axis: Option<Box<Axis>>,
     #[serde(rename = "yaxis")]
@@ -381,6 +385,36 @@ pub struct LayoutFields {
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
     sliders: Option<Vec<Slider>>,
+}
+
+impl Layout {
+    pub fn axis_by_name<S: Into<String>>(&mut self, axis_name: S, axis: Axis) -> &mut Self {
+        if self.axes.is_none() {
+            self.axes = Some(std::collections::BTreeMap::new());
+        }
+        self.axes
+            .as_mut()
+            .unwrap()
+            .insert(axis_name.into(), Box::new(axis));
+        self
+    }
+
+    pub fn set_x_axis(&mut self, index: usize, axis: Axis) -> &mut Self {
+        let key = if index == 1 {
+            "xaxis".to_string()
+        } else {
+            format!("xaxis{index}")
+        };
+        self.axis_by_name(key, axis)
+    }
+    pub fn set_y_axis(&mut self, index: usize, axis: Axis) -> &mut Self {
+        let key = if index == 1 {
+            "yaxis".to_string()
+        } else {
+            format!("yaxis{index}")
+        };
+        self.axis_by_name(key, axis)
+    }
 }
 
 #[cfg(test)]
