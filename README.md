@@ -124,7 +124,7 @@ let svg_string = plot.to_svg(800, 600, 1.0)?;
 
 The above example uses the legacy API that is backwards compatible with the Kaleido API. However, for more efficient workflows a `StaticExporter` object can be built and reused between calls to `write_image`. 
 
-More specificallt, enabling any of the `plotly` features `static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default` gives access to both the synchronous `StaticExporter` and the asynchronous `AsyncStaticExporter` (available via `plotly::plotly_static`). For exporter reuse and up-to-date sync/async usage patterns, please see the dedicated example in `examples/static_export`, which demonstrates both synchronous and asynchronous exporters and how to reuse a single exporter instance across multiple exports.
+More specifically, enabling any of the `plotly` features `static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default` gives access to both the synchronous `StaticExporter` and the asynchronous `AsyncStaticExporter` (available via `plotly::plotly_static`). For exporter reuse and up-to-date sync/async usage patterns, please see the dedicated example in `examples/static_export`, which demonstrates both synchronous and asynchronous exporters and how to reuse a single exporter instance across multiple exports.
 
  For further details see [`plotly_static` crate documentation](https://docs.rs/plotly_static/).
 
