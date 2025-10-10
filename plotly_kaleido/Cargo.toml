@@ -30,5 +30,5 @@ base64 = "0.22"
 plotly_kaleido = { path = ".", features = ["download"] }
 
 [build-dependencies]
-zip = "5.0"
+zip = "6.0"
 directories = ">=4, <7"
