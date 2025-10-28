@@ -161,7 +161,7 @@ let mut exporter = StaticExporterBuilder::default()
 
 ## Examples
 
-Check the self contatined examples in the examples folder. 
+Check the self contained examples in the examples folder. 
 
 Similar examples are available in the [Plotly.rs package](https://github.com/plotly/plotly.rs), in [Plotly.rs Book](https://plotly.github.io/plotly.rs/) as well as the example in [Plotly.rs examples/static_export](https://github.com/plotly/plotly.rs/tree/main/examples/static_export).
 
