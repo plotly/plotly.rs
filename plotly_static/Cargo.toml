@@ -29,7 +29,7 @@ fantoccini = "0.22"
 tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
 urlencoding = "2"
-reqwest = { version = "0.12", features = ["blocking"] }
+reqwest = { version = "0.13", features = ["blocking"] }
 
 [dev-dependencies]
 plotly_static = { path = "." }
