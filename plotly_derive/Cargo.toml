@@ -1,6 +1,6 @@
 [package]
 name = "plotly_derive"
-version = "0.13.5"
+version = "0.14.0"
 description = "Internal proc macro crate for Plotly-rs."
 authors = ["Ioannis Giagkiozis <i.giagkiozis@gmail.com>"]
 license = "MIT"

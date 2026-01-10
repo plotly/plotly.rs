@@ -5,16 +5,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 https://github.com/plotly/plotly.rs/pull/350
 
-## [0.13.6] - 2025-xx-xx
+## [0.14.0] - 2026-01-10
 
 ### Fixed  
 
 - [[#348](https://github.com/plotly/plotly.rs/pull/348)] Fix Pie chart color setting 
 - [[#355](https://github.com/plotly/plotly.rs/pull/355)] Add LayoutPolar support 
+- [[#354](https://github.com/plotly/plotly.rs/pull/354)] Fixed maps examples 
 
 ### Changed
 
+- [[#359](https://github.com/plotly/plotly.rs/pull/359)] Expand plotly_derive to support ergonomic 1D and 2D color arrays setters
+
+### Added
+
 - [[#350](https://github.com/plotly/plotly.rs/pull/350)] Add `plotly_static` `async` API
+- [[#355](https://github.com/plotly/plotly.rs/pull/355)] Add LayoutPolar layout
+- [[#356](https://github.com/plotly/plotly.rs/pull/356)] Add downsample example based on minmax-lttb layout
 
 ## [0.13.5] - 2025-07-31
 
