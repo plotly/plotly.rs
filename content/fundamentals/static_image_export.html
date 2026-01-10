@@ -197,23 +197,26 @@
 <h3 id="cargotoml-configuration-examples"><a class="header" href="#cargotoml-configuration-examples">Cargo.toml Configuration Examples:</a></h3>
 <pre><code class="language-toml"># Basic usage with manual Chromedriver installation
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_chromedriver"] }
+plotly = { version = "0.14", features = ["static_export_chromedriver"] }
 
 # With automatic Chromedriver download
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_wd_download"] }
+plotly = { version = "0.14", features = ["static_export_chromedriver", "static_export_wd_download"] }
 
 # Recommended: Default configuration with Chromedriver + auto-download
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_default"] }
+plotly = { version = "0.14", features = ["static_export_default"] }
 </code></pre>
+<blockquote>
+<p>Enabling any of the static export features in <code>plotly</code> (<code>static_export_chromedriver</code>, <code>static_export_geckodriver</code>, or <code>static_export_default</code>) enables both APIs from <code>plotly_static</code>: the sync <code>StaticExporter</code> and the async <code>AsyncStaticExporter</code> (reachable as <code>plotly::plotly_static::AsyncStaticExporter</code>). Prefer the async API inside async code.</p>
+</blockquote>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
 <ol>
 <li>
 <p><strong>WebDriver Installation</strong>: You need either chromedriver or geckodriver installed</p>
 <ul>
-<li>Chrome: Download from https://chromedriver.chromium.org/</li>
-<li>Firefox: Download from https://github.com/mozilla/geckodriver/releases</li>
+<li>Chrome: Download from <a href="https://chromedriver.chromium.org/">https://chromedriver.chromium.org/</a></li>
+<li>Firefox: Download from <a href="https://github.com/mozilla/geckodriver/releases">https://github.com/mozilla/geckodriver/releases</a></li>
 <li>Or use the <code>static_export_wd_download</code> feature for automatic download</li>
 </ul>
 </li>
@@ -250,6 +253,7 @@ plot.write_image("my_plot", ImageFormat::PNG, 800, 600, 1.0)
 </span><span class="boring">fn main() {
 </span>use plotly::{Plot, Scatter};
 use plotly::plotly_static::{StaticExporterBuilder, ImageFormat};
+use plotly::prelude::*;
 
 let mut plot1 = Plot::new();
 plot1.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
@@ -263,10 +267,13 @@ let mut exporter = StaticExporterBuilder::default()
     .expect("Failed to create StaticExporter");
 
 // Export multiple plots using the same exporter
-plot1.write_image_with_exporter(&amp;mut exporter, "plot1", ImageFormat::PNG, 800, 600, 1.0)
+exporter.write_image(&amp;plot1, "plot1", ImageFormat::PNG, 800, 600, 1.0)
     .expect("Failed to export plot1");
-plot2.write_image_with_exporter(&amp;mut exporter, "plot2", ImageFormat::JPEG, 800, 600, 1.0)
+exporter.write_image(&amp;plot2, "plot2", ImageFormat::JPEG, 800, 600, 1.0)
     .expect("Failed to export plot2");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 <span class="boring">}</span></code></pre></pre>
 <h2 id="supported-formats"><a class="header" href="#supported-formats">Supported Formats</a></h2>
 <h3 id="raster-formats"><a class="header" href="#raster-formats">Raster Formats</a></h3>
@@ -290,6 +297,7 @@ plot2.write_image_with_exporter(&amp;mut exporter, "plot2", ImageFormat::JPEG, 8
 </span><span class="boring">fn main() {
 </span>use plotly::{Plot, Scatter};
 use plotly::plotly_static::{StaticExporterBuilder, ImageFormat};
+use plotly::prelude::*;
 
 let mut plot = Plot::new();
 plot.add_trace(Scatter::new(vec![1, 2, 3], vec![4, 5, 6]));
@@ -299,13 +307,17 @@ let mut exporter = StaticExporterBuilder::default()
     .expect("Failed to create StaticExporter");
 
 // Get base64 data (useful for embedding in HTML)
-let base64_data = plot.to_base64_with_exporter(&amp;mut exporter, ImageFormat::PNG, 400, 300, 1.0)
+let base64_data = exporter.to_base64(&amp;plot, ImageFormat::PNG, 400, 300, 1.0)
     .expect("Failed to export plot");
 
 // Get SVG data (vector format, scalable)
-let svg_data = plot.to_svg_with_exporter(&amp;mut exporter, 400, 300, 1.0)
+let svg_data = exporter.to_svg(&amp;plot, 400, 300, 1.0)
     .expect("Failed to export plot");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 <span class="boring">}</span></code></pre></pre>
+<p>Always call <code>close()</code> on the exporter to ensure proper release of WebDriver resources. Due to the nature of WebDriver implementation, close has to be called as resources cannot be automatically dropped or released.</p>
 <h2 id="advanced-configuration"><a class="header" href="#advanced-configuration">Advanced Configuration</a></h2>
 <h3 id="custom-webdriver-configuration"><a class="header" href="#custom-webdriver-configuration">Custom WebDriver Configuration</a></h3>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -324,6 +336,10 @@ let mut exporter = StaticExporterBuilder::default()
     ])
     .build()
     .expect("Failed to create StaticExporter");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
+
 <span class="boring">}</span></code></pre></pre>
 <h3 id="parallel-usage"><a class="header" href="#parallel-usage">Parallel Usage</a></h3>
 <p>For parallel operations (tests, etc.), use unique ports:</p>
@@ -344,7 +360,16 @@ let mut exporter = StaticExporterBuilder::default()
     .webdriver_port(get_unique_port())
     .build()
     .expect("Failed to build StaticExporter");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 <span class="boring">}</span></code></pre></pre>
+<h3 id="async-support"><a class="header" href="#async-support">Async support</a></h3>
+<p><code>plotly_static</code> package offers an <code>async</code> API which is exposed in <code>plotly</code> via the <code>write_image_async</code>, <code>to_base64_async</code> and <code>to_svg_async</code> functions. However, the user must pass an <code>AsyncStaticExporter</code> asynchronous exporter instead of a synchronous one by building it via <code>StaticExportBuilder</code>'s <code>build_async</code> method.</p>
+<blockquote>
+<p>Note: Both sync and async exporters are available whenever a <code>static_export_*</code> feature is enabled in <code>plotly</code>.</p>
+</blockquote>
+<p>For more details check the <a href="https://docs.rs/plotly_static/"><code>plotly_static</code> API Documentation</a></p>
 <h2 id="logging-support"><a class="header" href="#logging-support">Logging Support</a></h2>
 <p>Enable logging for debugging and monitoring:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -360,6 +385,9 @@ env_logger::init();
 let mut exporter = StaticExporterBuilder::default()
     .build()
     .expect("Failed to create StaticExporter");
+
+// Always close the exporter to ensure proper release of WebDriver resources
+exporter.close();
 <span class="boring">}</span></code></pre></pre>
 <h2 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h2>
 <ul>
@@ -368,7 +396,7 @@ let mut exporter = StaticExporterBuilder::default()
 <li><strong>Resource Management</strong>: The exporter automatically manages WebDriver lifecycle</li>
 </ul>
 <h2 id="complete-example"><a class="header" href="#complete-example">Complete Example</a></h2>
-<p>See the <a href="../../../examples/static_export/">static export example</a> for a complete working example that demonstrates:</p>
+<p>See the <a href="https://github.com/plotly/plotly.rs/tree/main/examples/static_export">static export example</a> for a complete working example that demonstrates:</p>
 <ul>
 <li>Multiple export formats</li>
 <li>Exporter reuse</li>
@@ -397,7 +425,7 @@ cargo run
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../recipes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../fundamentals/timeseries_downsampling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -411,7 +439,7 @@ cargo run
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../recipes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../fundamentals/timeseries_downsampling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

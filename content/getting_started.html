@@ -198,7 +198,7 @@
 <h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
 <p>To start using <a href="https://github.com/plotly/plotly.rs">plotly.rs</a> in your project add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-plotly = "0.13"
+plotly = "0.14"
 </code></pre>
 <p><a href="https://github.com/plotly/plotly.rs">Plotly.rs</a> is ultimately a thin wrapper around the <code>plotly.js</code> library. The main job of this library is to provide <code>structs</code> and <code>enums</code> which get serialized to <code>json</code> and passed to the <code>plotly.js</code> library to actually do the heavy lifting. As such, if you are familiar with <code>plotly.js</code> or its derivatives (e.g. the equivalent Python library), then you should find <a href="https://github.com/plotly/plotly.rs"><code>plotly.rs</code></a> intuitive to use.</p>
 <p>A <code>Plot</code> struct contains one or more <code>Trace</code> objects which describe the structure of data to be displayed. Optional <code>Layout</code> and <code>Configuration</code> structs can be used to specify the layout and config of the plot, respectively.</p>
@@ -254,12 +254,12 @@ fn main() -&gt; std::io::Result&lt;()&gt; {
 <h2 id="saving-plots-with-kaleido-legacy"><a class="header" href="#saving-plots-with-kaleido-legacy">Saving Plots with Kaleido (legacy)</a></h2>
 <p>To add the ability to save plots in the following formats: png, jpeg, webp, svg, pdf and eps, you can use the <code>kaleido</code> feature. This feature depends on <a href="https://github.com/plotly/Kaleido">plotly/Kaleido</a>: a cross-platform open source library for generating static images. All the necessary binaries have been included with <code>plotly_kaleido</code> for <code>Linux</code>, <code>Windows</code> and <code>MacOS</code>. Previous versions of <a href="https://github.com/plotly/plotly.rs">plotly.rs</a> used the <code>orca</code> feature, however, this has been deprecated as it provided the same functionality but required additional installation steps. To enable the <code>kaleido</code> feature add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-plotly = { version = "0.13", features = ["kaleido"] }
+plotly = { version = "0.14", features = ["kaleido"] }
 </code></pre>
 <h2 id="static-image-export-with-webdriver-recommended"><a class="header" href="#static-image-export-with-webdriver-recommended">Static Image Export with WebDriver (recommended)</a></h2>
 <p>For static image export using WebDriver and headless browsers, you can use the <code>plotly_static</code> feature. This feature supports the same formats as Kaleido (png, jpeg, webp, svg, pdf) but uses WebDriver for the static export process. To enable static export, add the following to your <code>Cargo.toml</code>:</p>
 <pre><code class="language-toml">[dependencies]
-plotly = { version = "0.13", features = ["static_export_default"] }
+plotly = { version = "0.14", features = ["static_export_default"] }
 </code></pre>
 <p>The <code>static_export_default</code> feature includes Chrome WebDriver support with automatic download. For Firefox support, use <code>static_export_geckodriver</code> instead. See the <a href="../fundamentals/static_image_export.html">Static Image Export</a> chapter for a detailed usage example.</p>
 <h2 id="webassembly-support"><a class="header" href="#webassembly-support">WebAssembly Support</a></h2>
