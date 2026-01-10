@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.13.5"
+version = "0.14.0"
 description = "A plotting library powered by Plotly.js"
 authors = [
     "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
@@ -60,7 +60,7 @@ askama = { version = "0.15.0", features = ["serde_json"] }
 dyn-clone = "1"
 erased-serde = "0.4"
 image = { version = "0.25", optional = true }
-plotly_derive = { version = "0.13", path = "../plotly_derive" }
+plotly_derive = { version = "0.14", path = "../plotly_derive" }
 plotly_static = { version = "0.1", path = "../plotly_static", optional = true }
 plotly_kaleido = { version = "0.13", path = "../plotly_kaleido", optional = true }
 ndarray = { version = "0.17", optional = true }
