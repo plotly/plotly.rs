@@ -7,4 +7,4 @@ edition = "2021"
 plotly = { path = "../../../plotly" }
 plotly_utils = { path = "../../plotly_utils" }
 build_html = "2.5.0"
-ndarray = "0.16" 
+ndarray = "0.17"

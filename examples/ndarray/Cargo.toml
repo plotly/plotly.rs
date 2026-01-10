@@ -5,6 +5,6 @@ authors = ["Michael Freeborn <michaelfreeborn1@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-ndarray = "0.16"
+ndarray = "0.17"
 plotly = { path = "../../plotly", features = ["plotly_ndarray"] }
 plotly_utils = { path = "../plotly_utils" }
