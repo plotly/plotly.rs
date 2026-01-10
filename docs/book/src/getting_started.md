@@ -22,7 +22,7 @@ To start using [plotly.rs](https://github.com/plotly/plotly.rs) in your project 
 
 ```toml
 [dependencies]
-plotly = "0.13"
+plotly = "0.14"
 ```
 
 [Plotly.rs](https://github.com/plotly/plotly.rs) is ultimately a thin wrapper around the `plotly.js` library. The main job of this library is to provide `structs` and `enums` which get serialized to `json` and passed to the `plotly.js` library to actually do the heavy lifting. As such, if you are familiar with `plotly.js` or its derivatives (e.g. the equivalent Python library), then you should find [`plotly.rs`](https://github.com/plotly/plotly.rs) intuitive to use.
@@ -97,7 +97,7 @@ To add the ability to save plots in the following formats: png, jpeg, webp, svg,
 
 ```toml
 [dependencies]
-plotly = { version = "0.13", features = ["kaleido"] }
+plotly = { version = "0.14", features = ["kaleido"] }
 ```
 
 ## Static Image Export with WebDriver (recommended)
@@ -106,7 +106,7 @@ For static image export using WebDriver and headless browsers, you can use the `
 
 ```toml
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_default"] }
+plotly = { version = "0.14", features = ["static_export_default"] }
 ```
 
 The `static_export_default` feature includes Chrome WebDriver support with automatic download. For Firefox support, use `static_export_geckodriver` instead. See the [Static Image Export](../fundamentals/static_image_export.md) chapter for a detailed usage example.

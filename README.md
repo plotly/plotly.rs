@@ -63,7 +63,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.13"
+plotly = "0.14"
 ```
 
 ## Exporting a single Interactive Plot
@@ -103,7 +103,7 @@ The recommended way to export static images is using the `plotly_static` backend
 
 ```toml
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_default"] }
+plotly = { version = "0.14", features = ["static_export_default"] }
 ```
 
 This supports PNG, JPEG, WEBP, SVG, and PDF formats:
@@ -136,7 +136,7 @@ Enable the `kaleido` feature and opt in for automatic downloading of the `kaleid
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.13", features = ["kaleido", "kaleido_download"] }
+plotly = { version = "0.14", features = ["kaleido", "kaleido_download"] }
 ```
 
 Alternatively, enable only the `kaleido` feature and manually install Kaleido.
@@ -144,7 +144,7 @@ Alternatively, enable only the `kaleido` feature and manually install Kaleido.
 # Cargo.toml
 
 [dependencies]
-plotly = { version = "0.13", features = ["kaleido"] }
+plotly = { version = "0.14", features = ["kaleido"] }
 ```
 
 With the feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.

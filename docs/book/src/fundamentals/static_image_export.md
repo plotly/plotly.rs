@@ -23,15 +23,15 @@ The static export functionality is controlled by feature flags in the main `plot
 ```toml
 # Basic usage with manual Chromedriver installation
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_chromedriver"] }
+plotly = { version = "0.14", features = ["static_export_chromedriver"] }
 
 # With automatic Chromedriver download
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_chromedriver", "static_export_wd_download"] }
+plotly = { version = "0.14", features = ["static_export_chromedriver", "static_export_wd_download"] }
 
 # Recommended: Default configuration with Chromedriver + auto-download
 [dependencies]
-plotly = { version = "0.13", features = ["static_export_default"] }
+plotly = { version = "0.14", features = ["static_export_default"] }
 ```
 
 > Enabling any of the static export features in `plotly` (`static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default`) enables both APIs from `plotly_static`: the sync `StaticExporter` and the async `AsyncStaticExporter` (reachable as `plotly::plotly_static::AsyncStaticExporter`). Prefer the async API inside async code.
