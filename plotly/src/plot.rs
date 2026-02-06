@@ -156,7 +156,7 @@ impl Traces {
 ///     Ok(())
 /// }
 /// ```
-#[derive(Default, Serialize, Clone)]
+#[derive(Serialize, Clone)]
 pub struct Plot {
     #[serde(rename = "data")]
     traces: Traces,
@@ -169,13 +169,21 @@ pub struct Plot {
     js_scripts: String,
 }
 
+impl Default for Plot {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Plot {
     /// Create a new `Plot`.
     pub fn new() -> Plot {
         Plot {
             traces: Traces::new(),
+            layout: Layout::default(),
+            configuration: Configuration::default(),
+            frames: None,
             js_scripts: Self::js_scripts(),
-            ..Default::default()
         }
     }
 
