@@ -22,7 +22,7 @@ debug = []
 [dependencies]
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
-rand = "0.9"
+rand = "0.10"
 serde_json = "1.0"
 base64 = "0.22"
 fantoccini = "0.22"
