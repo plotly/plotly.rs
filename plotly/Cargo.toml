@@ -69,10 +69,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_repr = "0.1"
 serde_with = ">=2, <4"
-rand = { version = "0.10", default-features = false, features = [
-    "small_rng",
-    "alloc",
-] }
+rand = { version = "0.10", default-features = false, features = ["alloc"] }
 async-trait = { version = "0.1", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
@@ -92,5 +89,5 @@ itertools = ">=0.10, <0.15"
 itertools-num = "0.1"
 ndarray = "0.17"
 plotly_static = { path = "../plotly_static" }
-rand_distr = "0.5"
+rand_distr = "0.6"
 base64 = "0.22"

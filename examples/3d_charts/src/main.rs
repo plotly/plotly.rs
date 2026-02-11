@@ -8,7 +8,7 @@ use plotly::{
     Mesh3D, Plot, Scatter3D, Surface,
 };
 use plotly_utils::write_example_to_html;
-use rand::Rng;
+use rand::RngExt;
 
 // 3D Scatter Plots
 // ANCHOR: simple_scatter3d_plot
