@@ -7,7 +7,7 @@ use crate::{
     common::{
         Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
     },
-    private::NumOrStringCollection,
+    private::{NumOrString, NumOrStringCollection},
     Trace,
 };
 
@@ -107,11 +107,15 @@ where
     x_axis: Option<String>,
     #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
+    #[serde(rename = "xgap")]
+    x_gap: Option<NumOrString>,
     y: Option<Vec<Y>>,
     #[serde(rename = "yaxis")]
     y_axis: Option<String>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    #[serde(rename = "ygap")]
+    y_gap: Option<NumOrString>,
     z: Option<Vec<Z>>,
     zauto: Option<bool>,
     #[serde(rename = "zhoverformat")]
