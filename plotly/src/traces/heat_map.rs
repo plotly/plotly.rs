@@ -7,7 +7,7 @@ use crate::{
     common::{
         Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
     },
-    private::NumOrStringCollection,
+    private::{NumOrString, NumOrStringCollection},
     Trace,
 };
 
@@ -107,11 +107,15 @@ where
     x_axis: Option<String>,
     #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
+    #[serde(rename = "xgap")]
+    x_gap: Option<NumOrString>,
     y: Option<Vec<Y>>,
     #[serde(rename = "yaxis")]
     y_axis: Option<String>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    #[serde(rename = "ygap")]
+    y_gap: Option<NumOrString>,
     z: Option<Vec<Z>>,
     zauto: Option<bool>,
     #[serde(rename = "zhoverformat")]
@@ -223,8 +227,10 @@ mod tests {
         .visible(Visible::LegendOnly)
         .x_axis("x")
         .x_calendar(Calendar::Hebrew)
+        .x_gap(1.0)
         .y_axis("y")
         .y_calendar(Calendar::Islamic)
+        .y_gap("10")
         .zauto(true)
         .zhover_format("fmt")
         .zmax(10.0)
@@ -256,9 +262,11 @@ mod tests {
             "x": [0.0, 1.0],
             "xcalendar": "hebrew",
             "xaxis": "x",
+            "xgap": 1.0,
             "y": [2.0, 3.0],
             "yaxis": "y",
             "ycalendar": "islamic",
+            "ygap": "10",
             "z": [[4.0, 5.0], [6.0, 7.0]],
             "zauto": true,
             "zhoverformat": "fmt",
