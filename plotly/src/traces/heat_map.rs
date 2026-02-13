@@ -86,7 +86,8 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(rename = "hovertext")]
-    hover_text: Option<Vec<String>>,
+    #[field_setter(with_matrix)]
+    hover_text: Option<Dim<String>>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
     #[serde(rename = "legendgrouptitle")]
@@ -99,7 +100,8 @@ where
     show_legend: Option<bool>,
     #[serde(rename = "showscale")]
     show_scale: Option<bool>,
-    text: Option<Vec<String>>,
+    #[field_setter(with_matrix)]
+    text: Option<Dim<String>>,
     transpose: Option<bool>,
     visible: Option<Visible>,
     x: Option<Vec<X>>,
