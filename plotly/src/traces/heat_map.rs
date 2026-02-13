@@ -86,7 +86,8 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(rename = "hovertext")]
-    hover_text: Option<Vec<String>>,
+    #[field_setter(with_matrix)]
+    hover_text: Option<Dim<String>>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
     #[serde(rename = "legendgrouptitle")]
@@ -99,7 +100,8 @@ where
     show_legend: Option<bool>,
     #[serde(rename = "showscale")]
     show_scale: Option<bool>,
-    text: Option<Vec<String>>,
+    #[field_setter(with_matrix)]
+    text: Option<Dim<String>>,
     transpose: Option<bool>,
     visible: Option<Visible>,
     x: Option<Vec<X>>,
@@ -214,7 +216,7 @@ mod tests {
         .hover_on_gaps(true)
         .hover_template("tmpl")
         .hover_template_array(vec!["tmpl1", "tmpl2"])
-        .hover_text(vec!["hov", "er"])
+        .hover_text_array(vec!["hov", "er"])
         .legend_group("1")
         .legend_group_title("Legend Group Title")
         .name("name")
@@ -222,7 +224,7 @@ mod tests {
         .reverse_scale(false)
         .show_legend(true)
         .show_scale(false)
-        .text(vec!["te", "xt"])
+        .text_array(vec!["te", "xt"])
         .transpose(true)
         .visible(Visible::LegendOnly)
         .x_axis("x")
