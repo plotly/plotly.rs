@@ -2,7 +2,7 @@
 
 use std::f64::consts::PI;
 
-use plotly::common::{ColorScale, ColorScalePalette, Font};
+use plotly::common::{ColorScale, ColorScalePalette, Font, HoverInfo};
 use plotly::contour::Contours;
 use plotly::{Contour, HeatMap, Layout, Plot};
 use plotly_utils::write_example_to_html;
@@ -124,7 +124,15 @@ fn customizing_spacing_between_x_and_y_ticks(show: bool, file_name: &str) {
 // ANCHOR: basic_heat_map
 fn basic_heat_map(show: bool, file_name: &str) {
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
-    let trace = HeatMap::new_z(z).zmin(1.0).zmax(60.0);
+    let trace = HeatMap::new_z(z)
+        .zmin(1.0)
+        .zmax(60.0)
+        .hover_info(HoverInfo::Text)
+        .hover_text_matrix(vec![
+            vec!["A", "B", "C"],
+            vec!["D", "E", "F"],
+            vec!["G", "H", "I"],
+        ]);
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
