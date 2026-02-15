@@ -193,7 +193,15 @@ use std::f64::consts::PI;
 </span><span class="boring">fn main() {
 </span>fn basic_heat_map(show: bool, file_name: &amp;str) {
     let z = vec![vec![1, 20, 30], vec![20, 1, 60], vec![30, 60, 1]];
-    let trace = HeatMap::new_z(z).zmin(1.0).zmax(60.0);
+    let trace = HeatMap::new_z(z)
+        .zmin(1.0)
+        .zmax(60.0)
+        .hover_info(HoverInfo::Text)
+        .hover_text_matrix(vec![
+            vec!["A", "B", "C"],
+            vec!["D", "E", "F"],
+            vec!["G", "H", "I"],
+        ]);
     let mut plot = Plot::new();
     plot.add_trace(trace);
 
@@ -205,7 +213,7 @@ use std::f64::consts::PI;
 <span class="boring">}</span></code></pre></pre>
 <div id="basic_heat_map" class="plotly-graph-div" style="height:100%; width:100%;"></div>
 <script type="text/javascript">
-    Plotly.newPlot("basic_heat_map", {"data":[{"type":"heatmap","z":[[1,20,30],[20,1,60],[30,60,1]],"zmax":60.0,"zmin":1.0}],"layout":{},"config":{},"frames":null});
+    Plotly.newPlot("basic_heat_map", {"data":[{"type":"heatmap","hoverinfo":"text","hovertext":[["A","B","C"],["D","E","F"],["G","H","I"]],"z":[[1,20,30],[20,1,60],[30,60,1]],"zmax":60.0,"zmin":1.0}],"layout":{},"config":{},"frames":null});
 </script>
                     </main>
 
