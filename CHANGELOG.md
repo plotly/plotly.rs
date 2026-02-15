@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 https://github.com/plotly/plotly.rs/pull/350
 
+## [0.14.1] - 2026-02-15
+
+### Fixed  
+
+- [[#387](https://github.com/plotly/plotly.rs/pull/387)] Fix HeatMap hovertext/text dimensions
+- [[#385](https://github.com/plotly/plotly.rs/pull/385)] Add `{x,y}gap` parameter to heatmaps
+- [[#381](https://github.com/plotly/plotly.rs/pull/381)] Make `Plot::default()` behave like `Plot::new()` 
+
 ## [0.14.0] - 2026-01-10
 
 ### Fixed  

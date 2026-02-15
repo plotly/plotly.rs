@@ -5,7 +5,7 @@
 //! ## Feature Deprecation Notice
 //!
 //! The `kaleido` and `kaleido_download` features are deprecated since version
-//! 0.13.0 and will be removed in version 0.14.0. Please migrate to the
+//! 0.13.0 and will be removed in version 0.15.0. Please migrate to the
 //! `plotly_static` and `static_export_*` features instead.
 #![recursion_limit = "256"] // lets us use a large serde_json::json! macro for testing crate::layout::Axis
 extern crate askama;
@@ -15,14 +15,14 @@ extern crate serde;
 #[cfg(feature = "kaleido")]
 #[deprecated(
     since = "0.13.0",
-    note = "kaleido feature is deprecated and will be removed in version 0.14.0. Use plotly_static feature instead"
+    note = "kaleido feature is deprecated and will be removed in version 0.15.0. Use plotly_static feature instead"
 )]
 const _KALEIDO_DEPRECATED: () = ();
 
 #[cfg(feature = "kaleido_download")]
 #[deprecated(
     since = "0.13.0",
-    note = "kaleido_download feature is deprecated and will be removed in version 0.14.0. Use plotly_static_download feature instead"
+    note = "kaleido_download feature is deprecated and will be removed in version 0.15.0. Use plotly_static_download feature instead"
 )]
 const _KALEIDO_DOWNLOAD_DEPRECATED: () = ();
 

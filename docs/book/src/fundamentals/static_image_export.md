@@ -111,7 +111,7 @@ exporter.close();
 - **PDF**: Portable Document Format
 
 ### Deprecated
-- **EPS**: Encapsulated PostScript (will be removed in version 0.14.0)
+- **EPS**: Encapsulated PostScript (will be removed in version 0.15.0)
 
 ## String Export
 

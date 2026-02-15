@@ -279,7 +279,7 @@
 //!
 //! MIT License - see LICENSE file for details.
 
-// TODO: remove this once version 0.14.0 is out
+// TODO: remove this once version 0.15.0 is out
 #![allow(deprecated)]
 use std::fs::File;
 use std::io::prelude::*;
@@ -320,7 +320,7 @@ mod webdriver;
 /// # Deprecated Formats
 ///
 /// - **EPS**: Encapsulated PostScript format (deprecated since 0.13.0, will be
-///   removed in 0.14.0)
+///   removed in 0.15.0)
 ///   - Use SVG or PDF instead for vector graphics
 ///   - EPS is not supported in the open source version and in versions prior to
 ///     0.13.0 has been generating empty images.
@@ -349,11 +349,11 @@ pub enum ImageFormat {
     /// Encapsulated PostScript format (deprecated)
     ///
     /// This format is deprecated since version 0.13.0 and will be removed in
-    /// version 0.14.0. Use SVG or PDF instead for vector graphics. EPS is
+    /// version 0.15.0. Use SVG or PDF instead for vector graphics. EPS is
     /// not supported in the open source Plotly ecosystem version.
     #[deprecated(
         since = "0.13.0",
-        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.14.0"
+        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.15.0"
     )]
     EPS,
 }
@@ -837,7 +837,6 @@ impl StaticExporter {
     /// The format of the string depends on the image format. For
     /// ImageFormat::SVG the function will generate plain SVG text, for
     /// other formats it will return base64-encoded data.
-    ///
     ///
     /// # Examples
     ///
