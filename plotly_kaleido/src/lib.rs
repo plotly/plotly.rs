@@ -41,11 +41,11 @@ pub enum ImageFormat {
     /// Encapsulated PostScript format (deprecated)
     ///
     /// This format is deprecated since version 0.13.0 and will be removed in
-    /// version 0.14.0. Use SVG or PDF instead for vector graphics. EPS is
+    /// version 0.15.0. Use SVG or PDF instead for vector graphics. EPS is
     /// not supported in the open source version.
     #[deprecated(
         since = "0.13.0",
-        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.14.0"
+        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.15.0"
     )]
     EPS,
 }

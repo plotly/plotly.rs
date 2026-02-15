@@ -1,6 +1,6 @@
 [package]
 name = "plotly"
-version = "0.14.0"
+version = "0.14.1"
 description = "A plotting library powered by Plotly.js"
 authors = [
     "Ioannis Giagkiozis <i.giagkiozis@gmail.com>",
@@ -49,9 +49,9 @@ all = [
 # This is used for enabling extra debugging messages and debugging functionality
 debug = ["plotly_static?/debug"]
 
-# DEPRECATED: kaleido feature will be removed in version 0.14.0. Use `static_export_*` features instead.
+# DEPRECATED: kaleido feature will be removed in version 0.15.0. Use `static_export_*` features instead.
 kaleido = ["plotly_kaleido"]
-# DEPRECATED: kaleido_download feature will be removed in version 0.14.0. Use `static_export_wd_download` instead.
+# DEPRECATED: kaleido_download feature will be removed in version 0.15.0. Use `static_export_wd_download` instead.
 kaleido_download = ["plotly_kaleido/download"]
 
 

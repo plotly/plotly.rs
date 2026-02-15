@@ -62,7 +62,7 @@ Consider using the `to_html` method obtain a string representation instead. If u
 - ImageFormat::WEBP
 - ImageFormat::SVG
 - ImageFormat::PDF
-- ImageFormat::EPS // will be removed in version 0.14.0
+- ImageFormat::EPS // will be removed in version 0.15.0
 
 Used as follows:
 let plot = Plot::new();
@@ -427,11 +427,11 @@ impl Plot {
     /// at the given location using kaleido.
     ///
     /// This function is deprecated since version 0.13.0. The kaleido-based
-    /// implementation will be removed in version 0.14.0. Use
+    /// implementation will be removed in version 0.15.0. Use
     /// `plotly_static` feature instead for static image export functionality.
     #[deprecated(
         since = "0.13.0",
-        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.14.0"
+        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.15.0"
     )]
     #[cfg(feature = "kaleido")]
     pub fn write_image<P: AsRef<Path>>(
@@ -460,11 +460,11 @@ impl Plot {
     /// [ImageFormat::PNG] and [ImageFormat::WEBP]
     ///
     /// This function is deprecated since version 0.13.0. The kaleido-based
-    /// implementation will be removed in version 0.14.0. Use
+    /// implementation will be removed in version 0.15.0. Use
     /// `plotly_static` feature instead for static image export functionality.
     #[deprecated(
         since = "0.13.0",
-        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.14.0"
+        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.15.0"
     )]
     #[cfg(feature = "kaleido")]
     pub fn to_base64(
@@ -497,11 +497,11 @@ impl Plot {
     /// Convert the `Plot` to SVG and return it as a String using kaleido.
     ///
     /// This function is deprecated since version 0.13.0. The kaleido-based
-    /// implementation will be removed in version 0.14.0. Use
+    /// implementation will be removed in version 0.15.0. Use
     /// `plotly_static` feature instead for static image export functionality.
     #[deprecated(
         since = "0.13.0",
-        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.14.0"
+        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.15.0"
     )]
     #[cfg(feature = "kaleido")]
     pub fn to_svg(&self, width: usize, height: usize, scale: f64) -> String {
