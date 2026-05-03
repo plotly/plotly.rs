@@ -55,6 +55,7 @@ where
     legend_group_title: Option<LegendGroupTitle>,
     opacity: Option<f64>,
     ids: Option<Vec<String>>,
+    base: Option<Dim<Vec<f64>>>,
     width: Option<f64>,
     offset: Option<Dim<f64>>,
     text: Option<Dim<String>>,
