@@ -403,18 +403,28 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
+    fn to_evcxr_notebook_format(&self) -> String {
+        format!(
+            "EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT",
+            self.to_jupyter_notebook_html()
+        )
+    }
+
+    fn to_evcxr_lab_format(&self) -> String {
+        format!(
+            "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT",
+            self.to_json()
+        )
+    }
+
     /// Display plot in Jupyter Notebook.
     pub fn notebook_display(&self) {
-        let plot_data = self.to_jupyter_notebook_html();
-        println!("EVCXR_BEGIN_CONTENT text/html\n{plot_data}\nEVCXR_END_CONTENT");
+        println!("{}", self.to_evcxr_notebook_format());
     }
 
     /// Display plot in Jupyter Lab.
     pub fn lab_display(&self) {
-        let plot_data = self.to_json();
-        println!(
-            "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{plot_data}\nEVCXR_END_CONTENT"
-        );
+        println!("{}", self.to_evcxr_lab_format());
     }
 
     /// Displays the plot in Jupyter Lab; if running a Jupyter Notebook then use
