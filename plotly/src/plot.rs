@@ -886,6 +886,40 @@ mod tests {
     }
 
     #[test]
+    fn lab_display_output() {
+        let plot = create_test_plot();
+        let output = plot.to_evcxr_lab_format();
+
+        assert!(output.starts_with("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n"));
+        assert!(output.ends_with("\nEVCXR_END_CONTENT"));
+
+        let json_str = output
+            .strip_prefix("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n")
+            .unwrap()
+            .strip_suffix("\nEVCXR_END_CONTENT")
+            .unwrap();
+        let json: serde_json::Value = serde_json::from_str(json_str).unwrap();
+        assert!(json.get("data").is_some());
+        assert!(json.get("layout").is_some());
+    }
+
+    #[test]
+    fn notebook_display_output() {
+        let plot = create_test_plot();
+        let output = plot.to_evcxr_notebook_format();
+
+        assert!(output.starts_with("EVCXR_BEGIN_CONTENT text/html\n"));
+        assert!(output.ends_with("\nEVCXR_END_CONTENT"));
+
+        let html = output
+            .strip_prefix("EVCXR_BEGIN_CONTENT text/html\n")
+            .unwrap()
+            .strip_suffix("\nEVCXR_END_CONTENT")
+            .unwrap();
+        assert!(html.contains("plotly"));
+    }
+
+    #[test]
     fn plot_serialize_simple() {
         let plot = create_test_plot();
         let expected = json!({
