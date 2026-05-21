@@ -4,6 +4,8 @@ As of version `0.7.0`, [Plotly.rs](https://github.com/plotly/plotly.rs) has nati
 
 Once you've installed the required packages you'll be able to run all the examples shown here as well as all [the recipes](../recipes.md) in Jupyter Lab!
 
+> Tested against JupyterLab 4.4.7.
+
 ## Installation
 
 Install the plotly package and JupyterLab using pip or conda:
