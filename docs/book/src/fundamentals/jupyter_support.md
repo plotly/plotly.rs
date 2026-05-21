@@ -22,7 +22,7 @@ No separate JupyterLab extension install is required — the plotly renderer is 
 with the plotly package (5.x+) and JupyterLab picks it up automatically.
 
 > **Note:** `anywidget` is required for Python's `FigureWidget` interactive features
-> but is **not** needed for the Rust `lab_display()` / `notebook_display()` path.
+> but is **not** needed for the Rust `evcxr_display()` path.
 
 Next, install the EvCxR Jupyter Kernel:
 
@@ -55,12 +55,11 @@ let trace = Scatter::new(vec![1.0, 2.0, 3.0], vec![1.0, 4.0, 9.0]);
 let mut plot = Plot::new();
 plot.add_trace(trace);
 
-plot.lab_display();
+plot.evcxr_display();
 ```
 
-For Jupyter Lab there are two ways to display a plot in the `EvCxR` kernel: either
-have the plot object on the last line without a semicolon, or call `Plot::lab_display`
-directly — both produce the same result.
+`evcxr_display()` works in both Jupyter Lab and Notebook. Alternatively you can
+leave the plot on the last line of a cell without a semicolon for the same effect.
 
-For Jupyter Notebook, use `Plot::notebook_display` instead. You can find an example
-notebook [here](https://github.com/plotly/plotly.rs/tree/main/examples/jupyter/jupyter_notebook.ipynb).
+You can find a full notebook example
+[here](https://github.com/plotly/plotly.rs/tree/main/examples/jupyter/jupyter_notebook.ipynb).
