@@ -403,18 +403,28 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
+    fn to_evcxr_notebook_format(&self) -> String {
+        format!(
+            "EVCXR_BEGIN_CONTENT text/html\n{}\nEVCXR_END_CONTENT",
+            self.to_jupyter_notebook_html()
+        )
+    }
+
+    fn to_evcxr_lab_format(&self) -> String {
+        format!(
+            "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{}\nEVCXR_END_CONTENT",
+            self.to_json()
+        )
+    }
+
     /// Display plot in Jupyter Notebook.
     pub fn notebook_display(&self) {
-        let plot_data = self.to_jupyter_notebook_html();
-        println!("EVCXR_BEGIN_CONTENT text/html\n{plot_data}\nEVCXR_END_CONTENT");
+        println!("{}", self.to_evcxr_notebook_format());
     }
 
     /// Display plot in Jupyter Lab.
     pub fn lab_display(&self) {
-        let plot_data = self.to_json();
-        println!(
-            "EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n{plot_data}\nEVCXR_END_CONTENT"
-        );
+        println!("{}", self.to_evcxr_lab_format());
     }
 
     /// Displays the plot in Jupyter Lab; if running a Jupyter Notebook then use
@@ -873,6 +883,40 @@ mod tests {
     fn lab_display() {
         let plot = create_test_plot();
         plot.lab_display();
+    }
+
+    #[test]
+    fn lab_display_output() {
+        let plot = create_test_plot();
+        let output = plot.to_evcxr_lab_format();
+
+        assert!(output.starts_with("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n"));
+        assert!(output.ends_with("\nEVCXR_END_CONTENT"));
+
+        let json_str = output
+            .strip_prefix("EVCXR_BEGIN_CONTENT application/vnd.plotly.v1+json\n")
+            .unwrap()
+            .strip_suffix("\nEVCXR_END_CONTENT")
+            .unwrap();
+        let json: serde_json::Value = serde_json::from_str(json_str).unwrap();
+        assert!(json.get("data").is_some());
+        assert!(json.get("layout").is_some());
+    }
+
+    #[test]
+    fn notebook_display_output() {
+        let plot = create_test_plot();
+        let output = plot.to_evcxr_notebook_format();
+
+        assert!(output.starts_with("EVCXR_BEGIN_CONTENT text/html\n"));
+        assert!(output.ends_with("\nEVCXR_END_CONTENT"));
+
+        let html = output
+            .strip_prefix("EVCXR_BEGIN_CONTENT text/html\n")
+            .unwrap()
+            .strip_suffix("\nEVCXR_END_CONTENT")
+            .unwrap();
+        assert!(html.contains("plotly"));
     }
 
     #[test]
