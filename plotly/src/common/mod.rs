@@ -893,6 +893,16 @@ pub enum Reference {
     Paper,
 }
 
+/// Axis id for a 2D cartesian x axis.
+///
+/// Use `"x"` for the primary axis, `"x2"` for the second axis, and so on.
+pub type XAxisId = String;
+
+/// Axis id for a 2D cartesian y axis.
+///
+/// Use `"y"` for the primary axis, `"y2"` for the second axis, and so on.
+pub type YAxisId = String;
+
 #[derive(Serialize, Clone, Debug)]
 pub struct Pad {
     t: usize,
@@ -1797,6 +1807,14 @@ mod tests {
     fn serialize_reference() {
         assert_eq!(to_value(Reference::Container).unwrap(), json!("container"));
         assert_eq!(to_value(Reference::Paper).unwrap(), json!("paper"));
+    }
+
+    #[test]
+    fn serialize_axis_id() {
+        assert_eq!(to_value(XAxisId::from("x")).unwrap(), json!("x"));
+        assert_eq!(to_value(XAxisId::from("x3")).unwrap(), json!("x3"));
+        assert_eq!(to_value(YAxisId::from("y")).unwrap(), json!("y"));
+        assert_eq!(to_value(YAxisId::from("y8")).unwrap(), json!("y8"));
     }
 
     #[test]

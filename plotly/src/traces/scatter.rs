@@ -11,7 +11,7 @@ use crate::{
     color::Color,
     common::{
         Calendar, Dim, ErrorData, Fill, Font, HoverInfo, HoverOn, Label, LegendGroupTitle, Line,
-        Marker, Mode, Orientation, PlotType, Position, Visible,
+        Marker, Mode, Orientation, PlotType, Position, Visible, XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -180,13 +180,13 @@ where
     /// `Layout::x_axis`. If "x2", the x coordinates
     /// refer to `Layout::x_axis2`, and so on.
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     /// Sets a reference between this trace's y coordinates and a 2D cartesian y
     /// axis. If "y" (the default value), the y coordinates refer to
     /// `Layout::y_axis`. If "y2", the y coordinates
     /// refer to `Layout::y_axis2`, and so on.
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     /// Only relevant when `stackgroup` is used, and only the first
     /// `orientation` found in the `stackgroup` will be used - including if
     /// `visible` is "legendonly" but not if it is `false`.
@@ -524,6 +524,28 @@ mod tests {
             "yaxis": "y_axis",
             "ycalendar": "coptic",
             "y0": 2
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_scatter_axis_ids() {
+        use crate::common::{XAxisId, YAxisId};
+
+        let x_axis: XAxisId = "x2".into();
+        let y_axis: YAxisId = "y12".into();
+
+        let trace = Scatter::new(vec![0, 1], vec![2, 3])
+            .x_axis(x_axis)
+            .y_axis(y_axis);
+
+        let expected = json!({
+            "type": "scatter",
+            "x": [0, 1],
+            "y": [2, 3],
+            "xaxis": "x2",
+            "yaxis": "y12",
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);

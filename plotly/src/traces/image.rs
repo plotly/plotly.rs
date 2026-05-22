@@ -8,7 +8,7 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::color::{Rgb, Rgba};
-use crate::common::{Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible};
+use crate::common::{Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible, XAxisId, YAxisId};
 use crate::private::{NumOrString, NumOrStringCollection};
 use crate::Trace;
 
@@ -280,13 +280,13 @@ pub struct Image {
     /// `Layout::x_axis`. If "x2", the x coordinates
     /// refer to `Layout::x_axis2`, and so on.
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     /// Sets a reference between this trace's y coordinates and a 2D cartesian y
     /// axis. If "y" (the default value), the y coordinates refer to
     /// `Layout::y_axis`. If "y2", the y coordinates
     /// refer to `Layout::y_axis2`, and so on.
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
 
     /// Color model used to map the numerical color components described in `z`
     /// into colors. If `source` is specified, this attribute will be set to

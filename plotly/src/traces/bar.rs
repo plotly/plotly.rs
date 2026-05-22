@@ -6,7 +6,7 @@ use serde::Serialize;
 use crate::{
     common::{
         Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, LegendGroupTitle, Marker,
-        Orientation, PlotType, TextAnchor, TextPosition, Visible,
+        Orientation, PlotType, TextAnchor, TextPosition, Visible, XAxisId, YAxisId,
     },
     Trace,
 };
@@ -70,9 +70,9 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     orientation: Option<Orientation>,
     #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,

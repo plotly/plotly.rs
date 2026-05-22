@@ -7,7 +7,7 @@ use crate::{
     color::Color,
     common::{
         Calendar, Dim, HoverInfo, Label, LegendGroupTitle, Line, Marker, Orientation, PlotType,
-        Visible,
+        Visible, XAxisId, YAxisId,
     },
     Trace,
 };
@@ -124,9 +124,9 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     orientation: Option<Orientation>,
     #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,

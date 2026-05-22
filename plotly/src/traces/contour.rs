@@ -7,7 +7,7 @@ use crate::{
     color::Color,
     common::{
         Calendar, ColorBar, ColorScale, Dim, Font, HoverInfo, Label, LegendGroupTitle, Line,
-        PlotType, Visible,
+        PlotType, Visible, XAxisId, YAxisId,
     },
     private, Trace,
 };
@@ -137,9 +137,9 @@ where
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     line: Option<Line>,
     #[serde(rename = "colorbar")]
     color_bar: Option<ColorBar>,
@@ -403,8 +403,8 @@ where
         Box::new(self)
     }
 
-    pub fn x_axis(mut self, axis: &str) -> Box<Self> {
-        self.x_axis = Some(axis.to_string());
+    pub fn x_axis(mut self, axis: impl Into<XAxisId>) -> Box<Self> {
+        self.x_axis = Some(axis.into());
         Box::new(self)
     }
 
@@ -418,8 +418,8 @@ where
         Box::new(self)
     }
 
-    pub fn y_axis(mut self, axis: &str) -> Box<Self> {
-        self.y_axis = Some(axis.to_string());
+    pub fn y_axis(mut self, axis: impl Into<YAxisId>) -> Box<Self> {
+        self.y_axis = Some(axis.into());
         Box::new(self)
     }
 
@@ -653,6 +653,29 @@ mod tests {
             "transpose": true,
             "xcalendar": "ethiopian",
             "ycalendar": "gregorian"
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_contour_axis_ids() {
+        use crate::common::{XAxisId, YAxisId};
+
+        let x_axis: XAxisId = "x2".into();
+        let y_axis: YAxisId = "y12".into();
+
+        let trace = Contour::new(vec![0., 1.], vec![2., 3.], vec![4., 5.])
+            .x_axis(x_axis)
+            .y_axis(y_axis);
+
+        let expected = json!({
+            "type": "contour",
+            "x": [0.0, 1.0],
+            "y": [2.0, 3.0],
+            "z": [4.0, 5.0],
+            "xaxis": "x2",
+            "yaxis": "y12",
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
