@@ -174,19 +174,19 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
     match config.driver_name {
         CHROMEDRIVER_NAME => {
             let driver_info = ChromedriverInfo::new(webdriver_bin.clone(), browser_path);
-            runtime
-                .block_on(async { download_with_retry(&driver_info, false, true, 1).await })
-                .with_context(|| {
-                    format!("Failed to download and install {}", config.driver_name)
-                })?;
+            let dl_res =
+                runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await });
+            if let Err(e) = dl_res {
+                return Err(anyhow!("Failed to download and install chromedriver").context(e));
+            }
         }
         GECKODRIVER_NAME => {
             let driver_info = GeckodriverInfo::new(webdriver_bin.clone(), browser_path);
-            runtime
-                .block_on(async { download_with_retry(&driver_info, false, true, 1).await })
-                .with_context(|| {
-                    format!("Failed to download and install {}", config.driver_name)
-                })?;
+            let dl_res =
+                runtime.block_on(async { download_with_retry(&driver_info, false, true, 1).await });
+            if let Err(e) = dl_res {
+                return Err(anyhow!("Failed to download and install geckodriver").context(e));
+            }
         }
         _ => return Err(anyhow!("Unsupported driver type: {}", config.driver_name)),
     }
