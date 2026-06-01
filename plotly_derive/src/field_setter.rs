@@ -341,7 +341,13 @@ impl FieldReceiver {
                 quote![value.as_ref().to_owned()],
                 quote![],
             ),
-            FieldType::OptionOther(inner_ty) => (quote![#inner_ty], quote![value], quote![]),
+            FieldType::OptionOther(inner_ty) => {
+                if matches!(field_ident.to_string().as_str(), "x_axis" | "y_axis") {
+                    (quote![impl Into<#inner_ty>], quote![value.into()], quote![])
+                } else {
+                    (quote![#inner_ty], quote![value], quote![])
+                }
+            }
             FieldType::OptionVecString => (
                 quote![Vec<impl AsRef<str>>],
                 quote![value.into_iter().map(|v| v.as_ref().to_owned()).collect()],

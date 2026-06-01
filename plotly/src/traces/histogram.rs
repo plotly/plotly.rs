@@ -10,7 +10,7 @@ use crate::ndarray::ArrayTraces;
 use crate::{
     common::{
         Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Marker, Orientation,
-        PlotType, Visible,
+        PlotType, Visible, XAxisId, YAxisId,
     },
     Trace,
 };
@@ -155,14 +155,14 @@ where
     visible: Option<Visible>,
     x: Option<Vec<H>>,
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     #[serde(rename = "xbins")]
     x_bins: Option<Bins>,
     #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
     y: Option<Vec<H>>,
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     #[serde(rename = "ybins")]
     y_bins: Option<Bins>,
     #[serde(rename = "ycalendar")]

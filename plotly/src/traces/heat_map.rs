@@ -6,6 +6,7 @@ use serde::Serialize;
 use crate::{
     common::{
         Calendar, ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, PlotType, Visible,
+        XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -106,14 +107,14 @@ where
     visible: Option<Visible>,
     x: Option<Vec<X>>,
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     #[serde(rename = "xcalendar")]
     x_calendar: Option<Calendar>,
     #[serde(rename = "xgap")]
     x_gap: Option<NumOrString>,
     y: Option<Vec<Y>>,
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
     #[serde(rename = "ygap")]

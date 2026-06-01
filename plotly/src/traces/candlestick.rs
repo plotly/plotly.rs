@@ -7,6 +7,7 @@ use crate::{
     color::NamedColor,
     common::{
         Calendar, Dim, Direction, HoverInfo, Label, LegendGroupTitle, Line, PlotType, Visible,
+        XAxisId, YAxisId,
     },
     Trace,
 };
@@ -72,9 +73,9 @@ where
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
     #[serde(rename = "xaxis")]
-    x_axis: Option<String>,
+    x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]
-    y_axis: Option<String>,
+    y_axis: Option<YAxisId>,
     line: Option<Line>,
     #[serde(rename = "whiskerwidth")]
     whisker_width: Option<f64>,
