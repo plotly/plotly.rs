@@ -8,10 +8,6 @@ use anyhow::{anyhow, Context, Result};
 use tokio::time::sleep;
 use webdriver_downloader::prelude::*;
 
-// Enforce that only one driver feature is enabled
-#[cfg(all(feature = "geckodriver", feature = "chromedriver"))]
-compile_error!("Only one of 'geckodriver' or 'chromedriver' features can be enabled at a time.");
-
 // Enforce that at least one driver feature is enabled
 #[cfg(not(any(feature = "geckodriver", feature = "chromedriver")))]
 compile_error!("At least one of 'geckodriver' or 'chromedriver' features must be enabled.");
@@ -199,7 +195,7 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
     Ok(())
 }
 
-#[cfg(feature = "chromedriver")]
+#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
 fn get_chrome_path() -> Result<PathBuf> {
     if let Ok(chrome_path) = env::var(BROWSER_BIN_PATH_ENV) {
         let path = PathBuf::from(&chrome_path);
@@ -292,6 +288,9 @@ async fn download(
 }
 
 fn main() -> Result<()> {
+    #[cfg(all(feature = "geckodriver", feature = "chromedriver"))]
+    println!("cargo::warning=Both 'geckodriver' and 'chromedriver' features are enabled. 'geckodriver' will take priority.");
+
     if cfg!(feature = "webdriver_download") {
         println!("cargo:rerun-if-changed=src/lib.rs");
         let webdriver_bin_dir = user_bin_dir();
@@ -300,7 +299,7 @@ fn main() -> Result<()> {
             webdriver_bin_dir.to_string_lossy()
         );
 
-        #[cfg(feature = "chromedriver")]
+        #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
         {
             let config = WebdriverDownloadConfig {
                 driver_name: CHROMEDRIVER_NAME,
@@ -323,7 +322,7 @@ fn main() -> Result<()> {
             println!("cargo::warning=No specific driver feature enabled, skipping driver setup");
         }
     } else {
-        #[cfg(feature = "chromedriver")]
+        #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
         {
             let msg = format!("'webdriver_download' feature disabled. Please install a '{CHROMEDRIVER_NAME}' version manually and make the environment variable 'WEBDRIVER_PATH' point to it.");
             println!("cargo::warning={msg}");

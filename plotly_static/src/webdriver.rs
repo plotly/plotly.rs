@@ -26,15 +26,16 @@ const WEBDRIVER_PATH_ENV: &str = "WEBDRIVER_PATH";
 #[cfg(feature = "geckodriver")]
 const WEBDRIVER_BIN: &str = "geckodriver";
 
-#[cfg(feature = "chromedriver")]
+#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
 const WEBDRIVER_BIN: &str = "chromedriver";
+
 
 /// Default WebDriver port
 pub(crate) const WEBDRIVER_PORT: u32 = 4444;
 /// Default WebDriver URL
 pub(crate) const WEBDRIVER_URL: &str = "http://127.0.0.1";
 
-#[cfg(all(feature = "chromedriver", not(target_os = "windows")))]
+#[cfg(all(feature = "chromedriver", not(feature = "geckodriver"), not(target_os = "windows")))]
 pub(crate) fn chrome_default_caps() -> Vec<&'static str> {
     vec![
         "--headless",
@@ -65,7 +66,7 @@ pub(crate) fn chrome_default_caps() -> Vec<&'static str> {
     ]
 }
 
-#[cfg(all(feature = "chromedriver", target_os = "windows"))]
+#[cfg(all(feature = "chromedriver", not(feature = "geckodriver"), target_os = "windows"))]
 pub(crate) fn chrome_default_caps() -> Vec<&'static str> {
     vec![
         "--headless=new",
@@ -555,7 +556,7 @@ impl WebDriver {
             }
 
             // Check if chromedriver is in PATH (Windows-specific)
-            #[cfg(all(target_os = "windows", feature = "chromedriver"))]
+            #[cfg(all(target_os = "windows", feature = "chromedriver", not(feature = "geckodriver")))]
             {
                 if let Ok(output) = std::process::Command::new("where")
                     .arg("chromedriver")

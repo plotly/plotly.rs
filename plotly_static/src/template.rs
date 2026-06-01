@@ -39,7 +39,7 @@ pub(crate) fn image_export_js_script() -> String {
 }
 
 pub(crate) fn pdf_export_js_script(timeout_ms: u32) -> String {
-    let foreign_object_rendering = if cfg!(feature = "chromedriver") {
+    let foreign_object_rendering = if cfg!(all(feature = "chromedriver", not(feature = "geckodriver"))) {
         "true"
     } else {
         "false"

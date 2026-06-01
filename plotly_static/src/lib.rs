@@ -461,13 +461,6 @@ impl Default for StaticExporterBuilder {
             offline_mode: false,
             pdf_export_timeout: 150,
             webdriver_browser_caps: {
-                #[cfg(feature = "chromedriver")]
-                {
-                    crate::webdriver::chrome_default_caps()
-                        .into_iter()
-                        .map(|s| s.to_string())
-                        .collect()
-                }
                 #[cfg(feature = "geckodriver")]
                 {
                     crate::webdriver::firefox_default_caps()
@@ -475,9 +468,12 @@ impl Default for StaticExporterBuilder {
                         .map(|s| s.to_string())
                         .collect()
                 }
-                #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
+                #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
                 {
-                    Vec::new()
+                    crate::webdriver::chrome_default_caps()
+                        .into_iter()
+                        .map(|s| s.to_string())
+                        .collect()
                 }
             },
         }
@@ -1129,7 +1125,7 @@ impl AsyncStaticExporter {
         browser_opts.insert("args".to_string(), serde_json::json!(browser_args));
 
         // Add Chrome binary capability if BROWSER_PATH is set
-        #[cfg(feature = "chromedriver")]
+        #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
         if let Ok(chrome_path) = std::env::var("BROWSER_PATH") {
             browser_opts.insert("binary".to_string(), serde_json::json!(chrome_path));
             debug!("Added Chrome binary capability: {chrome_path}");
@@ -1610,7 +1606,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "chromedriver")]
+    #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
     // Skip this test for geckodriver as it doesn't support multiple concurrent
     // sessions on the same process as gracefully as chromedriver
     fn test_webdriver_process_reuse() {
@@ -1675,7 +1671,7 @@ mod tests {
     }
 }
 
-#[cfg(feature = "chromedriver")]
+#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
 mod chrome {
     /// Returns the browser name for Chrome WebDriver.
     ///
@@ -1713,7 +1709,8 @@ mod firefox {
     }
 }
 
-#[cfg(feature = "chromedriver")]
+#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
 use chrome::{get_browser_name, get_options_key};
 #[cfg(feature = "geckodriver")]
 use firefox::{get_browser_name, get_options_key};
+
