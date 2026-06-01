@@ -29,9 +29,6 @@ const WEBDRIVER_BIN: &str = "geckodriver";
 #[cfg(feature = "chromedriver")]
 const WEBDRIVER_BIN: &str = "chromedriver";
 
-#[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
-const WEBDRIVER_BIN: &str = "webdriver";
-
 /// Default WebDriver port
 pub(crate) const WEBDRIVER_PORT: u32 = 4444;
 /// Default WebDriver URL
