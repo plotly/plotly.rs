@@ -287,6 +287,9 @@ where
     /// Sets the calendar system to use with `y` date data.
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the stacking order of this trace. SVG traces with a higher `zorder`
+    /// value are rendered on top of those with lower `zorder` values.
+    zorder: Option<i32>,
 }
 
 impl<X, Y> Scatter<X, Y>
@@ -546,6 +549,21 @@ mod tests {
             "y": [2, 3],
             "xaxis": "x2",
             "yaxis": "y12",
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_scatter_zorder() {
+        let trace = Scatter::new(vec![0, 1], vec![2, 3])
+            .zorder(3);
+
+        let expected = json!({
+            "type": "scatter",
+            "x": [0, 1],
+            "y": [2, 3],
+            "zorder": 3,
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);

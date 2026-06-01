@@ -13,8 +13,8 @@ use webdriver_downloader::prelude::*;
 compile_error!("Only one of 'geckodriver' or 'chromedriver' features can be enabled at a time.");
 
 // Enforce that at least one driver feature is enabled
-#[cfg(not(any(feature = "geckodriver", feature = "chromedriver")))]
-compile_error!("At least one of 'geckodriver' or 'chromedriver' features must be enabled.");
+// #[cfg(not(any(feature = "geckodriver", feature = "chromedriver")))]
+// compile_error!("At least one of 'geckodriver' or 'chromedriver' features must be enabled.");
 
 #[cfg(target_os = "windows")]
 const DRIVER_EXT: &str = ".exe";

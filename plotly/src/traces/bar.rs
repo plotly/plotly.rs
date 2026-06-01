@@ -101,6 +101,9 @@ where
     x_calendar: Option<Calendar>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the stacking order of this trace. SVG traces with a higher `zorder`
+    /// value are rendered on top of those with lower `zorder` values.
+    zorder: Option<i32>,
 }
 
 impl<X, Y> Bar<X, Y>
@@ -225,5 +228,20 @@ mod tests {
         });
 
         assert_eq!(to_value(bar).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_bar_zorder() {
+        let trace = Bar::new(vec![1, 2], vec![3, 4])
+            .zorder(5);
+
+        let expected = json!({
+            "type": "bar",
+            "x": [1, 2],
+            "y": [3, 4],
+            "zorder": 5,
+        });
+
+        assert_eq!(to_value(trace).unwrap(), expected);
     }
 }
