@@ -13,7 +13,6 @@ keywords = ["plotly", "static", "image", "export", "webdriver"]
 exclude = ["target/*"]
 
 [features]
-default = ["chromedriver"]
 webdriver_download = []
 geckodriver = []
 chromedriver = []

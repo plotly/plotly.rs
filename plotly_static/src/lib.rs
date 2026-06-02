@@ -59,9 +59,9 @@
 //!
 //! ## Features and Dependencies
 //!
-//! ### Required Features
+//! ### Driver Features
 //!
-//! You must enable one of the following features:
+//! To use static export, enable one of the following features:
 //!
 //! - `chromedriver`: Use Chrome/Chromium for rendering
 //! - `geckodriver`: Use Firefox for rendering
@@ -294,6 +294,7 @@ use fantoccini::{wd::Capabilities, Client, ClientBuilder};
 #[cfg(not(any(test, feature = "debug")))]
 use log::{debug, error, warn};
 use serde::Serialize;
+#[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
 use serde_json::map::Map as JsonMap;
 use urlencoding::encode;
 use webdriver::WebDriver;
@@ -461,6 +462,13 @@ impl Default for StaticExporterBuilder {
             offline_mode: false,
             pdf_export_timeout: 150,
             webdriver_browser_caps: {
+                #[cfg(feature = "chromedriver")]
+                {
+                    crate::webdriver::chrome_default_caps()
+                        .into_iter()
+                        .map(|s| s.to_string())
+                        .collect()
+                }
                 #[cfg(feature = "geckodriver")]
                 {
                     crate::webdriver::firefox_default_caps()
@@ -468,12 +476,9 @@ impl Default for StaticExporterBuilder {
                         .map(|s| s.to_string())
                         .collect()
                 }
-                #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+                #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
                 {
-                    crate::webdriver::chrome_default_caps()
-                        .into_iter()
-                        .map(|s| s.to_string())
-                        .collect()
+                    Vec::new()
                 }
             },
         }
@@ -923,6 +928,10 @@ pub struct AsyncStaticExporter {
     pdf_export_timeout: u32,
 
     /// Browser command-line flags (e.g., "--headless", "--no-sandbox")
+    #[cfg_attr(
+        not(any(feature = "chromedriver", feature = "geckodriver")),
+        allow(dead_code)
+    )]
     webdriver_browser_caps: Vec<String>,
 
     /// Cached WebDriver client for session reuse
@@ -1117,46 +1126,55 @@ impl AsyncStaticExporter {
     }
 
     fn build_webdriver_caps(&self) -> Result<Capabilities> {
-        // Define browser capabilities (copied to avoid reordering existing code)
-        let mut caps = JsonMap::new();
-        let mut browser_opts = JsonMap::new();
-        let browser_args = self.webdriver_browser_caps.clone();
-
-        browser_opts.insert("args".to_string(), serde_json::json!(browser_args));
-
-        // Add Chrome binary capability if BROWSER_PATH is set
-        #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
-        if let Ok(chrome_path) = std::env::var("BROWSER_PATH") {
-            browser_opts.insert("binary".to_string(), serde_json::json!(chrome_path));
-            debug!("Added Chrome binary capability: {chrome_path}");
-        }
-        // Add Firefox binary capability if BROWSER_PATH is set
-        #[cfg(feature = "geckodriver")]
-        if let Ok(firefox_path) = std::env::var("BROWSER_PATH") {
-            browser_opts.insert("binary".to_string(), serde_json::json!(firefox_path));
-            debug!("Added Firefox binary capability: {firefox_path}");
-        }
-
-        // Add Firefox-specific preferences for CI environments
-        #[cfg(feature = "geckodriver")]
+        #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
         {
-            let prefs = common::get_firefox_ci_preferences();
-            browser_opts.insert("prefs".to_string(), serde_json::json!(prefs));
-            debug!("Added Firefox preferences for CI compatibility");
+            Err(anyhow!(
+                "Static image export requires enabling either the 'chromedriver' or 'geckodriver' feature."
+            ))
         }
+        #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
+        {
+            // Define browser capabilities (copied to avoid reordering existing code)
+            let mut caps = JsonMap::new();
+            let mut browser_opts = JsonMap::new();
+            let browser_args = self.webdriver_browser_caps.clone();
 
-        caps.insert(
-            "browserName".to_string(),
-            serde_json::json!(get_browser_name()),
-        );
-        caps.insert(
-            get_options_key().to_string(),
-            serde_json::json!(browser_opts),
-        );
+            browser_opts.insert("args".to_string(), serde_json::json!(browser_args));
 
-        debug!("WebDriver capabilities: {caps:?}");
+            // Add Chrome binary capability if BROWSER_PATH is set
+            #[cfg(feature = "chromedriver")]
+            if let Ok(chrome_path) = std::env::var("BROWSER_PATH") {
+                browser_opts.insert("binary".to_string(), serde_json::json!(chrome_path));
+                debug!("Added Chrome binary capability: {chrome_path}");
+            }
+            // Add Firefox binary capability if BROWSER_PATH is set
+            #[cfg(feature = "geckodriver")]
+            if let Ok(firefox_path) = std::env::var("BROWSER_PATH") {
+                browser_opts.insert("binary".to_string(), serde_json::json!(firefox_path));
+                debug!("Added Firefox binary capability: {firefox_path}");
+            }
 
-        Ok(caps)
+            // Add Firefox-specific preferences for CI environments
+            #[cfg(feature = "geckodriver")]
+            {
+                let prefs = common::get_firefox_ci_preferences();
+                browser_opts.insert("prefs".to_string(), serde_json::json!(prefs));
+                debug!("Added Firefox preferences for CI compatibility");
+            }
+
+            caps.insert(
+                "browserName".to_string(),
+                serde_json::json!(get_browser_name()),
+            );
+            caps.insert(
+                get_options_key().to_string(),
+                serde_json::json!(browser_opts),
+            );
+
+            debug!("WebDriver capabilities: {caps:?}");
+
+            Ok(caps)
+        }
     }
 
     #[cfg(target_os = "windows")]
@@ -1606,7 +1624,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+    #[cfg(feature = "chromedriver")]
     // Skip this test for geckodriver as it doesn't support multiple concurrent
     // sessions on the same process as gracefully as chromedriver
     fn test_webdriver_process_reuse() {
@@ -1671,7 +1689,7 @@ mod tests {
     }
 }
 
-#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+#[cfg(feature = "chromedriver")]
 mod chrome {
     /// Returns the browser name for Chrome WebDriver.
     ///
@@ -1709,8 +1727,7 @@ mod firefox {
     }
 }
 
-#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+#[cfg(feature = "chromedriver")]
 use chrome::{get_browser_name, get_options_key};
 #[cfg(feature = "geckodriver")]
 use firefox::{get_browser_name, get_options_key};
-

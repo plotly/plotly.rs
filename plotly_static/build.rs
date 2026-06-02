@@ -1,3 +1,8 @@
+#![cfg_attr(
+    not(any(feature = "geckodriver", feature = "chromedriver")),
+    allow(unused)
+)]
+
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -8,9 +13,9 @@ use anyhow::{anyhow, Context, Result};
 use tokio::time::sleep;
 use webdriver_downloader::prelude::*;
 
-// Enforce that at least one driver feature is enabled
-#[cfg(not(any(feature = "geckodriver", feature = "chromedriver")))]
-compile_error!("At least one of 'geckodriver' or 'chromedriver' features must be enabled.");
+// Enforce that only one driver feature is enabled
+#[cfg(all(feature = "geckodriver", feature = "chromedriver"))]
+compile_error!("Only one of 'geckodriver' or 'chromedriver' features can be enabled at a time.");
 
 #[cfg(target_os = "windows")]
 const DRIVER_EXT: &str = ".exe";
@@ -288,9 +293,6 @@ async fn download(
 }
 
 fn main() -> Result<()> {
-    #[cfg(all(feature = "geckodriver", feature = "chromedriver"))]
-    println!("cargo::warning=Both 'geckodriver' and 'chromedriver' features are enabled. 'geckodriver' will take priority.");
-
     if cfg!(feature = "webdriver_download") {
         println!("cargo:rerun-if-changed=src/lib.rs");
         let webdriver_bin_dir = user_bin_dir();
@@ -299,7 +301,7 @@ fn main() -> Result<()> {
             webdriver_bin_dir.to_string_lossy()
         );
 
-        #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+        #[cfg(feature = "chromedriver")]
         {
             let config = WebdriverDownloadConfig {
                 driver_name: CHROMEDRIVER_NAME,
@@ -322,7 +324,7 @@ fn main() -> Result<()> {
             println!("cargo::warning=No specific driver feature enabled, skipping driver setup");
         }
     } else {
-        #[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+        #[cfg(feature = "chromedriver")]
         {
             let msg = format!("'webdriver_download' feature disabled. Please install a '{CHROMEDRIVER_NAME}' version manually and make the environment variable 'WEBDRIVER_PATH' point to it.");
             println!("cargo::warning={msg}");
