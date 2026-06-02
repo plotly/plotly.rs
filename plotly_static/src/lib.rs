@@ -1059,7 +1059,7 @@ impl AsyncStaticExporter {
         client.goto(&url).await?;
 
         #[cfg(target_os = "windows")]
-        Self::wait_for_document_ready(&client, std::time::Duration::from_secs(10)).await?;
+        Self::wait_for_document_ready(&client, std::time::Duration::from_secs(20)).await?;
 
         // Wait for Plotly container element
         #[cfg(target_os = "windows")]
@@ -1200,13 +1200,13 @@ impl AsyncStaticExporter {
             if has_el.as_bool().unwrap_or(false) {
                 return Ok(());
             }
+            if start.elapsed() > timeout {
+                return Err(anyhow!(
+                    "Timeout waiting for #plotly-html-element to appear in DOM"
+                ));
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(50)).await;
         }
-        if start.elapsed() > timeout {
-            return Err(anyhow!(
-                "Timeout waiting for #plotly-html-element to appear in DOM"
-            ));
-        }
-        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
     }
 
     #[cfg(target_os = "windows")]
