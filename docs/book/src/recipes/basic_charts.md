@@ -9,3 +9,5 @@ Line Charts | [![Line Charts](./img/line_shape_options_for_interpolation.png)](.
 Bar Charts | [![Bar Charts](./img/bar_chart_with_error_bars.png)](./basic_charts/scatter_plots.md)
 Pie Charts | [![Pie Charts](./img/pie_charts.png)](./basic_charts/pie_charts.md)
 Sankey Diagrams | [![Sankey Diagrams](./img/basic_sankey.png)](./basic_charts/sankey_diagrams.md)
+Treemap Charts | [Treemap Charts](./basic_charts/treemap_charts.md)
+Sunburst Charts | [Sunburst Charts](./basic_charts/sunburst_charts.md)

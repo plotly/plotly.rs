@@ -13,10 +13,12 @@ use plotly::{
         TicksDirection, TraceOrder,
     },
     sankey::{Line as SankeyLine, Link, Node},
+    sunburst::Leaf,
     traces::table::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
-    Bar, Pie, Plot, Sankey, Scatter, ScatterPolar, Table,
+    treemap::{BranchValues, Packing, PathBar, Side, Tiling},
+    Bar, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table, Treemap,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -1043,6 +1045,103 @@ fn grouped_donout_pie_charts(show: bool, file_name: &str) {
 }
 // ANCHOR_END: grouped_donout_pie_charts
 
+// ANCHOR: basic_treemap
+fn basic_treemap(show: bool, file_name: &str) {
+    let labels = vec![
+        "Eve", "Cain", "Seth", "Enos", "Noam", "Abel", "Awan", "Enoch", "Azura",
+    ];
+    let parents = vec![
+        "", "Eve", "Eve", "Seth", "Seth", "Eve", "Eve", "Awan", "Eve",
+    ];
+    let trace = Treemap::new(labels, parents)
+        .values(vec![10.0, 14.0, 12.0, 10.0, 2.0, 6.0, 6.0, 4.0, 4.0])
+        .text_info("label+value");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_treemap
+
+// ANCHOR: styled_treemap
+fn styled_treemap(show: bool, file_name: &str) {
+    let labels = vec![
+        "Total",
+        "Tech",
+        "Health",
+        "Finance",
+        "Software",
+        "Hardware",
+        "Pharma",
+        "Devices",
+        "Banking",
+        "Insurance",
+    ];
+    let parents = vec![
+        "", "Total", "Total", "Total", "Tech", "Tech", "Health", "Health", "Finance", "Finance",
+    ];
+    let trace = Treemap::new(labels, parents)
+        .values(vec![0.0, 0.0, 0.0, 0.0, 40.0, 30.0, 25.0, 15.0, 20.0, 18.0])
+        .branch_values(BranchValues::Remainder)
+        .tiling(Tiling::new().packing(Packing::Binary).pad(2.0))
+        .path_bar(PathBar::new().visible(true).side(Side::Top))
+        .text_info("label+value+percent parent");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_treemap
+
+// ANCHOR: basic_sunburst
+fn basic_sunburst(show: bool, file_name: &str) {
+    let labels = vec![
+        "Eve", "Cain", "Seth", "Enos", "Noam", "Abel", "Awan", "Enoch", "Azura",
+    ];
+    let parents = vec![
+        "", "Eve", "Eve", "Seth", "Seth", "Eve", "Eve", "Awan", "Eve",
+    ];
+    let trace = Sunburst::new(labels, parents)
+        .values(vec![10.0, 14.0, 12.0, 10.0, 2.0, 6.0, 6.0, 4.0, 4.0]);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_sunburst
+
+// ANCHOR: styled_sunburst
+fn styled_sunburst(show: bool, file_name: &str) {
+    let labels = vec!["Root", "Branch A", "Branch B", "Leaf A1", "Leaf B1"];
+    let parents = vec!["", "Root", "Root", "Branch A", "Branch B"];
+    let trace = Sunburst::new(labels, parents)
+        .values(vec![8.0, 3.0, 5.0, 3.0, 5.0])
+        .branch_values(BranchValues::Total)
+        .leaf(Leaf::new().opacity(0.7))
+        .inside_text_orientation(Orientation::Radial);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_sunburst
+
 // ANCHOR: set_lower_or_upper_bound_on_axis
 fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &str) {
     use std::fs::File;
@@ -1199,6 +1298,14 @@ fn main() {
     pie_chart_text_control(false, "pie_chart_text_control");
 
     grouped_donout_pie_charts(false, "grouped_donout_pie_charts");
+
+    // Treemap Charts
+    basic_treemap(false, "basic_treemap");
+    styled_treemap(false, "styled_treemap");
+
+    // Sunburst Charts
+    basic_sunburst(false, "basic_sunburst");
+    styled_sunburst(false, "styled_sunburst");
 
     // Set Lower or Upper Bound on Axis
     set_lower_or_upper_bound_on_axis(false, "set_lower_or_upper_bound_on_axis");

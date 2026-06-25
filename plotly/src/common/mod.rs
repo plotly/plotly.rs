@@ -230,6 +230,8 @@ pub enum PlotType {
     DensityMapbox,
     Table,
     Pie,
+    Treemap,
+    Sunburst,
 }
 
 #[derive(Serialize, Clone, Debug)]

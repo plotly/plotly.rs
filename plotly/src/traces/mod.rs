@@ -17,8 +17,10 @@ pub mod scatter3d;
 pub mod scatter_geo;
 pub mod scatter_mapbox;
 mod scatter_polar;
+pub mod sunburst;
 pub mod surface;
 pub mod table;
+pub mod treemap;
 
 pub use bar::Bar;
 pub use box_plot::BoxPlot;
@@ -36,7 +38,9 @@ pub use scatter3d::Scatter3D;
 pub use scatter_geo::ScatterGeo;
 pub use scatter_mapbox::ScatterMapbox;
 pub use scatter_polar::ScatterPolar;
+pub use sunburst::Sunburst;
 pub use surface::Surface;
 pub use table::Table;
+pub use treemap::Treemap;
 
 pub use self::image::Image;

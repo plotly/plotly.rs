@@ -377,6 +377,10 @@ pub struct LayoutFields {
     sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendsunburstcolors")]
     extend_sunburst_colors: Option<bool>,
+    #[serde(rename = "treemapcolorway")]
+    treemap_colorway: Option<Vec<Box<dyn Color>>>,
+    #[serde(rename = "extendtreemapcolors")]
+    extend_treemap_colors: Option<bool>,
     mapbox: Option<Mapbox>,
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
@@ -545,6 +549,8 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
+            .treemap_colorway(vec!["#321321"])
+            .extend_treemap_colors(true)
             .mapbox(Mapbox::new())
             .update_menus(vec![UpdateMenu::new()])
             .sliders(vec![Slider::new()]);
@@ -620,6 +626,8 @@ mod tests {
             "extendpiecolors": true,
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
+            "treemapcolorway": ["#321321"],
+            "extendtreemapcolors": true,
             "mapbox": {},
             "updatemenus": [{}],
             "sliders": [{}],
@@ -704,6 +712,8 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
+            .treemap_colorway(vec!["#321321"])
+            .extend_treemap_colors(true)
             .z_axis(Axis::new())
             .scene(LayoutScene::new());
 
@@ -771,6 +781,8 @@ mod tests {
             "extendpiecolors": true,
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
+            "treemapcolorway": ["#321321"],
+            "extendtreemapcolors": true,
             "zaxis": {},
             "scene": {}
         });
