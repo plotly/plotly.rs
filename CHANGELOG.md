@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 https://github.com/plotly/plotly.rs/pull/350
 
+## [Unreleased]
+
+### Added
+
+- [[#NNN](https://github.com/plotly/plotly.rs/pull/NNN)] Add `Treemap` trace type, with `Tiling`/`PathBar` helpers, a dedicated `treemap::Marker` (`pad`/`corner_radius`/`depth_fade`), and `treemapcolorway`/`extendtreemapcolors` layout options
+- [[#NNN](https://github.com/plotly/plotly.rs/pull/NNN)] Add `Sunburst` trace type
+
 ## [0.14.1] - 2026-02-15
 
 ### Fixed  
