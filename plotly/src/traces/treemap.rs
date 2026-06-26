@@ -3,9 +3,13 @@
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
+use crate::color::{Color, ColorArray};
 use crate::private::{NumOrString, NumOrStringCollection};
 use crate::{
-    common::{Dim, Domain, Font, HoverInfo, Label, Marker, PlotType, Position},
+    common::{
+        ColorBar, ColorScale, Dim, Domain, Font, HoverInfo, Label, Line, Pattern, PlotType,
+        Position,
+    },
     Trace,
 };
 
@@ -92,6 +96,120 @@ impl PathBar {
     }
 }
 
+/// Sets the inner padding (in px) of the treemap tiles.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Pad {
+    /// Sets the padding form the top (in px).
+    #[serde(rename = "t")]
+    top: Option<f64>,
+    /// Sets the padding form the left (in px).
+    #[serde(rename = "l")]
+    left: Option<f64>,
+    /// Sets the padding form the right (in px).
+    #[serde(rename = "r")]
+    right: Option<f64>,
+    /// Sets the padding form the bottom (in px).
+    #[serde(rename = "b")]
+    bottom: Option<f64>,
+}
+
+impl Pad {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
+/// Determines if the sector colors are faded towards the background color of
+/// the chart as a function of depth.
+///
+/// Serializes to the values understood by Plotly.js: `Enabled` -> `true`,
+/// `Disabled` -> `false`, `Reversed` -> `"reversed"`.
+#[derive(Clone, Debug)]
+pub enum DepthFade {
+    Enabled,
+    Disabled,
+    Reversed,
+}
+
+impl Serialize for DepthFade {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            DepthFade::Enabled => serializer.serialize_bool(true),
+            DepthFade::Disabled => serializer.serialize_bool(false),
+            DepthFade::Reversed => serializer.serialize_str("reversed"),
+        }
+    }
+}
+
+/// Configures the appearance of the sectors of a [`Treemap`].
+///
+/// This is a treemap-specific marker: in addition to the shared
+/// color/colorscale machinery it exposes `pad`, `corner_radius` and
+/// `depth_fade`, which the common [`Marker`](crate::common::Marker) does not.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Marker {
+    /// Sets the color of each sector of the treemap. If not specified, the
+    /// default trace color set is used to pick the sector colors.
+    #[field_setter(skip)]
+    colors: Option<Vec<Box<dyn Color>>>,
+    /// Determines whether the colorscale is a default palette (`true`) or the
+    /// palette determined by `cmin` and `cmax`.
+    cauto: Option<bool>,
+    /// Sets the lower bound of the color domain.
+    cmin: Option<f64>,
+    /// Sets the upper bound of the color domain.
+    cmax: Option<f64>,
+    /// Sets the mid-point of the color domain by scaling `cmin` and/or `cmax`
+    /// to be equidistant to this point.
+    cmid: Option<f64>,
+    /// Sets the colorscale.
+    #[serde(rename = "colorscale")]
+    color_scale: Option<ColorScale>,
+    /// Determines whether the colorscale is picked using the sign of the input
+    /// `colors`.
+    #[serde(rename = "autocolorscale")]
+    auto_color_scale: Option<bool>,
+    /// Reverses the color mapping if `true`.
+    #[serde(rename = "reversescale")]
+    reverse_scale: Option<bool>,
+    /// Determines whether or not a colorbar is displayed.
+    #[serde(rename = "showscale")]
+    show_scale: Option<bool>,
+    /// Sets the colorbar.
+    #[serde(rename = "colorbar")]
+    color_bar: Option<ColorBar>,
+    /// Sets the outline of the sectors.
+    line: Option<Line>,
+    /// Sets the pattern within the sectors.
+    pattern: Option<Pattern>,
+    /// Sets the inner padding (in px) of the tiles.
+    pad: Option<Pad>,
+    /// Sets the maximum rounding of the corners (in px) of the tiles.
+    #[serde(rename = "cornerradius")]
+    corner_radius: Option<f64>,
+    /// Determines if the sector colors are faded towards the background color
+    /// of the chart as a function of depth.
+    #[serde(rename = "depthfade")]
+    depth_fade: Option<DepthFade>,
+}
+
+impl Marker {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Sets the color of each sector of the treemap.
+    pub fn colors<C: Color>(mut self, colors: Vec<C>) -> Self {
+        self.colors = Some(ColorArray(colors).into());
+        self
+    }
+}
+
 /// Construct a Treemap trace.
 ///
 /// Treemap charts visualize hierarchical data using nested rectangles. The
@@ -119,10 +237,9 @@ impl PathBar {
 /// assert_eq!(serde_json::to_value(trace).unwrap(), expected);
 /// ```
 ///
-/// Note: the treemap-specific `marker.pad`, `marker.cornerradius` and
-/// `marker.depthfade` attributes are not yet exposed; the shared
-/// [`Marker`](crate::common::Marker) is reused, providing colors, color scales,
-/// color bars and outline styling.
+/// Treemap styling uses the treemap-specific [`Marker`], which exposes the
+/// `pad`, `corner_radius` and `depth_fade` attributes in addition to the shared
+/// color/colorscale/line machinery.
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 #[field_setter(box_self, kind = "trace")]
@@ -309,6 +426,39 @@ mod tests {
             "textfont": {},
         });
         assert_eq!(to_value(path_bar).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_depth_fade() {
+        assert_eq!(to_value(DepthFade::Enabled).unwrap(), json!(true));
+        assert_eq!(to_value(DepthFade::Disabled).unwrap(), json!(false));
+        assert_eq!(to_value(DepthFade::Reversed).unwrap(), json!("reversed"));
+    }
+
+    #[test]
+    fn serialize_marker() {
+        let marker = Marker::new()
+            .colors(vec!["#1f77b4", "#ff7f0e"])
+            .show_scale(true)
+            .cmin(0.0)
+            .cmax(10.0)
+            .line(Line::new().width(2.0))
+            .pattern(Pattern::new())
+            .pad(Pad::new().top(1.0).left(2.0).right(3.0).bottom(4.0))
+            .corner_radius(5.0)
+            .depth_fade(DepthFade::Reversed);
+        let expected = json!({
+            "colors": ["#1f77b4", "#ff7f0e"],
+            "showscale": true,
+            "cmin": 0.0,
+            "cmax": 10.0,
+            "line": {"width": 2.0},
+            "pattern": {},
+            "pad": {"t": 1.0, "l": 2.0, "r": 3.0, "b": 4.0},
+            "cornerradius": 5.0,
+            "depthfade": "reversed",
+        });
+        assert_eq!(to_value(marker).unwrap(), expected);
     }
 
     #[test]

@@ -17,7 +17,7 @@ use plotly::{
     traces::table::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
-    treemap::{BranchValues, Packing, PathBar, Side, Tiling},
+    treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
     Bar, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table, Treemap,
 };
 use plotly_utils::write_example_to_html;
@@ -1087,6 +1087,11 @@ fn styled_treemap(show: bool, file_name: &str) {
     let trace = Treemap::new(labels, parents)
         .values(vec![0.0, 0.0, 0.0, 0.0, 40.0, 30.0, 25.0, 15.0, 20.0, 18.0])
         .branch_values(BranchValues::Remainder)
+        .marker(
+            TreemapMarker::new()
+                .corner_radius(5.0)
+                .line(Line::new().width(1.0).color(NamedColor::White)),
+        )
         .tiling(Tiling::new().packing(Packing::Binary).pad(2.0))
         .path_bar(PathBar::new().visible(true).side(Side::Top))
         .text_info("label+value+percent parent");
