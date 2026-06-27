@@ -13,7 +13,7 @@ use plotly::{
         TicksDirection, TraceOrder,
     },
     sankey::{Line as SankeyLine, Link, Node},
-    sunburst::Leaf,
+    sunburst::{InsideTextOrientation, Leaf},
     traces::table::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
@@ -1135,7 +1135,7 @@ fn styled_sunburst(show: bool, file_name: &str) {
         .values(vec![8.0, 3.0, 5.0, 3.0, 5.0])
         .branch_values(BranchValues::Total)
         .leaf(Leaf::new().opacity(0.7))
-        .inside_text_orientation(Orientation::Radial);
+        .inside_text_orientation(InsideTextOrientation::Radial);
 
     let mut plot = Plot::new();
     plot.add_trace(trace);
