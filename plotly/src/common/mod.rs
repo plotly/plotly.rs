@@ -798,7 +798,7 @@ pub struct Pattern {
     shape: Option<Dim<PatternShape>>,
     /// An arbitrary SVG path string to use as the pattern fill, as an
     /// alternative to one of the preset `shape` values.
-    path: Option<String>,
+    path: Option<Dim<String>>,
     #[serde(rename = "fillmode")]
     fill_mode: Option<PatternFillMode>,
     #[serde(rename = "bgcolor")]
@@ -1719,11 +1719,11 @@ mod tests {
             .foreground_opacity(0.9)
             .size_array(vec![10.0, 20.0])
             .solidity_array(vec![0.1, 0.2])
-            .path("M0,0 L10,10");
+            .path_array(vec!["M0,0 L10,10", "M5,5 L15,15"]);
 
         let expected = json!({
             "shape": ["-", "|"],
-            "path": "M0,0 L10,10",
+            "path": ["M0,0 L10,10", "M5,5 L15,15"],
             "fillmode": "overlay",
             "bgcolor": ["black", "blue"],
             "fgcolor": ["red", "green"],
@@ -1733,6 +1733,18 @@ mod tests {
         });
 
         assert_eq!(to_value(pattern).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_pattern_path() {
+        let pattern = Pattern::new().path("M0,0 L10,10");
+        assert_eq!(to_value(pattern).unwrap(), json!({"path": "M0,0 L10,10"}));
+
+        let pattern = Pattern::new().path_array(vec!["M0,0 L10,10", "M5,5 L15,15"]);
+        assert_eq!(
+            to_value(pattern).unwrap(),
+            json!({"path": ["M0,0 L10,10", "M5,5 L15,15"]})
+        );
     }
 
     #[test]
