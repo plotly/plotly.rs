@@ -12,6 +12,10 @@ https://github.com/plotly/plotly.rs/pull/350
 - [[#NNN](https://github.com/plotly/plotly.rs/pull/NNN)] Add `Treemap` trace type, with `Tiling`/`PathBar` helpers, a dedicated `treemap::Marker` (`pad`/`corner_radius`/`depth_fade`), and `treemapcolorway`/`extendtreemapcolors` layout options
 - [[#NNN](https://github.com/plotly/plotly.rs/pull/NNN)] Add `Sunburst` trace type
 
+### Changed
+
+- [[#407](https://github.com/plotly/plotly.rs/issues/407)] Upgrade bundled plotly.js from 3.0.1 to 3.6.0
+
 ## [0.14.1] - 2026-02-15
 
 ### Fixed  

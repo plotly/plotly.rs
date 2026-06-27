@@ -757,7 +757,7 @@ impl Plot {
     /// This function provides HTML script tags that load JavaScript libraries
     /// from external CDN sources, requiring an internet connection to
     /// function. The referenced sources include:
-    /// - Plotly.js library from CDN (version 3.0.1)
+    /// - Plotly.js library from CDN (version 3.6.0)
     /// - MathJax tex-svg from jsDelivr CDN (version 3.2.2)
     ///
     /// This is the default behavior when the `plotly_embed_js` feature is
@@ -767,7 +767,7 @@ impl Plot {
         // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when generating
         // Latex Titles we no longer include it.
         r##"<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
-        <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-3.6.0.min.js"></script>
         "##
         .to_string()
     }

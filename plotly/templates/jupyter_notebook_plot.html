@@ -1,7 +1,7 @@
 <div>
     <div id="{{ plot_div_id }}" class="plotly-graph-div" style="height:100%; width:100%;"></div>
     <script type="text/javascript">
-        require(['https://cdn.plot.ly/plotly-3.0.1.min.js'], function(Plotly) {
+        require(['https://cdn.plot.ly/plotly-3.6.0.min.js'], function(Plotly) {
             Plotly.newPlot(
                 "{{ plot_div_id }}",
                 {{ plot| tojson | safe }}
