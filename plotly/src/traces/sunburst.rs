@@ -6,9 +6,24 @@ use serde::Serialize;
 use crate::private::{NumOrString, NumOrStringCollection};
 use crate::traces::treemap::BranchValues;
 use crate::{
-    common::{Dim, Domain, Font, HoverInfo, Label, Marker, Orientation, PlotType},
+    common::{Dim, Domain, Font, HoverInfo, Label, Marker, PlotType},
     Trace,
 };
+
+/// Controls the orientation of the text inside the sectors of a [`Sunburst`].
+///
+/// Unlike the general [`crate::common::Orientation`] (which serializes to the
+/// single-letter codes `h`/`v` used by bars, boxes and legends), Plotly's
+/// `insidetextorientation` attribute expects the full words `horizontal`,
+/// `radial`, `tangential` or `auto`.
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum InsideTextOrientation {
+    Horizontal,
+    Radial,
+    Tangential,
+    Auto,
+}
 
 /// Configures the appearance of the leaf nodes of a [`Sunburst`].
 #[serde_with::skip_serializing_none]
@@ -129,7 +144,7 @@ where
     outside_text_font: Option<Font>,
     /// Controls the orientation of the text inside chart sectors.
     #[serde(rename = "insidetextorientation")]
-    inside_text_orientation: Option<Orientation>,
+    inside_text_orientation: Option<InsideTextOrientation>,
     /// Determines which trace information appears on hover.
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
@@ -218,7 +233,7 @@ mod tests {
             .text_font(Font::new())
             .inside_text_font(Font::new())
             .outside_text_font(Font::new())
-            .inside_text_orientation(Orientation::Radial)
+            .inside_text_orientation(InsideTextOrientation::Radial)
             .hover_info(HoverInfo::All)
             .hover_label(Label::new())
             .hover_template("%{label}: %{value}")
@@ -247,7 +262,7 @@ mod tests {
             "textfont": {},
             "insidetextfont": {},
             "outsidetextfont": {},
-            "insidetextorientation": "r",
+            "insidetextorientation": "radial",
             "hoverinfo": "all",
             "hoverlabel": {},
             "hovertemplate": "%{label}: %{value}",
