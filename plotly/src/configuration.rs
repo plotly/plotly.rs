@@ -185,6 +185,7 @@ pub struct Configuration {
     plot_gl_pixel_ratio: Option<PlotGLPixelRatio>,
     show_send_to_cloud: Option<bool>,
     queue_length: Option<usize>,
+    display_notifier: Option<bool>,
 }
 
 impl Configuration {
@@ -420,6 +421,13 @@ impl Configuration {
         self
     }
 
+    /// Determines whether the notifier is displayed in the top right area of
+    /// the viewport.
+    pub fn display_notifier(mut self, display_notifier: bool) -> Self {
+        self.display_notifier = Some(display_notifier);
+        self
+    }
+
     /// Sets which localization to use. When using this setting, make sure that
     /// the appropriate locale is present in the HTML file. For example, to
     /// use the "fr" locale, <script src="https://cdn.plot.ly/plotly-locale-fr-latest.js"></script> must be present.
@@ -552,6 +560,7 @@ mod tests {
             .topojson_url("topojson_url")
             .mapbox_access_token("123")
             .queue_length(100)
+            .display_notifier(true)
             .locale("en");
 
         let expected = json!({
@@ -583,6 +592,7 @@ mod tests {
             "topojsonURL": "topojson_url",
             "mapboxAccessToken": "123",
             "queueLength": 100,
+            "displayNotifier": true,
             "locale": "en"
         });
 

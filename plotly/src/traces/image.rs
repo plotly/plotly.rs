@@ -258,6 +258,8 @@ pub struct Image {
     /// completely, use an empty tag `<extra></extra>`.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
 
     /// Assigns extra meta information associated with this trace that can be
     /// used in various text attributes. Attributes such as trace `name`,

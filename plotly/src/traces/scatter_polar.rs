@@ -115,6 +115,8 @@ where
     /// per-point (the ones that are `arrayOk: true`) are available.
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
+    #[serde(rename = "texttemplatefallback")]
+    text_template_fallback: Option<Dim<String>>,
     /// Sets hover text elements associated with each (x,y) pair. If a single
     /// string, the same string appears over all the data points. If an
     /// array of string, the items are mapped in order to the this trace's
@@ -146,6 +148,8 @@ where
     /// completely, use an empty tag `<extra></extra>`.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     /// Assigns extra meta information associated with this trace that can be
     /// used in various text attributes. Attributes such as trace `name`,
     /// graph, axis and colorbar `title.text`, annotation `text`

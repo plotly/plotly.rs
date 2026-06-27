@@ -116,6 +116,8 @@ where
     /// points.
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
+    #[serde(rename = "texttemplatefallback")]
+    text_template_fallback: Option<Dim<String>>,
     /// Sets the font used for `text_info`.
     #[serde(rename = "textfont")]
     text_font: Option<Font>,
@@ -140,6 +142,8 @@ where
     /// hover box.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     /// Assigns extra meta information associated with this trace that can be
     /// used in various text attributes.
     meta: Option<NumOrString>,

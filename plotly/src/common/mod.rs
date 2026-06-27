@@ -614,6 +614,8 @@ pub enum ExponentFormat {
     SI,
     #[serde(rename = "B")]
     B,
+    #[serde(rename = "SI extended")]
+    SIExtended,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -794,6 +796,9 @@ pub enum PatternFillMode {
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Pattern {
     shape: Option<Dim<PatternShape>>,
+    /// An arbitrary SVG path string to use as the pattern fill, as an
+    /// alternative to one of the preset `shape` values.
+    path: Option<String>,
     #[serde(rename = "fillmode")]
     fill_mode: Option<PatternFillMode>,
     #[serde(rename = "bgcolor")]
@@ -979,6 +984,10 @@ pub struct Label {
     align: Option<String>,
     #[serde(rename = "namelength")]
     name_length: Option<Dim<i32>>,
+    /// Determines whether or not the triangular caret pointing to the data
+    /// point is shown on the hover label box.
+    #[serde(rename = "showarrow")]
+    show_arrow: Option<bool>,
 }
 
 impl Label {
@@ -1624,6 +1633,10 @@ mod tests {
         assert_eq!(to_value(ExponentFormat::Power).unwrap(), json!("power"));
         assert_eq!(to_value(ExponentFormat::SI).unwrap(), json!("SI"));
         assert_eq!(to_value(ExponentFormat::B).unwrap(), json!("B"));
+        assert_eq!(
+            to_value(ExponentFormat::SIExtended).unwrap(),
+            json!("SI extended")
+        );
     }
 
     #[test]
@@ -1705,10 +1718,12 @@ mod tests {
             .foreground_color_array(vec![NamedColor::Red, NamedColor::Green])
             .foreground_opacity(0.9)
             .size_array(vec![10.0, 20.0])
-            .solidity_array(vec![0.1, 0.2]);
+            .solidity_array(vec![0.1, 0.2])
+            .path("M0,0 L10,10");
 
         let expected = json!({
             "shape": ["-", "|"],
+            "path": "M0,0 L10,10",
             "fillmode": "overlay",
             "bgcolor": ["black", "blue"],
             "fgcolor": ["red", "green"],
@@ -1889,13 +1904,15 @@ mod tests {
             .font(Font::new())
             .align("something")
             .name_length_array(vec![5, 10])
-            .name_length(6);
+            .name_length(6)
+            .show_arrow(false);
         let expected = json!({
             "bgcolor": "#FFFFFF",
             "bordercolor": "#000000",
             "font": {},
             "align": "something",
             "namelength": 6,
+            "showarrow": false,
         });
 
         assert_eq!(to_value(label).unwrap(), expected);

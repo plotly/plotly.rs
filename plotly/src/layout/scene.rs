@@ -457,6 +457,17 @@ impl Serialize for HoverMode {
     }
 }
 
+/// Determines the order in which items in a unified hover label are sorted.
+#[derive(Serialize, Debug, Clone, PartialEq)]
+pub enum HoverSort {
+    #[serde(rename = "trace")]
+    Trace,
+    #[serde(rename = "value descending")]
+    ValueDescending,
+    #[serde(rename = "value ascending")]
+    ValueAscending,
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
 /// 3D scene layout

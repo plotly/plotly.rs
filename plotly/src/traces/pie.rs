@@ -113,6 +113,8 @@ where
     /// box completely, use an empty tag <extra></extra>.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     /// Sets hover text elements associated with each sector. If a single
     /// string, the same string appears for all data points. If an array of
     /// string, the items are mapped in order of this trace’s sectors. To be
@@ -217,6 +219,8 @@ where
     /// access to variables label, color, value, percent and text.
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
+    #[serde(rename = "texttemplatefallback")]
+    text_template_fallback: Option<Dim<String>>,
     /// Controls persistence of some user-driven changes to the trace:
     /// constraintrange in parcoords traces, as well as some editable: true
     /// modifications such as name and colorbar.title. Defaults to

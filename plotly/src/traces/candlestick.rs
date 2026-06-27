@@ -72,6 +72,10 @@ where
     hover_text: Option<Dim<String>>,
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
+    #[serde(rename = "hovertemplate")]
+    hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     #[serde(rename = "xaxis")]
     x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]
@@ -152,6 +156,8 @@ mod tests {
         .hover_text_array(vec!["hover", "text"])
         .hover_text("hover text")
         .hover_info(HoverInfo::Skip)
+        .hover_template("%{close}")
+        .hover_template_fallback("n/a")
         .x_axis("x1")
         .y_axis("y1")
         .line(Line::new())
@@ -177,6 +183,8 @@ mod tests {
             "text": "text here",
             "hovertext": "hover text",
             "hoverinfo": "skip",
+            "hovertemplate": "%{close}",
+            "hovertemplatefallback": "n/a",
             "xaxis": "x1",
             "yaxis": "y1",
             "line": {},

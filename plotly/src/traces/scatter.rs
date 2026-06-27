@@ -128,6 +128,8 @@ where
     /// per-point (the ones that are `arrayOk: true`) are available.
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
+    #[serde(rename = "texttemplatefallback")]
+    text_template_fallback: Option<Dim<String>>,
     /// Sets hover text elements associated with each (x,y) pair. If a single
     /// string, the same string appears over all the data points. If an
     /// array of string, the items are mapped in order to the this trace's
@@ -159,6 +161,8 @@ where
     /// completely, use an empty tag `<extra></extra>`.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     /// Assigns extra meta information associated with this trace that can be
     /// used in various text attributes. Attributes such as trace `name`,
     /// graph, axis and colorbar `title.text`, annotation `text`
@@ -452,6 +456,7 @@ mod tests {
             .hover_text_array(vec!["hover_text"])
             .hover_template("hover_template")
             .hover_template_array(vec!["hover_template"])
+            .hover_template_fallback("hover_template_fallback")
             .ids(vec!["1"])
             .legend_group("legend_group")
             .legend_group_title("Legend Group Title")
@@ -472,6 +477,7 @@ mod tests {
             .text_position_array(vec![Position::MiddleLeft])
             .text_template("text_template")
             .text_template_array(vec!["text_template"])
+            .text_template_fallback("text_template_fallback")
             .visible(Visible::True)
             .x_axis("x_axis")
             .x_calendar(Calendar::Chinese)
@@ -500,6 +506,7 @@ mod tests {
             "hoveron": "points",
             "hovertext": ["hover_text"],
             "hovertemplate": ["hover_template"],
+            "hovertemplatefallback": "hover_template_fallback",
             "ids": ["1"],
             "legendgroup": "legend_group",
             "legendgrouptitle": {"text": "Legend Group Title"},
@@ -517,6 +524,7 @@ mod tests {
             "textfont": {},
             "textposition": ["middle left"],
             "texttemplate": ["text_template"],
+            "texttemplatefallback": "text_template_fallback",
             "visible": true,
             "xaxis": "x_axis",
             "xcalendar": "chinese",

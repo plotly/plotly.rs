@@ -136,6 +136,8 @@ where
     hover_info: Option<HoverInfo>,
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     #[serde(rename = "xaxis")]
     x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]
@@ -203,6 +205,7 @@ where
             hover_text: None,
             hover_info: None,
             hover_template: None,
+            hover_template_fallback: None,
             x_axis: None,
             y_axis: None,
             line: None,

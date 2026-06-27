@@ -6,7 +6,7 @@ use crate::common::{
     Anchor, AxisSide, Calendar, ColorBar, ColorScale, DashType, ExponentFormat, Font,
     TickFormatStop, TickMode, Title,
 };
-use crate::layout::RangeBreak;
+use crate::layout::{MinorLogLabels, RangeBreak};
 use crate::private::{NumOrString, NumOrStringCollection};
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
@@ -441,6 +441,8 @@ pub struct Axis {
     ticks: Option<TicksDirection>,
     #[serde(rename = "tickson")]
     ticks_on: Option<TicksPosition>,
+    #[serde(rename = "ticklabelposition")]
+    tick_label_position: Option<TickLabelPosition>,
     mirror: Option<bool>,
     #[serde(rename = "ticklen")]
     tick_length: Option<usize>,
@@ -480,6 +482,8 @@ pub struct Axis {
     show_exponent: Option<ArrayShow>,
     #[serde(rename = "exponentformat")]
     exponent_format: Option<ExponentFormat>,
+    #[serde(rename = "minorloglabels")]
+    minor_log_labels: Option<MinorLogLabels>,
     #[serde(rename = "separatethousands")]
     separate_thousands: Option<bool>,
     #[serde(rename = "tickformat")]
@@ -506,6 +510,8 @@ pub struct Axis {
     zero_line_color: Option<Box<dyn Color>>,
     #[serde(rename = "zerolinewidth")]
     zero_line_width: Option<usize>,
+    #[serde(rename = "zerolinelayer")]
+    zero_line_layer: Option<ZeroLineLayer>,
     #[serde(rename = "showdividers")]
     show_dividers: Option<bool>,
     #[serde(rename = "dividercolor")]
@@ -515,6 +521,8 @@ pub struct Axis {
     anchor: Option<String>,
     side: Option<AxisSide>,
     overlaying: Option<String>,
+    #[serde(rename = "modebardisable")]
+    mode_bar_disable: Option<ModeBarDisable>,
     #[field_setter(skip)]
     domain: Option<Vec<f64>>,
     position: Option<f64>,
@@ -523,6 +531,73 @@ pub struct Axis {
     #[serde(rename = "rangeselector")]
     range_selector: Option<RangeSelector>,
     calendar: Option<Calendar>,
+    #[serde(rename = "unifiedhovertitle")]
+    unified_hover_title: Option<UnifiedHoverTitle>,
+}
+
+/// Determines whether the zero line is drawn above or below the traces of
+/// this cartesian axis.
+#[derive(Serialize, Debug, Clone, PartialEq)]
+pub enum ZeroLineLayer {
+    #[serde(rename = "above traces")]
+    AboveTraces,
+    #[serde(rename = "below traces")]
+    BelowTraces,
+}
+
+/// Determines the location of tick labels with respect to the ticks of a
+/// cartesian axis.
+#[derive(Serialize, Debug, Clone, PartialEq)]
+pub enum TickLabelPosition {
+    #[serde(rename = "outside")]
+    Outside,
+    #[serde(rename = "inside")]
+    Inside,
+    #[serde(rename = "outside top")]
+    OutsideTop,
+    #[serde(rename = "inside top")]
+    InsideTop,
+    #[serde(rename = "outside left")]
+    OutsideLeft,
+    #[serde(rename = "inside left")]
+    InsideLeft,
+    #[serde(rename = "outside right")]
+    OutsideRight,
+    #[serde(rename = "inside right")]
+    InsideRight,
+    #[serde(rename = "outside bottom")]
+    OutsideBottom,
+    #[serde(rename = "inside bottom")]
+    InsideBottom,
+}
+
+/// Determines which modebar buttons are disabled for this cartesian axis,
+/// giving fine control over which buttons affect which axes.
+#[derive(Serialize, Debug, Clone, PartialEq)]
+pub enum ModeBarDisable {
+    #[serde(rename = "none")]
+    None,
+    #[serde(rename = "autoscale")]
+    Autoscale,
+    #[serde(rename = "zoominout")]
+    ZoomInOut,
+    #[serde(rename = "autoscale+zoominout")]
+    AutoscaleAndZoomInOut,
+}
+
+/// Formats the title shown in unified hover labels for this cartesian axis.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Debug, Clone, FieldSetter)]
+pub struct UnifiedHoverTitle {
+    /// Template string used for rendering the unified hover title. Variables
+    /// are inserted using `%{variable}`, e.g. `%{x}`.
+    text: Option<String>,
+}
+
+impl UnifiedHoverTitle {
+    pub fn new() -> Self {
+        Default::default()
+    }
 }
 
 impl Axis {
@@ -1008,6 +1083,53 @@ mod tests {
         // Backward compatible range() setter version with both ends
         let axis = Axis::new().range(vec!["2020-01-01", "2020-01-02"]);
         let expected = json!({ "range": ["2020-01-01", "2020-01-02"] });
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn serialize_zero_line_layer() {
+        assert_eq!(to_value(ZeroLineLayer::AboveTraces).unwrap(), json!("above traces"));
+        assert_eq!(to_value(ZeroLineLayer::BelowTraces).unwrap(), json!("below traces"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn serialize_tick_label_position() {
+        assert_eq!(to_value(TickLabelPosition::Outside).unwrap(), json!("outside"));
+        assert_eq!(to_value(TickLabelPosition::Inside).unwrap(), json!("inside"));
+        assert_eq!(to_value(TickLabelPosition::OutsideTop).unwrap(), json!("outside top"));
+        assert_eq!(to_value(TickLabelPosition::InsideBottom).unwrap(), json!("inside bottom"));
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn serialize_mode_bar_disable() {
+        assert_eq!(to_value(ModeBarDisable::None).unwrap(), json!("none"));
+        assert_eq!(to_value(ModeBarDisable::Autoscale).unwrap(), json!("autoscale"));
+        assert_eq!(to_value(ModeBarDisable::ZoomInOut).unwrap(), json!("zoominout"));
+        assert_eq!(to_value(ModeBarDisable::AutoscaleAndZoomInOut).unwrap(), json!("autoscale+zoominout"));
+    }
+
+    #[test]
+    fn serialize_axis_new_3x_attributes() {
+        let axis = Axis::new()
+            .zero_line_layer(ZeroLineLayer::AboveTraces)
+            .minor_log_labels(MinorLogLabels::Complete)
+            .mode_bar_disable(ModeBarDisable::AutoscaleAndZoomInOut)
+            .tick_label_position(TickLabelPosition::Inside)
+            .exponent_format(ExponentFormat::SIExtended)
+            .unified_hover_title(UnifiedHoverTitle::new().text("%{x}"));
+
+        let expected = json!({
+            "zerolinelayer": "above traces",
+            "minorloglabels": "complete",
+            "modebardisable": "autoscale+zoominout",
+            "ticklabelposition": "inside",
+            "exponentformat": "SI extended",
+            "unifiedhovertitle": {"text": "%{x}"},
+        });
+
         assert_eq!(to_value(axis).unwrap(), expected);
     }
 }
