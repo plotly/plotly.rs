@@ -88,6 +88,5 @@ image = "0.25"
 itertools = ">=0.10, <0.16"
 itertools-num = "0.1"
 ndarray = "0.17"
-plotly_static = { path = "../plotly_static" }
 rand_distr = "0.6"
 base64 = "0.22"

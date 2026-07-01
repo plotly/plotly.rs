@@ -44,6 +44,8 @@ jobs:
           components: clippy
           targets: wasm32-unknown-unknown
       # lint plotly_static for all features
+      - run: cargo check -p plotly_static
+      - run: cargo test -p plotly_static build_without_driver_feature_returns_error
       - run: cargo clippy -p plotly_static --features geckodriver,webdriver_download -- -D warnings -A deprecated
       - run: cargo clippy -p plotly_static --features chromedriver,webdriver_download -- -D warnings -A deprecated
       # lint the main library workspace for non-wasm target

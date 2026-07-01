@@ -61,7 +61,8 @@
 //!
 //! ### Driver Features
 //!
-//! To use static export, enable one of the following features:
+//! For compile time only, no specific feature must be provided. However, to use
+//! static export at runtime, one of the below features must be enabled.
 //!
 //! - `chromedriver`: Use Chrome/Chromium for rendering
 //! - `geckodriver`: Use Firefox for rendering
@@ -303,6 +304,9 @@ use crate::template::{image_export_js_script, pdf_export_js_script};
 
 mod template;
 mod webdriver;
+
+#[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
+const DRIVER_FEATURE_REQUIRED: &str = "Static image export at runtime requires enabling either the 'chromedriver' or 'geckodriver' feature.";
 
 /// Supported image formats for static image export.
 ///
@@ -649,6 +653,7 @@ impl StaticExporterBuilder {
     }
 
     /// Create a new WebDriver instance based on the spawn_webdriver flag
+    #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
     fn create_webdriver(&self) -> Result<WebDriver> {
         let port = self.webdriver_port;
         let in_async = tokio::runtime::Handle::try_current().is_ok();
@@ -689,16 +694,22 @@ impl StaticExporterBuilder {
     ///     .expect("Failed to build AsyncStaticExporter");
     /// ```
     pub fn build_async(&self) -> Result<AsyncStaticExporter> {
-        let wd = self.create_webdriver()?;
-        Ok(AsyncStaticExporter {
-            webdriver_port: self.webdriver_port,
-            webdriver_url: self.webdriver_url.clone(),
-            webdriver: wd,
-            offline_mode: self.offline_mode,
-            pdf_export_timeout: self.pdf_export_timeout,
-            webdriver_browser_caps: self.webdriver_browser_caps.clone(),
-            webdriver_client: None,
-        })
+        #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
+        return Err(anyhow!(DRIVER_FEATURE_REQUIRED));
+
+        #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
+        {
+            let wd = self.create_webdriver()?;
+            Ok(AsyncStaticExporter {
+                webdriver_port: self.webdriver_port,
+                webdriver_url: self.webdriver_url.clone(),
+                webdriver: wd,
+                offline_mode: self.offline_mode,
+                pdf_export_timeout: self.pdf_export_timeout,
+                webdriver_browser_caps: self.webdriver_browser_caps.clone(),
+                webdriver_client: None,
+            })
+        }
     }
 }
 
@@ -1128,9 +1139,7 @@ impl AsyncStaticExporter {
     fn build_webdriver_caps(&self) -> Result<Capabilities> {
         #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
         {
-            Err(anyhow!(
-                "Static image export requires enabling either the 'chromedriver' or 'geckodriver' feature."
-            ))
+            Err(anyhow!(DRIVER_FEATURE_REQUIRED))
         }
         #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
         {
@@ -1346,6 +1355,15 @@ mod tests {
 
     fn init() {
         let _ = env_logger::try_init();
+    }
+
+    #[test]
+    #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
+    fn build_without_driver_feature_returns_error() {
+        match StaticExporterBuilder::default().build_async() {
+            Err(e) => assert_eq!(e.to_string(), DRIVER_FEATURE_REQUIRED),
+            Ok(_) => panic!("expected build to fail without a driver feature"),
+        }
     }
 
     // Helper to generate unique ports for parallel tests

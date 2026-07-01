@@ -200,7 +200,7 @@ fn setup_driver(config: &WebdriverDownloadConfig) -> Result<()> {
     Ok(())
 }
 
-#[cfg(all(feature = "chromedriver", not(feature = "geckodriver")))]
+#[cfg(feature = "chromedriver")]
 fn get_chrome_path() -> Result<PathBuf> {
     if let Ok(chrome_path) = env::var(BROWSER_BIN_PATH_ENV) {
         let path = PathBuf::from(&chrome_path);
