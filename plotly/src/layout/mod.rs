@@ -33,8 +33,9 @@ pub use self::animation::{
 pub use self::annotation::{Annotation, ArrowSide, ClickToShow};
 pub use self::axis::{
     ArrayShow, Axis, AxisConstrain, AxisRange, AxisType, CategoryOrder, ColorAxis,
-    ConstrainDirection, RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis, SelectorButton,
-    SelectorStep, SliderRangeMode, SpikeMode, SpikeSnap, StepMode, TicksDirection, TicksPosition,
+    ConstrainDirection, ModeBarDisable, RangeMode, RangeSelector, RangeSlider, RangeSliderYAxis,
+    SelectorButton, SelectorStep, SliderRangeMode, SpikeMode, SpikeSnap, StepMode,
+    TickLabelPosition, TicksDirection, TicksPosition, UnifiedHoverTitle, ZeroLineLayer,
 };
 pub use self::geo::LayoutGeo;
 pub use self::grid::{GridDomain, GridPattern, GridXSide, GridYSide, LayoutGrid, RowOrder};
@@ -50,8 +51,8 @@ pub use self::polar::{
 };
 pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
-    AspectRatio, Camera, CameraCenter, DragMode, DragMode3D, Eye, HoverMode, LayoutScene,
-    Projection, ProjectionType, Rotation, Up,
+    AspectRatio, Camera, CameraCenter, DragMode, DragMode3D, Eye, HoverMode, HoverSort,
+    LayoutScene, Projection, ProjectionType, Rotation, Up,
 };
 pub use self::shape::{
     ActiveShape, DrawDirection, FillRule, NewShape, Shape, ShapeLayer, ShapeLine, ShapeSizeMode,
@@ -283,6 +284,12 @@ pub struct LayoutFields {
     spike_distance: Option<i32>,
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
+    #[serde(rename = "hoversort")]
+    hover_sort: Option<HoverSort>,
+    #[serde(rename = "hoveranywhere")]
+    hover_anywhere: Option<bool>,
+    #[serde(rename = "clickanywhere")]
+    click_anywhere: Option<bool>,
     grid: Option<LayoutGrid>,
     calendar: Option<Calendar>,
     #[serde(rename = "xaxis")]
@@ -377,6 +384,10 @@ pub struct LayoutFields {
     sunburst_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendsunburstcolors")]
     extend_sunburst_colors: Option<bool>,
+    #[serde(rename = "treemapcolorway")]
+    treemap_colorway: Option<Vec<Box<dyn Color>>>,
+    #[serde(rename = "extendtreemapcolors")]
+    extend_treemap_colors: Option<bool>,
     mapbox: Option<Mapbox>,
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
@@ -545,6 +556,8 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
+            .treemap_colorway(vec!["#321321"])
+            .extend_treemap_colors(true)
             .mapbox(Mapbox::new())
             .update_menus(vec![UpdateMenu::new()])
             .sliders(vec![Slider::new()]);
@@ -620,6 +633,8 @@ mod tests {
             "extendpiecolors": true,
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
+            "treemapcolorway": ["#321321"],
+            "extendtreemapcolors": true,
             "mapbox": {},
             "updatemenus": [{}],
             "sliders": [{}],
@@ -704,6 +719,8 @@ mod tests {
             .extend_pie_colors(true)
             .sunburst_colorway(vec!["#654654"])
             .extend_sunburst_colors(false)
+            .treemap_colorway(vec!["#321321"])
+            .extend_treemap_colors(true)
             .z_axis(Axis::new())
             .scene(LayoutScene::new());
 
@@ -771,8 +788,26 @@ mod tests {
             "extendpiecolors": true,
             "sunburstcolorway": ["#654654"],
             "extendsunburstcolors": false,
+            "treemapcolorway": ["#321321"],
+            "extendtreemapcolors": true,
             "zaxis": {},
             "scene": {}
+        });
+
+        assert_eq!(to_value(layout).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_layout_hover_attributes() {
+        let layout = Layout::new()
+            .hover_sort(HoverSort::ValueDescending)
+            .hover_anywhere(true)
+            .click_anywhere(false);
+
+        let expected = json!({
+            "hoversort": "value descending",
+            "hoveranywhere": true,
+            "clickanywhere": false,
         });
 
         assert_eq!(to_value(layout).unwrap(), expected);

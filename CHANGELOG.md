@@ -5,6 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 https://github.com/plotly/plotly.rs/pull/350
 
+## [Unreleased]
+
+### Added
+
+- [[#NNN](https://github.com/plotly/plotly.rs/pull/NNN)] Add `Treemap` trace type, with `Tiling`/`PathBar` helpers, a dedicated `treemap::Marker` (`pad`/`corner_radius`/`depth_fade`), and `treemapcolorway`/`extendtreemapcolors` layout options
+- [[#NNN](https://github.com/plotly/plotly.rs/pull/NNN)] Add `Sunburst` trace type
+- [[#407](https://github.com/plotly/plotly.rs/issues/407)] Expose plotly.js 3.1–3.6 attributes:
+  - `Layout`: `hoversort`, `hoveranywhere`, `clickanywhere`
+  - `Axis`: `zerolinelayer` (`ZeroLineLayer`), `minorloglabels`, `modebardisable` (`ModeBarDisable`), `ticklabelposition` (`TickLabelPosition`), `unifiedhovertitle` (`UnifiedHoverTitle`), and `ExponentFormat::SIExtended`
+  - `Legend`: `maxheight`
+  - `Configuration`: `displayNotifier`
+  - `common::Label` (hover labels): `showarrow`
+  - `common::Pattern`: `path` (arbitrary SVG path fill)
+  - `Candlestick`/`Ohlc`: `hovertemplate`
+  - `hovertemplatefallback`/`texttemplatefallback` across applicable traces
+
+### Changed
+
+- [[#407](https://github.com/plotly/plotly.rs/issues/407)] Upgrade bundled plotly.js from 3.0.1 to 3.6.0
+
 ## [0.14.1] - 2026-02-15
 
 ### Fixed  

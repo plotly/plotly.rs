@@ -63,12 +63,16 @@ where
     text_position: Option<Dim<TextPosition>>,
     #[serde(rename = "texttemplate")]
     text_template: Option<Dim<String>>,
+    #[serde(rename = "texttemplatefallback")]
+    text_template_fallback: Option<Dim<String>>,
     #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
     #[serde(rename = "hoverinfo")]
     hover_info: Option<HoverInfo>,
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     #[serde(rename = "xaxis")]
     x_axis: Option<XAxisId>,
     #[serde(rename = "yaxis")]

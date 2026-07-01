@@ -57,6 +57,10 @@ where
     hover_label: Option<Label>,
     #[serde(rename = "hovertext")]
     hover_text: Option<Dim<String>>,
+    #[serde(rename = "hovertemplate")]
+    hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     increasing: Option<Direction>,
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,

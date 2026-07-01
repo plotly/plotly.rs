@@ -271,7 +271,7 @@ fn offline_js_sources() -> String {
 fn online_js_cdn() -> String {
     // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
     r##"
-    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     "##

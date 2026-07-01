@@ -86,6 +86,8 @@ where
     hover_on_gaps: Option<bool>,
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     #[serde(rename = "hovertext")]
     #[field_setter(with_matrix)]
     hover_text: Option<Dim<String>>,

@@ -203,6 +203,8 @@ where
     /// completely, use an empty tag `<extra></extra>`.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<Dim<String>>,
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
     /// Sets the hover text formatting rulefor `x` using d3 formatting
     /// mini-languages which are very similar to those in Python. For numbers, see: <https://github.com/d3/d3-format/tree/v1.4.5#d3-format>. And for dates
     /// see: <https://github.com/d3/d3-time-format/tree/v2.2.3#locale_format>. We add two items to d3's date

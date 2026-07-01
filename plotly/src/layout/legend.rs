@@ -82,6 +82,10 @@ pub struct Legend {
     group_click: Option<GroupClick>,
     #[serde(rename = "itemwidth")]
     item_width: Option<usize>,
+    /// Sets the max height (in px) of a horizontal legend, or the max height
+    /// ratio (from 0 to 1) of a vertical legend.
+    #[serde(rename = "maxheight")]
+    max_height: Option<f64>,
 }
 
 impl Legend {
@@ -146,7 +150,8 @@ mod tests {
             .valign(VAlign::Middle)
             .title("title")
             .group_click(GroupClick::ToggleItem)
-            .item_width(50);
+            .item_width(50)
+            .max_height(200.0);
 
         let expected = json!({
             "bgcolor": "#123123",
@@ -166,7 +171,8 @@ mod tests {
             "valign": "middle",
             "title": {"text": "title"},
             "groupclick": "toggleitem",
-            "itemwidth": 50
+            "itemwidth": 50,
+            "maxheight": 200.0
         });
 
         assert_eq!(to_value(legend).unwrap(), expected)
