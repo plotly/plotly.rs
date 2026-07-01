@@ -63,6 +63,7 @@ serde_json = "1.0"
 
 ### Feature Flags
 
+- To use static export at runtime, enable exactly one of the driver features below.
 - `chromedriver`: Use Chromedriver and Chrome/Chromium browser for rendering and export
 - `geckodriver`: Use Geckodriver Firefox browser for rendering for rendering and export
 - `webdriver_download`: Auto-download the chosen WebDriver binary
