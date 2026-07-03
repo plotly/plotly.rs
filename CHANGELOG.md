@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- Add `Violin` trace type with box, mean line, KDE span, and split/grouped support
+- [[#412](https://github.com/plotly/plotly.rs/pull/412)] Add `Violin` trace type with box, mean line, KDE span, and split/grouped support
 - [[#406](https://github.com/plotly/plotly.rs/issues/406)] Expose `plotly.js` 3.1–3.6 attributes
 
 ### Changed
