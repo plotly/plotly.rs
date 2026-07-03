@@ -12,7 +12,7 @@ use crate::{
         Dim, HoverInfo, Label, LegendGroupTitle, Line, Marker, Orientation, PlotType, Visible,
         XAxisId, YAxisId,
     },
-    private::NumOrString,
+    private::{NumOrString, NumOrStringCollection},
     Trace,
 };
 
@@ -232,7 +232,7 @@ where
     #[serde(rename = "scalemode")]
     scale_mode: Option<ScaleMode>,
     side: Option<ViolinSide>,
-    span: Option<Vec<f64>>,
+    span: Option<NumOrStringCollection>,
     #[serde(rename = "spanmode")]
     span_mode: Option<SpanMode>,
     #[serde(rename = "quartilemethod")]
@@ -303,6 +303,22 @@ mod tests {
         assert_eq!(to_value(SpanMode::Soft).unwrap(), json!("soft"));
         assert_eq!(to_value(SpanMode::Hard).unwrap(), json!("hard"));
         assert_eq!(to_value(SpanMode::Manual).unwrap(), json!("manual"));
+    }
+
+    #[test]
+    fn serialize_span_numeric_and_dates() {
+        // Numeric span (typical case).
+        let numeric = Violin::new(vec![1, 2, 3]).span(vec![0., 10.]);
+        assert_eq!(to_value(numeric).unwrap()["span"], json!([0.0, 10.0]));
+
+        // Date/string span for date-valued axes (plotly.js types `span` as `any`).
+        let dated = Violin::new(vec![1, 2, 3])
+            .span_mode(SpanMode::Manual)
+            .span(vec!["2020-01-01", "2020-12-31"]);
+        assert_eq!(
+            to_value(dated).unwrap()["span"],
+            json!(["2020-01-01", "2020-12-31"])
+        );
     }
 
     #[test]
