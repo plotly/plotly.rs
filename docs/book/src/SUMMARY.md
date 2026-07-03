@@ -21,6 +21,7 @@
     - [Statistical Charts](./recipes/statistical_charts.md)
         - [Error Bars](./recipes/statistical_charts/error_bars.md)
         - [Box Plots](./recipes/statistical_charts/box_plots.md)
+        - [Violin Plots](./recipes/statistical_charts/violin_plots.md)
         - [Histograms](./recipes/statistical_charts/histograms.md)
     - [Scientific Charts](./recipes/scientific_charts.md)
        - [Contour Plots](./recipes/scientific_charts/contour_plots.md)
