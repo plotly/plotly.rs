@@ -212,6 +212,7 @@ pub enum PlotType {
     ScatterGL,
     Scatter3D,
     ScatterMapbox,
+    ScatterMap,
     ScatterGeo,
     ScatterPolar,
     ScatterPolarGL,
