@@ -3,7 +3,10 @@
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
-use crate::common::{LegendGroupTitle, Line, PlotType, Visible};
+use crate::common::{
+    ColorBar, ColorScale, Dim, HoverInfo, Label, LegendGroupTitle, Line, PlotType, Visible,
+};
+use crate::private::{NumOrString, NumOrStringCollection};
 use crate::Trace;
 
 #[serde_with::skip_serializing_none]
@@ -49,12 +52,58 @@ where
     /// Line display properties.
     line: Option<Line>,
 
+    /// Assigns id labels to each datum. These ids are for object constancy of
+    /// data points during animation.
+    ids: Option<Vec<String>>,
+
     lat: Option<Vec<Lat>>,
     lon: Option<Vec<Lon>>,
     z: Option<Vec<Z>>,
 
     /// Sets the opacity of the trace.
     opacity: Option<f64>,
+
+    /// Sets text elements associated with each (lat,lon,z) triplet. If a single
+    /// string, the same string appears over all the data points. If an array of
+    /// strings, the items are mapped in order to the data points. To be seen,
+    /// the trace `hover_info` must contain a "text" flag.
+    text: Option<Dim<String>>,
+
+    /// Sets hover text elements associated with each (lat,lon,z) triplet. If a
+    /// single string, the same string appears over all the data points. If an
+    /// array of strings, the items are mapped in order to the data points. To
+    /// be seen, the trace `hover_info` must contain a "text" flag.
+    #[serde(rename = "hovertext")]
+    hover_text: Option<Dim<String>>,
+
+    /// Determines which trace information appears on hover.
+    #[serde(rename = "hoverinfo")]
+    hover_info: Option<HoverInfo>,
+
+    /// Template string used for rendering the information that appear on hover
+    /// box. Note that this will override `hover_info`. Variables are inserted
+    /// using %{variable}, for example "y: %{y}".
+    #[serde(rename = "hovertemplate")]
+    hover_template: Option<Dim<String>>,
+
+    /// Fallback string used for rendering the information that appear on hover
+    /// box when the `hover_template` cannot be evaluated.
+    #[serde(rename = "hovertemplatefallback")]
+    hover_template_fallback: Option<Dim<String>>,
+
+    /// Properties of label displayed on mouse hover.
+    #[serde(rename = "hoverlabel")]
+    hover_label: Option<Label>,
+
+    /// Assigns extra meta information associated with this trace that can be
+    /// used in various text attributes.
+    meta: Option<NumOrString>,
+
+    /// Assigns extra data each datum. This may be useful when listening to
+    /// hover, click and selection events. Note that, "scatter" traces also
+    /// appends customdata items in the markers DOM elements.
+    #[serde(rename = "customdata")]
+    custom_data: Option<NumOrStringCollection>,
 
     /// Sets a reference between this trace's data coordinates and a mapbox
     /// subplot. If "mapbox" (the default value), the data refer to
@@ -79,8 +128,46 @@ where
     zoom: Option<u8>,
 
     radius: Option<u8>,
-    //color_continuous_scale: Option<HashMap<Z, NamedColor>>,
-    //color_continuous_midpoint: Option<ContinuousColorScale>,
+
+    /// Sets the colorscale. The colorscale must be an array containing arrays
+    /// mapping a normalized value to an rgb, rgba, hex, hsl, hsv, or named
+    /// color string.
+    #[serde(rename = "colorscale")]
+    color_scale: Option<ColorScale>,
+
+    /// Determines whether the colorscale is a default palette
+    /// (`auto_color_scale: true`) or the palette determined by `color_scale`.
+    #[serde(rename = "autocolorscale")]
+    auto_color_scale: Option<bool>,
+
+    /// Reverses the color mapping if true. If true, `zmin` will correspond to
+    /// the last color in the array and `zmax` will correspond to the first
+    /// color.
+    #[serde(rename = "reversescale")]
+    reverse_scale: Option<bool>,
+
+    /// Determines whether or not a colorbar is displayed for this trace.
+    #[serde(rename = "showscale")]
+    show_scale: Option<bool>,
+
+    /// Sets the colorbar properties.
+    #[serde(rename = "colorbar")]
+    color_bar: Option<ColorBar>,
+
+    /// Sets a reference to a shared color axis (e.g. "coloraxis",
+    /// "coloraxis2").
+    #[serde(rename = "coloraxis")]
+    color_axis: Option<String>,
+
+    /// Determines if this trace's layer is displayed below the layer with the
+    /// given id. By default, density traces are placed below the first layer of
+    /// type symbol. Set `below` to "" to place it above every other layer.
+    below: Option<String>,
+
+    /// Controls persistence of some user-driven changes to the trace: `visible`
+    /// only. Defaults to `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<Lat, Lon, Z> DensityMapbox<Lat, Lon, Z>
@@ -115,6 +202,7 @@ mod tests {
     use serde_json::{json, to_value};
 
     use super::*;
+    use crate::common::ColorScalePalette;
 
     #[test]
     fn serialize_density_mapbox() {
@@ -126,7 +214,15 @@ mod tests {
             .legend_group("legend group")
             .zoom(5)
             .radius(20)
-            .opacity(0.5);
+            .opacity(0.5)
+            .hover_text_array(vec!["Montreal"])
+            .hover_info(HoverInfo::Text)
+            .hover_template("%{lat}, %{lon}")
+            .custom_data(vec!["Montreal"])
+            .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+            .show_scale(true)
+            .reverse_scale(true)
+            .below("");
         let expected = json!({
             "type": "densitymapbox",
             "lat": [45.5017],
@@ -140,6 +236,14 @@ mod tests {
             "opacity": 0.5,
             "zoom": 5,
             "radius": 20,
+            "hovertext": ["Montreal"],
+            "hoverinfo": "text",
+            "hovertemplate": "%{lat}, %{lon}",
+            "customdata": ["Montreal"],
+            "colorscale": "Viridis",
+            "showscale": true,
+            "reversescale": true,
+            "below": "",
         });
         assert_eq!(to_value(density_mapbox.clone()).unwrap(), expected);
     }
