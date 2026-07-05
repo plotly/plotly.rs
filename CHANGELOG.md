@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#412](https://github.com/plotly/plotly.rs/pull/412)] Add `Violin` trace type with box, mean line, KDE span, and split/grouped support
 - [[#414](https://github.com/plotly/plotly.rs/issues/414)] Add `DensityMap` (MapLibre `map` subplot) trace type — density heatmaps with full color-scale and hover support
 - [[#417](https://github.com/plotly/plotly.rs/issues/417)] Add `ScatterMap` (MapLibre `map` subplot) trace type — the modern counterpart to `ScatterMapbox`
+- [[#418](https://github.com/plotly/plotly.rs/issues/418)] Add native point clustering to `ScatterMap` via a `Cluster` option
 
 ### Changed
 
