@@ -6,8 +6,9 @@ use plotly::{
     color::{NamedColor, Rgb, Rgba},
     common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation},
     histogram::{Bins, Cumulative, HistFunc, HistNorm},
-    layout::{Axis, BarMode, BoxMode, Layout, Margin},
-    Bar, BoxPlot, Histogram, Plot, Scatter,
+    layout::{Axis, BarMode, BoxMode, Layout, Margin, ViolinMode},
+    violin::{MeanLine, ViolinBox, ViolinPoints, ViolinSide},
+    Bar, BoxPlot, Histogram, Plot, Scatter, Violin,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -477,6 +478,98 @@ fn fully_styled_box_plot(show: bool, file_name: &str) {
 }
 // ANCHOR_END: fully_styled_box_plot
 
+// Violin Plots
+// ANCHOR: basic_violin_plot
+fn basic_violin_plot(show: bool, file_name: &str) {
+    let y = vec![
+        0.2, 0.2, 0.6, 1.0, 0.5, 0.4, 0.2, 0.7, 0.9, 0.1, 0.5, 0.3, 0.8, 0.4, 0.6,
+    ];
+
+    let trace = Violin::new(y)
+        .box_plot(ViolinBox::new().visible(true))
+        .mean_line(MeanLine::new().visible(true))
+        .name("Total");
+
+    let layout = Layout::new().title("Basic Violin Plot");
+
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_violin_plot
+
+// ANCHOR: horizontal_violin_plot
+fn horizontal_violin_plot(show: bool, file_name: &str) {
+    let x = vec![1.4, 2.1, 1.9, 3.2, 2.7, 2.2, 1.8, 2.5, 3.1, 2.0, 2.6, 1.7];
+
+    let trace = Violin::<f64, f64>::default()
+        .x(x)
+        .points(ViolinPoints::All)
+        .box_plot(ViolinBox::new().visible(true))
+        .mean_line(MeanLine::new().visible(true))
+        .orientation(Orientation::Horizontal)
+        .name("Score");
+
+    let layout = Layout::new().title("Horizontal Violin Plot");
+
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: horizontal_violin_plot
+
+// ANCHOR: split_violin_plot
+fn split_violin_plot(show: bool, file_name: &str) {
+    let x = vec![
+        "Mon", "Mon", "Mon", "Mon", "Tue", "Tue", "Tue", "Tue", "Wed", "Wed", "Wed", "Wed",
+    ];
+
+    let trace1 = Violin::new_xy(
+        x.clone(),
+        vec![0.6, 0.9, 0.4, 0.7, 0.8, 1.1, 0.6, 0.9, 1.0, 1.3, 0.8, 1.1],
+    )
+    .legend_group("Yes")
+    .scale_group("Yes")
+    .name("Yes")
+    .side(ViolinSide::Negative)
+    .line(Line::new().color(NamedColor::Blue));
+
+    let trace2 = Violin::new_xy(
+        x,
+        vec![0.4, 0.7, 0.3, 0.5, 0.6, 0.9, 0.4, 0.7, 0.8, 1.1, 0.6, 0.9],
+    )
+    .legend_group("No")
+    .scale_group("No")
+    .name("No")
+    .side(ViolinSide::Positive)
+    .line(Line::new().color(NamedColor::Green));
+
+    let layout = Layout::new()
+        .title("Split Violin Plot")
+        .violin_mode(ViolinMode::Overlay);
+
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace1);
+    plot.add_trace(trace2);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: split_violin_plot
+
 // Histograms
 fn sample_normal_distribution(n: usize, mean: f64, std_dev: f64) -> Vec<f64> {
     let mut rng = rand::rng();
@@ -728,6 +821,11 @@ fn main() {
 
     grouped_horizontal_box_plot(false, "grouped_horizontal_box_plot");
     fully_styled_box_plot(false, "fully_styled_box_plot");
+
+    // Violin Plots
+    basic_violin_plot(false, "basic_violin_plot");
+    horizontal_violin_plot(false, "horizontal_violin_plot");
+    split_violin_plot(false, "split_violin_plot");
 
     // Histograms
     basic_histogram(false, "basic_histogram");

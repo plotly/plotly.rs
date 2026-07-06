@@ -232,6 +232,7 @@ pub enum PlotType {
     Pie,
     Treemap,
     Sunburst,
+    Violin,
 }
 
 #[derive(Serialize, Clone, Debug)]
