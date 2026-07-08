@@ -218,6 +218,8 @@ pub enum PlotType {
     Bar,
     Box,
     Candlestick,
+    Choropleth,
+    ChoroplethMap,
     Contour,
     HeatMap,
     Histogram,

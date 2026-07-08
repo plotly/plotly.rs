@@ -40,6 +40,7 @@ BOOK_EXAMPLES=(
     "basic_charts"
     "custom_controls"
     "financial_charts"
+    "maps"
     "scientific_charts"
     "shapes"
     "static_export"

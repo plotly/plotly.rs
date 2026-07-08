@@ -33,6 +33,8 @@
        - [Rangebreaks](./recipes/financial_charts/rangebreaks.md)
     - [3D Charts](./recipes/3dcharts.md)
         - [Scatter 3D](./recipes/3dcharts/3dcharts.md)
+    - [Maps](./recipes/maps.md)
+        - [Choropleth Maps](./recipes/maps/choropleth_maps.md)
     - [Subplots](./recipes/subplots.md)
         - [Subplots](./recipes/subplots/subplots.md)
         - [Multiple Axes](./recipes/subplots/multiple_axes.md)
