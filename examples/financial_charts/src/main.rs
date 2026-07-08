@@ -381,10 +381,8 @@ fn hiding_weekends_and_holidays_with_rangebreaks(show: bool, file_name: &str) {
                 .range(vec!["2015-12-01", "2016-01-15"])
                 .title("Date")
                 .range_breaks(vec![
-                    plotly::layout::RangeBreak::new()
-                        .bounds("sat", "mon"), // hide weekends
-                    plotly::layout::RangeBreak::new()
-                        .values(vec!["2015-12-25", "2016-01-01"]), // hide Christmas and New Year's
+                    plotly::layout::RangeBreak::new().bounds("sat", "mon"), // hide weekends
+                    plotly::layout::RangeBreak::new().values(vec!["2015-12-25", "2016-01-01"]), // hide Christmas and New Year's
                 ]),
         )
         .y_axis(Axis::new().title("Price"));

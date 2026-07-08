@@ -11,7 +11,7 @@ use plotly::{
     Choropleth, ChoroplethMap, Configuration, DensityMapbox, Layout, Plot, ScatterGeo,
     ScatterMapbox,
 };
-use plotly_utils::write_example_to_html;
+use plotly_utils::{write_example_to_html, write_example_to_html_with_inline_config};
 
 fn scatter_mapbox(show: bool, file_name: &str) {
     let trace = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
@@ -210,7 +210,11 @@ fn choropleth(show: bool, file_name: &str) {
     plot.set_layout(layout);
     plot.set_configuration(Configuration::default().responsive(true).fill_frame(true));
 
-    let path = write_example_to_html(&plot, file_name);
+    let path = write_example_to_html_with_inline_config(
+        &plot,
+        file_name,
+        Some(Configuration::default().scroll_zoom(false)), // book friendly intline HTML
+    );
     if show {
         plot.show_html(path);
     }
@@ -246,7 +250,11 @@ fn choropleth_map(show: bool, file_name: &str) {
     plot.set_layout(layout);
     plot.set_configuration(Configuration::default().responsive(true).fill_frame(true));
 
-    let path = write_example_to_html(&plot, file_name);
+    let path = write_example_to_html_with_inline_config(
+        &plot,
+        file_name,
+        Some(Configuration::default().scroll_zoom(false)), // book friendly intline HTML
+    );
     if show {
         plot.show_html(path);
     }
