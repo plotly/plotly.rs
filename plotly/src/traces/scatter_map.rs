@@ -54,6 +54,56 @@ impl Selection {
     }
 }
 
+/// Native point-clustering options for a [`ScatterMap`] trace.
+///
+/// When enabled, nearby markers are grouped client-side (by MapLibre's
+/// supercluster) into cluster bubbles that progressively expand into individual
+/// points as the map is zoomed in. This declutters dense point maps without
+/// dropping any data — every point still ships in the trace and becomes
+/// individually visible/hoverable at higher zoom levels.
+///
+/// This is a `scattermap`-only feature: the deprecated Mapbox-based
+/// [`ScatterMapbox`](crate::ScatterMapbox) has no equivalent.
+///
+/// # Examples
+///
+/// ```
+/// use plotly::{traces::scatter_map::Cluster, ScatterMap};
+///
+/// let trace = ScatterMap::new(vec![45.5017], vec![-73.5673])
+///     .cluster(Cluster::new().enabled(true));
+/// ```
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, FieldSetter)]
+pub struct Cluster {
+    /// Determines whether clustering is enabled or disabled. Defaults to
+    /// `false` unless `color`, `size`, or `step` is set, in which case it
+    /// defaults to `true`.
+    enabled: Option<bool>,
+    /// Sets the color for each cluster step. May be a single color or an array
+    /// of colors (one per step).
+    color: Option<Dim<Box<dyn Color>>>,
+    /// Sets the maximum zoom level (0-24) at which clustering applies. Past
+    /// this zoom, clusters expand into their individual points.
+    #[serde(rename = "maxzoom")]
+    max_zoom: Option<f64>,
+    /// Sets the marker opacity of the cluster bubbles.
+    opacity: Option<f64>,
+    /// Sets the size for each cluster step. May be a single size or an array
+    /// (one per step).
+    size: Option<Dim<usize>>,
+    /// Sets how many points it takes to create a cluster or advance to the next
+    /// cluster step. May be a single number or an array (one per step). A value
+    /// of `-1` (the default) lets MapLibre choose the step thresholds.
+    step: Option<Dim<i32>>,
+}
+
+impl Cluster {
+    pub fn new() -> Self {
+        Default::default()
+    }
+}
+
 /// Construct a scatter trace drawn on the MapLibre `map` subplot
 /// (configured via [`LayoutMap`](crate::layout::LayoutMap)).
 ///
@@ -206,6 +256,11 @@ where
     /// Line display properties.
     line: Option<Line>,
 
+    /// Native point-clustering options. When enabled, nearby markers are
+    /// grouped into clusters that expand into individual points as the map is
+    /// zoomed in.
+    cluster: Option<Cluster>,
+
     /// Sets the text font.
     #[serde(rename = "textfont")]
     text_font: Option<Font>,
@@ -321,6 +376,27 @@ mod tests {
     }
 
     #[test]
+    fn serialize_cluster() {
+        let cluster = Cluster::new()
+            .enabled(true)
+            .color("#112233")
+            .max_zoom(12.0)
+            .opacity(0.8)
+            .size(20)
+            .step(50);
+        let expected = json!({
+            "enabled": true,
+            "color": "#112233",
+            "maxzoom": 12.0,
+            "opacity": 0.8,
+            "size": 20,
+            "step": 50,
+        });
+
+        assert_eq!(to_value(cluster).unwrap(), expected);
+    }
+
+    #[test]
     fn serialize_scatter_map() {
         let scatter_map = ScatterMap::new(vec![45.5017], vec![-73.5673])
             .name("name")
@@ -348,6 +424,7 @@ mod tests {
             .subplot("map")
             .marker(Marker::new())
             .line(Line::new())
+            .cluster(Cluster::new().enabled(true))
             .text_font(Font::new())
             .selected_points(vec![0])
             .selected(Selection::new().color("#111111"))
@@ -382,6 +459,7 @@ mod tests {
             "subplot": "map",
             "marker": {},
             "line": {},
+            "cluster": {"enabled": true},
             "textfont": {},
             "selectedpoints": [0],
             "selected": {"marker": {"color": "#111111"}},
