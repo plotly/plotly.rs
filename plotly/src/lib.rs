@@ -52,12 +52,14 @@ pub mod configuration;
 pub mod export;
 pub mod layout;
 pub mod plot;
+pub mod subplot;
 pub mod traces;
 
 pub use common::color;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{Plot, Trace, Traces};
+pub use subplot::{HasXYAxes, StartCell, SubplotsBuilder};
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
     box_plot, choropleth, choropleth_map, contour, density_map, heat_map, histogram, image, mesh3d,
