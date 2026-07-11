@@ -1,12 +1,15 @@
 //! Indicator trace
 
+use std::collections::HashMap;
+
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::color::Color;
+use crate::layout::{ArrayShow, TicksDirection};
 use crate::private::{NumOrString, NumOrStringCollection};
 use crate::{
-    common::{Domain, Font, Line, PlotType},
+    common::{Domain, ExponentFormat, Font, Line, PlotType, TickFormatStop, TickMode},
     Trace,
 };
 
@@ -151,8 +154,11 @@ impl Delta {
 
 /// Configures the axis of a gauge (its range and ticks).
 ///
-/// This is a minimal subset of a full Cartesian axis, exposing only the
-/// attributes relevant to gauges.
+/// This mirrors the subset of a Cartesian axis that Plotly.js exposes on
+/// `indicator.gauge.axis`: a numeric `range` plus the full tick-styling
+/// machinery. It is intentionally distinct from [`crate::layout::Axis`], which
+/// carries many attributes (grid lines, spikes, range sliders, subplot
+/// anchoring, …) that a gauge axis does not support.
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct GaugeAxis {
@@ -160,24 +166,95 @@ pub struct GaugeAxis {
     range: Option<[f64; 2]>,
     /// Determines whether or not the gauge axis is visible.
     visible: Option<bool>,
-    /// Sets the tick mode of the gauge axis (e.g. `"auto"`, `"linear"`,
-    /// `"array"`).
+    /// Sets the tick mode of the gauge axis.
     #[serde(rename = "tickmode")]
-    tick_mode: Option<String>,
-    /// Sets the number of ticks.
+    tick_mode: Option<TickMode>,
+    /// Sets the number of ticks (with `tick_mode` [`TickMode::Auto`]).
     #[serde(rename = "nticks")]
     n_ticks: Option<usize>,
-    /// Sets the values at which ticks are drawn (with `tick_mode` `"array"`).
+    /// Sets the placement of the first tick (with `tick_mode`
+    /// [`TickMode::Linear`]).
+    tick0: Option<f64>,
+    /// Sets the step between ticks (with `tick_mode` [`TickMode::Linear`]).
+    dtick: Option<f64>,
+    /// Sets the values at which ticks are drawn (with `tick_mode`
+    /// [`TickMode::Array`]).
     #[serde(rename = "tickvals")]
     tick_vals: Option<Vec<f64>>,
-    /// Sets the text displayed at the tick values (with `tick_mode` `"array"`).
+    /// Sets the text displayed at the tick values (with `tick_mode`
+    /// [`TickMode::Array`]).
     #[serde(rename = "ticktext")]
     tick_text: Option<Vec<String>>,
+    /// Determines whether ticks are drawn inside or outside the axis line.
+    ticks: Option<TicksDirection>,
+    /// Sets the tick length (in px).
+    #[serde(rename = "ticklen")]
+    tick_length: Option<usize>,
+    /// Sets the tick width (in px).
+    #[serde(rename = "tickwidth")]
+    tick_width: Option<usize>,
+    /// Sets the tick color.
+    #[serde(rename = "tickcolor")]
+    #[field_setter(skip)]
+    tick_color: Option<Box<dyn Color>>,
+    /// Determines whether or not the tick labels are drawn.
+    #[serde(rename = "showticklabels")]
+    show_tick_labels: Option<bool>,
+    /// Sets the font used for the tick labels.
+    #[serde(rename = "tickfont")]
+    tick_font: Option<Font>,
+    /// Sets the angle (in degrees) of the tick labels.
+    #[serde(rename = "tickangle")]
+    tick_angle: Option<f64>,
+    /// Sets a prefix appearing before each tick label.
+    #[serde(rename = "tickprefix")]
+    tick_prefix: Option<String>,
+    /// Determines on which ticks the prefix is shown.
+    #[serde(rename = "showtickprefix")]
+    show_tick_prefix: Option<ArrayShow>,
+    /// Sets a suffix appearing after each tick label.
+    #[serde(rename = "ticksuffix")]
+    tick_suffix: Option<String>,
+    /// Determines on which ticks the suffix is shown.
+    #[serde(rename = "showticksuffix")]
+    show_tick_suffix: Option<ArrayShow>,
+    /// Determines on which ticks the exponent is shown.
+    #[serde(rename = "showexponent")]
+    show_exponent: Option<ArrayShow>,
+    /// Determines the formatting of exponents.
+    #[serde(rename = "exponentformat")]
+    exponent_format: Option<ExponentFormat>,
+    /// Sets the smallest exponent that gets a suffix/prefix (with
+    /// `exponent_format` [`ExponentFormat::SI`]/[`ExponentFormat::B`]).
+    #[serde(rename = "minexponent")]
+    min_exponent: Option<usize>,
+    /// Determines whether thousands are separated (e.g. `1,000,000`).
+    #[serde(rename = "separatethousands")]
+    separate_thousands: Option<bool>,
+    /// Sets the tick label formatting rule using d3 formatting
+    /// mini-languages.
+    #[serde(rename = "tickformat")]
+    tick_format: Option<String>,
+    /// Sets conditional tick-label formatting rules by range.
+    #[serde(rename = "tickformatstops")]
+    tick_format_stops: Option<Vec<TickFormatStop>>,
+    /// Sets the spacing between tick labels: every n-th label is shown.
+    #[serde(rename = "ticklabelstep")]
+    tick_label_step: Option<usize>,
+    /// Replaces specific tick labels with the provided aliases.
+    #[serde(rename = "labelalias")]
+    label_alias: Option<HashMap<String, String>>,
 }
 
 impl GaugeAxis {
     pub fn new() -> Self {
         Default::default()
+    }
+
+    /// Sets the tick color.
+    pub fn tick_color<C: Color>(mut self, color: C) -> Self {
+        self.tick_color = Some(Box::new(color));
+        self
     }
 }
 
@@ -493,6 +570,85 @@ mod tests {
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_gauge_axis() {
+        let axis = GaugeAxis::new()
+            .range([0.0, 100.0])
+            .visible(true)
+            .tick_mode(TickMode::Array)
+            .n_ticks(5)
+            .tick0(0.0)
+            .dtick(10.0)
+            .tick_vals(vec![0.0, 50.0, 100.0])
+            .tick_text(vec![
+                "low".to_string(),
+                "mid".to_string(),
+                "high".to_string(),
+            ])
+            .ticks(TicksDirection::Outside)
+            .tick_length(8)
+            .tick_width(2)
+            .tick_color("gray")
+            .show_tick_labels(true)
+            .tick_font(Font::new())
+            .tick_angle(45.0)
+            .tick_prefix("$")
+            .show_tick_prefix(ArrayShow::All)
+            .tick_suffix("k")
+            .show_tick_suffix(ArrayShow::Last)
+            .show_exponent(ArrayShow::First)
+            .exponent_format(ExponentFormat::SI)
+            .min_exponent(3)
+            .separate_thousands(true)
+            .tick_format(".2f")
+            .tick_label_step(2);
+
+        let expected = json!({
+            "range": [0.0, 100.0],
+            "visible": true,
+            "tickmode": "array",
+            "nticks": 5,
+            "tick0": 0.0,
+            "dtick": 10.0,
+            "tickvals": [0.0, 50.0, 100.0],
+            "ticktext": ["low", "mid", "high"],
+            "ticks": "outside",
+            "ticklen": 8,
+            "tickwidth": 2,
+            "tickcolor": "gray",
+            "showticklabels": true,
+            "tickfont": {},
+            "tickangle": 45.0,
+            "tickprefix": "$",
+            "showtickprefix": "all",
+            "ticksuffix": "k",
+            "showticksuffix": "last",
+            "showexponent": "first",
+            "exponentformat": "SI",
+            "minexponent": 3,
+            "separatethousands": true,
+            "tickformat": ".2f",
+            "ticklabelstep": 2,
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_gauge_axis_label_alias_and_format_stops() {
+        use std::collections::HashMap;
+
+        let mut alias = HashMap::new();
+        alias.insert("0".to_string(), "min".to_string());
+        let axis = GaugeAxis::new()
+            .label_alias(alias)
+            .tick_format_stops(vec![TickFormatStop::new()]);
+
+        let v = to_value(axis).unwrap();
+        assert_eq!(v["labelalias"], json!({"0": "min"}));
+        assert!(v["tickformatstops"].is_array());
     }
 
     #[test]
