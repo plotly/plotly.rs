@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#417](https://github.com/plotly/plotly.rs/issues/417)] Add `ScatterMap` (MapLibre `map` subplot) trace type — the modern counterpart to `ScatterMapbox`
 - [[#418](https://github.com/plotly/plotly.rs/issues/418)] Add native point clustering to `ScatterMap` via a `Cluster` option
 - [[#421](https://github.com/plotly/plotly.rs/pull/421)] Backfill trace attributes on trace types to bring them to parity with  plotly.js 3.7 
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator` trace type (number / delta / gauge KPI displays) with `Gauge`, `Delta`, `Number` config
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Histogram2d` trace type (2D histogram heatmap) with `histfunc`/`histnorm`/`nbinsx`/`nbinsy`/`xbins`/`ybins`
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Icicle` trace type (hierarchical icicle chart; sibling of `Treemap`/`Sunburst`)
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add layout-level `uirevision` to preserve UI state (zoom/pan/selection) across re-renders (complements the trace-level `uirevision` added in #421)
 
 ### Changed
 
