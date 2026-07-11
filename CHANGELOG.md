@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - date-axis period positioning (`xperiod`/`xperiod0`/`xperiodalignment` and the `y` variants) on `Scatter`, `Bar`, `BoxPlot`, `HeatMap`, `Contour` (x-only on `Candlestick`, `Ohlc`), via a new `PeriodAlignment` enum
   - `fillpattern` (reusing `Pattern`) and `fillgradient` (new `FillGradient` struct) on `Scatter`
   - Consolidate the duplicated `Selection`/`SelectionMarker` structs into `common` (re-exported from their original modules for backward compatibility)
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator` trace type (number / delta / gauge KPI displays) with `Gauge`, `Delta`, `Number` config
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Histogram2d` trace type (2D histogram heatmap) with `histfunc`/`histnorm`/`nbinsx`/`nbinsy`/`xbins`/`ybins`
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Icicle` trace type (hierarchical icicle chart; sibling of `Treemap`/`Sunburst`)
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add layout-level `uirevision` to preserve UI state (zoom/pan/selection) across re-renders (complements the trace-level `uirevision` added in #421)
 
 ### Changed
 
