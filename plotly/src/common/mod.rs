@@ -696,6 +696,50 @@ pub enum PeriodAlignment {
     End,
 }
 
+/// Sets a fill gradient for a scatter trace's filled area, as an alternative to
+/// a solid `fill_color`.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct FillGradient {
+    #[serde(rename = "type")]
+    r#type: Option<GradientType>,
+    start: Option<f64>,
+    stop: Option<f64>,
+    #[serde(rename = "colorscale")]
+    color_scale: Option<ColorScale>,
+}
+
+impl FillGradient {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Sets the direction of the gradient (`radial`, `horizontal`, `vertical`).
+    pub fn type_(mut self, gradient_type: GradientType) -> Self {
+        self.r#type = Some(gradient_type);
+        self
+    }
+
+    /// Sets the gradient start value (in the units of the axis the gradient is
+    /// aligned with).
+    pub fn start(mut self, start: f64) -> Self {
+        self.start = Some(start);
+        self
+    }
+
+    /// Sets the gradient stop value.
+    pub fn stop(mut self, stop: f64) -> Self {
+        self.stop = Some(stop);
+        self
+    }
+
+    /// Sets the color scale used across the gradient.
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
+        self.color_scale = Some(color_scale);
+        self
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct TickFormatStop {
