@@ -12,7 +12,7 @@ use plotly::{
 fn main() {
     let html: String = HtmlPage::new()
         .with_title("Plotly-rs Multiple Plots")
-        .with_script_link("https://cdn.plot.ly/plotly-latest.min.js")
+        .with_script_link("https://cdn.plot.ly/plotly-3.7.0.min.js")
         .with_header(1, "Multiple Plotly plots on the same HTML page")
         .with_raw(first_plot())
         .with_raw(second_plot())
