@@ -3,7 +3,7 @@
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
-use crate::private::NumOrString;
+use crate::private::{NumOrString, NumOrStringCollection};
 use crate::{
     common::{
         Calendar, Dim, Direction, HoverInfo, Label, LegendGroupTitle, Line, PlotType, Visible,
@@ -91,6 +91,13 @@ where
     /// `layout.uirevision`.
     #[serde(rename = "uirevision")]
     ui_revision: Option<NumOrString>,
+    /// Array of integer indices of the points in this trace that are selected.
+    #[serde(rename = "selectedpoints")]
+    selected_points: Option<NumOrStringCollection>,
+    /// Sets the layer on which this trace is displayed relative to other SVG
+    /// traces on the same subplot. A higher `zorder` appears on top.
+    #[serde(rename = "zorder")]
+    z_order: Option<i32>,
 }
 
 impl<X, O> Ohlc<X, O>

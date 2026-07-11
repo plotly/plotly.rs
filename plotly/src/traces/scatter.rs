@@ -11,7 +11,7 @@ use crate::{
     color::Color,
     common::{
         Calendar, Dim, ErrorData, Fill, Font, HoverInfo, HoverOn, Label, LegendGroupTitle, Line,
-        Marker, Mode, Orientation, PlotType, Position, Visible, XAxisId, YAxisId,
+        Marker, Mode, Orientation, PlotType, Position, Selection, Visible, XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -312,6 +312,17 @@ where
     /// their positions.
     #[serde(rename = "alignmentgroup")]
     alignment_group: Option<String>,
+    /// Array of integer indices of the points in this trace that are selected.
+    #[serde(rename = "selectedpoints")]
+    selected_points: Option<NumOrStringCollection>,
+    /// Sets the style of selected points.
+    selected: Option<Selection>,
+    /// Sets the style of unselected points.
+    unselected: Option<Selection>,
+    /// Sets the layer on which this trace is displayed relative to other SVG
+    /// traces on the same subplot. A higher `zorder` appears on top.
+    #[serde(rename = "zorder")]
+    z_order: Option<i32>,
 }
 
 impl<X, Y> Scatter<X, Y>
@@ -582,12 +593,18 @@ mod tests {
 
     #[test]
     fn serialize_scatter_backfilled_attributes() {
+        use crate::common::Selection;
+
         let trace = Scatter::new(vec![0], vec![0])
             .legend_rank(1000)
             .legend_width(50.0)
             .ui_revision(6)
             .offset_group("group1")
-            .alignment_group("group2");
+            .alignment_group("group2")
+            .selected_points(vec![0])
+            .selected(Selection::new().opacity(1.0))
+            .unselected(Selection::new().opacity(0.2))
+            .z_order(3);
 
         let json = to_value(trace).unwrap();
         assert_eq!(json["legendrank"], json!(1000));
@@ -595,5 +612,9 @@ mod tests {
         assert_eq!(json["uirevision"], json!(6));
         assert_eq!(json["offsetgroup"], json!("group1"));
         assert_eq!(json["alignmentgroup"], json!("group2"));
+        assert_eq!(json["selectedpoints"], json!([0]));
+        assert_eq!(json["selected"], json!({"marker": {"opacity": 1.0}}));
+        assert_eq!(json["unselected"], json!({"marker": {"opacity": 0.2}}));
+        assert_eq!(json["zorder"], json!(3));
     }
 }
