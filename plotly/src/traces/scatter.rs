@@ -291,6 +291,27 @@ where
     /// Sets the calendar system to use with `y` date data.
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
+    /// Sets the offset group for this trace. Traces in the same group are
+    /// bumped so they don't overlap.
+    #[serde(rename = "offsetgroup")]
+    offset_group: Option<String>,
+    /// Sets the alignment group for this trace. Traces sharing a group align
+    /// their positions.
+    #[serde(rename = "alignmentgroup")]
+    alignment_group: Option<String>,
 }
 
 impl<X, Y> Scatter<X, Y>
@@ -557,5 +578,22 @@ mod tests {
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_scatter_backfilled_attributes() {
+        let trace = Scatter::new(vec![0], vec![0])
+            .legend_rank(1000)
+            .legend_width(50.0)
+            .ui_revision(6)
+            .offset_group("group1")
+            .alignment_group("group2");
+
+        let json = to_value(trace).unwrap();
+        assert_eq!(json["legendrank"], json!(1000));
+        assert_eq!(json["legendwidth"], json!(50.0));
+        assert_eq!(json["uirevision"], json!(6));
+        assert_eq!(json["offsetgroup"], json!("group1"));
+        assert_eq!(json["alignmentgroup"], json!("group2"));
     }
 }

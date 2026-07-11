@@ -169,6 +169,10 @@ where
     /// Assign an id to this trace. Use this to provide object constancy between
     /// traces during animations and transitions.
     uid: Option<String>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<V> Sunburst<V>

@@ -9,6 +9,7 @@ use crate::{
         Calendar, Dim, HoverInfo, Label, LegendGroupTitle, Line, Marker, Orientation, PlotType,
         Visible, XAxisId, YAxisId,
     },
+    private::NumOrString,
     Trace,
 };
 
@@ -172,6 +173,19 @@ where
     x_calendar: Option<Calendar>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<Y> BoxPlot<f64, Y>

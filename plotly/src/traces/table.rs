@@ -3,6 +3,7 @@
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
+use crate::private::NumOrString;
 use crate::{
     color::Color,
     common::{Dim, PlotType, Visible},
@@ -46,6 +47,10 @@ where
     /// must be the same (longer vectors, will be truncated). Each value
     /// must be a finite number or a string.
     cells: Option<Cells<N>>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<T, N> Table<T, N>
