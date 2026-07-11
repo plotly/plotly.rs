@@ -9,7 +9,8 @@ use crate::{
         Calendar, ColorBar, ColorScale, Dim, Font, HoverInfo, Label, LegendGroupTitle, Line,
         PlotType, Visible, XAxisId, YAxisId,
     },
-    private, Trace,
+    private::{self, NumOrString},
+    Trace,
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -177,6 +178,19 @@ where
     x_calendar: Option<Calendar>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<Z, X, Y> Default for Contour<Z, X, Y>
@@ -229,6 +243,9 @@ where
             transpose: None,
             x_calendar: None,
             y_calendar: None,
+            legend_rank: None,
+            legend_width: None,
+            ui_revision: None,
         }
     }
 }
@@ -433,6 +450,21 @@ where
 
     pub fn y_calendar(mut self, y_calendar: Calendar) -> Box<Self> {
         self.y_calendar = Some(y_calendar);
+        Box::new(self)
+    }
+
+    pub fn legend_rank(mut self, legend_rank: usize) -> Box<Self> {
+        self.legend_rank = Some(legend_rank);
+        Box::new(self)
+    }
+
+    pub fn legend_width(mut self, legend_width: f64) -> Box<Self> {
+        self.legend_width = Some(legend_width);
+        Box::new(self)
+    }
+
+    pub fn ui_revision(mut self, ui_revision: impl Into<NumOrString>) -> Box<Self> {
+        self.ui_revision = Some(ui_revision.into());
         Box::new(self)
     }
 
@@ -682,5 +714,18 @@ mod tests {
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_contour_backfilled_attributes() {
+        let trace = Contour::new(vec![0.], vec![0.], vec![1.])
+            .legend_rank(1000)
+            .legend_width(50.0)
+            .ui_revision(6);
+
+        let json = to_value(trace).unwrap();
+        assert_eq!(json["legendrank"], json!(1000));
+        assert_eq!(json["legendwidth"], json!(50.0));
+        assert_eq!(json["uirevision"], json!(6));
     }
 }

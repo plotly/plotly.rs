@@ -5,6 +5,7 @@ use ndarray::{Array, Ix1};
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
+use crate::private::NumOrString;
 use crate::{
     color::Color,
     common::{
@@ -270,6 +271,13 @@ where
     /// Sets the calendar system to use with `z` date data.
     #[serde(rename = "zcalendar")]
     z_calendar: Option<Calendar>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<X, Y, Z> Scatter3D<X, Y, Z>
