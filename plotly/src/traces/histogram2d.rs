@@ -17,9 +17,16 @@ use crate::{
 /// Construct a 2D histogram trace.
 ///
 /// A `Histogram2d` bins raw `x`/`y` samples into a 2D grid and renders the
-/// counts as a heatmap. Provide raw `x`/`y` data (and let Plotly.js bin it via
-/// `hist_func`/`n_bins_x`/`n_bins_y`/`x_bins`/`y_bins`), or supply a
-/// pre-computed `z` matrix.
+/// binned counts as a heatmap. Provide raw `x`/`y` data and let Plotly.js bin
+/// it via `hist_func`/`n_bins_x`/`n_bins_y`/`x_bins`/`y_bins`. Optionally
+/// supply per-sample aggregation values via `z` (a 1D array aligned with
+/// `x`/`y`) and a `hist_func` such as [`HistFunc::Sum`] or
+/// [`HistFunc::Average`] to aggregate those values within each bin instead of
+/// counting samples.
+///
+/// Note: unlike [`HeatMap`](crate::HeatMap), `z` here is per-sample aggregation
+/// data aligned with `x`/`y`, not a pre-binned 2D matrix. For a pre-computed
+/// matrix, use [`HeatMap`](crate::HeatMap).
 ///
 /// # Examples
 ///
@@ -177,8 +184,10 @@ where
     Y: Serialize + Clone,
     Z: Serialize + Clone,
 {
-    /// Build a new 2D histogram from a pre-computed `z` matrix, with `x`/`y`
-    /// coordinates.
+    /// Build a new 2D histogram from raw `x`/`y` samples plus per-sample
+    /// aggregation values `z`. All three vectors are aligned (one entry per
+    /// sample); combine with a `hist_func` such as [`HistFunc::Sum`] to
+    /// aggregate the `z` values within each `x`/`y` bin.
     pub fn new_xyz(x: Vec<X>, y: Vec<Y>, z: Vec<Z>) -> Box<Self> {
         Box::new(Self {
             x: Some(x),
@@ -251,29 +260,33 @@ mod tests {
     }
 
     #[test]
-    fn serialize_histogram2d_z_matrix() {
+    fn serialize_histogram2d_aggregation() {
+        // `z` is per-sample aggregation data aligned with `x`/`y` (not a
+        // pre-binned matrix); `hist_func` aggregates it within each bin.
         let trace = Histogram2d::new_xyz(
-            vec![0.0, 1.0],
-            vec![2.0, 3.0],
-            vec![vec![4.0, 5.0], vec![6.0, 7.0]],
+            vec![1.0, 2.0, 2.0],
+            vec![1.0, 1.0, 3.0],
+            vec![10.0, 20.0, 30.0],
         )
+        .hist_func(HistFunc::Sum)
         .zauto(true)
         .zmin(0.0)
-        .zmax(10.0)
-        .zmid(5.0)
+        .zmax(60.0)
+        .zmid(30.0)
         .zsmooth(Smoothing::Best)
         .x_gap(1.0)
         .y_gap("10");
 
         let expected = json!({
             "type": "histogram2d",
-            "x": [0.0, 1.0],
-            "y": [2.0, 3.0],
-            "z": [[4.0, 5.0], [6.0, 7.0]],
+            "x": [1.0, 2.0, 2.0],
+            "y": [1.0, 1.0, 3.0],
+            "z": [10.0, 20.0, 30.0],
+            "histfunc": "sum",
             "zauto": true,
             "zmin": 0.0,
-            "zmax": 10.0,
-            "zmid": 5.0,
+            "zmax": 60.0,
+            "zmid": 30.0,
             "zsmooth": "best",
             "xgap": 1.0,
             "ygap": "10",
