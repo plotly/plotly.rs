@@ -11,7 +11,8 @@ use crate::{
     color::Color,
     common::{
         Calendar, Dim, ErrorData, Fill, Font, HoverInfo, HoverOn, Label, LegendGroupTitle, Line,
-        Marker, Mode, Orientation, PlotType, Position, Selection, Visible, XAxisId, YAxisId,
+        Marker, Mode, Orientation, PeriodAlignment, PlotType, Position, Selection, Visible,
+        XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -323,6 +324,28 @@ where
     /// traces on the same subplot. A higher `zorder` appears on top.
     #[serde(rename = "zorder")]
     z_order: Option<i32>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the x axis.
+    #[serde(rename = "xperiod")]
+    x_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the x axis.
+    #[serde(rename = "xperiod0")]
+    x_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the x axis relative to the period.
+    #[serde(rename = "xperiodalignment")]
+    x_period_alignment: Option<PeriodAlignment>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the y axis.
+    #[serde(rename = "yperiod")]
+    y_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the y axis.
+    #[serde(rename = "yperiod0")]
+    y_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the y axis relative to the period.
+    #[serde(rename = "yperiodalignment")]
+    y_period_alignment: Option<PeriodAlignment>,
 }
 
 impl<X, Y> Scatter<X, Y>
@@ -593,7 +616,7 @@ mod tests {
 
     #[test]
     fn serialize_scatter_backfilled_attributes() {
-        use crate::common::Selection;
+        use crate::common::{PeriodAlignment, Selection};
 
         let trace = Scatter::new(vec![0], vec![0])
             .legend_rank(1000)
@@ -604,7 +627,10 @@ mod tests {
             .selected_points(vec![0])
             .selected(Selection::new().opacity(1.0))
             .unselected(Selection::new().opacity(0.2))
-            .z_order(3);
+            .z_order(3)
+            .x_period(86400000)
+            .x_period_alignment(PeriodAlignment::Start)
+            .y_period_alignment(PeriodAlignment::End);
 
         let json = to_value(trace).unwrap();
         assert_eq!(json["legendrank"], json!(1000));
@@ -616,5 +642,8 @@ mod tests {
         assert_eq!(json["selected"], json!({"marker": {"opacity": 1.0}}));
         assert_eq!(json["unselected"], json!({"marker": {"opacity": 0.2}}));
         assert_eq!(json["zorder"], json!(3));
+        assert_eq!(json["xperiod"], json!(86400000));
+        assert_eq!(json["xperiodalignment"], json!("start"));
+        assert_eq!(json["yperiodalignment"], json!("end"));
     }
 }

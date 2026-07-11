@@ -685,6 +685,17 @@ impl Selection {
     }
 }
 
+/// Alignment of the period on a date axis, controlling where within each
+/// period the point is drawn (used by the `xperiodalignment` /
+/// `yperiodalignment` trace attributes).
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum PeriodAlignment {
+    Start,
+    Middle,
+    End,
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct TickFormatStop {
