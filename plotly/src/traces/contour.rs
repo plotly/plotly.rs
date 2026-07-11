@@ -191,6 +191,10 @@ where
     /// `layout.uirevision`.
     #[serde(rename = "uirevision")]
     ui_revision: Option<NumOrString>,
+    /// Sets the layer on which this trace is displayed relative to other SVG
+    /// traces on the same subplot. A higher `zorder` appears on top.
+    #[serde(rename = "zorder")]
+    z_order: Option<i32>,
 }
 
 impl<Z, X, Y> Default for Contour<Z, X, Y>
@@ -246,6 +250,7 @@ where
             legend_rank: None,
             legend_width: None,
             ui_revision: None,
+            z_order: None,
         }
     }
 }
@@ -465,6 +470,11 @@ where
 
     pub fn ui_revision(mut self, ui_revision: impl Into<NumOrString>) -> Box<Self> {
         self.ui_revision = Some(ui_revision.into());
+        Box::new(self)
+    }
+
+    pub fn z_order(mut self, z_order: i32) -> Box<Self> {
+        self.z_order = Some(z_order);
         Box::new(self)
     }
 
@@ -721,11 +731,13 @@ mod tests {
         let trace = Contour::new(vec![0.], vec![0.], vec![1.])
             .legend_rank(1000)
             .legend_width(50.0)
-            .ui_revision(6);
+            .ui_revision(6)
+            .z_order(3);
 
         let json = to_value(trace).unwrap();
         assert_eq!(json["legendrank"], json!(1000));
         assert_eq!(json["legendwidth"], json!(50.0));
         assert_eq!(json["uirevision"], json!(6));
+        assert_eq!(json["zorder"], json!(3));
     }
 }
