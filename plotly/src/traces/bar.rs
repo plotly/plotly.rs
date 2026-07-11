@@ -6,7 +6,8 @@ use serde::Serialize;
 use crate::{
     common::{
         Calendar, ConstrainText, Dim, ErrorData, Font, HoverInfo, Label, LegendGroupTitle, Marker,
-        Orientation, PlotType, Selection, TextAnchor, TextPosition, Visible, XAxisId, YAxisId,
+        Orientation, PeriodAlignment, PlotType, Selection, TextAnchor, TextPosition, Visible,
+        XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -130,6 +131,28 @@ where
     /// traces on the same subplot. A higher `zorder` appears on top.
     #[serde(rename = "zorder")]
     z_order: Option<i32>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the x axis.
+    #[serde(rename = "xperiod")]
+    x_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the x axis.
+    #[serde(rename = "xperiod0")]
+    x_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the x axis relative to the period.
+    #[serde(rename = "xperiodalignment")]
+    x_period_alignment: Option<PeriodAlignment>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the y axis.
+    #[serde(rename = "yperiod")]
+    y_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the y axis.
+    #[serde(rename = "yperiod0")]
+    y_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the y axis relative to the period.
+    #[serde(rename = "yperiodalignment")]
+    y_period_alignment: Option<PeriodAlignment>,
 }
 
 impl<X, Y> Bar<X, Y>

@@ -7,7 +7,7 @@ use crate::{
     color::Color,
     common::{
         Calendar, ColorBar, ColorScale, Dim, Font, HoverInfo, Label, LegendGroupTitle, Line,
-        PlotType, Visible, XAxisId, YAxisId,
+        PeriodAlignment, PlotType, Visible, XAxisId, YAxisId,
     },
     private::{self, NumOrString},
     Trace,
@@ -195,6 +195,28 @@ where
     /// traces on the same subplot. A higher `zorder` appears on top.
     #[serde(rename = "zorder")]
     z_order: Option<i32>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the x axis.
+    #[serde(rename = "xperiod")]
+    x_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the x axis.
+    #[serde(rename = "xperiod0")]
+    x_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the x axis relative to the period.
+    #[serde(rename = "xperiodalignment")]
+    x_period_alignment: Option<PeriodAlignment>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the y axis.
+    #[serde(rename = "yperiod")]
+    y_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the y axis.
+    #[serde(rename = "yperiod0")]
+    y_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the y axis relative to the period.
+    #[serde(rename = "yperiodalignment")]
+    y_period_alignment: Option<PeriodAlignment>,
 }
 
 impl<Z, X, Y> Default for Contour<Z, X, Y>
@@ -251,6 +273,12 @@ where
             legend_width: None,
             ui_revision: None,
             z_order: None,
+            x_period: None,
+            x_period0: None,
+            x_period_alignment: None,
+            y_period: None,
+            y_period0: None,
+            y_period_alignment: None,
         }
     }
 }
@@ -475,6 +503,36 @@ where
 
     pub fn z_order(mut self, z_order: i32) -> Box<Self> {
         self.z_order = Some(z_order);
+        Box::new(self)
+    }
+
+    pub fn x_period(mut self, x_period: impl Into<NumOrString>) -> Box<Self> {
+        self.x_period = Some(x_period.into());
+        Box::new(self)
+    }
+
+    pub fn x_period0(mut self, x_period0: impl Into<NumOrString>) -> Box<Self> {
+        self.x_period0 = Some(x_period0.into());
+        Box::new(self)
+    }
+
+    pub fn x_period_alignment(mut self, x_period_alignment: PeriodAlignment) -> Box<Self> {
+        self.x_period_alignment = Some(x_period_alignment);
+        Box::new(self)
+    }
+
+    pub fn y_period(mut self, y_period: impl Into<NumOrString>) -> Box<Self> {
+        self.y_period = Some(y_period.into());
+        Box::new(self)
+    }
+
+    pub fn y_period0(mut self, y_period0: impl Into<NumOrString>) -> Box<Self> {
+        self.y_period0 = Some(y_period0.into());
+        Box::new(self)
+    }
+
+    pub fn y_period_alignment(mut self, y_period_alignment: PeriodAlignment) -> Box<Self> {
+        self.y_period_alignment = Some(y_period_alignment);
         Box::new(self)
     }
 

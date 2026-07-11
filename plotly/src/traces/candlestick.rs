@@ -7,8 +7,8 @@ use crate::private::{NumOrString, NumOrStringCollection};
 use crate::{
     color::NamedColor,
     common::{
-        Calendar, Dim, Direction, HoverInfo, Label, LegendGroupTitle, Line, PlotType, Visible,
-        XAxisId, YAxisId,
+        Calendar, Dim, Direction, HoverInfo, Label, LegendGroupTitle, Line, PeriodAlignment,
+        PlotType, Visible, XAxisId, YAxisId,
     },
     Trace,
 };
@@ -110,6 +110,17 @@ where
     /// traces on the same subplot. A higher `zorder` appears on top.
     #[serde(rename = "zorder")]
     z_order: Option<i32>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the x axis.
+    #[serde(rename = "xperiod")]
+    x_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the x axis.
+    #[serde(rename = "xperiod0")]
+    x_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the x axis relative to the period.
+    #[serde(rename = "xperiodalignment")]
+    x_period_alignment: Option<PeriodAlignment>,
 }
 
 impl<T, O> Candlestick<T, O>
