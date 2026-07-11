@@ -342,6 +342,15 @@ where
     /// Assign an id to this trace. Use this to provide object constancy between
     /// traces during animations and transitions.
     uid: Option<String>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
     /// Controls persistence of user-driven changes to the trace. Defaults to
     /// `layout.uirevision`.
     #[serde(rename = "uirevision")]
@@ -529,5 +538,18 @@ mod tests {
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_treemap_legend_and_uirevision() {
+        let trace = Treemap::new(vec!["Eve"], vec![""])
+            .values(vec![10])
+            .legend_rank(7)
+            .legend_width(2.0)
+            .ui_revision("rev");
+        let v = to_value(trace).unwrap();
+        assert_eq!(v["legendrank"], json!(7));
+        assert_eq!(v["legendwidth"], json!(2.0));
+        assert_eq!(v["uirevision"], json!("rev"));
     }
 }
