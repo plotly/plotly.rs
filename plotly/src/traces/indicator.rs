@@ -6,10 +6,10 @@ use plotly_derive::FieldSetter;
 use serde::Serialize;
 
 use crate::color::Color;
-use crate::layout::{ArrayShow, TicksDirection};
+use crate::layout::ArrayShow;
 use crate::private::{NumOrString, NumOrStringCollection};
 use crate::{
-    common::{Domain, ExponentFormat, Font, Line, PlotType, TickFormatStop, TickMode},
+    common::{Domain, ExponentFormat, Font, Line, PlotType, TickFormatStop, TickMode, Ticks},
     Trace,
 };
 
@@ -185,8 +185,9 @@ pub struct GaugeAxis {
     /// [`TickMode::Array`]).
     #[serde(rename = "ticktext")]
     tick_text: Option<Vec<String>>,
-    /// Determines whether ticks are drawn inside or outside the axis line.
-    ticks: Option<TicksDirection>,
+    /// Determines whether ticks are drawn inside or outside the axis line
+    /// ([`Ticks::None`] disables them).
+    ticks: Option<Ticks>,
     /// Sets the tick length (in px).
     #[serde(rename = "ticklen")]
     tick_length: Option<usize>,
@@ -587,7 +588,7 @@ mod tests {
                 "mid".to_string(),
                 "high".to_string(),
             ])
-            .ticks(TicksDirection::Outside)
+            .ticks(Ticks::Outside)
             .tick_length(8)
             .tick_width(2)
             .tick_color("gray")
@@ -649,6 +650,13 @@ mod tests {
         let v = to_value(axis).unwrap();
         assert_eq!(v["labelalias"], json!({"0": "min"}));
         assert!(v["tickformatstops"].is_array());
+    }
+
+    #[test]
+    fn serialize_gauge_axis_ticks_none() {
+        // The gauge-axis schema allows "" to disable tick marks.
+        let axis = GaugeAxis::new().ticks(Ticks::None);
+        assert_eq!(to_value(axis).unwrap()["ticks"], json!(""));
     }
 
     #[test]
