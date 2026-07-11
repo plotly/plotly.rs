@@ -10,9 +10,9 @@ use crate::ndarray::ArrayTraces;
 use crate::{
     color::Color,
     common::{
-        Calendar, Dim, ErrorData, Fill, Font, HoverInfo, HoverOn, Label, LegendGroupTitle, Line,
-        Marker, Mode, Orientation, PeriodAlignment, PlotType, Position, Selection, Visible,
-        XAxisId, YAxisId,
+        Calendar, Dim, ErrorData, Fill, FillGradient, Font, HoverInfo, HoverOn, Label,
+        LegendGroupTitle, Line, Marker, Mode, Orientation, Pattern, PeriodAlignment, PlotType,
+        Position, Selection, Visible, XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -267,6 +267,13 @@ where
     /// color, marker color, or marker line color, whichever is available.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
+    /// Sets a pattern used to fill the area, as an alternative to `fill_color`.
+    #[serde(rename = "fillpattern")]
+    fill_pattern: Option<Pattern>,
+    /// Sets a color gradient used to fill the area, as an alternative to
+    /// `fill_color`.
+    #[serde(rename = "fillgradient")]
+    fill_gradient: Option<FillGradient>,
     /// Properties of label displayed on mouse hover.
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
@@ -616,7 +623,7 @@ mod tests {
 
     #[test]
     fn serialize_scatter_backfilled_attributes() {
-        use crate::common::{PeriodAlignment, Selection};
+        use crate::common::{FillGradient, GradientType, Pattern, PeriodAlignment, Selection};
 
         let trace = Scatter::new(vec![0], vec![0])
             .legend_rank(1000)
@@ -630,7 +637,9 @@ mod tests {
             .z_order(3)
             .x_period(86400000)
             .x_period_alignment(PeriodAlignment::Start)
-            .y_period_alignment(PeriodAlignment::End);
+            .y_period_alignment(PeriodAlignment::End)
+            .fill_pattern(Pattern::new())
+            .fill_gradient(FillGradient::new().type_(GradientType::Horizontal));
 
         let json = to_value(trace).unwrap();
         assert_eq!(json["legendrank"], json!(1000));
@@ -645,5 +654,7 @@ mod tests {
         assert_eq!(json["xperiod"], json!(86400000));
         assert_eq!(json["xperiodalignment"], json!("start"));
         assert_eq!(json["yperiodalignment"], json!("end"));
+        assert_eq!(json["fillpattern"], json!({}));
+        assert_eq!(json["fillgradient"], json!({"type": "horizontal"}));
     }
 }
