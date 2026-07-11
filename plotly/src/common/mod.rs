@@ -645,6 +645,46 @@ impl Gradient {
     }
 }
 
+/// Styles the marker of `selected`/`unselected` points, used by the
+/// `selected` and `unselected` attributes of point-marker traces.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct SelectionMarker {
+    color: Option<Box<dyn Color>>,
+    opacity: Option<f64>,
+    size: Option<Dim<usize>>,
+}
+
+/// Sets the style of `selected`/`unselected` points.
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Selection {
+    marker: SelectionMarker,
+}
+
+impl Selection {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Sets the marker color of un/selected points.
+    pub fn color<C: Color>(mut self, color: C) -> Self {
+        self.marker.color = Some(Box::new(color));
+        self
+    }
+
+    /// Sets the marker opacity of un/selected points.
+    pub fn opacity(mut self, opacity: f64) -> Self {
+        self.marker.opacity = Some(opacity);
+        self
+    }
+
+    /// Sets the marker size of un/selected points.
+    pub fn size(mut self, size: usize) -> Self {
+        self.marker.size = Some(Dim::Scalar(size));
+        self
+    }
+}
+
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct TickFormatStop {
