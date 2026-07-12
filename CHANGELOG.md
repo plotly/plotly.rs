@@ -14,8 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#414](https://github.com/plotly/plotly.rs/issues/414)] Add `DensityMap` (MapLibre `map` subplot) trace type — density heatmaps with full color-scale and hover support
 - [[#417](https://github.com/plotly/plotly.rs/issues/417)] Add `ScatterMap` (MapLibre `map` subplot) trace type — the modern counterpart to `ScatterMapbox`
 - [[#418](https://github.com/plotly/plotly.rs/issues/418)] Add native point clustering to `ScatterMap` via a `Cluster` option
-- [[#421](https://github.com/plotly/plotly.rs/pull/421)] Backfill trace attributes on trace types to bring them to parity with  plotly.js 3.7 
+- [[#421](https://github.com/plotly/plotly.rs/pull/421)] Backfill trace attributes for trace types to bring them to parity with  plotly.js 3.7 
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator`, `Histogram2d`, `Icicle` trace types 
+- [[#425](https://github.com/plotly/plotly.rs/issues/425)] Add `Splom` and `Parcats` trace types (scatter-plot matrix and parallel categories) 
 
 ### Changed
 
