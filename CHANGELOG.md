@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Icicle` trace type (hierarchical icicle chart; sibling of `Treemap`/`Sunburst`)
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add layout-level `uirevision` to preserve UI state (zoom/pan/selection) across re-renders (complements the trace-level `uirevision` added in #421)
 - Add `Splom` trace type (scatter-plot matrix) with `SplomDimension`/`SplomAxis`/`SplomDiagonal` config and `showupperhalf`/`showlowerhalf` controls
-- Add `Parcats` trace type (parallel categories) with `ParcatsDimension`/`ParcatsLine` config and `ParcatsLineShape`/`ParcatsArrangement`/`ParcatsHoverOn`/`ParcatsSortPaths` enums
+- Add `Parcats` trace type (parallel categories) with `ParcatsDimension`/`ParcatsLine` config and `ParcatsLineShape`/`ParcatsArrangement`/`ParcatsHoverOn`/`ParcatsSortPaths`/`ParcatsHoverInfo` enums
 
 ### Changed
 

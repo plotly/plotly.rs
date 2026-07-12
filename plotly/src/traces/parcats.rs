@@ -5,7 +5,7 @@ use serde::Serialize;
 
 use crate::{
     color::Color,
-    common::{ColorScale, Dim, Domain, HoverInfo, PlotType},
+    common::{ColorScale, Dim, Domain, PlotType},
     layout::CategoryOrder,
     Trace,
 };
@@ -42,6 +42,22 @@ pub enum ParcatsHoverOn {
 pub enum ParcatsSortPaths {
     Forward,
     Backward,
+}
+
+/// Determines which trace information appears on hover for a parcats trace.
+///
+/// Unlike the cartesian [`HoverInfo`](crate::common::HoverInfo), parcats hover
+/// info is limited to `count`/`probability` (plus `all`/`none`/`skip`).
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum ParcatsHoverInfo {
+    Count,
+    Probability,
+    #[serde(rename = "count+probability")]
+    CountAndProbability,
+    All,
+    None,
+    Skip,
 }
 
 /// A single dimension (column) of a [`Parcats`] trace.
@@ -181,9 +197,10 @@ where
     // the more general form and is used here.
     #[serde(rename = "hovertemplate")]
     hover_template: Option<String>,
-    /// Determines which trace information appears on hover.
+    /// Determines which trace information appears on hover. Limited to
+    /// `count`/`probability` (plus `all`/`none`/`skip`).
     #[serde(rename = "hoverinfo")]
-    hover_info: Option<HoverInfo>,
+    hover_info: Option<ParcatsHoverInfo>,
     /// Sets the domain within which this parcats trace is drawn.
     domain: Option<Domain>,
 }
@@ -274,6 +291,23 @@ mod tests {
         });
 
         assert_eq!(to_value(line).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_parcats_hover_info() {
+        assert_eq!(to_value(ParcatsHoverInfo::Count).unwrap(), json!("count"));
+        assert_eq!(
+            to_value(ParcatsHoverInfo::Probability).unwrap(),
+            json!("probability")
+        );
+        assert_eq!(
+            to_value(ParcatsHoverInfo::CountAndProbability).unwrap(),
+            json!("count+probability")
+        );
+        assert_eq!(to_value(ParcatsHoverInfo::Skip).unwrap(), json!("skip"));
+
+        let trace = Parcats::<i32>::new().hover_info(ParcatsHoverInfo::Count);
+        assert_eq!(to_value(trace).unwrap()["hoverinfo"], json!("count"));
     }
 
     #[test]
