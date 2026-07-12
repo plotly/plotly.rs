@@ -38,8 +38,9 @@ where
     label: Option<String>,
     /// Sets the dimension values to be plotted.
     values: Option<Vec<V>>,
-    /// Determines whether or not this dimension is shown on the graph. Note that
-    /// even visible false dimensions contribute to the default grid generation.
+    /// Determines whether or not this dimension is shown on the graph. Note
+    /// that even visible false dimensions contribute to the default grid
+    /// generation.
     visible: Option<bool>,
     /// Per-dimension axis settings.
     axis: Option<SplomAxis>,
@@ -112,8 +113,8 @@ where
     /// Determines whether or not this trace is visible. If "legendonly", the
     /// trace is not drawn, but can appear as a legend item.
     visible: Option<Visible>,
-    /// Determines whether or not an item corresponding to this trace is shown in
-    /// the legend.
+    /// Determines whether or not an item corresponding to this trace is shown
+    /// in the legend.
     #[serde(rename = "showlegend")]
     show_legend: Option<bool>,
     /// Sets the legend group for this trace. Traces part of the same legend

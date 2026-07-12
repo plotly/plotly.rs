@@ -58,8 +58,8 @@ where
     /// Specifies the ordering logic for the categories in the dimension.
     #[serde(rename = "categoryorder")]
     category_order: Option<CategoryOrder>,
-    /// Sets the order in which categories in this dimension appear, only used if
-    /// `category_order` is set to "array".
+    /// Sets the order in which categories in this dimension appear, only used
+    /// if `category_order` is set to "array".
     #[serde(rename = "categoryarray")]
     category_array: Option<Vec<V>>,
     /// Sets alternative tick labels for the categories in this dimension.
@@ -165,7 +165,8 @@ where
     counts: Option<Dim<f64>>,
     /// Sets the drag interaction mode for categories and dimensions.
     arrangement: Option<ParcatsArrangement>,
-    /// Sort paths so that like colors are bundled together within each category.
+    /// Sort paths so that like colors are bundled together within each
+    /// category.
     #[serde(rename = "bundlecolors")]
     bundle_colors: Option<bool>,
     /// Sets the hover interaction mode for the parcats diagram.
