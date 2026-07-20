@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - [[#406](https://github.com/plotly/plotly.rs/issues/406)] Upgrade bundled plotly.js from 3.0.1 to 3.6.0
 - [[#419](https://github.com/plotly/plotly.rs/issues/419)] Upgrade bundled plotly.js from 3.6.0 to 3.7.0
+- [[#427](https://github.com/plotly/plotly.rs/issues/427)] Bump `webdriver-downloader` build dependency from 0.16 to 0.17.0, clearing the unmaintained `rustls-pemfile` advisory (RUSTSEC-2025-0134) and updating its dependency tree to current majors
 
 ## [0.14.1] - 2026-02-15
 
