@@ -6,9 +6,10 @@ use serde::{Serialize, Serializer};
 use crate::{
     color::Color,
     common::{
-        Calendar, Dim, HoverInfo, Label, LegendGroupTitle, Line, Marker, Orientation, PlotType,
-        Visible, XAxisId, YAxisId,
+        Calendar, Dim, HoverInfo, Label, LegendGroupTitle, Line, Marker, Orientation,
+        PeriodAlignment, PlotType, Selection, Visible, XAxisId, YAxisId,
     },
+    private::{NumOrString, NumOrStringCollection},
     Trace,
 };
 
@@ -172,6 +173,52 @@ where
     x_calendar: Option<Calendar>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
+    /// Array of integer indices of the points in this trace that are selected.
+    #[serde(rename = "selectedpoints")]
+    selected_points: Option<NumOrStringCollection>,
+    /// Sets the style of selected points.
+    selected: Option<Selection>,
+    /// Sets the style of unselected points.
+    unselected: Option<Selection>,
+    /// Sets the layer on which this trace is displayed relative to other SVG
+    /// traces on the same subplot. A higher `zorder` appears on top.
+    #[serde(rename = "zorder")]
+    z_order: Option<i32>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the x axis.
+    #[serde(rename = "xperiod")]
+    x_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the x axis.
+    #[serde(rename = "xperiod0")]
+    x_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the x axis relative to the period.
+    #[serde(rename = "xperiodalignment")]
+    x_period_alignment: Option<PeriodAlignment>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the y axis.
+    #[serde(rename = "yperiod")]
+    y_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the y axis.
+    #[serde(rename = "yperiod0")]
+    y_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the y axis relative to the period.
+    #[serde(rename = "yperiodalignment")]
+    y_period_alignment: Option<PeriodAlignment>,
 }
 
 impl<Y> BoxPlot<f64, Y>

@@ -3,6 +3,7 @@
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
+use crate::private::NumOrString;
 use crate::{
     color::Color,
     common::{Dim, PlotType, Visible},
@@ -46,6 +47,19 @@ where
     /// must be the same (longer vectors, will be truncated). Each value
     /// must be a finite number or a string.
     cells: Option<Cells<N>>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
 }
 
 impl<T, N> Table<T, N>
@@ -356,5 +370,19 @@ mod tests {
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_table_legend_and_uirevision() {
+        let columns = Header::new(vec![String::from("col1")]);
+        let values = Cells::new(vec![vec![1, 2]]);
+        let trace = Table::new(columns, values)
+            .legend_rank(7)
+            .legend_width(2.0)
+            .ui_revision("rev");
+        let v = to_value(trace).unwrap();
+        assert_eq!(v["legendrank"], json!(7));
+        assert_eq!(v["legendwidth"], json!(2.0));
+        assert_eq!(v["uirevision"], json!("rev"));
     }
 }

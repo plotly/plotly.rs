@@ -10,8 +10,9 @@ use crate::ndarray::ArrayTraces;
 use crate::{
     common::{
         Calendar, Dim, ErrorData, HoverInfo, Label, LegendGroupTitle, Marker, Orientation,
-        PlotType, Visible, XAxisId, YAxisId,
+        PlotType, Selection, Visible, XAxisId, YAxisId,
     },
+    private::{NumOrString, NumOrStringCollection},
     Trace,
 };
 
@@ -169,6 +170,30 @@ where
     y_bins: Option<Bins>,
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
+    /// Array of integer indices of the points in this trace that are selected.
+    #[serde(rename = "selectedpoints")]
+    selected_points: Option<NumOrStringCollection>,
+    /// Sets the style of selected points.
+    selected: Option<Selection>,
+    /// Sets the style of unselected points.
+    unselected: Option<Selection>,
+    /// Sets the layer on which this trace is displayed relative to other SVG
+    /// traces on the same subplot. A higher `zorder` appears on top.
+    #[serde(rename = "zorder")]
+    z_order: Option<i32>,
 }
 
 impl<H> Histogram<H>

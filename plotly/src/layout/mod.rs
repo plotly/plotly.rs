@@ -7,6 +7,7 @@ use update_menu::UpdateMenu;
 
 use crate::color::Color;
 use crate::common::{Calendar, ColorScale, Font, Label, Orientation, Title};
+use crate::private::NumOrString;
 
 pub mod themes;
 pub mod update_menu;
@@ -257,6 +258,12 @@ pub struct LayoutFields {
     color_axis: Option<ColorAxis>,
     #[serde(rename = "modebar")]
     mode_bar: Option<ModeBar>,
+    /// Controls persistence of user-driven UI changes (zoom, pan, selection,
+    /// legend visibility) across `Plotly.react`/`newPlot` calls: state is kept
+    /// while `uirevision` is unchanged. Trace-level `uirevision` overrides per
+    /// trace.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
     /// Determines the mode of hover interactions. If "closest", a single
     /// hoverlabel will appear for the "closest" point within the
     /// `hoverdistance`. If "x" (or "y"), multiple hoverlabels will appear for
@@ -652,6 +659,12 @@ mod tests {
         let expected = json!({"layout": {}});
 
         assert_eq!(to_value(template).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_layout_ui_revision() {
+        let layout = Layout::new().ui_revision("forever");
+        assert_eq!(to_value(layout).unwrap()["uirevision"], json!("forever"));
     }
 
     #[test]

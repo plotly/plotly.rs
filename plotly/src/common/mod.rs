@@ -224,8 +224,11 @@ pub enum PlotType {
     Contour,
     HeatMap,
     Histogram,
+    Histogram2d,
     Histogram2dContour,
+    Icicle,
     Image,
+    Indicator,
     Mesh3D,
     Ohlc,
     Sankey,
@@ -642,6 +645,101 @@ impl Gradient {
             r#type: gradient_type,
             color: Dim::Vector(ColorArray(colors).into()),
         }
+    }
+}
+
+/// Styles the marker of `selected`/`unselected` points, used by the
+/// `selected` and `unselected` attributes of point-marker traces.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct SelectionMarker {
+    color: Option<Box<dyn Color>>,
+    opacity: Option<f64>,
+    size: Option<Dim<usize>>,
+}
+
+/// Sets the style of `selected`/`unselected` points.
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct Selection {
+    marker: SelectionMarker,
+}
+
+impl Selection {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Sets the marker color of un/selected points.
+    pub fn color<C: Color>(mut self, color: C) -> Self {
+        self.marker.color = Some(Box::new(color));
+        self
+    }
+
+    /// Sets the marker opacity of un/selected points.
+    pub fn opacity(mut self, opacity: f64) -> Self {
+        self.marker.opacity = Some(opacity);
+        self
+    }
+
+    /// Sets the marker size of un/selected points.
+    pub fn size(mut self, size: usize) -> Self {
+        self.marker.size = Some(Dim::Scalar(size));
+        self
+    }
+}
+
+/// Alignment of the period on a date axis, controlling where within each
+/// period the point is drawn (used by the `xperiodalignment` /
+/// `yperiodalignment` trace attributes).
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "lowercase")]
+pub enum PeriodAlignment {
+    Start,
+    Middle,
+    End,
+}
+
+/// Sets a fill gradient for a scatter trace's filled area, as an alternative to
+/// a solid `fill_color`.
+#[serde_with::skip_serializing_none]
+#[derive(Serialize, Clone, Debug, Default)]
+pub struct FillGradient {
+    #[serde(rename = "type")]
+    r#type: Option<GradientType>,
+    start: Option<f64>,
+    stop: Option<f64>,
+    #[serde(rename = "colorscale")]
+    color_scale: Option<ColorScale>,
+}
+
+impl FillGradient {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Sets the direction of the gradient (`radial`, `horizontal`, `vertical`).
+    pub fn type_(mut self, gradient_type: GradientType) -> Self {
+        self.r#type = Some(gradient_type);
+        self
+    }
+
+    /// Sets the gradient start value (in the units of the axis the gradient is
+    /// aligned with).
+    pub fn start(mut self, start: f64) -> Self {
+        self.start = Some(start);
+        self
+    }
+
+    /// Sets the gradient stop value.
+    pub fn stop(mut self, stop: f64) -> Self {
+        self.stop = Some(stop);
+        self
+    }
+
+    /// Sets the color scale used across the gradient.
+    pub fn color_scale(mut self, color_scale: ColorScale) -> Self {
+        self.color_scale = Some(color_scale);
+        self
     }
 }
 
