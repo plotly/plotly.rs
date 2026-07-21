@@ -14,10 +14,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#414](https://github.com/plotly/plotly.rs/issues/414)] Add `DensityMap` (MapLibre `map` subplot) trace type — density heatmaps with full color-scale and hover support
 - [[#417](https://github.com/plotly/plotly.rs/issues/417)] Add `ScatterMap` (MapLibre `map` subplot) trace type — the modern counterpart to `ScatterMapbox`
 - [[#418](https://github.com/plotly/plotly.rs/issues/418)] Add native point clustering to `ScatterMap` via a `Cluster` option
+- [[#421](https://github.com/plotly/plotly.rs/pull/421)] Backfill common trace attributes on the older trace types for plotly.js 3.7 parity:
+  - `legendrank`, `legendwidth`, `uirevision` on `Scatter`, `Bar`, `BoxPlot`, `Violin`, `Histogram`, `HeatMap`, `Contour`, `Candlestick`, `Ohlc`, `Scatter3D`, `Surface`, `ScatterPolar`, `Sunburst`, `Treemap`, `Table`; `offsetgroup`/`alignmentgroup` on `Scatter`
+  - `selected`/`unselected`/`selectedpoints` on `Scatter`, `Bar`, `BoxPlot`, `Histogram` (`selectedpoints` only on `Candlestick`, `Ohlc`)
+  - `zorder` on `Scatter`, `Bar`, `BoxPlot`, `Histogram`, `HeatMap`, `Contour`, `Candlestick`, `Ohlc`
+  - date-axis period positioning (`xperiod`/`xperiod0`/`xperiodalignment` and the `y` variants) on `Scatter`, `Bar`, `BoxPlot`, `HeatMap`, `Contour` (x-only on `Candlestick`, `Ohlc`), via a new `PeriodAlignment` enum
+  - `fillpattern` (reusing `Pattern`) and `fillgradient` (new `FillGradient` struct) on `Scatter`
+  - Consolidate the duplicated `Selection`/`SelectionMarker` structs into `common` (re-exported from their original modules for backward compatibility)
 
 ### Changed
 
 - [[#406](https://github.com/plotly/plotly.rs/issues/406)] Upgrade bundled plotly.js from 3.0.1 to 3.6.0
+- [[#419](https://github.com/plotly/plotly.rs/issues/419)] Upgrade bundled plotly.js from 3.6.0 to 3.7.0
 
 ## [0.14.1] - 2026-02-15
 
