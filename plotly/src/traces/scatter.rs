@@ -10,8 +10,9 @@ use crate::ndarray::ArrayTraces;
 use crate::{
     color::Color,
     common::{
-        Calendar, Dim, ErrorData, Fill, Font, HoverInfo, HoverOn, Label, LegendGroupTitle, Line,
-        Marker, Mode, Orientation, PlotType, Position, Visible, XAxisId, YAxisId,
+        Calendar, Dim, ErrorData, Fill, FillGradient, Font, HoverInfo, HoverOn, Label,
+        LegendGroupTitle, Line, Marker, Mode, Orientation, Pattern, PeriodAlignment, PlotType,
+        Position, Selection, Visible, XAxisId, YAxisId,
     },
     private::{NumOrString, NumOrStringCollection},
     Trace,
@@ -266,6 +267,13 @@ where
     /// color, marker color, or marker line color, whichever is available.
     #[serde(rename = "fillcolor")]
     fill_color: Option<Box<dyn Color>>,
+    /// Sets a pattern used to fill the area, as an alternative to `fill_color`.
+    #[serde(rename = "fillpattern")]
+    fill_pattern: Option<Pattern>,
+    /// Sets a color gradient used to fill the area, as an alternative to
+    /// `fill_color`.
+    #[serde(rename = "fillgradient")]
+    fill_gradient: Option<FillGradient>,
     /// Properties of label displayed on mouse hover.
     #[serde(rename = "hoverlabel")]
     hover_label: Option<Label>,
@@ -291,6 +299,60 @@ where
     /// Sets the calendar system to use with `y` date data.
     #[serde(rename = "ycalendar")]
     y_calendar: Option<Calendar>,
+    /// Sets the legend rank for this trace. Items and groups with smaller ranks
+    /// are presented on top/left side while with `"reversed"`
+    /// `legend.trace_order` they are on bottom/right side. The default
+    /// legendrank is 1000.
+    #[serde(rename = "legendrank")]
+    legend_rank: Option<usize>,
+    /// Sets the width (in px or fraction) of the legend for this trace.
+    #[serde(rename = "legendwidth")]
+    legend_width: Option<f64>,
+    /// Controls persistence of user-driven changes to the trace. Defaults to
+    /// `layout.uirevision`.
+    #[serde(rename = "uirevision")]
+    ui_revision: Option<NumOrString>,
+    /// Sets the offset group for this trace. Traces in the same group are
+    /// bumped so they don't overlap.
+    #[serde(rename = "offsetgroup")]
+    offset_group: Option<String>,
+    /// Sets the alignment group for this trace. Traces sharing a group align
+    /// their positions.
+    #[serde(rename = "alignmentgroup")]
+    alignment_group: Option<String>,
+    /// Array of integer indices of the points in this trace that are selected.
+    #[serde(rename = "selectedpoints")]
+    selected_points: Option<NumOrStringCollection>,
+    /// Sets the style of selected points.
+    selected: Option<Selection>,
+    /// Sets the style of unselected points.
+    unselected: Option<Selection>,
+    /// Sets the layer on which this trace is displayed relative to other SVG
+    /// traces on the same subplot. A higher `zorder` appears on top.
+    #[serde(rename = "zorder")]
+    z_order: Option<i32>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the x axis.
+    #[serde(rename = "xperiod")]
+    x_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the x axis.
+    #[serde(rename = "xperiod0")]
+    x_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the x axis relative to the period.
+    #[serde(rename = "xperiodalignment")]
+    x_period_alignment: Option<PeriodAlignment>,
+    /// Only relevant when the corresponding axis `type` is "date". Sets the
+    /// period positioning in milliseconds or "M<n>" on the y axis.
+    #[serde(rename = "yperiod")]
+    y_period: Option<NumOrString>,
+    /// Only relevant when the axis `type` is "date". Sets the base for period
+    /// positioning on the y axis.
+    #[serde(rename = "yperiod0")]
+    y_period0: Option<NumOrString>,
+    /// Sets the alignment of data points on the y axis relative to the period.
+    #[serde(rename = "yperiodalignment")]
+    y_period_alignment: Option<PeriodAlignment>,
 }
 
 impl<X, Y> Scatter<X, Y>
@@ -557,5 +619,42 @@ mod tests {
         });
 
         assert_eq!(to_value(trace).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_scatter_backfilled_attributes() {
+        use crate::common::{FillGradient, GradientType, Pattern, PeriodAlignment, Selection};
+
+        let trace = Scatter::new(vec![0], vec![0])
+            .legend_rank(1000)
+            .legend_width(50.0)
+            .ui_revision(6)
+            .offset_group("group1")
+            .alignment_group("group2")
+            .selected_points(vec![0])
+            .selected(Selection::new().opacity(1.0))
+            .unselected(Selection::new().opacity(0.2))
+            .z_order(3)
+            .x_period(86400000)
+            .x_period_alignment(PeriodAlignment::Start)
+            .y_period_alignment(PeriodAlignment::End)
+            .fill_pattern(Pattern::new())
+            .fill_gradient(FillGradient::new().type_(GradientType::Horizontal));
+
+        let json = to_value(trace).unwrap();
+        assert_eq!(json["legendrank"], json!(1000));
+        assert_eq!(json["legendwidth"], json!(50.0));
+        assert_eq!(json["uirevision"], json!(6));
+        assert_eq!(json["offsetgroup"], json!("group1"));
+        assert_eq!(json["alignmentgroup"], json!("group2"));
+        assert_eq!(json["selectedpoints"], json!([0]));
+        assert_eq!(json["selected"], json!({"marker": {"opacity": 1.0}}));
+        assert_eq!(json["unselected"], json!({"marker": {"opacity": 0.2}}));
+        assert_eq!(json["zorder"], json!(3));
+        assert_eq!(json["xperiod"], json!(86400000));
+        assert_eq!(json["xperiodalignment"], json!("start"));
+        assert_eq!(json["yperiodalignment"], json!("end"));
+        assert_eq!(json["fillpattern"], json!({}));
+        assert_eq!(json["fillgradient"], json!({"type": "horizontal"}));
     }
 }
