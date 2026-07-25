@@ -222,6 +222,7 @@ pub enum PlotType {
     Choropleth,
     ChoroplethMap,
     Contour,
+    Funnel,
     HeatMap,
     Histogram,
     Histogram2d,

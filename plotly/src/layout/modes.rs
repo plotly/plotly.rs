@@ -71,6 +71,14 @@ pub enum WaterfallMode {
     Overlay,
 }
 
+#[derive(Serialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum FunnelMode {
+    Stack,
+    Group,
+    Overlay,
+}
+
 #[derive(Debug, Clone)]
 pub enum UniformTextMode {
     False,
@@ -144,6 +152,13 @@ mod tests {
     fn serialize_waterfall_mode() {
         assert_eq!(to_value(WaterfallMode::Group).unwrap(), json!("group"));
         assert_eq!(to_value(WaterfallMode::Overlay).unwrap(), json!("overlay"));
+    }
+
+    #[test]
+    fn serialize_funnel_mode() {
+        assert_eq!(to_value(FunnelMode::Stack).unwrap(), json!("stack"));
+        assert_eq!(to_value(FunnelMode::Group).unwrap(), json!("group"));
+        assert_eq!(to_value(FunnelMode::Overlay).unwrap(), json!("overlay"));
     }
 
     #[test]

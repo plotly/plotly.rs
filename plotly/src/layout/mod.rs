@@ -45,7 +45,8 @@ pub use self::legend::{GroupClick, ItemClick, ItemSizing, Legend, TraceOrder};
 pub use self::map::{LayoutMap, MapBounds, MapStyle};
 pub use self::mapbox::{Center, Mapbox, MapboxStyle};
 pub use self::modes::{
-    AspectMode, BarMode, BarNorm, BoxMode, ClickMode, UniformTextMode, ViolinMode, WaterfallMode,
+    AspectMode, BarMode, BarNorm, BoxMode, ClickMode, FunnelMode, UniformTextMode, ViolinMode,
+    WaterfallMode,
 };
 pub use self::polar::{
     AngularAxis, AngularAxisType, AutoRange, AutoRangeOptions, AutoTypeNumbers, AxisLayer,
@@ -386,6 +387,12 @@ pub struct LayoutFields {
     waterfall_gap: Option<f64>,
     #[serde(rename = "waterfallgroupgap")]
     waterfall_group_gap: Option<f64>,
+    #[serde(rename = "funnelmode")]
+    funnel_mode: Option<FunnelMode>,
+    #[serde(rename = "funnelgap")]
+    funnel_gap: Option<f64>,
+    #[serde(rename = "funnelgroupgap")]
+    funnel_group_gap: Option<f64>,
     #[serde(rename = "piecolorway")]
     pie_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendpiecolors")]
