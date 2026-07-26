@@ -14,4 +14,5 @@ Treemap Charts | [![Treemap Charts](./img/treemap.png)](./basic_charts/treemap_c
 Sunburst Charts | [![Sunburst Charts](./img/sunburst.png)](./basic_charts/sunburst_charts.md)
 Icicle Charts | [![Icicle Charts](./img/icicle.png)](./basic_charts/icicle_charts.md)
 Indicator Charts | [![Indicator Charts](./img/indicator.png)](./basic_charts/indicator_charts.md)
-Waterfall Charts | [Waterfall Charts](./basic_charts/waterfall_charts.md)
+Funnel Charts | [![Funnel Charts](./img/funnel.png)](./basic_charts/funnel_charts.md)
+Waterfall Charts | [![Waterfall Charts](./img/waterfall.png)](./basic_charts/waterfall_charts.md)

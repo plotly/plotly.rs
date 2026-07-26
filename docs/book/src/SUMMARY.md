@@ -19,6 +19,7 @@
         - [Parallel Categories](./recipes/basic_charts/parcats_charts.md)
         - [Treemap Charts](./recipes/basic_charts/treemap_charts.md)
         - [Sunburst Charts](./recipes/basic_charts/sunburst_charts.md)
+        - [Funnel Charts](./recipes/basic_charts/funnel_charts.md)
         - [Waterfall Charts](./recipes/basic_charts/waterfall_charts.md)
         - [Icicle Charts](./recipes/basic_charts/icicle_charts.md)
         - [Indicator Charts](./recipes/basic_charts/indicator_charts.md)
