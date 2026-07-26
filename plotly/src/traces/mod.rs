@@ -32,6 +32,7 @@ pub mod surface;
 pub mod table;
 pub mod treemap;
 pub mod violin;
+pub mod waterfall;
 
 pub use bar::Bar;
 pub use box_plot::BoxPlot;
@@ -64,5 +65,6 @@ pub use surface::Surface;
 pub use table::Table;
 pub use treemap::Treemap;
 pub use violin::Violin;
+pub use waterfall::Waterfall;
 
 pub use self::image::Image;

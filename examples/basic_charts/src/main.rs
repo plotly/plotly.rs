@@ -30,8 +30,9 @@ use plotly::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
     treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
+    waterfall::{Marker as WaterfallMarker, Measure, MeasureStyle},
     Bar, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table,
-    Treemap,
+    Treemap, Waterfall,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
