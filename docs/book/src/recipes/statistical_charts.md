@@ -9,3 +9,4 @@ Box Plots | [![Line Charts](./img/box_plot.png)](./statistical_charts/box_plots.
 Violin Plots | [![Violin Plots](./img/violin_plot.png)](./statistical_charts/violin_plots.md)
 Histograms | [![Scatter Plots](./img/overlaid_histogram.png)](./statistical_charts/histograms.md)
 2D Histograms | [![2D Histograms](./img/basic_histogram2d.png)](./statistical_charts/histogram2d.md)
+SPLOM | [![SPLOM](./img/splom.png)](./statistical_charts/splom.md)

@@ -9,8 +9,9 @@ use plotly::{
     },
     histogram::{Bins, Cumulative, HistFunc, HistNorm},
     layout::{Axis, BarMode, BoxMode, Layout, Margin, ViolinMode},
+    splom::{SplomDiagonal, SplomDimension},
     violin::{MeanLine, ViolinBox, ViolinPoints, ViolinSide},
-    Bar, BoxPlot, Histogram, Histogram2d, Plot, Scatter, Violin,
+    Bar, BoxPlot, Histogram, Histogram2d, Plot, Scatter, Splom, Violin,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -868,6 +869,118 @@ fn histogram2d_aggregation(show: bool, file_name: &str) {
 }
 // ANCHOR_END: histogram2d_aggregation
 
+// SPLOM
+fn splom_axis() -> Axis {
+    Axis::new()
+        .show_line(false)
+        .zero_line(false)
+        .grid_color("#ffffff")
+        .tick_length(4)
+}
+
+fn splom_layout(title: &str, dimensions: usize) -> Layout {
+    let axis = splom_axis;
+    let mut layout = Layout::new()
+        .title(title)
+        .height(800)
+        .width(800)
+        .auto_size(false)
+        .x_axis(axis())
+        .y_axis(axis());
+
+    if dimensions >= 2 {
+        layout = layout.x_axis2(axis()).y_axis2(axis());
+    }
+    if dimensions >= 3 {
+        layout = layout.x_axis3(axis()).y_axis3(axis());
+    }
+    if dimensions >= 4 {
+        layout = layout.x_axis4(axis()).y_axis4(axis());
+    }
+    if dimensions >= 5 {
+        layout = layout.x_axis5(axis()).y_axis5(axis());
+    }
+    if dimensions >= 6 {
+        layout = layout.x_axis6(axis()).y_axis6(axis());
+    }
+    if dimensions >= 7 {
+        layout = layout.x_axis7(axis()).y_axis7(axis());
+    }
+    if dimensions >= 8 {
+        layout = layout.x_axis8(axis()).y_axis8(axis());
+    }
+
+    layout
+}
+
+// ANCHOR: basic_splom
+fn basic_splom(show: bool, file_name: &str) {
+    let n = 200;
+    let sepal_length = sample_normal_distribution(n, 5.8, 0.8);
+    let sepal_width = sample_normal_distribution(n, 3.0, 0.4);
+    let petal_length = sample_normal_distribution(n, 3.8, 1.8);
+    let petal_width = sample_normal_distribution(n, 1.2, 0.8);
+
+    let trace = Splom::new().name("flower measurements").dimensions(vec![
+        SplomDimension::new()
+            .label("Sepal Length")
+            .values(sepal_length),
+        SplomDimension::new()
+            .label("Sepal Width")
+            .values(sepal_width),
+        SplomDimension::new()
+            .label("Petal Length")
+            .values(petal_length),
+        SplomDimension::new()
+            .label("Petal Width")
+            .values(petal_width),
+    ]);
+
+    let mut plot = Plot::new();
+    plot.set_layout(splom_layout("Flower Measurements", 4));
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_splom
+
+// ANCHOR: styled_splom
+fn styled_splom(show: bool, file_name: &str) {
+    let n = 150;
+    let x = sample_uniform_distribution(n, 0.0, 10.0);
+    let y = sample_uniform_distribution(n, 0.0, 10.0);
+    let z = sample_normal_distribution(n, 5.0, 2.0);
+
+    let trace = Splom::new()
+        .name("styled splom")
+        .dimensions(vec![
+            SplomDimension::new().label("X").values(x),
+            SplomDimension::new().label("Y").values(y),
+            SplomDimension::new().label("Z").values(z),
+        ])
+        .diagonal(SplomDiagonal::new().visible(false))
+        .show_upper_half(false)
+        .marker(
+            Marker::new()
+                .size(4)
+                .opacity(0.6)
+                .color(NamedColor::SteelBlue),
+        );
+
+    let mut plot = Plot::new();
+    plot.set_layout(splom_layout("Styled SPLOM", 3));
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_splom
+
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -925,4 +1038,8 @@ fn main() {
     basic_histogram2d(false, "basic_histogram2d");
     styled_histogram2d(false, "styled_histogram2d");
     histogram2d_aggregation(false, "histogram2d_aggregation");
+
+    // SPLOM
+    basic_splom(false, "basic_splom");
+    styled_splom(false, "styled_splom");
 }

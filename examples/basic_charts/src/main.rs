@@ -16,6 +16,10 @@ use plotly::{
         LayoutPolar, Legend, PolarAxisAttributes, PolarAxisTicks, PolarDirection, RadialAxis,
         TicksDirection, TraceOrder,
     },
+    parcats::{
+        ParcatsArrangement, ParcatsDimension, ParcatsHoverInfo, ParcatsHoverOn, ParcatsLine,
+        ParcatsLineShape,
+    },
     sankey::{Line as SankeyLine, Link, Node},
     sunburst::{InsideTextOrientation, Leaf},
     traces::indicator::{
@@ -26,7 +30,8 @@ use plotly::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
     treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
-    Bar, Icicle, Indicator, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table, Treemap,
+    Bar, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table,
+    Treemap,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -887,6 +892,76 @@ fn custom_node_sankey_diagram(show: bool, file_name: &str) {
 }
 // ANCHOR_END: custom_node_sankey_diagram
 
+// Parallel Categories
+// ANCHOR: basic_parcats
+fn basic_parcats(show: bool, file_name: &str) {
+    let trace = Parcats::new()
+        .name("survey responses")
+        .dimensions(vec![
+            ParcatsDimension::new()
+                .label("Region")
+                .values(vec!["North", "South", "North", "East", "West", "South"]),
+            ParcatsDimension::new()
+                .label("Product")
+                .values(vec!["A", "B", "A", "C", "B", "A"]),
+            ParcatsDimension::new().label("Channel").values(vec![
+                "Online", "Retail", "Online", "Retail", "Online", "Retail",
+            ]),
+        ])
+        .arrangement(ParcatsArrangement::Perpendicular);
+
+    let layout = Layout::new().title("Basic Parallel Categories");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_parcats
+
+// ANCHOR: styled_parcats
+fn styled_parcats(show: bool, file_name: &str) {
+    let trace = Parcats::new()
+        .name("passengers")
+        .dimensions(vec![
+            ParcatsDimension::new()
+                .label("Sex")
+                .values(vec!["M", "F", "F", "M", "F", "M"]),
+            ParcatsDimension::new()
+                .label("Class")
+                .values(vec!["First", "Second", "Third", "Third", "First", "Second"]),
+            ParcatsDimension::new()
+                .label("Survived")
+                .values(vec!["yes", "no", "yes", "no", "yes", "no"]),
+        ])
+        .counts_array(vec![1.0, 2.0, 1.0, 3.0, 1.0, 2.0])
+        .line(
+            ParcatsLine::new()
+                .color(NamedColor::SteelBlue)
+                .shape(ParcatsLineShape::Hspline)
+                .show_scale(true),
+        )
+        .arrangement(ParcatsArrangement::Perpendicular)
+        .bundle_colors(true)
+        .hover_on(ParcatsHoverOn::Category)
+        .hover_info(ParcatsHoverInfo::CountAndProbability)
+        .domain(Domain::new());
+
+    let layout = Layout::new().title("Styled Parallel Categories");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_parcats
+
 // ANCHOR: table_chart
 fn table_chart(show: bool, file_name: &str) {
     let trace = Table::new(
@@ -1435,6 +1510,10 @@ fn main() {
     // Sankey Diagrams
     basic_sankey_diagram(false, "basic_sankey_diagram");
     custom_node_sankey_diagram(false, "custom_node_sankey_diagram");
+
+    // Parallel Categories
+    basic_parcats(false, "basic_parcats");
+    styled_parcats(false, "styled_parcats");
 
     // Pie Charts
     basic_pie_chart(false, "basic_pie_chart");
