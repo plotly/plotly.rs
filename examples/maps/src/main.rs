@@ -13,6 +13,8 @@ use plotly::{
 };
 use plotly_utils::{write_example_to_html, write_example_to_html_with_inline_config};
 
+// Scatter Maps
+// ANCHOR: scatter_mapbox
 fn scatter_mapbox(show: bool, file_name: &str) {
     let trace = ScatterMapbox::new(vec![45.5017], vec![-73.5673])
         .marker(Marker::new().size(25).opacity(0.9));
@@ -34,8 +36,10 @@ fn scatter_mapbox(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
+// ANCHOR_END: scatter_mapbox
 
 /// Reproduce the Earth from https://plotly.com/javascript/lines-on-maps/#lines-on-an-orthographic-map
+// ANCHOR: scatter_geo
 fn scatter_geo(show: bool, file_name: &str) {
     use csv;
     use reqwest;
@@ -161,7 +165,10 @@ fn scatter_geo(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
+// ANCHOR_END: scatter_geo
 
+// Density Maps
+// ANCHOR: density_mapbox
 fn density_mapbox(show: bool, file_name: &str) {
     let trace = DensityMapbox::new(vec![45.5017], vec![-73.5673], vec![0.75]).zauto(true);
 
@@ -182,6 +189,7 @@ fn density_mapbox(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
+// ANCHOR_END: density_mapbox
 
 /// Classic choropleth on the `geo` subplot, coloring countries by value using
 /// ISO-3 country codes.
@@ -263,9 +271,15 @@ fn choropleth_map(show: bool, file_name: &str) {
 
 fn main() {
     // Change false to true on any of these lines to display the example.
+
+    // Scatter Maps
     scatter_mapbox(false, "scatter_mapbox");
     scatter_geo(false, "scatter_geo");
+
+    // Density Maps
     density_mapbox(false, "density_mapbox");
+
+    // Choropleth Maps
     choropleth(false, "choropleth");
     choropleth_map(false, "choropleth_map");
 }

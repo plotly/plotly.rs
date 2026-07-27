@@ -22,7 +22,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 {{#include ../../../../../examples/basic_charts/output/inline_basic_sankey_diagram.html}}
 
 
-## Skankey diagram with defined node position
+## Sankey diagram with defined node position
 ```rust,no_run
 {{#include ../../../../../examples/basic_charts/src/main.rs:custom_node_sankey_diagram}}
 ```

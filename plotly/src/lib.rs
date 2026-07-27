@@ -60,16 +60,16 @@ pub use layout::Layout;
 pub use plot::{Plot, Trace, Traces};
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
-    box_plot, choropleth, choropleth_map, contour, density_map, funnel, heat_map, histogram, histogram2d,
-    icicle, image, indicator, mesh3d, parcats, sankey, scatter, scatter3d, scatter_map,
-    scatter_mapbox, splom, sunburst, surface, treemap, violin, waterfall,
+    box_plot, choropleth, choropleth_map, contour, density_map, funnel, heat_map, histogram,
+    histogram2d, icicle, image, indicator, mesh3d, parcats, sankey, scatter, scatter3d,
+    scatter_map, scatter_mapbox, splom, sunburst, surface, treemap, violin, waterfall,
 };
 // Bring the different trace types into the top-level scope
 pub use traces::{
     Bar, BoxPlot, Candlestick, Choropleth, ChoroplethMap, Contour, DensityMap, DensityMapbox,
-    Funnel, HeatMap, Histogram, Histogram2d, Icicle, Image, Indicator, Mesh3D, Ohlc, Parcats, Pie, Sankey,
-    Scatter, Scatter3D, ScatterGeo, ScatterMap, ScatterMapbox, ScatterPolar, Splom, Sunburst,
-    Surface, Table, Treemap, Violin, Waterfall,
+    Funnel, HeatMap, Histogram, Histogram2d, Icicle, Image, Indicator, Mesh3D, Ohlc, Parcats, Pie,
+    Sankey, Scatter, Scatter3D, ScatterGeo, ScatterMap, ScatterMapbox, ScatterPolar, Splom,
+    Sunburst, Surface, Table, Treemap, Violin, Waterfall,
 };
 
 pub trait Restyle: serde::Serialize {}

@@ -4,4 +4,6 @@ The source code for the following examples can also be found [here](https://gith
 
 Kind | Link
 :---|:----:
-Choropleth Maps | [Choropleth Maps](./maps/choropleth_maps.md)
+Scatter Maps | [![Scatter Maps](./img/scatter_maps.png)](./maps/scatter_maps.md)
+Density Maps | [![Density Maps](./img/density_maps.png)](./maps/density_maps.md)
+Choropleth Maps | [![Choropleth Maps](./img/choropleth_maps.png)](./maps/choropleth_maps.md)

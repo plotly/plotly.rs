@@ -4,9 +4,12 @@ use std::env;
 use std::path::PathBuf;
 
 use chrono::{DateTime, Duration};
-use plotly::common::TickFormatStop;
+use plotly::color::NamedColor;
+use plotly::common::{Marker, TickFormatStop};
+use plotly::funnel::Connector as FunnelConnector;
 use plotly::layout::{Axis, RangeSelector, RangeSlider, SelectorButton, SelectorStep, StepMode};
-use plotly::{Candlestick, Layout, Ohlc, Plot, Scatter};
+use plotly::waterfall::{Marker as WaterfallMarker, Measure, MeasureStyle};
+use plotly::{Candlestick, Funnel, Layout, Ohlc, Plot, Scatter, Waterfall};
 use plotly_utils::write_example_to_html;
 use serde::Deserialize;
 
@@ -321,6 +324,59 @@ fn simple_ohlc_chart(show: bool, file_name: &str) {
 }
 // ANCHOR_END: simple_ohlc_chart
 
+// Waterfall Charts
+// ANCHOR: basic_waterfall
+fn basic_waterfall(show: bool, file_name: &str) {
+    let trace = Waterfall::new(
+        vec!["Start", "Revenue", "Costs", "End"],
+        vec![100.0, 40.0, -25.0, 0.0],
+    )
+    .measure(vec![
+        Measure::Absolute,
+        Measure::Relative,
+        Measure::Relative,
+        Measure::Total,
+    ])
+    .text_info("label+delta")
+    .increasing(MeasureStyle::new().marker(WaterfallMarker::new().color(NamedColor::SeaGreen)))
+    .decreasing(MeasureStyle::new().marker(WaterfallMarker::new().color(NamedColor::Tomato)))
+    .totals(MeasureStyle::new().marker(WaterfallMarker::new().color(NamedColor::SteelBlue)));
+
+    let layout = Layout::new().title("Basic Waterfall");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_waterfall
+
+// Funnel Charts
+// ANCHOR: basic_funnel
+fn basic_funnel(show: bool, file_name: &str) {
+    let trace = Funnel::new(
+        vec![100, 60, 40, 25],
+        vec!["Visits", "Signups", "Trials", "Purchases"],
+    )
+    .text_info("value+percent previous")
+    .connector(FunnelConnector::new().visible(true))
+    .marker(Marker::new().color(NamedColor::SteelBlue));
+
+    let layout = Layout::new().title("Conversion Funnel");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_funnel
+
 // ANCHOR: series_with_gaps_for_weekends_and_holidays
 fn series_with_gaps_for_weekends_and_holidays(show: bool, file_name: &str) {
     let data = load_apple_data();
@@ -503,6 +559,12 @@ fn main() {
 
     // OHLC Charts
     simple_ohlc_chart(false, "simple_ohlc_chart");
+
+    // Waterfall Charts
+    basic_waterfall(false, "basic_waterfall");
+
+    // Funnel Charts
+    basic_funnel(false, "basic_funnel");
 
     // Rangebreaks usage
     series_with_gaps_for_weekends_and_holidays(false, "series_with_gaps_for_weekends_and_holidays");

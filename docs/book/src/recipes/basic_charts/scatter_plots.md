@@ -74,3 +74,10 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 ```
 
 {{#include ../../../../../examples/basic_charts/output/inline_large_data_sets.html}}
+
+## Categories Scatter Chart
+```rust,no_run
+{{#include ../../../../../examples/basic_charts/src/main.rs:categories_scatter_chart}}
+```
+
+{{#include ../../../../../examples/basic_charts/output/inline_categories_scatter_chart.html}}

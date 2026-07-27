@@ -18,8 +18,9 @@ The following imports have been used to produce the plots below:
 
 ```rust,no_run
 use plotly::color::NamedColor;
-use plotly::common::{Marker, Orientation};
+use plotly::common::Marker;
 use plotly::funnel::Connector as FunnelConnector;
+use plotly::layout::Layout;
 use plotly::{Funnel, Plot};
 ```
 
@@ -27,7 +28,7 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 
 ## Basic Funnel
 ```rust,no_run
-{{#include ../../../../../examples/basic_charts/src/main.rs:basic_funnel}}
+{{#include ../../../../../examples/financial_charts/src/main.rs:basic_funnel}}
 ```
 
-{{#include ../../../../../examples/basic_charts/output/inline_basic_funnel.html}}
+{{#include ../../../../../examples/financial_charts/output/inline_basic_funnel.html}}

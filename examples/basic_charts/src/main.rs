@@ -7,7 +7,6 @@ use plotly::{
         ColorScale, ColorScalePalette, DashType, Domain, Fill, Font, HoverInfo, Line, LineShape,
         Marker, Mode, Orientation, Pattern, PatternShape,
     },
-    funnel::Connector as FunnelConnector,
     icicle::{
         BranchValues as IcicleBranchValues, Leaf as IcicleLeaf, Marker as IcicleMarker,
         PathBar as IciclePathBar, Side as IcicleSide, Tiling as IcicleTiling,
@@ -31,9 +30,8 @@ use plotly::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
     treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
-    waterfall::{Marker as WaterfallMarker, Measure, MeasureStyle},
-    Bar, Funnel, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst,
-    Table, Treemap, Waterfall,
+    Bar, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table,
+    Treemap,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -359,6 +357,54 @@ fn large_data_sets(show: bool, file_name: &str) {
 }
 // ANCHOR_END: large_data_sets
 
+/// Scatter plot showing y axis categories and category ordering.
+// ANCHOR: categories_scatter_chart
+fn categories_scatter_chart(show: bool, file_name: &str) {
+    // Categories are ordered on the y axis from bottom to top.
+    let categories = vec!["Unknown", "Off", "On"];
+
+    let x = vec![
+        "2024-10-30T08:30:05.05Z",
+        "2024-10-30T08:35:05.05Z",
+        "2024-10-30T08:50:05.05Z",
+        "2024-10-30T08:50:20.05Z",
+        "2024-10-30T09:00:05.05Z",
+        "2024-10-30T09:05:05.05Z",
+        "2024-10-30T09:10:05.05Z",
+        "2024-10-30T09:10:20.05Z",
+    ];
+    let y = vec![
+        "On",
+        "Off",
+        "Unknown",
+        "Off",
+        "On",
+        "Off",
+        // Categories that aren't in the category_array follow the Trace order.
+        "NewCategory",
+        "Off",
+    ];
+
+    let trace = Scatter::new(x, y).line(Line::new().shape(LineShape::Hv));
+
+    let layout = Layout::new().y_axis(
+        Axis::new()
+            .category_order(CategoryOrder::Array)
+            .category_array(categories),
+    );
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: categories_scatter_chart
+
 // Line Charts
 // ANCHOR: adding_names_to_line_and_scatter_plot
 fn adding_names_to_line_and_scatter_plot(show: bool, file_name: &str) {
@@ -644,44 +690,109 @@ fn filled_lines(show: bool, file_name: &str) {
 }
 // ANCHOR_END: filled_lines
 
-/// Scatter plot showing y axis categories and category ordering.
-// ANCHOR: categories_scatter_chart
-fn categories_scatter_chart(show: bool, file_name: &str) {
-    // Categories are ordered on the y axis from bottom to top.
-    let categories = vec!["Unknown", "Off", "On"];
+// ANCHOR: set_lower_or_upper_bound_on_axis
+fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &str) {
+    use std::fs::File;
+    use std::io::BufReader;
 
-    let x = vec![
-        "2024-10-30T08:30:05.05Z",
-        "2024-10-30T08:35:05.05Z",
-        "2024-10-30T08:50:05.05Z",
-        "2024-10-30T08:50:20.05Z",
-        "2024-10-30T09:00:05.05Z",
-        "2024-10-30T09:05:05.05Z",
-        "2024-10-30T09:10:05.05Z",
-        "2024-10-30T09:10:20.05Z",
-    ];
-    let y = vec![
-        "On",
-        "Off",
-        "Unknown",
-        "Off",
-        "On",
-        "Off",
-        // Categories that aren't in the category_array follow the Trace order.
-        "NewCategory",
-        "Off",
-    ];
+    // Read the iris dataset
+    let file = File::open("assets/iris.csv").expect("Failed to open iris.csv");
+    let reader = BufReader::new(file);
+    let mut csv_reader = csv::Reader::from_reader(reader);
 
-    let trace = Scatter::new(x, y).line(Line::new().shape(LineShape::Hv));
+    // Parse the data
+    let mut sepal_width = Vec::new();
+    let mut sepal_length = Vec::new();
+    let mut species = Vec::new();
 
-    let layout = Layout::new().y_axis(
-        Axis::new()
-            .category_order(CategoryOrder::Array)
-            .category_array(categories),
-    );
+    for result in csv_reader.records() {
+        let record = result.expect("Failed to read CSV record");
+        sepal_width.push(record[1].parse::<f64>().unwrap());
+        sepal_length.push(record[0].parse::<f64>().unwrap());
+        species.push(record[4].to_string());
+    }
+
+    // Create separate traces for each species
+    let mut traces = Vec::new();
+    let unique_species: Vec<String> = species
+        .iter()
+        .cloned()
+        .collect::<std::collections::HashSet<_>>()
+        .into_iter()
+        .collect();
+
+    for (i, species_name) in unique_species.iter().enumerate() {
+        let mut x = Vec::new();
+        let mut y = Vec::new();
+
+        for (j, s) in species.iter().enumerate() {
+            if s == species_name {
+                x.push(sepal_width[j]);
+                y.push(sepal_length[j]);
+            }
+        }
+
+        let trace = Scatter::new(x, y)
+            .name(species_name)
+            .mode(plotly::common::Mode::Markers)
+            .x_axis(format!("x{}", i + 1))
+            .y_axis(format!("y{}", i + 1));
+        traces.push(trace);
+    }
 
     let mut plot = Plot::new();
-    plot.add_trace(trace);
+    for trace in traces {
+        plot.add_trace(trace);
+    }
+
+    // Create layout with subplots
+    let mut layout = Layout::new()
+        .title("Iris Dataset - Subplots by Species")
+        .grid(
+            LayoutGrid::new()
+                .rows(1)
+                .columns(3)
+                .pattern(plotly::layout::GridPattern::Independent),
+        );
+
+    // Set x-axis range for all subplots: [None, 4.5]
+    layout = layout
+        .x_axis(
+            Axis::new()
+                .title("sepal_width")
+                // Can be set using a vec! of two optional values
+                .range(vec![None, Some(4.5)]),
+        )
+        .x_axis2(
+            Axis::new()
+                .title("sepal_width")
+                // Or can be set using AxisRange::upper(4.5)
+                .range(AxisRange::upper(4.5)),
+        )
+        .x_axis3(
+            Axis::new()
+                .title("sepal_width")
+                // Or can be set using AxisRange::upper(4.5)
+                .range(AxisRange::upper(4.5)),
+        );
+
+    // Set y-axis range for all subplots: [3, None]
+    layout = layout
+        .y_axis(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        )
+        .y_axis2(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        )
+        .y_axis3(
+            Axis::new()
+                .title("sepal_length")
+                .range(vec![Some(3.0), None]),
+        );
 
     plot.set_layout(layout);
 
@@ -690,8 +801,7 @@ fn categories_scatter_chart(show: bool, file_name: &str) {
         plot.show_html(path);
     }
 }
-// ANCHOR_END: categories_scatter_chart
-
+// ANCHOR_END: set_lower_or_upper_bound_on_axis
 // Bar Charts
 // ANCHOR: basic_bar_chart
 fn basic_bar_chart(show: bool, file_name: &str) {
@@ -813,210 +923,7 @@ fn bar_chart_with_pattern_fills(show: bool, file_name: &str) {
 }
 // ANCHOR_END: bar_chart_with_pattern_fills
 
-// Funnel Charts
-// ANCHOR: basic_funnel
-fn basic_funnel(show: bool, file_name: &str) {
-    let trace = Funnel::new(
-        vec![100, 60, 40, 25],
-        vec!["Visits", "Signups", "Trials", "Purchases"],
-    )
-    .text_info("value+percent previous")
-    .connector(FunnelConnector::new().visible(true))
-    .marker(Marker::new().color(NamedColor::SteelBlue));
-
-    let layout = Layout::new().title("Conversion Funnel");
-    let mut plot = Plot::new();
-    plot.set_layout(layout);
-    plot.add_trace(trace);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: basic_funnel
-
-// Waterfall Charts
-// ANCHOR: basic_waterfall
-fn basic_waterfall(show: bool, file_name: &str) {
-    let trace = Waterfall::new(
-        vec!["Start", "Revenue", "Costs", "End"],
-        vec![100.0, 40.0, -25.0, 0.0],
-    )
-    .measure(vec![
-        Measure::Absolute,
-        Measure::Relative,
-        Measure::Relative,
-        Measure::Total,
-    ])
-    .text_info("label+delta")
-    .increasing(MeasureStyle::new().marker(WaterfallMarker::new().color(NamedColor::SeaGreen)))
-    .decreasing(MeasureStyle::new().marker(WaterfallMarker::new().color(NamedColor::Tomato)))
-    .totals(MeasureStyle::new().marker(WaterfallMarker::new().color(NamedColor::SteelBlue)));
-
-    let layout = Layout::new().title("Basic Waterfall");
-    let mut plot = Plot::new();
-    plot.set_layout(layout);
-    plot.add_trace(trace);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: basic_waterfall
-
-// Sankey Diagrams
-// ANCHOR: basic_sankey_diagram
-fn basic_sankey_diagram(show: bool, file_name: &str) {
-    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
-    let trace = Sankey::new()
-        .orientation(Orientation::Horizontal)
-        .node(
-            Node::new()
-                .pad(15)
-                .thickness(30)
-                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
-                .label(vec!["A1", "A2", "B1", "B2", "C1", "C2"])
-                .color_array(vec![
-                    NamedColor::Blue,
-                    NamedColor::Blue,
-                    NamedColor::Blue,
-                    NamedColor::Blue,
-                    NamedColor::Blue,
-                    NamedColor::Blue,
-                ]),
-        )
-        .link(
-            Link::new()
-                .value(vec![8, 4, 2, 8, 4, 2])
-                .source(vec![0, 1, 0, 2, 3, 3])
-                .target(vec![2, 3, 3, 4, 4, 5]),
-        );
-
-    let layout = Layout::new()
-        .title("Basic Sankey")
-        .font(Font::new().size(10));
-
-    let mut plot = Plot::new();
-    plot.add_trace(trace);
-    plot.set_layout(layout);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: basic_sankey_diagram
-
-// ANCHOR: custom_node_sankey_diagram
-fn custom_node_sankey_diagram(show: bool, file_name: &str) {
-    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
-    let trace = Sankey::new()
-        .orientation(Orientation::Horizontal)
-        .arrangement(plotly::sankey::Arrangement::Snap)
-        .node(
-            Node::new()
-                .pad(15)
-                .thickness(30)
-                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
-                .label(vec!["A", "B", "C", "D", "E", "F"])
-                .x(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
-                .y(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
-                .pad(20),
-        )
-        .link(
-            Link::new()
-                .source(vec![0, 0, 1, 2, 5, 4, 3, 5])
-                .target(vec![5, 3, 4, 3, 0, 2, 2, 3])
-                .value(vec![1, 2, 1, 1, 1, 1, 1, 2]),
-        );
-
-    let layout = Layout::new()
-        .title("Define Node Position")
-        .font(Font::new().size(10));
-
-    let mut plot = Plot::new();
-    plot.add_trace(trace);
-    plot.set_layout(layout);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: custom_node_sankey_diagram
-
-// Parallel Categories
-// ANCHOR: basic_parcats
-fn basic_parcats(show: bool, file_name: &str) {
-    let trace = Parcats::new()
-        .name("survey responses")
-        .dimensions(vec![
-            ParcatsDimension::new()
-                .label("Region")
-                .values(vec!["North", "South", "North", "East", "West", "South"]),
-            ParcatsDimension::new()
-                .label("Product")
-                .values(vec!["A", "B", "A", "C", "B", "A"]),
-            ParcatsDimension::new().label("Channel").values(vec![
-                "Online", "Retail", "Online", "Retail", "Online", "Retail",
-            ]),
-        ])
-        .arrangement(ParcatsArrangement::Perpendicular);
-
-    let layout = Layout::new().title("Basic Parallel Categories");
-    let mut plot = Plot::new();
-    plot.set_layout(layout);
-    plot.add_trace(trace);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: basic_parcats
-
-// ANCHOR: styled_parcats
-fn styled_parcats(show: bool, file_name: &str) {
-    let trace = Parcats::new()
-        .name("passengers")
-        .dimensions(vec![
-            ParcatsDimension::new()
-                .label("Sex")
-                .values(vec!["M", "F", "F", "M", "F", "M"]),
-            ParcatsDimension::new()
-                .label("Class")
-                .values(vec!["First", "Second", "Third", "Third", "First", "Second"]),
-            ParcatsDimension::new()
-                .label("Survived")
-                .values(vec!["yes", "no", "yes", "no", "yes", "no"]),
-        ])
-        .counts_array(vec![1.0, 2.0, 1.0, 3.0, 1.0, 2.0])
-        .line(
-            ParcatsLine::new()
-                .color(NamedColor::SteelBlue)
-                .shape(ParcatsLineShape::Hspline)
-                .show_scale(true),
-        )
-        .arrangement(ParcatsArrangement::Perpendicular)
-        .bundle_colors(true)
-        .hover_on(ParcatsHoverOn::Category)
-        .hover_info(ParcatsHoverInfo::CountAndProbability)
-        .domain(Domain::new());
-
-    let layout = Layout::new().title("Styled Parallel Categories");
-    let mut plot = Plot::new();
-    plot.set_layout(layout);
-    plot.add_trace(trace);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: styled_parcats
-
+// Table Charts
 // ANCHOR: table_chart
 fn table_chart(show: bool, file_name: &str) {
     let trace = Table::new(
@@ -1183,6 +1090,7 @@ fn grouped_donout_pie_charts(show: bool, file_name: &str) {
 }
 // ANCHOR_END: grouped_donout_pie_charts
 
+// Treemap Charts
 // ANCHOR: basic_treemap
 fn basic_treemap(show: bool, file_name: &str) {
     let labels = vec![
@@ -1244,6 +1152,7 @@ fn styled_treemap(show: bool, file_name: &str) {
 }
 // ANCHOR_END: styled_treemap
 
+// Sunburst Charts
 // ANCHOR: basic_sunburst
 fn basic_sunburst(show: bool, file_name: &str) {
     let labels = vec![
@@ -1348,6 +1257,157 @@ fn styled_icicle(show: bool, file_name: &str) {
 }
 // ANCHOR_END: styled_icicle
 
+// Sankey Diagrams
+// ANCHOR: basic_sankey_diagram
+fn basic_sankey_diagram(show: bool, file_name: &str) {
+    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
+    let trace = Sankey::new()
+        .orientation(Orientation::Horizontal)
+        .node(
+            Node::new()
+                .pad(15)
+                .thickness(30)
+                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
+                .label(vec!["A1", "A2", "B1", "B2", "C1", "C2"])
+                .color_array(vec![
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                    NamedColor::Blue,
+                ]),
+        )
+        .link(
+            Link::new()
+                .value(vec![8, 4, 2, 8, 4, 2])
+                .source(vec![0, 1, 0, 2, 3, 3])
+                .target(vec![2, 3, 3, 4, 4, 5]),
+        );
+
+    let layout = Layout::new()
+        .title("Basic Sankey")
+        .font(Font::new().size(10));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_sankey_diagram
+
+// ANCHOR: custom_node_sankey_diagram
+fn custom_node_sankey_diagram(show: bool, file_name: &str) {
+    // https://plotly.com/javascript/sankey-diagram/#basic-sankey-diagram
+    let trace = Sankey::new()
+        .orientation(Orientation::Horizontal)
+        .arrangement(plotly::sankey::Arrangement::Snap)
+        .node(
+            Node::new()
+                .pad(15)
+                .thickness(30)
+                .line(SankeyLine::new().color(NamedColor::Black).width(0.5))
+                .label(vec!["A", "B", "C", "D", "E", "F"])
+                .x(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
+                .y(vec![0.2, 0.1, 0.5, 0.7, 0.3, 0.5])
+                .pad(20),
+        )
+        .link(
+            Link::new()
+                .source(vec![0, 0, 1, 2, 5, 4, 3, 5])
+                .target(vec![5, 3, 4, 3, 0, 2, 2, 3])
+                .value(vec![1, 2, 1, 1, 1, 1, 1, 2]),
+        );
+
+    let layout = Layout::new()
+        .title("Define Node Position")
+        .font(Font::new().size(10));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: custom_node_sankey_diagram
+
+// Parallel Categories
+// ANCHOR: basic_parcats
+fn basic_parcats(show: bool, file_name: &str) {
+    let trace = Parcats::new()
+        .name("survey responses")
+        .dimensions(vec![
+            ParcatsDimension::new()
+                .label("Region")
+                .values(vec!["North", "South", "North", "East", "West", "South"]),
+            ParcatsDimension::new()
+                .label("Product")
+                .values(vec!["A", "B", "A", "C", "B", "A"]),
+            ParcatsDimension::new().label("Channel").values(vec![
+                "Online", "Retail", "Online", "Retail", "Online", "Retail",
+            ]),
+        ])
+        .arrangement(ParcatsArrangement::Perpendicular);
+
+    let layout = Layout::new().title("Basic Parallel Categories");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_parcats
+
+// ANCHOR: styled_parcats
+fn styled_parcats(show: bool, file_name: &str) {
+    let trace = Parcats::new()
+        .name("passengers")
+        .dimensions(vec![
+            ParcatsDimension::new()
+                .label("Sex")
+                .values(vec!["M", "F", "F", "M", "F", "M"]),
+            ParcatsDimension::new()
+                .label("Class")
+                .values(vec!["First", "Second", "Third", "Third", "First", "Second"]),
+            ParcatsDimension::new()
+                .label("Survived")
+                .values(vec!["yes", "no", "yes", "no", "yes", "no"]),
+        ])
+        .counts_array(vec![1.0, 2.0, 1.0, 3.0, 1.0, 2.0])
+        .line(
+            ParcatsLine::new()
+                .color(NamedColor::SteelBlue)
+                .shape(ParcatsLineShape::Hspline)
+                .show_scale(true),
+        )
+        .arrangement(ParcatsArrangement::Perpendicular)
+        .bundle_colors(true)
+        .hover_on(ParcatsHoverOn::Category)
+        .hover_info(ParcatsHoverInfo::CountAndProbability)
+        .domain(Domain::new());
+
+    let layout = Layout::new().title("Styled Parallel Categories");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_parcats
+
 // Indicator Charts
 // ANCHOR: basic_indicator
 fn basic_indicator(show: bool, file_name: &str) {
@@ -1416,119 +1476,6 @@ fn indicator_gauge(show: bool, file_name: &str) {
 }
 // ANCHOR_END: indicator_gauge
 
-// ANCHOR: set_lower_or_upper_bound_on_axis
-fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &str) {
-    use std::fs::File;
-    use std::io::BufReader;
-
-    // Read the iris dataset
-    let file = File::open("assets/iris.csv").expect("Failed to open iris.csv");
-    let reader = BufReader::new(file);
-    let mut csv_reader = csv::Reader::from_reader(reader);
-
-    // Parse the data
-    let mut sepal_width = Vec::new();
-    let mut sepal_length = Vec::new();
-    let mut species = Vec::new();
-
-    for result in csv_reader.records() {
-        let record = result.expect("Failed to read CSV record");
-        sepal_width.push(record[1].parse::<f64>().unwrap());
-        sepal_length.push(record[0].parse::<f64>().unwrap());
-        species.push(record[4].to_string());
-    }
-
-    // Create separate traces for each species
-    let mut traces = Vec::new();
-    let unique_species: Vec<String> = species
-        .iter()
-        .cloned()
-        .collect::<std::collections::HashSet<_>>()
-        .into_iter()
-        .collect();
-
-    for (i, species_name) in unique_species.iter().enumerate() {
-        let mut x = Vec::new();
-        let mut y = Vec::new();
-
-        for (j, s) in species.iter().enumerate() {
-            if s == species_name {
-                x.push(sepal_width[j]);
-                y.push(sepal_length[j]);
-            }
-        }
-
-        let trace = Scatter::new(x, y)
-            .name(species_name)
-            .mode(plotly::common::Mode::Markers)
-            .x_axis(format!("x{}", i + 1))
-            .y_axis(format!("y{}", i + 1));
-        traces.push(trace);
-    }
-
-    let mut plot = Plot::new();
-    for trace in traces {
-        plot.add_trace(trace);
-    }
-
-    // Create layout with subplots
-    let mut layout = Layout::new()
-        .title("Iris Dataset - Subplots by Species")
-        .grid(
-            LayoutGrid::new()
-                .rows(1)
-                .columns(3)
-                .pattern(plotly::layout::GridPattern::Independent),
-        );
-
-    // Set x-axis range for all subplots: [None, 4.5]
-    layout = layout
-        .x_axis(
-            Axis::new()
-                .title("sepal_width")
-                // Can be set using a vec! of two optional values
-                .range(vec![None, Some(4.5)]),
-        )
-        .x_axis2(
-            Axis::new()
-                .title("sepal_width")
-                // Or can be set using AxisRange::upper(4.5)
-                .range(AxisRange::upper(4.5)),
-        )
-        .x_axis3(
-            Axis::new()
-                .title("sepal_width")
-                // Or can be set using AxisRange::upper(4.5)
-                .range(AxisRange::upper(4.5)),
-        );
-
-    // Set y-axis range for all subplots: [3, None]
-    layout = layout
-        .y_axis(
-            Axis::new()
-                .title("sepal_length")
-                .range(vec![Some(3.0), None]),
-        )
-        .y_axis2(
-            Axis::new()
-                .title("sepal_length")
-                .range(vec![Some(3.0), None]),
-        )
-        .y_axis3(
-            Axis::new()
-                .title("sepal_length")
-                .range(vec![Some(3.0), None]),
-        );
-
-    plot.set_layout(layout);
-
-    let path = write_example_to_html(&plot, file_name);
-    if show {
-        plot.show_html(path);
-    }
-}
-// ANCHOR_END: set_lower_or_upper_bound_on_axis
-
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -1552,35 +1499,20 @@ fn main() {
     line_shape_options_for_interpolation(false, "line_shape_options_for_interpolation");
     line_dash(false, "line_dash");
     filled_lines(false, "filled_lines");
+    set_lower_or_upper_bound_on_axis(false, "set_lower_or_upper_bound_on_axis");
 
     // Bar Charts
     basic_bar_chart(false, "basic_bar_chart");
     grouped_bar_chart(false, "grouped_bar_chart");
     stacked_bar_chart(false, "stacked_bar_chart");
-    table_chart(false, "table_chart");
     category_order_bar_chart(false, "category_order_bar_chart");
-
     bar_chart_with_pattern_fills(false, "bar_chart_with_pattern_fills");
-
-    // Funnel Charts
-    basic_funnel(true, "basic_funnel");
-
-    // Waterfall Charts
-    basic_waterfall(true, "basic_waterfall");
-
-    // Sankey Diagrams
-    basic_sankey_diagram(false, "basic_sankey_diagram");
-    custom_node_sankey_diagram(false, "custom_node_sankey_diagram");
-
-    // Parallel Categories
-    basic_parcats(false, "basic_parcats");
-    styled_parcats(false, "styled_parcats");
+    table_chart(false, "table_chart");
 
     // Pie Charts
     basic_pie_chart(false, "basic_pie_chart");
     basic_pie_chart_labels(false, "basic_pie_chart_labels");
     pie_chart_text_control(false, "pie_chart_text_control");
-
     grouped_donout_pie_charts(false, "grouped_donout_pie_charts");
 
     // Treemap Charts
@@ -1595,10 +1527,15 @@ fn main() {
     basic_icicle(false, "basic_icicle");
     styled_icicle(false, "styled_icicle");
 
+    // Sankey Diagrams
+    basic_sankey_diagram(false, "basic_sankey_diagram");
+    custom_node_sankey_diagram(false, "custom_node_sankey_diagram");
+
+    // Parallel Categories
+    basic_parcats(false, "basic_parcats");
+    styled_parcats(false, "styled_parcats");
+
     // Indicator Charts
     basic_indicator(false, "basic_indicator");
     indicator_gauge(false, "indicator_gauge");
-
-    // Set Lower or Upper Bound on Axis
-    set_lower_or_upper_bound_on_axis(false, "set_lower_or_upper_bound_on_axis");
 }

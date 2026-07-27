@@ -35,3 +35,17 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 ```
 
 {{#include ../../../../../examples/basic_charts/output/inline_stacked_bar_chart.html}}
+
+## Category Order Bar Chart
+```rust,no_run
+{{#include ../../../../../examples/basic_charts/src/main.rs:category_order_bar_chart}}
+```
+
+{{#include ../../../../../examples/basic_charts/output/inline_category_order_bar_chart.html}}
+
+## Bar Chart with Pattern Fills
+```rust,no_run
+{{#include ../../../../../examples/basic_charts/src/main.rs:bar_chart_with_pattern_fills}}
+```
+
+{{#include ../../../../../examples/basic_charts/output/inline_bar_chart_with_pattern_fills.html}}

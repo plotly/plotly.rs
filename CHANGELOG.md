@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#421](https://github.com/plotly/plotly.rs/pull/421)] Backfill trace attributes for trace types to bring them to parity with  plotly.js 3.7 
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator`, `Histogram2d`, `Icicle` trace types 
 - [[#425](https://github.com/plotly/plotly.rs/issues/425)] Add `Splom` and `Parcats` trace types (scatter-plot matrix and parallel categories) 
+- [[#432](https://github.com/plotly/plotly.rs/issues/432)] Add `Funnel` and `Waterfall` trace types
 
 ### Changed
 
@@ -33,6 +34,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#387](https://github.com/plotly/plotly.rs/pull/387)] Fix HeatMap hovertext/text dimensions
 - [[#385](https://github.com/plotly/plotly.rs/pull/385)] Add `{x,y}gap` parameter to heatmaps
 - [[#381](https://github.com/plotly/plotly.rs/pull/381)] Make `Plot::default()` behave like `Plot::new()` 
+- [[#432](https://github.com/plotly/plotly.rs/issues/432)] Fixed mdBook table of contents ordering
+
 
 ## [0.14.0] - 2026-01-10
 
