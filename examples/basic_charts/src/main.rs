@@ -7,6 +7,10 @@ use plotly::{
         ColorScale, ColorScalePalette, DashType, Domain, Fill, Font, HoverInfo, Line, LineShape,
         Marker, Mode, Orientation, Pattern, PatternShape,
     },
+    icicle::{
+        BranchValues as IcicleBranchValues, Leaf as IcicleLeaf, Marker as IcicleMarker,
+        PathBar as IciclePathBar, Side as IcicleSide, Tiling as IcicleTiling,
+    },
     layout::{
         AngularAxis, Annotation, Axis, AxisRange, BarMode, CategoryOrder, Layout, LayoutGrid,
         LayoutPolar, Legend, PolarAxisAttributes, PolarAxisTicks, PolarDirection, RadialAxis,
@@ -14,11 +18,15 @@ use plotly::{
     },
     sankey::{Line as SankeyLine, Link, Node},
     sunburst::{InsideTextOrientation, Leaf},
+    traces::indicator::{
+        Align, Delta, DeltaPosition, Direction, Gauge, GaugeAxis, GaugeBar, GaugeShape,
+        IndicatorTitle, Mode as IndicatorMode, Number, Step, Threshold,
+    },
     traces::table::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
     treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
-    Bar, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table, Treemap,
+    Bar, Icicle, Indicator, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table, Treemap,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -1147,6 +1155,137 @@ fn styled_sunburst(show: bool, file_name: &str) {
 }
 // ANCHOR_END: styled_sunburst
 
+// Icicle Charts
+// ANCHOR: basic_icicle
+fn basic_icicle(show: bool, file_name: &str) {
+    let labels = vec![
+        "Eve", "Cain", "Seth", "Enos", "Noam", "Abel", "Awan", "Enoch", "Azura",
+    ];
+    let parents = vec![
+        "", "Eve", "Eve", "Seth", "Seth", "Eve", "Eve", "Awan", "Eve",
+    ];
+    let trace = Icicle::new(labels, parents)
+        .values(vec![10.0, 14.0, 12.0, 10.0, 2.0, 6.0, 6.0, 4.0, 4.0])
+        .text_info("label+value");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_icicle
+
+// ANCHOR: styled_icicle
+fn styled_icicle(show: bool, file_name: &str) {
+    let labels = vec![
+        "Total",
+        "Tech",
+        "Health",
+        "Finance",
+        "Software",
+        "Hardware",
+        "Pharma",
+        "Devices",
+        "Banking",
+        "Insurance",
+    ];
+    let parents = vec![
+        "", "Total", "Total", "Total", "Tech", "Tech", "Health", "Health", "Finance", "Finance",
+    ];
+    let trace = Icicle::new(labels, parents)
+        .values(vec![0.0, 0.0, 0.0, 0.0, 40.0, 30.0, 25.0, 15.0, 20.0, 18.0])
+        .branch_values(IcicleBranchValues::Remainder)
+        .marker(IcicleMarker::new().line(Line::new().width(1.0).color(NamedColor::White)))
+        .tiling(
+            IcicleTiling::new()
+                .orientation(Orientation::Horizontal)
+                .pad(2.0),
+        )
+        .path_bar(IciclePathBar::new().visible(true).side(IcicleSide::Top))
+        .leaf(IcicleLeaf::new().opacity(0.7))
+        .text_info("label+value+percent parent");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_icicle
+
+// Indicator Charts
+// ANCHOR: basic_indicator
+fn basic_indicator(show: bool, file_name: &str) {
+    let trace = Indicator::new(120.0)
+        .mode(IndicatorMode::NumberAndDelta)
+        .align(Align::Center)
+        .title(IndicatorTitle::new().text("Revenue"))
+        .number(Number::new().prefix("$").value_format(".2f"))
+        .delta(
+            Delta::new()
+                .reference(100.0)
+                .relative(true)
+                .position(DeltaPosition::Top)
+                .increasing(Direction::new().color(NamedColor::Green).symbol("▲"))
+                .decreasing(Direction::new().color(NamedColor::Red).symbol("▼")),
+        )
+        .domain(Domain::new());
+
+    let layout = Layout::new().title("Basic Indicator");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_indicator
+
+// ANCHOR: indicator_gauge
+fn indicator_gauge(show: bool, file_name: &str) {
+    let trace = Indicator::new(270.0)
+        .mode(IndicatorMode::Gauge)
+        .title(IndicatorTitle::new().text("Speed"))
+        .gauge(
+            Gauge::new()
+                .shape(GaugeShape::Angular)
+                .axis(GaugeAxis::new().range([0.0, 500.0]))
+                .bar(GaugeBar::new().color("darkblue").thickness(0.75))
+                .background_color(NamedColor::White)
+                .border_color(NamedColor::Gray)
+                .border_width(1.0)
+                .steps(vec![
+                    Step::new().range([0.0, 250.0]).color("lightgray"),
+                    Step::new().range([250.0, 400.0]).color("gray"),
+                ])
+                .threshold(
+                    Threshold::new()
+                        .line(Line::new().color(NamedColor::Red).width(4.0))
+                        .thickness(0.75)
+                        .value(490.0),
+                ),
+        )
+        .domain(Domain::new());
+
+    let layout = Layout::new().title("Indicator Gauge");
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: indicator_gauge
+
 // ANCHOR: set_lower_or_upper_bound_on_axis
 fn set_lower_or_upper_bound_on_axis(show: bool, file_name: &str) {
     use std::fs::File;
@@ -1311,6 +1450,14 @@ fn main() {
     // Sunburst Charts
     basic_sunburst(false, "basic_sunburst");
     styled_sunburst(false, "styled_sunburst");
+
+    // Icicle Charts
+    basic_icicle(false, "basic_icicle");
+    styled_icicle(false, "styled_icicle");
+
+    // Indicator Charts
+    basic_indicator(false, "basic_indicator");
+    indicator_gauge(false, "indicator_gauge");
 
     // Set Lower or Upper Bound on Axis
     set_lower_or_upper_bound_on_axis(false, "set_lower_or_upper_bound_on_axis");

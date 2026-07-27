@@ -4,11 +4,13 @@ use ndarray::Array;
 use plotly::{
     box_plot::{BoxMean, BoxPoints},
     color::{NamedColor, Rgb, Rgba},
-    common::{ErrorData, ErrorType, Line, Marker, Mode, Orientation},
+    common::{
+        ColorScale, ColorScalePalette, ErrorData, ErrorType, Line, Marker, Mode, Orientation,
+    },
     histogram::{Bins, Cumulative, HistFunc, HistNorm},
     layout::{Axis, BarMode, BoxMode, Layout, Margin, ViolinMode},
     violin::{MeanLine, ViolinBox, ViolinPoints, ViolinSide},
-    Bar, BoxPlot, Histogram, Plot, Scatter, Violin,
+    Bar, BoxPlot, Histogram, Histogram2d, Plot, Scatter, Violin,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -785,6 +787,87 @@ fn specify_binning_function(show: bool, file_name: &str) {
 }
 // ANCHOR_END: specify_binning_function
 
+// 2D Histograms
+// ANCHOR: basic_histogram2d
+fn basic_histogram2d(show: bool, file_name: &str) {
+    let n = 5_000;
+    let x = sample_normal_distribution(n, 0.0, 1.0);
+    let y = sample_normal_distribution(n, 0.0, 1.0);
+
+    let trace = Histogram2d::new(x, y).name("2d histogram");
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_histogram2d
+
+// ANCHOR: styled_histogram2d
+fn styled_histogram2d(show: bool, file_name: &str) {
+    let n = 2_000;
+    let x = sample_uniform_distribution(n, -3.0, 3.0);
+    let y = sample_uniform_distribution(n, -3.0, 3.0);
+
+    let trace = Histogram2d::new(x, y)
+        .name("styled 2d histogram")
+        .hist_func(HistFunc::Count)
+        .hist_norm(HistNorm::Probability)
+        .auto_bin_x(false)
+        .auto_bin_y(false)
+        .n_bins_x(20)
+        .n_bins_y(20)
+        .x_bins(Bins::new(-3.0, 3.0, 0.3))
+        .y_bins(Bins::new(-3.0, 3.0, 0.3))
+        .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+        .show_scale(true);
+
+    let layout = Layout::new()
+        .title("Styled 2D Histogram")
+        .x_axis(Axis::new().title("x"))
+        .y_axis(Axis::new().title("y"));
+
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: styled_histogram2d
+
+// ANCHOR: histogram2d_aggregation
+fn histogram2d_aggregation(show: bool, file_name: &str) {
+    let x = vec![1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0];
+    let y = vec![1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0];
+    let z = vec![10.0, 20.0, 15.0, 25.0, 30.0, 5.0, 10.0];
+
+    let trace = Histogram2d::new_xyz(x, y, z)
+        .name("sum by bin")
+        .hist_func(HistFunc::Sum)
+        .color_scale(ColorScale::Palette(ColorScalePalette::Blues))
+        .show_scale(true);
+
+    let layout = Layout::new()
+        .title("2D Histogram with Per-Sample Aggregation")
+        .x_axis(Axis::new().title("x"))
+        .y_axis(Axis::new().title("y"));
+
+    let mut plot = Plot::new();
+    plot.set_layout(layout);
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: histogram2d_aggregation
+
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -837,4 +920,9 @@ fn main() {
     cumulative_histogram(false, "cumulative_histogram");
     normalized_histogram(false, "normalized_histogram");
     specify_binning_function(false, "specify_binning_function");
+
+    // 2D Histograms
+    basic_histogram2d(false, "basic_histogram2d");
+    styled_histogram2d(false, "styled_histogram2d");
+    histogram2d_aggregation(false, "histogram2d_aggregation");
 }
