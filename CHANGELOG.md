@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator`, `Histogram2d`, `Icicle` trace types 
 - [[#425](https://github.com/plotly/plotly.rs/issues/425)] Add `Splom` and `Parcats` trace types (scatter-plot matrix and parallel categories) 
 - [[#432](https://github.com/plotly/plotly.rs/issues/432)] Add `Funnel` and `Waterfall` trace types
+- [[#396](https://github.com/plotly/plotly.rs/issues/396)] Add `ColorSequence` and Plotly Express qualitative color sequences (`plotly::color::qualitative`), including reversed (`*_R`) variants
 
 ### Changed
 

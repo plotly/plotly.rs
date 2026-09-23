@@ -1,3 +1,5 @@
+pub mod qualitative;
+
 use std::error::Error;
 use std::fmt;
 use std::num::{ParseFloatError, ParseIntError};
@@ -19,6 +21,9 @@ use std::str::FromStr;
 /// types. The user can then implement a valid serialization function according
 /// to their own requirements. On the whole, that should be largely unnecessary
 /// given the functionality already provided within this module.
+///
+/// Discrete color sequences from Plotly Express are available in the
+/// [`qualitative`] module.
 ///
 /// [`CSS color formats`]: <https://www.w3schools.com/cssref/css_colors_legal.asp>
 /// [`predefined colors`]: <https://www.w3schools.com/cssref/css_colors.asp>
