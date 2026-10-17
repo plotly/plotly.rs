@@ -37,8 +37,8 @@ impl From<(f64, f64, f64)> for AspectRatio {
 
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Debug, Clone, FieldSetter)]
-/// Container for CameraCenter, Eye, Up, and Projection objects. The camera of a
-/// 3D scene.
+/// Container for `CameraCenter`, Eye, Up, and Projection objects. The camera of
+/// a 3D scene.
 pub struct Camera {
     center: Option<CameraCenter>,
     eye: Option<Eye>,

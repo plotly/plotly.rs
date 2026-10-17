@@ -67,7 +67,7 @@ pub use self::slider::{
     SliderStepBuilder, SliderTransition, SliderTransitionEasing,
 };
 
-/// Error type for ControlBuilder operations
+/// Error type for `ControlBuilder` operations
 #[derive(Debug)]
 pub enum ControlBuilderError {
     RestyleSerializationError(String),
@@ -227,11 +227,11 @@ impl Into<Cow<'static, Template>> for &'static Template {
     }
 }
 
-/// Generates Layout and LayoutTemplate
-/// LayoutTemplate matches Layout except it lacks a field for template
+/// Generates Layout and `LayoutTemplate`
+/// `LayoutTemplate` matches Layout except it lacks a field for template
 /// See layout/layout.rs for the full field list and doc comments.
-/// Layout is identical to LayoutTemplate except it has a `template` field and
-/// #[field_setter(kind = "layout")] See layout/layout.rs for the full field
+/// Layout is identical to `LayoutTemplate` except it has a `template` field and
+/// `#[field_setter(kind = "layout")]` See layout/layout.rs for the full field
 /// list and doc comments.
 #[layout_structs]
 pub struct LayoutFields {

@@ -110,6 +110,11 @@ impl Traces {
         self.traces.iter()
     }
 
+    /// Serialize to a JSON string.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `serde_json` fails to serialize the value.
     pub fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap()
     }
@@ -233,19 +238,15 @@ impl Plot {
 
     /// Add a single frame to the animation sequence.
     pub fn add_frame(&mut self, frame: Frame) -> &mut Self {
-        if self.frames.is_none() {
-            self.frames = Some(Vec::new());
-        }
-        self.frames.as_mut().unwrap().push(frame);
+        self.frames.get_or_insert_with(Vec::new).push(frame);
         self
     }
 
     /// Add multiple frames to the animation sequence.
     pub fn add_frames(&mut self, frames: &[Frame]) -> &mut Self {
-        if self.frames.is_none() {
-            self.frames = Some(frames.to_vec());
-        }
-        self.frames.as_mut().unwrap().extend(frames.iter().cloned());
+        self.frames
+            .get_or_insert_with(Vec::new)
+            .extend(frames.iter().cloned());
         self
     }
 
@@ -272,6 +273,11 @@ impl Plot {
     ///
     /// The HTML file is saved in a temp file, from which it is read and
     /// displayed by the browser.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the temporary HTML file cannot be created or written, or if
+    /// its path is not valid UTF-8.
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
     pub fn show(&self) {
         use std::env;
@@ -305,6 +311,11 @@ impl Plot {
     /// The HTML file is generated and saved in the provided filename as long as
     /// the path already exists, after the file is saved, it is read and
     /// displayed by the browser.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `filename` is not valid UTF-8 or the HTML file cannot be
+    /// created or written.
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
     pub fn show_html<P: AsRef<Path> + std::clone::Clone>(&self, filename: P) {
         let path = filename.as_ref().to_str().unwrap();
@@ -316,6 +327,11 @@ impl Plot {
 
     /// Display the fully rendered `Plot` as a static image of the given format
     /// in the default system browser.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the temporary HTML file cannot be created or written, or if
+    /// its path is not valid UTF-8.
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
     #[cfg(feature = "plotly_static")]
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
@@ -350,6 +366,10 @@ impl Plot {
     ///
     /// This method will render the plot to a full, standalone HTML document,
     /// before saving it to the given location.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the file cannot be created or written.
     pub fn write_html<P: AsRef<Path>>(&self, filename: P) {
         let rendered = self.to_html();
 
@@ -445,6 +465,11 @@ impl Plot {
     /// consider using the [`ExporterSyncExt`] or [`ExporterAsyncExt`] extension
     /// methods to reuse a single `StaticExporter` instance across multiple
     /// operations.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the `StaticExporter` cannot be created (e.g. no
+    /// WebDriver is available) or if the export fails.
     #[cfg(feature = "plotly_static")]
     pub fn write_image<P: AsRef<Path>>(
         &self,
@@ -464,8 +489,8 @@ impl Plot {
     }
 
     /// Convert the `Plot` to a static image and return the image as a `base64`
-    /// String. Supported formats are [ImageFormat::JPEG],
-    /// [ImageFormat::PNG] and [ImageFormat::WEBP].
+    /// String. Supported formats are [`ImageFormat::JPEG`],
+    /// [`ImageFormat::PNG`] and [`ImageFormat::WEBP`].
     ///
     /// This method uses the [plotly_static](https://docs.rs/plotly_static/) crate and requires a WebDriver-compatible browser (Chrome or Firefox) to be available on the system.
     ///
@@ -478,6 +503,12 @@ impl Plot {
     /// using the [`ExporterSyncExt`] or [`ExporterAsyncExt`] extension methods
     /// to reuse a single `StaticExporter` instance across multiple
     /// operations.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if `format` is not JPEG, PNG or WEBP, if the
+    /// `StaticExporter` cannot be created (e.g. no WebDriver is available) or
+    /// if the export fails.
     #[cfg(feature = "plotly_static")]
     pub fn to_base64(
         &self,
@@ -495,7 +526,8 @@ impl Plot {
         result
     }
 
-    /// Convert the `Plot` to SVG and return it as a String using plotly_static.
+    /// Convert the `Plot` to SVG and return it as a String using
+    /// `plotly_static`.
     ///
     /// This method requires the usage of the `plotly_static` crate using one of
     /// the available feature flags. For advanced usage (parallelism, exporter reuse, custom config), see the [plotly_static documentation](https://docs.rs/plotly_static/).
@@ -506,6 +538,11 @@ impl Plot {
     /// consider using the [`ExporterSyncExt`] or [`ExporterAsyncExt`] extension
     /// methods to reuse a single `StaticExporter` instance across multiple
     /// operations.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the `StaticExporter` cannot be created (e.g. no
+    /// WebDriver is available) or if the export fails.
     #[cfg(feature = "plotly_static")]
     pub fn to_svg(
         &self,
@@ -522,10 +559,13 @@ impl Plot {
         result
     }
 
-    /// Deprecated: use [crate::export::sync::ExporterSyncExt::write_image].
+    /// Deprecated: use [`crate::export::sync::ExporterSyncExt::write_image`].
     #[deprecated(
         note = "Use exporter.write_image(&plot, ...) from plotly::export::sync::ExporterSyncExt"
     )]
+    /// # Errors
+    ///
+    /// Returns an error if the plot cannot be serialized or the export fails.
     #[cfg(feature = "plotly_static")]
     pub fn write_image_with_exporter<P: AsRef<Path>>(
         &self,
@@ -546,10 +586,14 @@ impl Plot {
         )
     }
 
-    /// Deprecated: use [crate::export::sync::ExporterSyncExt::to_base64].
+    /// Deprecated: use [`crate::export::sync::ExporterSyncExt::to_base64`].
     #[deprecated(
         note = "Use exporter.to_base64(&plot, ...) from plotly::export::sync::ExporterSyncExt"
     )]
+    /// # Errors
+    ///
+    /// Returns an error if `format` is not JPEG, PNG or WEBP, if the plot
+    /// cannot be serialized or if the export fails.
     #[cfg(feature = "plotly_static")]
     pub fn to_base64_with_exporter(
         &self,
@@ -575,10 +619,13 @@ impl Plot {
         }
     }
 
-    /// Deprecated: use [crate::export::sync::ExporterSyncExt::to_svg].
+    /// Deprecated: use [`crate::export::sync::ExporterSyncExt::to_svg`].
     #[deprecated(
         note = "Use exporter.to_svg(&plot, ...) from plotly::export::sync::ExporterSyncExt"
     )]
+    /// # Errors
+    ///
+    /// Returns an error if the plot cannot be serialized or the export fails.
     #[cfg(feature = "plotly_static")]
     pub fn to_svg_with_exporter(
         &self,
@@ -604,6 +651,12 @@ impl Plot {
         tmpl.render().unwrap()
     }
 
+    /// Render the `Plot` as a standalone HTML page that displays it as a static
+    /// image of the given format.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the HTML template fails to render.
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
     #[cfg(feature = "plotly_static")]
     pub fn render_static(&self, format: &ImageFormat, width: usize, height: usize) -> String {
@@ -678,12 +731,21 @@ impl Plot {
         .to_string()
     }
 
+    /// Serialize to a JSON string.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `serde_json` fails to serialize the value.
     pub fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap()
     }
 
     #[cfg(target_family = "wasm")]
     /// Convert a `Plot` to a native JavaScript `js_sys::Object`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the serialized plot is not a valid top-level JSON object.
     pub fn to_js_object(&self) -> wasm_bindgen_futures::js_sys::Object {
         use wasm_bindgen_futures::js_sys;
         use wasm_bindgen_futures::wasm_bindgen::JsCast;
@@ -723,7 +785,7 @@ impl Plot {
             .expect(DEFAULT_HTML_APP_NOT_FOUND);
     }
 
-    /// Generate unique seeds for SmallRng such that file names and div names
+    /// Generate unique seeds for `SmallRng` such that file names and div names
     /// are unique random for each call
     pub(crate) fn generate_seed() -> u64 {
         let time = SystemTime::now()
@@ -930,6 +992,16 @@ mod tests {
         let plot2 = plot1.clone();
 
         assert!(plot1 == plot2);
+    }
+
+    #[test]
+    fn add_frames_does_not_duplicate() {
+        let mut plot = Plot::new();
+        plot.add_frames(&[Frame::new(), Frame::new()]);
+        assert_eq!(plot.frame_count(), 2);
+        plot.add_frames(&[Frame::new()]);
+        plot.add_frame(Frame::new());
+        assert_eq!(plot.frame_count(), 4);
     }
 
     #[test]

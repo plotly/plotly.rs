@@ -622,7 +622,7 @@ impl Axis {
 
     /// Set the range of the axis. This method accepts various types and
     /// converts them to `AxisRange` while also keeping backward compatibility
-    /// with API prior to AxisRange introduction.
+    /// with API prior to `AxisRange` introduction.
     pub fn range(mut self, range: impl Into<AxisRange>) -> Self {
         self.range = Some(range.into());
         self

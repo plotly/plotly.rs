@@ -270,7 +270,7 @@
 //! - **Better Browser Support**: Works with any WebDriver-compatible browser:
 //!   Chrome/Chromium,Firefox,Brave
 //! - **Extensible**: Easy to control browser capabilities and customize the
-//!   StaticExporter instance
+//!   `StaticExporter` instance
 //!
 //! ## Limitations
 //!
@@ -346,7 +346,7 @@ pub enum ImageFormat {
 }
 
 impl std::fmt::Display for ImageFormat {
-    /// Formats the ImageFormat as a string.
+    /// Formats the `ImageFormat` as a string.
     ///
     /// # Examples
     ///
@@ -407,7 +407,7 @@ struct PlotData<'a> {
 /// # Default Configuration
 ///
 /// - WebDriver port: 4444
-/// - WebDriver URL: "http://localhost"
+/// - WebDriver URL: `"http://localhost"`
 /// - Spawn webdriver: true (automatically manages WebDriver lifecycle)
 /// - Offline mode: false
 /// - PDF export timeout: 250ms
@@ -416,7 +416,7 @@ struct PlotData<'a> {
 pub struct StaticExporterBuilder {
     /// WebDriver server port (default: 4444)
     webdriver_port: u32,
-    /// WebDriver server base URL (default: "http://localhost")
+    /// WebDriver server base URL (default: `"http://localhost"`)
     webdriver_url: String,
     /// Auto-spawn WebDriver if not running (default: true)
     spawn_webdriver: bool,
@@ -433,7 +433,7 @@ impl Default for StaticExporterBuilder {
     ///
     /// The default configuration includes:
     /// - WebDriver port: 4444
-    /// - WebDriver URL: "http://localhost"
+    /// - WebDriver URL: `"http://localhost"`
     /// - Spawn webdriver: true
     /// - Offline mode: false
     /// - PDF export timeout: 250ms
@@ -605,7 +605,7 @@ impl StaticExporterBuilder {
     ///   existing WebDriver without spawning
     ///
     /// Returns a `Result<StaticExporter>` where:
-    /// - `Ok(exporter)` - Successfully created the StaticExporter instance
+    /// - `Ok(exporter)` - Successfully created the `StaticExporter` instance
     /// - `Err(e)` - Failed to create the instance (e.g., WebDriver not
     ///   available, port conflicts, etc.)
     ///
@@ -619,6 +619,15 @@ impl StaticExporterBuilder {
     ///     .build()
     ///     .expect("Failed to build StaticExporter");
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if no driver feature (`chromedriver` or `geckodriver`)
+    /// is enabled, or if the WebDriver cannot be spawned or connected to.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the Tokio runtime cannot be created.
     pub fn build(&self) -> Result<StaticExporter> {
         let runtime = std::sync::Arc::new(
             tokio::runtime::Builder::new_multi_thread()
@@ -632,7 +641,7 @@ impl StaticExporterBuilder {
         Ok(StaticExporter { runtime, inner })
     }
 
-    /// Create a new WebDriver instance based on the spawn_webdriver flag
+    /// Create a new WebDriver instance based on the `spawn_webdriver` flag
     #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
     fn create_webdriver(&self) -> Result<WebDriver> {
         let port = self.webdriver_port;
@@ -673,6 +682,13 @@ impl StaticExporterBuilder {
     ///     .build_async()
     ///     .expect("Failed to build AsyncStaticExporter");
     /// ```
+    ///
+    /// Build an [`AsyncStaticExporter`] for use in async contexts.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if no driver feature (`chromedriver` or `geckodriver`)
+    /// is enabled, or if the WebDriver cannot be spawned or connected to.
     pub fn build_async(&self) -> Result<AsyncStaticExporter> {
         #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
         return Err(anyhow!(DRIVER_FEATURE_REQUIRED));
@@ -798,6 +814,12 @@ impl StaticExporter {
     /// // Close the exporter
     /// exporter.close();
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if called from within an async (Tokio) context, if the
+    /// browser export fails, if the image data cannot be decoded, or if the
+    /// file cannot be written.
     pub fn write_fig(
         &mut self,
         dst: &Path,
@@ -827,7 +849,7 @@ impl StaticExporter {
     /// string. or an error if the export fails.
     ///
     /// The format of the string depends on the image format. For
-    /// ImageFormat::SVG the function will generate plain SVG text, for
+    /// `ImageFormat::SVG` the function will generate plain SVG text, for
     /// other formats it will return base64-encoded data.
     ///
     /// # Examples
@@ -860,6 +882,11 @@ impl StaticExporter {
     /// // svg_data contains the SVG markup as a string
     /// assert!(svg_data.starts_with("<svg"));
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if called from within an async (Tokio) context, or if
+    /// the browser export fails.
     pub fn write_to_string(
         &mut self,
         plot: &serde_json::Value,
@@ -900,13 +927,13 @@ impl StaticExporter {
     }
 }
 
-/// Async StaticExporter for async contexts. Keeps the same API as the sync
-/// StaticExporter for compatibility.
+/// Async `StaticExporter` for async contexts. Keeps the same API as the sync
+/// `StaticExporter` for compatibility.
 pub struct AsyncStaticExporter {
     /// WebDriver server port (default: 4444)
     webdriver_port: u32,
 
-    /// WebDriver server base URL (default: "http://localhost")
+    /// WebDriver server base URL (default: `"http://localhost"`)
     webdriver_url: String,
 
     /// WebDriver process manager for spawning and cleanup
@@ -933,6 +960,11 @@ impl AsyncStaticExporter {
     /// Exports a Plotly plot to a static image file
     ///
     /// Same as [`StaticExporter::write_fig`] but async.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the browser export fails, if the image data cannot
+    /// be decoded, or if the file cannot be written.
     pub async fn write_fig(
         &mut self,
         dst: &Path,
@@ -968,6 +1000,10 @@ impl AsyncStaticExporter {
     /// Exports a Plotly plot to a string representation.
     ///
     /// Same as [`StaticExporter::write_to_string`] but async.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the browser export fails.
     pub async fn write_to_string(
         &mut self,
         plot: &serde_json::Value,

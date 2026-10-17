@@ -163,7 +163,7 @@ impl SliderStepBuilder {
     }
 
     /// Sets the value of the slider step using any type that can be converted
-    /// into NumOrString.
+    /// into `NumOrString`.
     pub fn value<T: Into<NumOrString>>(mut self, value: T) -> Self {
         if self.error.is_none() {
             if let Err(e) = self.try_set_value(value) {
@@ -186,6 +186,14 @@ impl SliderStepBuilder {
         self.animation = Some(animation);
         self
     }
+    /// Build the [`SliderStep`].
+    ///
+    /// # Errors
+    ///
+    /// Returns the first error recorded by an earlier builder call (a restyle,
+    /// relayout or value that failed to serialize or was not a JSON object), or
+    /// [`ControlBuilderError::AnimationSerializationError`] if the animation
+    /// cannot be serialized.
     pub fn build(self) -> Result<SliderStep, ControlBuilderError> {
         if let Some(error) = self.error {
             return Err(error);

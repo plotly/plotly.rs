@@ -1,4 +1,4 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 use crate::{
     common::{ColorBar, ColorScale, ColorScaleElement, Font, Label, Title},
@@ -7,12 +7,12 @@ use crate::{
     },
 };
 
-pub static DEFAULT: Lazy<Template> = Lazy::new(|| {
+pub static DEFAULT: LazyLock<Template> = LazyLock::new(|| {
     let layout_template = LayoutTemplate::new();
     Template::new().layout(layout_template)
 });
 
-pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
+pub static PLOTLY_WHITE: LazyLock<Template> = LazyLock::new(|| {
     let layout_template = LayoutTemplate::new()
         .color_axis(ColorAxis::new().color_bar(ColorBar::new().outline_width(0)))
         .color_scale(
@@ -86,7 +86,7 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
+pub static PLOTLY_DARK: LazyLock<Template> = LazyLock::new(|| {
     // the following are unimplemented: layout.autotypenumbers, layout.polar,
     // layout.ternary, layout.scene, layout.*defaults
     let layout_template = LayoutTemplate::new()
@@ -162,7 +162,7 @@ pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static SEABORN: Lazy<Template> = Lazy::new(|| {
+pub static SEABORN: LazyLock<Template> = LazyLock::new(|| {
     // Based on seaborn's "darkgrid" style and "deep" color palette
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#333333"))
@@ -192,7 +192,7 @@ pub static SEABORN: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static SEABORN_WHITEGRID: Lazy<Template> = Lazy::new(|| {
+pub static SEABORN_WHITEGRID: LazyLock<Template> = LazyLock::new(|| {
     // Seaborn "whitegrid" style
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#333333"))
@@ -222,7 +222,7 @@ pub static SEABORN_WHITEGRID: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static SEABORN_DARK: Lazy<Template> = Lazy::new(|| {
+pub static SEABORN_DARK: LazyLock<Template> = LazyLock::new(|| {
     // Seaborn "dark" style
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#eaeaf2"))
@@ -252,7 +252,7 @@ pub static SEABORN_DARK: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static MATPLOTLIB: Lazy<Template> = Lazy::new(|| {
+pub static MATPLOTLIB: LazyLock<Template> = LazyLock::new(|| {
     // Based on matplotlib's classic style with publication-ready formatting
     // Inspired by: https://medium.com/swlh/formatting-a-plotly-figure-with-matplotlib-style-fa56ddd97539
     let layout_template = LayoutTemplate::new()
@@ -296,7 +296,7 @@ pub static MATPLOTLIB: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static PLOTNINE: Lazy<Template> = Lazy::new(|| {
+pub static PLOTNINE: LazyLock<Template> = LazyLock::new(|| {
     // Based on plotnine's default theme (ggplot2-inspired)
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#525252"))

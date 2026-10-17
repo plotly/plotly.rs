@@ -7,9 +7,9 @@ pub mod sync {
     /// Extension methods for exporting plots using a synchronous exporter.
     pub trait ExporterSyncExt {
         /// Convert the `Plot` to a static image of the given image format and
-        /// save at the given location using a provided StaticExporter.
+        /// save at the given location using a provided `StaticExporter`.
         ///
-        /// This method allows you to reuse a StaticExporter instance across
+        /// This method allows you to reuse a `StaticExporter` instance across
         /// multiple plots, which is more efficient than creating a new one for
         /// each operation.
         ///
@@ -18,7 +18,7 @@ pub mod sync {
         ///
         /// # Arguments
         ///
-        /// * `exporter` - A mutable reference to a StaticExporter instance
+        /// * `exporter` - A mutable reference to a `StaticExporter` instance
         /// * `filename` - The destination path for the output file
         /// * `format` - The desired output image format
         /// * `width` - The width of the output image in pixels
@@ -45,6 +45,11 @@ pub mod sync {
         ///
         /// exporter.close();
         /// ```
+        ///
+        /// # Errors
+        ///
+        /// Returns an error if the export fails, if the image file cannot be
+        /// written, or if called from within an async (Tokio) context.
         fn write_image<P: AsRef<Path>>(
             &mut self,
             plot: &Plot,
@@ -56,10 +61,10 @@ pub mod sync {
         ) -> Result<(), Box<dyn std::error::Error>>;
 
         /// Convert the `Plot` to a static image and return the image as a
-        /// `base64` string. Supported formats are [ImageFormat::JPEG],
-        /// [ImageFormat::PNG] and [ImageFormat::WEBP].
+        /// `base64` string. Supported formats are [`ImageFormat::JPEG`],
+        /// [`ImageFormat::PNG`] and [`ImageFormat::WEBP`].
         ///
-        /// This method allows you to reuse the same StaticExporter instance
+        /// This method allows you to reuse the same `StaticExporter` instance
         /// across multiple plots, which is more efficient than creating
         /// a new one for each operation.
         ///
@@ -91,6 +96,11 @@ pub mod sync {
         ///
         /// exporter.close();
         /// ```
+        ///
+        /// # Errors
+        ///
+        /// Returns an error if `format` is not JPEG, PNG or WEBP, if the export
+        /// fails, or if called from within an async (Tokio) context.
         fn to_base64(
             &mut self,
             plot: &Plot,
@@ -102,7 +112,7 @@ pub mod sync {
 
         /// Convert the `Plot` to SVG and return it as a String.
         ///
-        /// This method allows you to reuse the same StaticExporter instance
+        /// This method allows you to reuse the same `StaticExporter` instance
         /// across multiple plots, which is more efficient than creating
         /// a new one for each operation.
         ///
@@ -133,6 +143,11 @@ pub mod sync {
         ///
         /// exporter.close();
         /// ```
+        ///
+        /// # Errors
+        ///
+        /// Returns an error if the export fails, or if called from within an
+        /// async (Tokio) context.
         fn to_svg(
             &mut self,
             plot: &Plot,
@@ -218,7 +233,7 @@ pub mod r#async {
         /// the given location using the asynchronous exporter.
         ///
         /// The exporter must have been built with the `build_async` method of
-        /// the StaticExporterBuilder.
+        /// the `StaticExporterBuilder`.
         ///
         /// Functionally signature equivalent to the sync version in
         /// [`crate::export::sync::ExporterSyncExt::write_image`], but meant for
@@ -239,7 +254,7 @@ pub mod r#async {
         /// `base64` string using the asynchronous exporter.
         ///
         /// The exporter must have been built with the `build_async` method of
-        /// the StaticExporterBuilder.
+        /// the `StaticExporterBuilder`.
         ///
         /// Functionally signature equivalent to the sync version in
         /// [`crate::export::sync::ExporterSyncExt::to_base64`], but meant for

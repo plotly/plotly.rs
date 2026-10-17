@@ -1,4 +1,4 @@
-//! WebDriver management module for plotly_static.
+//! WebDriver management module for `plotly_static`.
 //!
 //! This module provides WebDriver process management, including:
 //! - Automatic detection of existing WebDriver sessions
