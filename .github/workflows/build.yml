@@ -69,7 +69,6 @@ jobs:
           feature-group: only-explicit-features
           features: static_export_chromedriver
           rust-toolchain: stable
-          release-type: minor
 
   test:
     name: Tests
