@@ -78,7 +78,6 @@ jobs:
           feature-group: only-explicit-features
           features: static_export_chromedriver
           rust-toolchain: stable
-          release-type: minor
           # Check what the PR changes. Main still checks against the latest release.
           baseline-rev: ${{ github.event.pull_request.base.sha || '' }}
 
