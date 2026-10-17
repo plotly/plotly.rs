@@ -262,6 +262,9 @@
 //!
 //! ## Comparison with Kaleido
 //!
+//! `plotly_static` replaces the Kaleido-based `plotly_kaleido` backend, which
+//! was removed in plotly.rs 0.15.0.
+//!
 //! - **No custom Chromium/Chrome external dependency**: Uses standard WebDriver
 //!   instead of proprietary Kaleido
 //! - **Better Browser Support**: Works with any WebDriver-compatible browser:
@@ -273,15 +276,13 @@
 //!
 //! - Requires a WebDriver-compatible browser
 //! - PDF export uses browser JavaScript `html2pdf` (not native Plotly PDF)
-//! - EPS is no longer supported and will be removed
+//! - EPS is not supported (removed in 0.2.0); use SVG or PDF instead
 //! - Slightly slower than Kaleido
 //!
 //! ## License
 //!
 //! MIT License - see LICENSE file for details.
 
-// TODO: remove this once version 0.15.0 is out
-#![allow(deprecated)]
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
@@ -322,14 +323,6 @@ const DRIVER_FEATURE_REQUIRED: &str = "Static image export at runtime requires e
 /// - **SVG**: Scalable Vector Graphics format (vector-based, scalable)
 /// - **PDF**: Portable Document Format (implemented via browser JS)
 ///
-/// # Deprecated Formats
-///
-/// - **EPS**: Encapsulated PostScript format (deprecated since 0.13.0, will be
-///   removed in 0.15.0)
-///   - Use SVG or PDF instead for vector graphics
-///   - EPS is not supported in the open source version and in versions prior to
-///     0.13.0 has been generating empty images.
-///
 /// # Examples
 ///
 /// ```rust
@@ -339,7 +332,6 @@ const DRIVER_FEATURE_REQUIRED: &str = "Static image export at runtime requires e
 /// assert_eq!(format.to_string(), "png");
 /// ```
 #[derive(Debug, Clone, Serialize)]
-#[allow(deprecated)]
 pub enum ImageFormat {
     /// Portable Network Graphics format
     PNG,
@@ -351,16 +343,6 @@ pub enum ImageFormat {
     SVG,
     /// Portable Document Format (implemented via browser JS)
     PDF,
-    /// Encapsulated PostScript format (deprecated)
-    ///
-    /// This format is deprecated since version 0.13.0 and will be removed in
-    /// version 0.15.0. Use SVG or PDF instead for vector graphics. EPS is
-    /// not supported in the open source Plotly ecosystem version.
-    #[deprecated(
-        since = "0.13.0",
-        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.15.0"
-    )]
-    EPS,
 }
 
 impl std::fmt::Display for ImageFormat {
@@ -383,8 +365,6 @@ impl std::fmt::Display for ImageFormat {
                 Self::WEBP => "webp",
                 Self::SVG => "svg",
                 Self::PDF => "pdf",
-                #[allow(deprecated)]
-                Self::EPS => "eps",
             }
         )
     }
@@ -1126,11 +1106,6 @@ impl AsyncStaticExporter {
         match plot.format {
             ImageFormat::SVG => common::extract_plain(result, &plot.format),
             ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP | ImageFormat::PDF => {
-                common::extract_encoded(result, &plot.format)
-            }
-            #[allow(deprecated)]
-            ImageFormat::EPS => {
-                error!("EPS format is deprecated. Use SVG or PDF instead.");
                 common::extract_encoded(result, &plot.format)
             }
         }

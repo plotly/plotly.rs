@@ -51,7 +51,7 @@ jobs:
       # lint the main library workspace for non-wasm target
       - run: cargo clippy --features all -- -D warnings -A deprecated
       # lint the non-wasm examples
-      - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" --exclude "kaleido" -- -D warnings
+      - run: cd ${{ github.workspace }}/examples && cargo clippy --workspace --exclude "wasm*" -- -D warnings
       # lint the plotly library for wasm target
       - run: cargo clippy --package plotly --target wasm32-unknown-unknown -- -D warnings
       # lint the wasm examples
@@ -67,7 +67,7 @@ jobs:
         with:
           package: plotly
           feature-group: only-explicit-features
-          features: kaleido
+          features: static_export_chromedriver
           rust-toolchain: stable
           release-type: minor
 
@@ -135,7 +135,7 @@ jobs:
       # Run tests on Ubuntu with Chrome
       - name: Run tests (${{ matrix.os }} - Chrome)
         if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
-        run: cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+        run: cargo test --workspace --features ${{ matrix.features }}
 
       # Install xvfb for Firefox WebGL support
       - name: Install xvfb
@@ -157,12 +157,12 @@ jobs:
           echo "BROWSER_PATH: $BROWSER_PATH"
           echo "RUST_LOG: $RUST_LOG"
           
-          xvfb-run -s "-screen 0 1920x1080x24" cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+          xvfb-run -s "-screen 0 1920x1080x24" cargo test --workspace --features ${{ matrix.features }}
 
       # Run tests on macOS with Chrome
       - name: Run tests (${{ matrix.os }} - Chrome)
         if: matrix.os == 'macos-latest' && matrix.browser == 'chrome'
-        run: cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido
+        run: cargo test --workspace --features ${{ matrix.features }}
 
       # Run tests on Windows with Chrome WebDriver
       - name: Run tests (${{ matrix.os }} - Chrome)
@@ -180,7 +180,7 @@ jobs:
           Write-Host "WEBDRIVER_PATH: $env:WEBDRIVER_PATH"
           Write-Host "BROWSER_PATH: $env:BROWSER_PATH"
 
-          cargo test --workspace --features ${{ matrix.features }} --exclude plotly_kaleido          
+          cargo test --workspace --features ${{ matrix.features }}          
 
       - name: Upload static image(s) artifact
         uses: actions/upload-artifact@v4
@@ -218,7 +218,6 @@ jobs:
           customization/multiple_plots_example,
           financial_charts,
           images,
-          kaleido,
           maps,
           ndarray,
           scientific_charts,

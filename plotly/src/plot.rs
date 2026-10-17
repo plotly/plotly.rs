@@ -5,8 +5,6 @@ use std::{fs::File, io::Write, path::Path};
 use askama::Template;
 use dyn_clone::DynClone;
 use erased_serde::Serialize as ErasedSerialize;
-#[cfg(feature = "kaleido")]
-use plotly_kaleido::ImageFormat;
 #[cfg(feature = "plotly_static")]
 use plotly_static::ImageFormat;
 use rand::{
@@ -27,7 +25,7 @@ struct PlotTemplate<'a> {
     js_scripts: &'a str,
 }
 
-#[cfg(any(feature = "kaleido", feature = "plotly_static"))]
+#[cfg(feature = "plotly_static")]
 #[derive(Template)]
 #[template(path = "static_plot.html", escape = "none")]
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
@@ -55,14 +53,13 @@ struct JupyterNotebookPlotTemplate<'a> {
 
 #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
 const DEFAULT_HTML_APP_NOT_FOUND: &str = r#"Could not find default application for HTML files.
-Consider using the `to_html` method obtain a string representation instead. If using the `kaleido` or `plotly_static` feature the
+Consider using the `to_html` method obtain a string representation instead. If using the `plotly_static` feature the
 `write_image` method can be used to produce a static image in one of the following formats:
 - ImageFormat::PNG
 - ImageFormat::JPEG
 - ImageFormat::WEBP
 - ImageFormat::SVG
 - ImageFormat::PDF
-- ImageFormat::EPS // will be removed in version 0.15.0
 
 Used as follows:
 let plot = Plot::new();
@@ -318,7 +315,7 @@ impl Plot {
     /// Display the fully rendered `Plot` as a static image of the given format
     /// in the default system browser.
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-    #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
+    #[cfg(feature = "plotly_static")]
     pub fn show_image(&self, format: ImageFormat, width: usize, height: usize) {
         use std::env;
 
@@ -431,100 +428,6 @@ impl Plot {
     /// the `notebook_display()` method instead.
     pub fn evcxr_display(&self) {
         self.lab_display();
-    }
-
-    /// Convert the `Plot` to a static image of the given image format and save
-    /// at the given location using kaleido.
-    ///
-    /// This function is deprecated since version 0.13.0. The kaleido-based
-    /// implementation will be removed in version 0.15.0. Use
-    /// `plotly_static` feature instead for static image export functionality.
-    #[deprecated(
-        since = "0.13.0",
-        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.15.0"
-    )]
-    #[cfg(feature = "kaleido")]
-    pub fn write_image<P: AsRef<Path>>(
-        &self,
-        filename: P,
-        format: ImageFormat,
-        width: usize,
-        height: usize,
-        scale: f64,
-    ) {
-        let kaleido = plotly_kaleido::Kaleido::new();
-        kaleido
-            .save(
-                filename.as_ref(),
-                &serde_json::to_value(self).unwrap(),
-                format,
-                width,
-                height,
-                scale,
-            )
-            .unwrap_or_else(|_| panic!("failed to export plot to {:?}", filename.as_ref()));
-    }
-
-    /// Convert the `Plot` to a static image and return the image as a `base64`
-    /// String using kaleido. Supported formats are [ImageFormat::JPEG],
-    /// [ImageFormat::PNG] and [ImageFormat::WEBP]
-    ///
-    /// This function is deprecated since version 0.13.0. The kaleido-based
-    /// implementation will be removed in version 0.15.0. Use
-    /// `plotly_static` feature instead for static image export functionality.
-    #[deprecated(
-        since = "0.13.0",
-        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.15.0"
-    )]
-    #[cfg(feature = "kaleido")]
-    pub fn to_base64(
-        &self,
-        format: ImageFormat,
-        width: usize,
-        height: usize,
-        scale: f64,
-    ) -> String {
-        match format {
-            ImageFormat::JPEG | ImageFormat::PNG | ImageFormat::WEBP => {
-                let kaleido = plotly_kaleido::Kaleido::new();
-                kaleido
-                    .image_to_string(
-                        &serde_json::to_value(self).unwrap(),
-                        format,
-                        width,
-                        height,
-                        scale,
-                    )
-                    .unwrap_or_else(|_| panic!("Kaleido failed to generate image"))
-            }
-            _ => {
-                eprintln!("Cannot generate base64 string for ImageFormat:{format}. Allowed formats are JPEG, PNG, WEBP");
-                String::default()
-            }
-        }
-    }
-
-    /// Convert the `Plot` to SVG and return it as a String using kaleido.
-    ///
-    /// This function is deprecated since version 0.13.0. The kaleido-based
-    /// implementation will be removed in version 0.15.0. Use
-    /// `plotly_static` feature instead for static image export functionality.
-    #[deprecated(
-        since = "0.13.0",
-        note = "kaleido-based implementation is deprecated. Use plotly_static feature instead. The kaleido implementation will be removed in version 0.15.0"
-    )]
-    #[cfg(feature = "kaleido")]
-    pub fn to_svg(&self, width: usize, height: usize, scale: f64) -> String {
-        let kaleido = plotly_kaleido::Kaleido::new();
-        kaleido
-            .image_to_string(
-                &serde_json::to_value(self).unwrap(),
-                ImageFormat::SVG,
-                width,
-                height,
-                scale,
-            )
-            .unwrap_or_else(|_| panic!("Kaleido failed to generate image"))
     }
 
     /// Convert the `Plot` to a static image of the given image format and save
@@ -699,7 +602,7 @@ impl Plot {
     }
 
     #[cfg(all(not(target_family = "wasm"), not(target_os = "android")))]
-    #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
+    #[cfg(feature = "plotly_static")]
     pub fn render_static(&self, format: &ImageFormat, width: usize, height: usize) -> String {
         let tmpl = StaticPlotTemplate {
             plot: self,
@@ -839,12 +742,10 @@ impl PartialEq for Plot {
 mod tests {
     use std::path::PathBuf;
 
-    #[cfg(feature = "kaleido")]
-    use plotly_kaleido::ImageFormat;
     #[cfg(feature = "plotly_static")]
     use plotly_static::ImageFormat;
     use serde_json::{json, to_value};
-    #[cfg(any(feature = "kaleido", feature = "plotly_static"))]
+    #[cfg(feature = "plotly_static")]
     use {base64::engine::general_purpose, base64::Engine};
 
     use super::*;

@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     std::fs::create_dir_all("./output").unwrap();
 
-    info!("Exporting multiple plots using a Kaleido style API ...");
+    info!("Exporting multiple plots using the one-shot Plot::write_image API ...");
     plot1.write_image("./output/plot1_legacy_api", ImageFormat::PNG, 800, 600, 1.0)?;
     plot2.write_image(
         "./output/plot2_legacy_api",
