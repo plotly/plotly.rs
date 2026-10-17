@@ -49,9 +49,9 @@ impl Color for i16 {}
 impl Color for i8 {}
 impl Color for usize {}
 
-/// ColorArray is only used internally to provide a helper method for converting
-/// Vec<impl Color> to Vec<Box<dyn Color>>, as we would otherwise fall foul of
-/// the orphan rules.
+/// `ColorArray` is only used internally to provide a helper method for
+/// converting Vec<impl Color> to Vec<Box<dyn Color>>, as we would otherwise
+/// fall foul of the orphan rules.
 pub(crate) struct ColorArray<C: Color>(pub(crate) Vec<C>);
 
 #[allow(clippy::from_over_into)]

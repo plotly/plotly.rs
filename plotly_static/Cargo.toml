@@ -5,7 +5,6 @@ description = "Export Plotly graphs to static images using WebDriver"
 authors = ["Andrei Gherghescu andrei-ng@protonmail.com"]
 license = "MIT"
 workspace = ".."
-homepage = "https://github.com/plotly/plotly.rs"
 repository = "https://github.com/plotly/plotly.rs"
 edition = "2021"
 keywords = ["plotly", "static", "image", "export", "webdriver"]

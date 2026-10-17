@@ -31,11 +31,17 @@ This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is
 - `plotly_static` bumped to 0.2.0 (breaking: `ImageFormat::EPS` removed)
 - Bump `darling` to 0.24 and `syn` to 3 in `plotly_derive`, and `dirs` to 7 in `plotly_static`
 - Bump example dependencies: `reqwest` 0.13, `env_logger` 0.11, `itertools` 0.15, `ndarray` 0.17, `rand`/`rand_chacha` 0.10
+- Theme statics in `plotly::layout::themes` (`DEFAULT`, `PLOTLY_WHITE`, `PLOTLY_DARK`, …) are now `std::sync::LazyLock<Template>` instead of `once_cell::sync::Lazy<Template>`; the `once_cell` dependency is dropped. Code that only dereferences them is unaffected
+- Add `# Errors`/`# Panics` sections to public fallible APIs and tidy doc formatting (clippy `missing_errors_doc`, `missing_panics_doc`, `doc_markdown`)
 
 ### Removed
 
 - The deprecated Kaleido static export backend: the `plotly_kaleido` crate is no longer part of the workspace, and the `kaleido` and `kaleido_download` features are gone. Use the `static_export_*` features (`plotly_static`) instead
 - The deprecated `ImageFormat::EPS` variant. Use `ImageFormat::SVG` or `ImageFormat::PDF` for vector output
+
+### Fixed
+
+- `Plot::add_frames` no longer adds every frame twice when the plot has no frames yet
 
 ### Security
 

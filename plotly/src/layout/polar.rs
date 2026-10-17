@@ -253,9 +253,9 @@ pub struct PolarAxisTicks {
     /// Applies a label alias to tick or hover labels matching specific
     /// patterns. For example using { US: \'USA\', CA: \'Canada\' } changes US
     /// to USA, and CA to Canada. The labels we would have shown must match the
-    /// keys exactly, after adding any tick_prefix or tick_suffix. `label_alias`
-    /// can be used with any axis type, and both keys and values can include
-    /// html-like tags or MathJax.
+    /// keys exactly, after adding any `tick_prefix` or `tick_suffix`.
+    /// `label_alias` can be used with any axis type, and both keys and
+    /// values can include html-like tags or MathJax.
     #[serde(rename = "labelalias")]
     label_alias: Option<String>,
     #[serde(rename = "minorloglabels")]
@@ -398,6 +398,10 @@ pub struct Hole(f64);
 
 impl Hole {
     /// Create a new hole from the given value.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if `value` is not within `0.0..=1.0`.
     pub fn new(value: f64) -> Result<Self, Box<dyn std::error::Error>> {
         if (0.0..=1.0).contains(&value) {
             Ok(Self(value))
@@ -483,10 +487,11 @@ pub enum PolarTickMode {
         /// Sets the step size between ticks on this axis. Must be a positive
         /// number or a string suitable for *log* or *date* axes. If the axis
         /// type is set to [`RadialAxisType::Log`], ticks will be set every
-        /// 10^(n*d_tick) where n is the tick number. For example, to set a tick
-        /// mark at 1, 10, 100, 1000, ... set d_tick to 1. To set tick marks at
-        /// 1, 100, 10000, ... set dtick to 2. To set tick marks at 1, 5, 25,
-        /// 125, 625, 3125, ... set dtick to log_10(5), or 0.69897000433.
+        /// `10^(n*d_tick)` where n is the tick number. For example, to set a
+        /// tick mark at 1, 10, 100, 1000, ... set `d_tick` to 1. To set
+        /// tick marks at 1, 100, 10000, ... set dtick to 2. To set tick
+        /// marks at 1, 5, 25, 125, 625, 3125, ... set dtick to
+        /// `log_10(5)`, or 0.69897000433.
         ///
         /// [`RadialAxisType::Log`] has several special values:
         ///
