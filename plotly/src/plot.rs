@@ -295,7 +295,8 @@ impl Plot {
             file.flush().unwrap();
         }
 
-        // Hand off the job of opening the browser to an OS-specific implementation.
+        // Hand off the job of opening the browser to an OS-specific
+        // implementation.
         Plot::show_with_default_app(temp_path);
     }
 
@@ -308,7 +309,8 @@ impl Plot {
     pub fn show_html<P: AsRef<Path> + std::clone::Clone>(&self, filename: P) {
         let path = filename.as_ref().to_str().unwrap();
         self.write_html(filename.clone());
-        // Hand off the job of opening the browser to an OS-specific implementation.
+        // Hand off the job of opening the browser to an OS-specific
+        // implementation.
         Plot::show_with_default_app(path);
     }
 
@@ -339,7 +341,8 @@ impl Plot {
             file.flush().unwrap();
         }
 
-        // Hand off the job of opening the browser to an OS-specific implementation.
+        // Hand off the job of opening the browser to an OS-specific
+        // implementation.
         Plot::show_with_default_app(temp_path);
     }
 
@@ -642,8 +645,8 @@ impl Plot {
     /// This is used when the `plotly_embed_js` feature is enabled, providing
     /// self-contained HTML files that don't require external CDN resources.
     pub fn offline_js_sources() -> String {
-        // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when generating
-        // Latex Titles we no longer include it.
+        // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when
+        // generating Latex Titles we no longer include it.
         let local_tex_svg_js = include_str!("../resource/tex-svg-3.2.2.js");
         let local_plotly_js = include_str!("../resource/plotly.min.js");
 
@@ -667,8 +670,8 @@ impl Plot {
     /// disabled, providing smaller HTML files that rely on external
     /// resources.
     pub fn online_cdn_js() -> String {
-        // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when generating
-        // Latex Titles we no longer include it.
+        // Note that since 'tex-mml-chtml' conflicts with 'tex-svg' when
+        // generating Latex Titles we no longer include it.
         r##"<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
         <script src="https://cdn.plot.ly/plotly-3.7.0.min.js"></script>
         "##

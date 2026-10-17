@@ -42,8 +42,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("Failed to create StaticExporter");
 
     info!("Exporting multiple plots using a single StaticExporter...");
-    // Export all plots using the same exporter (new unified naming via extension
-    // trait)
+    // Export all plots using the same exporter (new unified naming via
+    // extension trait)
     exporter.write_image(
         &plot1,
         "./output/plot1_new_api",

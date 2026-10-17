@@ -324,7 +324,8 @@ mod tests {
         let numeric = Violin::new(vec![1, 2, 3]).span(vec![0., 10.]);
         assert_eq!(to_value(numeric).unwrap()["span"], json!([0.0, 10.0]));
 
-        // Date/string span for date-valued axes (plotly.js types `span` as `any`).
+        // Date/string span for date-valued axes (plotly.js types `span` as
+        // `any`).
         let dated = Violin::new(vec![1, 2, 3])
             .span_mode(SpanMode::Manual)
             .span(vec!["2020-01-01", "2020-12-31"]);

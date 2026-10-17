@@ -30,7 +30,8 @@ pub fn layout_structs(_attr: TokenStream, item: TokenStream) -> TokenStream {
         #vis struct #template_struct_name #fields
     };
 
-    // Generate Layout (with template field and #[field_setter(kind = "layout")])
+    // Generate Layout (with template field and #[field_setter(kind =
+    // "layout")])
     let layout_struct_name = format_ident!("Layout");
     let mut layout_fields = fields.clone();
     // Add the template field

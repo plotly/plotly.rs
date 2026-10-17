@@ -552,8 +552,8 @@ mod tests {
     use crate::Layout;
 
     // The focus of the test is serialization, so we test all options for
-    // [`LayoutPolar`], even though some of those options would normally be mutually
-    // exclusive.
+    // [`LayoutPolar`], even though some of those options would normally be
+    // mutually exclusive.
     #[test]
     fn serialize_layout_polar() {
         let ticks = PolarAxisTicks::new()
