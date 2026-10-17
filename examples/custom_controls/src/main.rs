@@ -271,7 +271,7 @@ fn sinusoidal_slider_example(show: bool, file_name: &str) {
     // Add traces, one for each slider step (frequency parameter)
     for step in 0..=num_steps {
         let frequency = step as f64 / 10.0; // 0.0, 0.1, ..., 5.0
-        let x: Vec<f64> = Array::linspace(0.0, 10.0, 1001).into_raw_vec().to_vec();
+        let x: Vec<f64> = Array::linspace(0.0, 10.0, 1001).to_vec();
         let y: Vec<f64> = x.iter().map(|&x_val| (frequency * x_val).sin()).collect();
         let trace = Scatter::new(x, y)
             .visible(if step == 10 {

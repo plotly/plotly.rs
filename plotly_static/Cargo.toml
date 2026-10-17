@@ -40,8 +40,7 @@ clap = { version = "4.0", features = ["derive"] }
 [build-dependencies]
 tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
-dirs = "6.0"
-zip = "8.0"
+dirs = "7.0"
 webdriver-downloader = "0.17"
 
 # Needed for docs.rs to build the documentation
