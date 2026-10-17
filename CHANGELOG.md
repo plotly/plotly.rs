@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-17
+
+This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is planned for 0.16.0 ([#437](https://github.com/plotly/plotly.rs/issues/437)).
+
 ### Added
 
 - [[#406](https://github.com/plotly/plotly.rs/issues/406)] Expose `plotly.js` 3.1–3.6 attributes
@@ -13,8 +17,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#412](https://github.com/plotly/plotly.rs/pull/412)] Add `Violin` trace type with box, mean line, KDE span, and split/grouped support
 - [[#414](https://github.com/plotly/plotly.rs/issues/414)] Add `DensityMap` (MapLibre `map` subplot) trace type — density heatmaps with full color-scale and hover support
 - [[#417](https://github.com/plotly/plotly.rs/issues/417)] Add `ScatterMap` (MapLibre `map` subplot) trace type — the modern counterpart to `ScatterMapbox`
-- Add `Funnel` trace type (bar-like, cartesian) with `Connector` and `FunnelHoverInfo` options, plus the layout-level `funnelmode`/`funnelgap`/`funnelgroupgap` attributes and a `FunnelMode` enum
-- Add `Waterfall` trace type (bar-like, cartesian) with a typed `Measure` enum (`absolute`/`relative`/`total`), per-class `increasing`/`decreasing`/`totals` styling via `MeasureStyle`, a `Connector` with `ConnectorMode`, and a `WaterfallHoverInfo` enum. The layout-level `waterfallmode`/`waterfallgap`/`waterfallgroupgap` attributes and the `WaterfallMode` enum already existed
 - [[#418](https://github.com/plotly/plotly.rs/issues/418)] Add native point clustering to `ScatterMap` via a `Cluster` option
 - [[#421](https://github.com/plotly/plotly.rs/pull/421)] Backfill trace attributes for trace types to bring them to parity with  plotly.js 3.7 
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator`, `Histogram2d`, `Icicle` trace types 
@@ -26,6 +28,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - [[#406](https://github.com/plotly/plotly.rs/issues/406)] Upgrade bundled plotly.js from 3.0.1 to 3.6.0
 - [[#419](https://github.com/plotly/plotly.rs/issues/419)] Upgrade bundled plotly.js from 3.6.0 to 3.7.0
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add layout-level `uirevision` to preserve UI state (zoom/pan/selection) across re-renders (complements the trace-level `uirevision` added in #421)
+- `plotly_static` bumped to 0.2.0 (breaking: `ImageFormat::EPS` removed)
+- Bump `darling` to 0.24 and `syn` to 3 in `plotly_derive`, and `dirs` to 7 in `plotly_static`
+- Bump example dependencies: `reqwest` 0.13, `env_logger` 0.11, `itertools` 0.15, `ndarray` 0.17, `rand`/`rand_chacha` 0.10
+- Theme statics in `plotly::layout::themes` (`DEFAULT`, `PLOTLY_WHITE`, `PLOTLY_DARK`, …) are now `std::sync::LazyLock<Template>` instead of `once_cell::sync::Lazy<Template>`; the `once_cell` dependency is dropped. Code that only dereferences them is unaffected
+- Add `# Errors`/`# Panics` sections to public fallible APIs and tidy doc formatting (clippy `missing_errors_doc`, `missing_panics_doc`, `doc_markdown`)
+
+### Removed
+
+- The deprecated Kaleido static export backend: the `plotly_kaleido` crate is no longer part of the workspace, and the `kaleido` and `kaleido_download` features are gone. Use the `static_export_*` features (`plotly_static`) instead
+- The deprecated `ImageFormat::EPS` variant. Use `ImageFormat::SVG` or `ImageFormat::PDF` for vector output
+
+### Fixed
+
+- `Plot::add_frames` no longer adds every frame twice when the plot has no frames yet
+
+### Security
+
+- Remove the unused `zip` build-dependency from `plotly_static`; with `plotly_kaleido` gone, no workspace crate depends on `zip` directly
+- Known issue: `zip` 8.x is still pulled in transitively by `webdriver-downloader` 0.17 (used at build time to fetch chromedriver/geckodriver) and is flagged by RUSTSEC-2026-0367/0368/0369. Those advisories concern `ZipArchive::extract()`, which `webdriver-downloader` does not call (it reads the driver entry with `by_name`). It will be resolved once [ik1ne/webdriver-downloader#67](https://github.com/ik1ne/webdriver-downloader/pull/67) is released
 
 ## [0.14.1] - 2026-02-15
 

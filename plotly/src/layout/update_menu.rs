@@ -163,6 +163,14 @@ impl ButtonBuilder {
         self
     }
 
+    /// Build the [`Button`].
+    ///
+    /// # Errors
+    ///
+    /// Returns the first error recorded by an earlier builder call (a restyle
+    /// or relayout that failed to serialize or was not a JSON object), or
+    /// [`ControlBuilderError::AnimationSerializationError`] if the animation
+    /// cannot be serialized.
     pub fn build(self) -> Result<Button, ControlBuilderError> {
         if let Some(error) = self.error {
             return Err(error);

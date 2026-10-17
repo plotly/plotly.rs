@@ -1177,8 +1177,8 @@ mod tests {
 
     #[test]
     fn serialize_direction() {
-        // TODO: I think `Direction` would be better as a struct, with `fillcolor` and
-        // `line` attributes
+        // TODO: I think `Direction` would be better as a struct, with
+        // `fillcolor` and `line` attributes
         let inc = Direction::Increasing { line: Line::new() };
         let expected = json!({"line": {}});
         assert_eq!(to_value(inc).unwrap(), expected);
