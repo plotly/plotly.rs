@@ -453,7 +453,7 @@ fn hiding_weekends_and_holidays_with_rangebreaks(show: bool, file_name: &str) {
 
 // Helper to generate random walk data for all hours in a week
 fn generate_business_hours_data() -> (Vec<String>, Vec<f64>) {
-    use rand::Rng;
+    use rand::RngExt;
     use rand::SeedableRng;
     use rand_chacha::ChaCha8Rng;
 
@@ -467,7 +467,7 @@ fn generate_business_hours_data() -> (Vec<String>, Vec<f64>) {
         for hour in 0..24 {
             let current_date = start_date + Duration::days(day) + Duration::hours(hour);
             dates.push(current_date.format("%Y-%m-%d %H:%M:%S").to_string());
-            current_value += (rng.gen::<f64>() - 0.5) * 2.0;
+            current_value += (rng.random::<f64>() - 0.5) * 2.0;
             values.push(current_value);
         }
     }
