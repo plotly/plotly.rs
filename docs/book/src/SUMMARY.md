@@ -44,6 +44,8 @@
         - [Scatter 3D](./recipes/3dcharts/3dcharts.md)
         - [Surface Plots](./recipes/3dcharts/surface_plots.md)
         - [Mesh3D](./recipes/3dcharts/mesh3d_plots.md)
+        - [Vector Field Plots](./recipes/3dcharts/vector_field_plots.md)
+        - [Isosurface and Volume Plots](./recipes/3dcharts/volume_plots.md)
     - [Maps](./recipes/maps.md)
         - [Scatter Maps](./recipes/maps/scatter_maps.md)
         - [Density Maps](./recipes/maps/density_maps.md)

@@ -31,16 +31,18 @@ pub use layout::Layout;
 pub use plot::{Plot, Trace, Traces};
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
-    bar_polar, box_plot, choropleth, choropleth_map, contour, density_map, funnel, funnel_area,
-    heat_map, histogram, histogram2d, icicle, image, indicator, mesh3d, parcats, sankey, scatter,
-    scatter3d, scatter_map, scatter_mapbox, splom, sunburst, surface, treemap, violin, waterfall,
+    bar_polar, box_plot, choropleth, choropleth_map, cone, contour, density_map, funnel,
+    funnel_area, heat_map, histogram, histogram2d, icicle, image, indicator, isosurface, mesh3d,
+    parcats, sankey, scatter, scatter3d, scatter_map, scatter_mapbox, splom, stream_tube, sunburst,
+    surface, treemap, violin, volume, waterfall,
 };
 // Bring the different trace types into the top-level scope
 pub use traces::{
-    Bar, BarPolar, BoxPlot, Candlestick, Choropleth, ChoroplethMap, Contour, DensityMap,
+    Bar, BarPolar, BoxPlot, Candlestick, Choropleth, ChoroplethMap, Cone, Contour, DensityMap,
     DensityMapbox, Funnel, FunnelArea, HeatMap, Histogram, Histogram2d, Icicle, Image, Indicator,
-    Mesh3D, Ohlc, Parcats, Pie, Sankey, Scatter, Scatter3D, ScatterGeo, ScatterMap, ScatterMapbox,
-    ScatterPolar, Splom, Sunburst, Surface, Table, Treemap, Violin, Waterfall,
+    IsoSurface, Mesh3D, Ohlc, Parcats, Pie, Sankey, Scatter, Scatter3D, ScatterGeo, ScatterMap,
+    ScatterMapbox, ScatterPolar, Splom, StreamTube, Sunburst, Surface, Table, Treemap, Violin,
+    Volume, Waterfall,
 };
 
 pub trait Restyle: serde::Serialize {}
