@@ -1,40 +1,11 @@
 //! # Plotly.rs
 //!
 //! A plotting library for Rust powered by [Plotly.js](https://plot.ly/javascript/).
-//!
-//! ## Feature Deprecation Notice
-//!
-//! The `kaleido` and `kaleido_download` features are deprecated since version
-//! 0.13.0 and will be removed in version 0.15.0. Please migrate to the
-//! `plotly_static` and `static_export_*` features instead.
-#![recursion_limit = "256"] // lets us use a large serde_json::json! macro for testing crate::layout::Axis
+#![recursion_limit = "256"] // lets us use a large serde_json::json! macro for
+                            // testing crate::layout::Axis
 extern crate askama;
 extern crate rand;
 extern crate serde;
-
-#[cfg(feature = "kaleido")]
-#[deprecated(
-    since = "0.13.0",
-    note = "kaleido feature is deprecated and will be removed in version 0.15.0. Use plotly_static feature instead"
-)]
-const _KALEIDO_DEPRECATED: () = ();
-
-#[cfg(feature = "kaleido_download")]
-#[deprecated(
-    since = "0.13.0",
-    note = "kaleido_download feature is deprecated and will be removed in version 0.15.0. Use plotly_static_download feature instead"
-)]
-const _KALEIDO_DOWNLOAD_DEPRECATED: () = ();
-
-#[cfg(all(feature = "kaleido", target_family = "wasm"))]
-compile_error!(
-    r#"The "kaleido" feature is not available on "wasm" targets. Please compile without this feature for the wasm target family."#
-);
-
-#[cfg(all(feature = "kaleido", feature = "plotly_static"))]
-compile_error!(
-    r#"The "kaleido" feature and "plotly_static" are conflictings. Please select only one of them."#
-);
 
 #[cfg(feature = "plotly_ndarray")]
 pub mod ndarray;
@@ -60,23 +31,25 @@ pub use layout::Layout;
 pub use plot::{Plot, Trace, Traces};
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
-    box_plot, choropleth, choropleth_map, contour, density_map, funnel, heat_map, histogram,
-    histogram2d, icicle, image, indicator, mesh3d, parcats, sankey, scatter, scatter3d,
-    scatter_map, scatter_mapbox, splom, sunburst, surface, treemap, violin, waterfall,
+    bar_polar, box_plot, carpet, choropleth, choropleth_map, cone, contour, contour_carpet,
+    density_map, funnel, funnel_area, heat_map, histogram, histogram2d, histogram2d_contour,
+    icicle, image, indicator, isosurface, mesh3d, parcats, parcoords, sankey, scatter, scatter3d,
+    scatter_carpet, scatter_map, scatter_mapbox, scatter_smith, scatter_ternary, splom,
+    stream_tube, sunburst, surface, treemap, violin, volume, waterfall,
 };
 // Bring the different trace types into the top-level scope
 pub use traces::{
-    Bar, BoxPlot, Candlestick, Choropleth, ChoroplethMap, Contour, DensityMap, DensityMapbox,
-    Funnel, HeatMap, Histogram, Histogram2d, Icicle, Image, Indicator, Mesh3D, Ohlc, Parcats, Pie,
-    Sankey, Scatter, Scatter3D, ScatterGeo, ScatterMap, ScatterMapbox, ScatterPolar, Splom,
-    Sunburst, Surface, Table, Treemap, Violin, Waterfall,
+    Bar, BarPolar, BoxPlot, Candlestick, Carpet, Choropleth, ChoroplethMap, Cone, Contour,
+    ContourCarpet, DensityMap, DensityMapbox, Funnel, FunnelArea, HeatMap, Histogram, Histogram2d,
+    Histogram2dContour, Icicle, Image, Indicator, IsoSurface, Mesh3D, Ohlc, Parcats, Parcoords,
+    Pie, Sankey, Scatter, Scatter3D, ScatterCarpet, ScatterGeo, ScatterMap, ScatterMapbox,
+    ScatterPolar, ScatterSmith, ScatterTernary, Splom, StreamTube, Sunburst, Surface, Table,
+    Treemap, Violin, Volume, Waterfall,
 };
 
 pub trait Restyle: serde::Serialize {}
 pub trait Relayout {}
 
-#[cfg(feature = "kaleido")]
-pub use plotly_kaleido::ImageFormat;
 #[cfg(feature = "plotly_static")]
 pub use plotly_static::{self, ImageFormat};
 

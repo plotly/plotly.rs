@@ -20,8 +20,9 @@ The following imports have been used to produce the plots below:
 use plotly::color::NamedColor;
 use plotly::common::Marker;
 use plotly::funnel::Connector as FunnelConnector;
+use plotly::funnel_area::{FunnelAreaTitle, FunnelAreaTitlePosition};
 use plotly::layout::Layout;
-use plotly::{Funnel, Plot};
+use plotly::{Funnel, FunnelArea, Plot};
 ```
 
 The `to_inline_html` method is used to produce the html plot displayed in this page.
@@ -32,3 +33,15 @@ The `to_inline_html` method is used to produce the html plot displayed in this p
 ```
 
 {{#include ../../../../../examples/financial_charts/output/inline_basic_funnel.html}}
+
+## Funnel Area
+
+A `FunnelArea` trace is the pie-like sibling of `Funnel`: stages are drawn as slices of a funnel
+whose *area* is proportional to each value, with no value axis. `base_ratio` sets how narrow the
+bottom is relative to the top, and `aspect_ratio` sets the funnel's height-to-width ratio.
+
+```rust,no_run
+{{#include ../../../../../examples/financial_charts/src/main.rs:basic_funnel_area}}
+```
+
+{{#include ../../../../../examples/financial_charts/output/inline_basic_funnel_area.html}}

@@ -41,7 +41,6 @@
 * [Basic Usage](#basic-usage)
     * [Exporting a single Interactive Plot](#exporting-a-single-interactive-plot)
     * [Exporting Static Images with plotly_static (Recommended)](#exporting-static-images-with-plotly_static-recommended)
-    * [Exporting Static Images with Kaleido (legacy)](#exporting-static-images-with-kaleido-legacy)
     * [Usage Within a WASM Environment](#usage-within-a-wasm-environment)
     * [Timeseries Downsampling](#timeseries-downsampling)
 * [Crate Feature Flags](#crate-feature-flags)
@@ -63,7 +62,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-plotly = "0.14"
+plotly = "0.15"
 ```
 
 ## Exporting a single Interactive Plot
@@ -103,7 +102,7 @@ The recommended way to export static images is using the `plotly_static` backend
 
 ```toml
 [dependencies]
-plotly = { version = "0.14", features = ["static_export_default"] }
+plotly = { version = "0.15", features = ["static_export_default"] }
 ```
 
 This supports PNG, JPEG, WEBP, SVG, and PDF formats:
@@ -122,56 +121,15 @@ let svg_string = plot.to_svg(800, 600, 1.0)?;
 
 **Note:** This feature requires a WebDriver-compatible browser (Chrome or Firefox) as well as a Webdriver (chromedriver/geckodriver) to be available on the system.
 
-The above example uses the legacy API that is backwards compatible with the Kaleido API. However, for more efficient workflows a `StaticExporter` object can be built and reused between calls to `write_image`. 
+The above example uses the one-shot `Plot` API, which creates a new exporter for every call. However, for more efficient workflows a `StaticExporter` object can be built and reused between calls to `write_image`. 
 
 More specifically, enabling any of the `plotly` features `static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default` gives access to both the synchronous `StaticExporter` and the asynchronous `AsyncStaticExporter` (available via `plotly::plotly_static`). For exporter reuse and up-to-date sync/async usage patterns, please see the dedicated example in `examples/static_export`, which demonstrates both synchronous and asynchronous exporters and how to reuse a single exporter instance across multiple exports.
 
  For further details see [`plotly_static` crate documentation](https://docs.rs/plotly_static/).
 
-## Exporting Static Images with Kaleido (legacy)
-
-Enable the `kaleido` feature and opt in for automatic downloading of the `kaleido` binaries by doing the following
-
-```toml
-# Cargo.toml
-
-[dependencies]
-plotly = { version = "0.14", features = ["kaleido", "kaleido_download"] }
-```
-
-Alternatively, enable only the `kaleido` feature and manually install Kaleido.
-```toml
-# Cargo.toml
-
-[dependencies]
-plotly = { version = "0.14", features = ["kaleido"] }
-```
-
-With the feature enabled, plots can be saved as any of `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`. Note that the plot will be a static image, i.e. they will be non-interactive.
-
-Exporting a simple plot looks like this:
-
-```rust
-use plotly::{ImageFormat, Plot};
-
-let mut plot = Plot::new();
-let trace = Scatter::new(vec![0, 1, 2], vec![2, 1, 0]);
-plot.add_trace(trace);
-
-plot.write_image("out.png", ImageFormat::PNG, 800, 600, 1.0);
-```
-
-### Kaleido external dependency
-
-When developing applications for your host, enabling both `kaleido` and `kaleido_download` features will ensure that the `kaleido` binary is downloaded for your system's architecture at compile time. After download, it is unpacked into a specific path, e.g., on Linux this is `/home/USERNAME/.config/kaleido`. With these two features enabled, static images can be exported as described in the next section as long as the application runs on the same machine where it has been compiled on.
-
-When the applications developed with `plotly.rs` are intended for other targets or when the user wants to control where the `kaleido` binary is installed then Kaleido must be manually downloaded and installed. Setting the environment variable `KALEIDO_PATH=/path/installed/kaleido/` will ensure that applications that were built with the `kaleido` feature enabled can locate the `kaleido` executable and use it to generate static images.
-
-Kaleido binaries are available on Github [release page](https://github.com/plotly/Kaleido/releases). It currently supports Linux(`x86_64`), Windows(`x86_64`) and MacOS(`x86_64`/`aarch64`).
-
 ## Usage Within a WASM Environment
 
-`Plotly.rs` can be used with a WASM-based frontend framework. Note that the `kaleido` and `plotly_static` static export features are not supported in WASM environments and will throw a compilation error if used. 
+`Plotly.rs` can be used with a WASM-based frontend framework. Note that the `plotly_static` static export features are not supported in WASM environments and will throw a compilation error if used. 
 
 The needed dependencies are automatically enabled for `wasm32` targets at compile time and there is no longer a need for the custom `wasm` flag in this crate.
 
@@ -184,7 +142,7 @@ First, make sure that you have the Plotly JavaScript library in your base HTML t
 <html lang="en">
     <head>
         <!-- snip -->
-        <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-3.7.0.min.js"></script>
     </head>
     <!-- snip -->
 </html>
@@ -262,17 +220,6 @@ However, there are two downsides of using this feature flag, one is that the res
 When the feature is enabled, users can still opt in for the CDN version by using the method `use_cdn_js`.
 
 Note that when using `Plot::to_inline_html()`, it is assumed that the `plotly.js` library is already in scope within the HTML file, so enabling this feature flag will have no effect.
-
-### `kaleido` (legacy)
-
-Adds plot save functionality to the following formats: `png`, `jpeg`, `webp`, `svg`, `pdf` and `eps`.
-
-Requires `Kaleido` to have been previously installed on the host machine. See the following feature flag and [Kaleido external dependency](#kaleido-external-dependency).
-
-### `kaleido_download` (legacy)
-
-Enable download and install of Kaleido binary at build time from [Kaleido releases](https://github.com/plotly/Kaleido/releases/) on the host machine.
-See [Kaleido external dependency](#kaleido-external-dependency) for more details.
 
 # Contributing
 

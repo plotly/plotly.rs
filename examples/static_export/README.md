@@ -4,7 +4,7 @@ This example demonstrates how to use the `plotly_static` crate for exporting Plo
 
 The `plotly_static` provides a interface for converting Plotly plots into various static image formats (PNG, JPEG, WEBP, SVG, PDF) using WebDriver and headless browsers.
 
-In this example it is shown how to use the `StaticExporter` with the old style Kaleido API and also with the new style API. Using the former API is fine for one time static exports, but that API will crate an instance of the `StaticExporter` for each `write_image` call. The new style API is recommended for performance as the same instance of the `StaticExporter` can be reused across multiple exports.  
+In this example it is shown how to use the `StaticExporter` with the one-shot `Plot::write_image` API (the style of the former Kaleido backend) and also with the new style API. Using the former API is fine for one time static exports, but that API will crate an instance of the `StaticExporter` for each `write_image` call. The new style API is recommended for performance as the same instance of the `StaticExporter` can be reused across multiple exports.  
 
 When any of the `plotly` static export features are enabled (`static_export_chromedriver`, `static_export_geckodriver`, or `static_export_default`), both `StaticExporter` (sync) and `AsyncStaticExporter` (async) are available via `plotly::plotly_static`. This example includes separate `sync` and `async` bins demonstrating both.  Refer to the [`plotly_static` API Documentation](https://docs.rs/plotly_static/) a more detailed description.
 
