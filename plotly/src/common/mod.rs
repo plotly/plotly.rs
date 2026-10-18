@@ -246,6 +246,10 @@ pub enum PlotType {
     Sunburst,
     Violin,
     Waterfall,
+    Cone,
+    StreamTube,
+    IsoSurface,
+    Volume,
 }
 
 #[derive(Serialize, Clone, Debug)]

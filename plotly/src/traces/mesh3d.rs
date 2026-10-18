@@ -80,12 +80,12 @@ impl Lighting {
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct LightPosition {
-    /// Numeric vector, representing the X coordinate for each vertex.
-    x: Option<Vec<f64>>,
-    /// Numeric vector, representing the Y coordinate for each vertex.
-    y: Option<Vec<f64>>,
-    /// Numeric vector, representing the Z coordinate for each vertex.
-    z: Option<Vec<f64>>,
+    /// X coordinate of the light source, between -1e5 and 1e5.
+    x: Option<f64>,
+    /// Y coordinate of the light source, between -1e5 and 1e5.
+    y: Option<f64>,
+    /// Z coordinate of the light source, between -1e5 and 1e5.
+    z: Option<f64>,
 }
 
 impl LightPosition {
@@ -471,11 +471,8 @@ mod tests {
 
     #[test]
     fn serialize_light_position() {
-        let light_position = LightPosition::new()
-            .x(vec![10.0])
-            .y(vec![20.0])
-            .z(vec![30.0]);
-        let expected = json!({"x": [10.0], "y": [20.0], "z": [30.0]});
+        let light_position = LightPosition::new().x(10.0).y(20.0).z(30.0);
+        let expected = json!({"x": 10.0, "y": 20.0, "z": 30.0});
 
         assert_eq!(to_value(light_position).unwrap(), expected);
     }

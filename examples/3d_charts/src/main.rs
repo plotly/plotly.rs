@@ -4,8 +4,11 @@ use ndarray::Array;
 use plotly::{
     color::Rgb,
     common::{ColorBar, ColorScale, ColorScalePalette, Font, Marker, MarkerSymbol, Mode},
+    isosurface::{Cap, Caps, IsoSurfaceSurface},
     layout::{Axis, Camera, Layout, LayoutScene, Legend, Margin, ProjectionType},
-    Mesh3D, Plot, Scatter3D, Surface,
+    stream_tube::Starts,
+    volume::OpacityScale,
+    Cone, IsoSurface, Mesh3D, Plot, Scatter3D, StreamTube, Surface, Volume,
 };
 use plotly_utils::write_example_to_html;
 use rand::RngExt;
@@ -260,6 +263,148 @@ fn colorscale_plot(show: bool, file_name: &str) {
 }
 // ANCHOR_END: colorscale_plot
 
+/// Flattened coordinates of an `n`x`n`x`n` grid spanning `[lo, hi]` on each
+/// axis, in the x-fastest order expected by volumetric traces.
+fn grid_3d(n: usize, lo: f64, hi: f64) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
+    let step = (hi - lo) / (n - 1) as f64;
+    let (mut x, mut y, mut z) = (Vec::new(), Vec::new(), Vec::new());
+    for k in 0..n {
+        for j in 0..n {
+            for i in 0..n {
+                x.push(lo + i as f64 * step);
+                y.push(lo + j as f64 * step);
+                z.push(lo + k as f64 * step);
+            }
+        }
+    }
+    (x, y, z)
+}
+
+// Cone Plots
+// ANCHOR: cone_plot
+fn cone_plot(show: bool, file_name: &str) {
+    // A vortex: vectors rotate around the z axis and drift upwards.
+    let (x, y, z) = grid_3d(5, -1.0, 1.0);
+    let u: Vec<f64> = y.iter().map(|y| -y).collect();
+    let v: Vec<f64> = x.clone();
+    let w: Vec<f64> = vec![0.3; x.len()];
+
+    let trace = Cone::new(x, y, z, u, v, w)
+        .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+        .size_ref(0.5)
+        .color_bar(ColorBar::new().title("Norm"));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(
+        Layout::new()
+            .title("Cone plot of a vortex")
+            .scene(LayoutScene::new().camera(Camera::new())),
+    );
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: cone_plot
+
+// Streamtube Plots
+// ANCHOR: streamtube_plot
+fn streamtube_plot(show: bool, file_name: &str) {
+    // Flow along x with a sinusoidal swirl in y and z.
+    let (x, y, z) = grid_3d(8, 0.0, 4.0);
+    let u: Vec<f64> = vec![1.0; x.len()];
+    let v: Vec<f64> = x.iter().map(|x| 0.5 * x.sin()).collect();
+    let w: Vec<f64> = x.iter().map(|x| 0.5 * x.cos()).collect();
+
+    let starts = Starts::new()
+        .x(vec![0.0; 4])
+        .y(vec![1.0, 1.0, 3.0, 3.0])
+        .z(vec![1.0, 3.0, 1.0, 3.0]);
+
+    let trace = StreamTube::new(x, y, z, u, v, w)
+        .starts(starts)
+        .size_ref(0.5)
+        .color_scale(ColorScale::Palette(ColorScalePalette::Portland))
+        .show_scale(false);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Streamtubes following a swirling flow"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: streamtube_plot
+
+// Isosurface Plots
+// ANCHOR: isosurface_plot
+fn isosurface_plot(show: bool, file_name: &str) {
+    let (x, y, z) = grid_3d(20, -1.0, 1.0);
+    let value: Vec<f64> = x
+        .iter()
+        .zip(&y)
+        .zip(&z)
+        .map(|((x, y), z)| x * x + y * y + z * z)
+        .collect();
+
+    let trace = IsoSurface::new(x, y, z, value)
+        .iso_min(0.2)
+        .iso_max(0.8)
+        .surface(IsoSurfaceSurface::new().count(3))
+        .caps(
+            Caps::new()
+                .x(Cap::new().show(false))
+                .y(Cap::new().show(false))
+                .z(Cap::new().show(false)),
+        )
+        .opacity(0.6)
+        .color_scale(ColorScale::Palette(ColorScalePalette::Blues));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Nested spherical isosurfaces"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: isosurface_plot
+
+// Volume Plots
+// ANCHOR: volume_plot
+fn volume_plot(show: bool, file_name: &str) {
+    let (x, y, z) = grid_3d(20, -1.0, 1.0);
+    let value: Vec<f64> = x
+        .iter()
+        .zip(&y)
+        .zip(&z)
+        .map(|((x, y), z)| (3.0 * x).sin() * (3.0 * y).cos() * (3.0 * z).sin())
+        .collect();
+
+    let trace = Volume::new(x, y, z, value)
+        .iso_min(-0.5)
+        .iso_max(0.5)
+        .opacity(0.1)
+        .opacity_scale(OpacityScale::Extremes)
+        .surface(IsoSurfaceSurface::new().count(15))
+        .color_scale(ColorScale::Palette(ColorScalePalette::RdBu));
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Volume rendering"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: volume_plot
+
 fn main() {
     // Change false to true on any of these lines to display the example.
     // Scatter3D Plots
@@ -273,4 +418,12 @@ fn main() {
 
     // Mesh Plots
     mesh_3d_plot(false, "mesh_3d_plot");
+
+    // Vector Field Plots
+    cone_plot(false, "cone_plot");
+    streamtube_plot(false, "streamtube_plot");
+
+    // Volume Plots
+    isosurface_plot(false, "isosurface_plot");
+    volume_plot(false, "volume_plot");
 }
