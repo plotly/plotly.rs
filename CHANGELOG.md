@@ -48,7 +48,8 @@ Highlights: plotly.rs now exposes every non-deprecated plotly.js 3.7 trace type 
 ### Fixed
 
 - `Plot::add_frames` no longer adds every frame twice when the plot has no frames yet
-- `LayoutPolar`, its axes, `PolarTickMode` and the geo `Rotation` no longer serialize unset fields as `null`. plotly.js applies a layout template only to attributes that are absent, so the `null`s overrode the theme: a polar subplot drew a white background on a dark template
+- `LayoutPolar`, its axes, `PolarTickMode` and the geo `Rotation` no longer serialize unset fields as `null`, so the JSON carries only the attributes that were set
+- The `plotly_dark` template now styles polar and ternary subplots (dark background, grid and axis lines, matching plotly.py's `plotly_dark`); polar and ternary charts drew a white background on it
 
 ### Security
 
