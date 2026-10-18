@@ -16,3 +16,4 @@ Sankey Diagrams | [![Sankey Diagrams](./img/basic_sankey.png)](./basic_charts/sa
 Parallel Categories | [![Parallel Categories](./img/parallelcat.png)](./basic_charts/parcats_charts.md)
 Indicator Charts | [![Indicator Charts](./img/indicator.png)](./basic_charts/indicator_charts.md)
 Polar Bar Charts | [Polar Bar Charts](./basic_charts/polar_bar_charts.md)
+Parallel Coordinates | [Parallel Coordinates](./basic_charts/parcoords_charts.md)
