@@ -251,6 +251,8 @@ pub enum PlotType {
     IsoSurface,
     Volume,
     Parcoords,
+    ScatterTernary,
+    ScatterSmith,
 }
 
 #[derive(Serialize, Clone, Debug)]

@@ -3,8 +3,10 @@
 use std::f64::consts::PI;
 
 use plotly::common::{ColorScale, ColorScalePalette, Font, HoverInfo};
+use plotly::common::{Marker, Mode};
 use plotly::contour::Contours;
-use plotly::{Contour, HeatMap, Layout, Plot};
+use plotly::layout::{LayoutSmith, LayoutTernary, TernaryAxis};
+use plotly::{Contour, HeatMap, Layout, Plot, ScatterSmith, ScatterTernary};
 use plotly_utils::write_example_to_html;
 
 // Contour Plots
@@ -185,6 +187,60 @@ fn customized_heat_map(show: bool, file_name: &str) {
 }
 // ANCHOR_END: customized_heat_map
 
+// Ternary Plots
+// ANCHOR: ternary_plot
+fn ternary_plot(show: bool, file_name: &str) {
+    // Soil composition: each sample is a mix of clay, sand and silt (in %).
+    let clay = vec![30.0, 10.0, 55.0, 20.0, 40.0];
+    let sand = vec![50.0, 70.0, 15.0, 30.0, 20.0];
+    let silt = vec![20.0, 20.0, 30.0, 50.0, 40.0];
+
+    let trace = ScatterTernary::new(clay, sand, silt)
+        .mode(Mode::MarkersText)
+        .text_array(vec!["Loam", "Sandy loam", "Clay", "Silt loam", "Clay loam"])
+        .marker(Marker::new().size(12));
+
+    let layout = Layout::new().title("Soil composition").ternary(
+        LayoutTernary::new()
+            .sum(100.0)
+            .a_axis(TernaryAxis::new().title("Clay"))
+            .b_axis(TernaryAxis::new().title("Sand"))
+            .c_axis(TernaryAxis::new().title("Silt")),
+    );
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: ternary_plot
+
+// Smith Charts
+// ANCHOR: smith_chart
+fn smith_chart(show: bool, file_name: &str) {
+    // Normalized impedance of a load swept in frequency.
+    let real = vec![0.5, 1.0, 2.0, 3.0, 2.0, 1.0, 0.5];
+    let imag = vec![0.5, 1.0, 1.5, 0.0, -1.5, -1.0, -0.5];
+
+    let trace = ScatterSmith::new(real, imag)
+        .mode(Mode::LinesMarkers)
+        .name("Load impedance");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Smith Chart").smith(LayoutSmith::new()));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: smith_chart
+
 fn main() {
     // Change false to true on any of these lines to display the example.
     // Contour Plots
@@ -199,4 +255,10 @@ fn main() {
     // Heatmaps
     basic_heat_map(false, "basic_heat_map");
     customized_heat_map(false, "customized_heat_map");
+
+    // Ternary Plots
+    ternary_plot(false, "ternary_plot");
+
+    // Smith Charts
+    smith_chart(false, "smith_chart");
 }

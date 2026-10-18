@@ -26,6 +26,8 @@ mod rangebreaks;
 mod scene;
 mod shape;
 mod slider;
+mod smith;
+mod ternary;
 
 // Re-export layout sub-module types
 pub use self::animation::{
@@ -66,6 +68,8 @@ pub use self::slider::{
     Slider, SliderCurrentValue, SliderCurrentValueXAnchor, SliderMethod, SliderStep,
     SliderStepBuilder, SliderTransition, SliderTransitionEasing,
 };
+pub use self::smith::{ImaginaryAxis, LayoutSmith, RealAxis, RealAxisSide, RealAxisTicks};
+pub use self::ternary::{LayoutTernary, TernaryAxis};
 
 /// Error type for `ControlBuilder` operations
 #[derive(Debug)]
@@ -350,7 +354,8 @@ pub struct LayoutFields {
     y_axis8: Option<Box<Axis>>,
     #[serde(rename = "zaxis8")]
     z_axis8: Option<Box<Axis>>,
-    // ternary: Option<LayoutTernary>,
+    ternary: Option<LayoutTernary>,
+    smith: Option<LayoutSmith>,
     scene: Option<LayoutScene>,
     geo: Option<LayoutGeo>,
     map: Option<LayoutMap>,
@@ -679,6 +684,26 @@ mod tests {
     fn serialize_layout_ui_revision() {
         let layout = Layout::new().ui_revision("forever");
         assert_eq!(to_value(layout).unwrap()["uirevision"], json!("forever"));
+    }
+
+    #[test]
+    fn serialize_layout_subplots_and_funnel_area_colors() {
+        let layout = Layout::new()
+            .ternary(LayoutTernary::new().sum(1.0))
+            .smith(LayoutSmith::new())
+            .funnel_area_colorway(vec!["#111111"])
+            .extend_funnel_area_colors(false)
+            .hidden_labels(vec!["a"]);
+
+        let expected = json!({
+            "ternary": {"sum": 1.0},
+            "smith": {},
+            "funnelareacolorway": ["#111111"],
+            "extendfunnelareacolors": false,
+            "hiddenlabels": ["a"],
+        });
+
+        assert_eq!(to_value(layout).unwrap(), expected);
     }
 
     #[test]
