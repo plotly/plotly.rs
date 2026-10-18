@@ -250,6 +250,7 @@ pub enum PlotType {
     StreamTube,
     IsoSurface,
     Volume,
+    Parcoords,
 }
 
 #[derive(Serialize, Clone, Debug)]
