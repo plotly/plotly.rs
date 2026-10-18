@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [0.15.0] - 2026-10-17
+## [0.15.0] - 2026-10-18
 
 This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is planned for 0.16.0 ([#437](https://github.com/plotly/plotly.rs/issues/437)).
+
+Highlights: plotly.rs now exposes every non-deprecated plotly.js 3.7 trace type ([#422](https://github.com/plotly/plotly.rs/issues/422)) — 26 trace types are new since 0.14.1 — adds the MapLibre `map`, ternary and Smith chart subplots, and drops the deprecated Kaleido backend. Breaking changes are marked **Breaking** below.
 
 ### Added
 
@@ -22,6 +24,9 @@ This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator`, `Histogram2d`, `Icicle` trace types 
 - [[#425](https://github.com/plotly/plotly.rs/issues/425)] Add `Splom` and `Parcats` trace types (scatter-plot matrix and parallel categories) 
 - [[#432](https://github.com/plotly/plotly.rs/issues/432)] Add `Funnel` and `Waterfall` trace types
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Complete trace-type coverage for plotly.js 3.7: add `BarPolar`, `FunnelArea`, `Cone`, `StreamTube`, `IsoSurface`, `Volume`, `Parcoords`, `ScatterTernary`, `ScatterSmith`, `Carpet`, `ScatterCarpet` and `ContourCarpet`. Every non-deprecated plotly.js 3.7 trace type is now exposed. The new traces omit Chart Studio `*src` attributes, which plotly.js 4 removes
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add the ternary and Smith chart subplots (`LayoutTernary`/`TernaryAxis`, `LayoutSmith`/`RealAxis`/`ImaginaryAxis`), polar-subplot `bar_mode`/`bar_gap` (`PolarBarMode`) for `BarPolar`, the `funnelareacolorway`/`extendfunnelareacolors`/`hiddenlabels` layout attributes, and `ThetaUnit::Gradians` (breaking for exhaustive matches on `ThetaUnit`)
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Examples and mdBook recipe pages for every new trace type: polar bar, parallel coordinates, funnel area, vector field (cone/streamtube), isosurface/volume, ternary, Smith and carpet charts
 
 ### Changed
 
@@ -33,6 +38,7 @@ This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is
 - Bump example dependencies: `reqwest` 0.13, `env_logger` 0.11, `itertools` 0.15, `ndarray` 0.17, `rand`/`rand_chacha` 0.10
 - Theme statics in `plotly::layout::themes` (`DEFAULT`, `PLOTLY_WHITE`, `PLOTLY_DARK`, …) are now `std::sync::LazyLock<Template>` instead of `once_cell::sync::Lazy<Template>`; the `once_cell` dependency is dropped. Code that only dereferences them is unaffected
 - Add `# Errors`/`# Panics` sections to public fallible APIs and tidy doc formatting (clippy `missing_errors_doc`, `missing_panics_doc`, `doc_markdown`)
+- **Breaking**: `mesh3d::LightPosition` fields `x`/`y`/`z` are now `f64` instead of `Vec<f64>`. plotly.js expects a single number per coordinate and silently ignored the arrays, so `Mesh3D` light positions never took effect. Replace e.g. `.x(vec![10.0])` with `.x(10.0)`. `LightPosition` and `Lighting` are now also used by the new `Cone`, `StreamTube`, `IsoSurface` and `Volume` traces
 
 ### Removed
 
