@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is planned for 0.16.0 ([#437](https://github.com/plotly/plotly.rs/issues/437)).
 
-Highlights: plotly.rs now exposes every non-deprecated plotly.js 3.7 trace type ([#422](https://github.com/plotly/plotly.rs/issues/422)) — 26 trace types are new since 0.14.1 — adds the MapLibre `map`, ternary and Smith chart subplots, and drops the deprecated Kaleido backend. Breaking changes are marked **Breaking** below.
+Highlights: plotly.rs now exposes every non-deprecated plotly.js 3.7 trace type ([#422](https://github.com/plotly/plotly.rs/issues/422)) — 27 trace types are new since 0.14.1 — adds the MapLibre `map`, ternary and Smith chart subplots, and drops the deprecated Kaleido backend. Breaking changes are marked **Breaking** below.
 
 ### Added
 
@@ -24,9 +24,9 @@ Highlights: plotly.rs now exposes every non-deprecated plotly.js 3.7 trace type 
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add `Indicator`, `Histogram2d`, `Icicle` trace types 
 - [[#425](https://github.com/plotly/plotly.rs/issues/425)] Add `Splom` and `Parcats` trace types (scatter-plot matrix and parallel categories) 
 - [[#432](https://github.com/plotly/plotly.rs/issues/432)] Add `Funnel` and `Waterfall` trace types
-- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Complete trace-type coverage for plotly.js 3.7: add `BarPolar`, `FunnelArea`, `Cone`, `StreamTube`, `IsoSurface`, `Volume`, `Parcoords`, `ScatterTernary`, `ScatterSmith`, `Carpet`, `ScatterCarpet` and `ContourCarpet`. Every non-deprecated plotly.js 3.7 trace type is now exposed. The new traces omit Chart Studio `*src` attributes, which plotly.js 4 removes
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Complete trace-type coverage for plotly.js 3.7: add `BarPolar`, `FunnelArea`, `Cone`, `StreamTube`, `IsoSurface`, `Volume`, `Parcoords`, `ScatterTernary`, `ScatterSmith`, `Carpet`, `ScatterCarpet`, `ContourCarpet` and `Histogram2dContour` (which previously had a `PlotType` variant but no trace to emit it). Every non-deprecated plotly.js 3.7 trace type is now exposed. The new traces omit Chart Studio `*src` attributes, which plotly.js 4 removes
 - [[#422](https://github.com/plotly/plotly.rs/issues/422)] Add the ternary and Smith chart subplots (`LayoutTernary`/`TernaryAxis`, `LayoutSmith`/`RealAxis`/`ImaginaryAxis`), polar-subplot `bar_mode`/`bar_gap` (`PolarBarMode`) for `BarPolar`, the `funnelareacolorway`/`extendfunnelareacolors`/`hiddenlabels` layout attributes, and `ThetaUnit::Gradians` (breaking for exhaustive matches on `ThetaUnit`)
-- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Examples and mdBook recipe pages for every new trace type: polar bar, parallel coordinates, funnel area, vector field (cone/streamtube), isosurface/volume, ternary, Smith and carpet charts
+- [[#422](https://github.com/plotly/plotly.rs/issues/422)] Examples and mdBook recipe pages for every new trace type: polar bar, parallel coordinates, funnel area, vector field (cone/streamtube), isosurface/volume, ternary, Smith and carpet charts, and 2D histogram contours
 
 ### Changed
 

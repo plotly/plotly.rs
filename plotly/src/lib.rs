@@ -32,19 +32,19 @@ pub use plot::{Plot, Trace, Traces};
 // Also provide easy access to modules which contain additional trace-specific types
 pub use traces::{
     bar_polar, box_plot, carpet, choropleth, choropleth_map, cone, contour, contour_carpet,
-    density_map, funnel, funnel_area, heat_map, histogram, histogram2d, icicle, image, indicator,
-    isosurface, mesh3d, parcats, parcoords, sankey, scatter, scatter3d, scatter_carpet,
-    scatter_map, scatter_mapbox, scatter_smith, scatter_ternary, splom, stream_tube, sunburst,
-    surface, treemap, violin, volume, waterfall,
+    density_map, funnel, funnel_area, heat_map, histogram, histogram2d, histogram2d_contour,
+    icicle, image, indicator, isosurface, mesh3d, parcats, parcoords, sankey, scatter, scatter3d,
+    scatter_carpet, scatter_map, scatter_mapbox, scatter_smith, scatter_ternary, splom,
+    stream_tube, sunburst, surface, treemap, violin, volume, waterfall,
 };
 // Bring the different trace types into the top-level scope
 pub use traces::{
     Bar, BarPolar, BoxPlot, Candlestick, Carpet, Choropleth, ChoroplethMap, Cone, Contour,
     ContourCarpet, DensityMap, DensityMapbox, Funnel, FunnelArea, HeatMap, Histogram, Histogram2d,
-    Icicle, Image, Indicator, IsoSurface, Mesh3D, Ohlc, Parcats, Parcoords, Pie, Sankey, Scatter,
-    Scatter3D, ScatterCarpet, ScatterGeo, ScatterMap, ScatterMapbox, ScatterPolar, ScatterSmith,
-    ScatterTernary, Splom, StreamTube, Sunburst, Surface, Table, Treemap, Violin, Volume,
-    Waterfall,
+    Histogram2dContour, Icicle, Image, Indicator, IsoSurface, Mesh3D, Ohlc, Parcats, Parcoords,
+    Pie, Sankey, Scatter, Scatter3D, ScatterCarpet, ScatterGeo, ScatterMap, ScatterMapbox,
+    ScatterPolar, ScatterSmith, ScatterTernary, Splom, StreamTube, Sunburst, Surface, Table,
+    Treemap, Violin, Volume, Waterfall,
 };
 
 pub trait Restyle: serde::Serialize {}
