@@ -34,6 +34,8 @@
     - [Scientific Charts](./recipes/scientific_charts.md)
        - [Contour Plots](./recipes/scientific_charts/contour_plots.md)
        - [Heatmaps](./recipes/scientific_charts/heatmaps.md)
+       - [Ternary Plots](./recipes/scientific_charts/ternary_plots.md)
+       - [Smith Charts](./recipes/scientific_charts/smith_charts.md)
     - [Financial Charts](./recipes/financial_charts.md)
        - [Time Series and Date Axes](./recipes/financial_charts/time_series_and_date_axes.md)
        - [Candlestick Charts](./recipes/financial_charts/candlestick_charts.md)
