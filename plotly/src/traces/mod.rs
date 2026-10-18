@@ -1,6 +1,7 @@
 //! The various supported traces
 
 pub mod bar;
+pub mod bar_polar;
 pub mod box_plot;
 mod candlestick;
 pub mod choropleth;
@@ -9,6 +10,7 @@ pub mod contour;
 pub mod density_map;
 mod density_mapbox;
 pub mod funnel;
+pub mod funnel_area;
 pub mod heat_map;
 pub mod histogram;
 pub mod histogram2d;
@@ -35,6 +37,7 @@ pub mod violin;
 pub mod waterfall;
 
 pub use bar::Bar;
+pub use bar_polar::BarPolar;
 pub use box_plot::BoxPlot;
 pub use candlestick::Candlestick;
 pub use choropleth::Choropleth;
@@ -43,6 +46,7 @@ pub use contour::Contour;
 pub use density_map::DensityMap;
 pub use density_mapbox::DensityMapbox;
 pub use funnel::Funnel;
+pub use funnel_area::FunnelArea;
 pub use heat_map::HeatMap;
 pub use histogram::Histogram;
 pub use histogram2d::Histogram2d;

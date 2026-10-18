@@ -15,3 +15,4 @@ Icicle Charts | [![Icicle Charts](./img/icicle.png)](./basic_charts/icicle_chart
 Sankey Diagrams | [![Sankey Diagrams](./img/basic_sankey.png)](./basic_charts/sankey_diagrams.md)
 Parallel Categories | [![Parallel Categories](./img/parallelcat.png)](./basic_charts/parcats_charts.md)
 Indicator Charts | [![Indicator Charts](./img/indicator.png)](./basic_charts/indicator_charts.md)
+Polar Bar Charts | [Polar Bar Charts](./basic_charts/polar_bar_charts.md)

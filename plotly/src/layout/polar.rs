@@ -44,6 +44,14 @@ pub struct LayoutPolar {
     /// configuration.
     #[serde(rename = "uirevision")]
     ui_revision: Option<NumOrString>,
+    /// Determines how [`BarPolar`](crate::traces::BarPolar) traces on this
+    /// subplot are displayed relative to one another.
+    #[serde(rename = "barmode")]
+    bar_mode: Option<PolarBarMode>,
+    /// Sets the gap between bars of adjacent locations on this subplot, as a
+    /// fraction of the bar width (between 0.0 and 1.0).
+    #[serde(rename = "bargap")]
+    bar_gap: Option<f64>,
 }
 
 impl LayoutPolar {
@@ -549,6 +557,18 @@ pub enum RadialAxisType {
 pub enum ThetaUnit {
     Degrees,
     Radians,
+    Gradians,
+}
+
+/// Determines how [`BarPolar`](crate::traces::BarPolar) traces on the same
+/// polar subplot are displayed relative to one another.
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PolarBarMode {
+    /// Bars are stacked on top of one another.
+    Stack,
+    /// Bars are plotted over one another.
+    Overlay,
 }
 
 #[cfg(test)]
@@ -615,12 +635,14 @@ mod tests {
             .bg_color("#dddddd")
             .radial_axis(radial_axis)
             .angular_axis(angular_axis)
-            .grid_shape(GridShape::Circular);
+            .grid_shape(GridShape::Circular)
+            .bar_mode(PolarBarMode::Overlay)
+            .bar_gap(0.3);
 
         let layout = Layout::new().polar(layout_polar);
         let json = serde_json::to_string(&layout).unwrap();
 
-        let expected = r##"{"polar":{"sector":[0.0,270.0],"hole":0.2,"bgcolor":"#dddddd","radialaxis":{"visible":true,"type":"linear","autotypenumbers":"strict","autorangeoptions":{"minallowed":1,"maxallowed":null,"clipmin":null,"clipmax":null,"include":null},"autorange":true,"rangemode":"normal","minallowed":0,"maxallowed":105,"range":[5,100],"categoryorder":"trace","categoryarray":["category 1","category 2"],"angle":0.0,"autotickangles":[0.0,12.2,30.85],"side":"counterclockwise","title":{"text":"My Title"},"hoverformat":"%{label}: <br>Popularity: %{percent} </br> %{text}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"angularaxis":{"visible":true,"type":"-","autotypenumbers":"convert types","categoryorder":"category ascending","categoryarray":["category 3","category 4"],"thetaunit":"radians","period":10,"direction":"counterclockwise","rotation":5.0,"hoverformat":"GDP: %{x} <br>Life Expectancy: %{y}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"gridshape":"circular","uirevision":null}}"##;
+        let expected = r##"{"polar":{"sector":[0.0,270.0],"hole":0.2,"bgcolor":"#dddddd","radialaxis":{"visible":true,"type":"linear","autotypenumbers":"strict","autorangeoptions":{"minallowed":1,"maxallowed":null,"clipmin":null,"clipmax":null,"include":null},"autorange":true,"rangemode":"normal","minallowed":0,"maxallowed":105,"range":[5,100],"categoryorder":"trace","categoryarray":["category 1","category 2"],"angle":0.0,"autotickangles":[0.0,12.2,30.85],"side":"counterclockwise","title":{"text":"My Title"},"hoverformat":"%{label}: <br>Popularity: %{percent} </br> %{text}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"angularaxis":{"visible":true,"type":"-","autotypenumbers":"convert types","categoryorder":"category ascending","categoryarray":["category 3","category 4"],"thetaunit":"radians","period":10,"direction":"counterclockwise","rotation":5.0,"hoverformat":"GDP: %{x} <br>Life Expectancy: %{y}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"gridshape":"circular","uirevision":null,"barmode":"overlay","bargap":0.3}}"##;
 
         assert_eq!(json, expected);
     }

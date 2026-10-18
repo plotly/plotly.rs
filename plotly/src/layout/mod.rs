@@ -51,7 +51,7 @@ pub use self::modes::{
 pub use self::polar::{
     AngularAxis, AngularAxisType, AutoRange, AutoRangeOptions, AutoTypeNumbers, AxisLayer,
     GridShape, Hole, LayoutPolar, MinorLogLabels, PolarAxisAttributes, PolarAxisTicks,
-    PolarDirection, PolarTickMode, RadialAxis, RadialAxisType, ThetaUnit,
+    PolarBarMode, PolarDirection, PolarTickMode, RadialAxis, RadialAxisType, ThetaUnit,
 };
 pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
@@ -405,6 +405,13 @@ pub struct LayoutFields {
     treemap_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendtreemapcolors")]
     extend_treemap_colors: Option<bool>,
+    #[serde(rename = "funnelareacolorway")]
+    funnel_area_colorway: Option<Vec<Box<dyn Color>>>,
+    #[serde(rename = "extendfunnelareacolors")]
+    extend_funnel_area_colors: Option<bool>,
+    /// Hides the pie / funnel area sectors whose labels are listed here.
+    #[serde(rename = "hiddenlabels")]
+    hidden_labels: Option<Vec<String>>,
     mapbox: Option<Mapbox>,
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
