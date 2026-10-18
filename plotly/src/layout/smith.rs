@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
@@ -74,8 +76,10 @@ pub struct RealAxis {
     show_tick_suffix: Option<ArrayShow>,
     #[serde(rename = "showticklabels")]
     show_tick_labels: Option<bool>,
+    /// Replacement text for specific tick labels, keyed by the original
+    /// label (e.g. `{"0.5": "half"}`).
     #[serde(rename = "labelalias")]
-    label_alias: Option<String>,
+    label_alias: Option<HashMap<String, String>>,
     #[serde(rename = "hoverformat")]
     hover_format: Option<String>,
 }
@@ -131,8 +135,10 @@ pub struct ImaginaryAxis {
     show_tick_suffix: Option<ArrayShow>,
     #[serde(rename = "showticklabels")]
     show_tick_labels: Option<bool>,
+    /// Replacement text for specific tick labels, keyed by the original
+    /// label (e.g. `{"0.5": "half"}`).
     #[serde(rename = "labelalias")]
-    label_alias: Option<String>,
+    label_alias: Option<HashMap<String, String>>,
     #[serde(rename = "hoverformat")]
     hover_format: Option<String>,
 }
@@ -196,7 +202,7 @@ mod tests {
             .tick_suffix("ohm")
             .show_tick_suffix(ArrayShow::All)
             .show_tick_labels(true)
-            .label_alias("alias")
+            .label_alias(HashMap::from([("1".to_string(), "one".to_string())]))
             .hover_format(".2f");
 
         let expected = json!({
@@ -224,7 +230,7 @@ mod tests {
             "ticksuffix": "ohm",
             "showticksuffix": "all",
             "showticklabels": true,
-            "labelalias": "alias",
+            "labelalias": {"1": "one"},
             "hoverformat": ".2f",
         });
 

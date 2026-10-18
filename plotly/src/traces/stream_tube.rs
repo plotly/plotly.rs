@@ -11,7 +11,7 @@ use crate::{
 };
 
 /// Starting positions of the streamtubes. When unset, tubes start from the
-/// `x`-`y`-`z` plane at the lowest `x`.
+/// x-z plane at the lowest `y`, at every interior grid point of that plane.
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Starts {

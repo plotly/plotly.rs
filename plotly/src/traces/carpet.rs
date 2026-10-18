@@ -1,5 +1,7 @@
 //! Carpet trace (a 2D `a`/`b` coordinate system drawn on cartesian axes)
 
+use std::collections::HashMap;
+
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
@@ -147,8 +149,10 @@ pub struct CarpetAxis {
     show_tick_suffix: Option<ArrayShow>,
     #[serde(rename = "showticklabels")]
     show_tick_labels: Option<CarpetShowTickLabels>,
+    /// Replacement text for specific tick labels, keyed by the original
+    /// label (e.g. `{"0.5": "half"}`).
     #[serde(rename = "labelalias")]
-    label_alias: Option<String>,
+    label_alias: Option<HashMap<String, String>>,
     #[serde(rename = "labelpadding")]
     label_padding: Option<i32>,
     #[serde(rename = "labelprefix")]
@@ -397,7 +401,7 @@ mod tests {
             .tick_suffix("s")
             .show_tick_suffix(ArrayShow::Last)
             .show_tick_labels(CarpetShowTickLabels::Both)
-            .label_alias("alias")
+            .label_alias(HashMap::from([("4".to_string(), "four".to_string())]))
             .label_padding(10)
             .label_prefix("a = ")
             .label_suffix("!")
@@ -453,7 +457,7 @@ mod tests {
             "ticksuffix": "s",
             "showticksuffix": "last",
             "showticklabels": "both",
-            "labelalias": "alias",
+            "labelalias": {"4": "four"},
             "labelpadding": 10,
             "labelprefix": "a = ",
             "labelsuffix": "!",

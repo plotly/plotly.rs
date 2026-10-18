@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use plotly_derive::FieldSetter;
 use serde::Serialize;
 
@@ -71,8 +73,10 @@ pub struct TernaryAxis {
     show_tick_suffix: Option<ArrayShow>,
     #[serde(rename = "showticklabels")]
     show_tick_labels: Option<bool>,
+    /// Replacement text for specific tick labels, keyed by the original
+    /// label (e.g. `{"0.5": "half"}`).
     #[serde(rename = "labelalias")]
-    label_alias: Option<String>,
+    label_alias: Option<HashMap<String, String>>,
     #[serde(rename = "showexponent")]
     show_exponent: Option<ArrayShow>,
     #[serde(rename = "exponentformat")]
@@ -160,7 +164,7 @@ mod tests {
             .tick_suffix("s")
             .show_tick_suffix(ArrayShow::Last)
             .show_tick_labels(true)
-            .label_alias("alias")
+            .label_alias(HashMap::from([("0.5".to_string(), "half".to_string())]))
             .show_exponent(ArrayShow::None)
             .exponent_format(ExponentFormat::Power)
             .min_exponent(3.0)
@@ -200,7 +204,7 @@ mod tests {
             "ticksuffix": "s",
             "showticksuffix": "last",
             "showticklabels": true,
-            "labelalias": "alias",
+            "labelalias": {"0.5": "half"},
             "showexponent": "none",
             "exponentformat": "power",
             "minexponent": 3.0,

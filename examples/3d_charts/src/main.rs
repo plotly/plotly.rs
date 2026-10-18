@@ -263,6 +263,7 @@ fn colorscale_plot(show: bool, file_name: &str) {
 }
 // ANCHOR_END: colorscale_plot
 
+// ANCHOR: grid_3d
 /// Flattened coordinates of an `n`x`n`x`n` grid spanning `[lo, hi]` on each
 /// axis, in the x-fastest order expected by volumetric traces.
 fn grid_3d(n: usize, lo: f64, hi: f64) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
@@ -279,6 +280,7 @@ fn grid_3d(n: usize, lo: f64, hi: f64) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
     }
     (x, y, z)
 }
+// ANCHOR_END: grid_3d
 
 // Cone Plots
 // ANCHOR: cone_plot

@@ -388,7 +388,7 @@ fn basic_funnel_area(show: bool, file_name: &str) {
             "Subscribed",
             "Renewed",
         ])
-        .text_info("label+value+percent initial")
+        .text_info("label+value+percent")
         .marker(Marker::new().colors(vec![
             NamedColor::RoyalBlue,
             NamedColor::DodgerBlue,

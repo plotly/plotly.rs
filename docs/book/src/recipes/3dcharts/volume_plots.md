@@ -18,6 +18,12 @@ use plotly::volume::OpacityScale;
 use plotly::{IsoSurface, Plot, Volume};
 ```
 
+The examples on this page build their grid with the following helper:
+
+```rust,no_run
+{{#include ../../../../../examples/3d_charts/src/main.rs:grid_3d}}
+```
+
 The `to_inline_html` method is used to produce the html plot displayed in this page.
 
 ## Isosurface Plot
