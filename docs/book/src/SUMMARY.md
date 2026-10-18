@@ -21,6 +21,7 @@
         - [Icicle Charts](./recipes/basic_charts/icicle_charts.md)
         - [Sankey Diagrams](./recipes/basic_charts/sankey_diagrams.md)
         - [Parallel Categories](./recipes/basic_charts/parcats_charts.md)
+        - [Polar Bar Charts](./recipes/basic_charts/polar_bar_charts.md)
         - [Indicator Charts](./recipes/basic_charts/indicator_charts.md)
     - [Statistical Charts](./recipes/statistical_charts.md)
         - [Error Bars](./recipes/statistical_charts/error_bars.md)

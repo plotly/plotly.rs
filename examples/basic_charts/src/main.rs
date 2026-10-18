@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use ndarray::Array;
+use plotly::layout::PolarBarMode;
 use plotly::{
     color::{NamedColor, Rgb, Rgba},
     common::{
@@ -30,8 +31,8 @@ use plotly::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
     treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
-    Bar, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table,
-    Treemap,
+    Bar, BarPolar, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst,
+    Table, Treemap,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -1476,6 +1477,51 @@ fn indicator_gauge(show: bool, file_name: &str) {
 }
 // ANCHOR_END: indicator_gauge
 
+// Polar Bar Charts
+// ANCHOR: wind_rose
+fn wind_rose(show: bool, file_name: &str) {
+    let directions = vec!["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    let bands = [
+        (
+            "< 5 m/s",
+            vec![7.0, 5.5, 4.5, 6.0, 5.0, 6.5, 7.5, 6.0],
+            NamedColor::LightSkyBlue,
+        ),
+        (
+            "5-10 m/s",
+            vec![5.0, 3.5, 2.5, 4.0, 3.0, 4.5, 6.0, 4.5],
+            NamedColor::DodgerBlue,
+        ),
+        (
+            "> 10 m/s",
+            vec![2.5, 1.5, 1.0, 2.0, 1.5, 2.5, 3.5, 2.0],
+            NamedColor::DarkBlue,
+        ),
+    ];
+
+    let mut plot = Plot::new();
+    for (name, frequency, color) in bands {
+        let trace = BarPolar::new(directions.clone(), frequency)
+            .name(name)
+            .marker(Marker::new().color(color));
+        plot.add_trace(trace);
+    }
+
+    let layout = Layout::new().title("Wind Rose").polar(
+        LayoutPolar::new()
+            .bar_mode(PolarBarMode::Stack)
+            .bar_gap(0.1)
+            .angular_axis(AngularAxis::new().direction(PolarDirection::Clockwise)),
+    );
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: wind_rose
+
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -1534,6 +1580,9 @@ fn main() {
     // Parallel Categories
     basic_parcats(false, "basic_parcats");
     styled_parcats(false, "styled_parcats");
+
+    // Polar Bar Charts
+    wind_rose(false, "wind_rose");
 
     // Indicator Charts
     basic_indicator(false, "basic_indicator");

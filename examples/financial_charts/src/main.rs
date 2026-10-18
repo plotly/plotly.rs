@@ -7,9 +7,10 @@ use chrono::{DateTime, Duration};
 use plotly::color::NamedColor;
 use plotly::common::{Marker, TickFormatStop};
 use plotly::funnel::Connector as FunnelConnector;
+use plotly::funnel_area::{FunnelAreaTitle, FunnelAreaTitlePosition};
 use plotly::layout::{Axis, RangeSelector, RangeSlider, SelectorButton, SelectorStep, StepMode};
 use plotly::waterfall::{Marker as WaterfallMarker, Measure, MeasureStyle};
-use plotly::{Candlestick, Funnel, Layout, Ohlc, Plot, Scatter, Waterfall};
+use plotly::{Candlestick, Funnel, FunnelArea, Layout, Ohlc, Plot, Scatter, Waterfall};
 use plotly_utils::write_example_to_html;
 use serde::Deserialize;
 
@@ -377,6 +378,42 @@ fn basic_funnel(show: bool, file_name: &str) {
 }
 // ANCHOR_END: basic_funnel
 
+// ANCHOR: basic_funnel_area
+fn basic_funnel_area(show: bool, file_name: &str) {
+    let trace = FunnelArea::new(vec![5000, 3200, 1800, 900, 400])
+        .labels(vec![
+            "Visited",
+            "Signed up",
+            "Activated",
+            "Subscribed",
+            "Renewed",
+        ])
+        .text_info("label+value+percent initial")
+        .marker(Marker::new().colors(vec![
+            NamedColor::RoyalBlue,
+            NamedColor::DodgerBlue,
+            NamedColor::DeepSkyBlue,
+            NamedColor::LightSkyBlue,
+            NamedColor::LightBlue,
+        ]))
+        .title(
+            FunnelAreaTitle::new()
+                .text("Subscription funnel")
+                .position(FunnelAreaTitlePosition::TopCenter),
+        )
+        .base_ratio(0.2);
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Funnel Area"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_funnel_area
+
 // ANCHOR: series_with_gaps_for_weekends_and_holidays
 fn series_with_gaps_for_weekends_and_holidays(show: bool, file_name: &str) {
     let data = load_apple_data();
@@ -565,6 +602,7 @@ fn main() {
 
     // Funnel Charts
     basic_funnel(false, "basic_funnel");
+    basic_funnel_area(false, "basic_funnel_area");
 
     // Rangebreaks usage
     series_with_gaps_for_weekends_and_holidays(false, "series_with_gaps_for_weekends_and_holidays");
