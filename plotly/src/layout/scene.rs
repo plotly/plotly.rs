@@ -334,6 +334,7 @@ impl From<ProjectionType> for Projection {
 }
 
 /// Sets the rotation of the map projection.
+#[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct Rotation {
     /// Rotates the map along meridians (in degrees North).

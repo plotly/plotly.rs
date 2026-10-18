@@ -14,6 +14,7 @@ use crate::{
 /// (distance from the center) and an angular axis Theta (distance around the
 /// circumference). See [`ScatterPolar`](crate::traces::ScatterPolar) for
 /// details on traces.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct LayoutPolar {
     /// Sets the angular span of the polar subplot using two angles (in
@@ -63,6 +64,7 @@ impl LayoutPolar {
 
 /// Describes the radial axis of the plot, extending from the center to the
 /// periphery.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct RadialAxis {
     visible: Option<bool>,
@@ -148,6 +150,7 @@ impl RadialAxis {
 }
 
 /// Describes the angular (circular) axis of the plot.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct AngularAxis {
     visible: Option<bool>,
@@ -205,6 +208,7 @@ impl AngularAxis {
 
 /// Provides styles for an axis in [`LayoutPolar`]. May be applied to
 /// [`RadialAxis`] or [`AngularAxis`].
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct PolarAxisAttributes {
     color: Option<Box<dyn Color>>,
@@ -237,6 +241,7 @@ impl PolarAxisAttributes {
 
 /// Provides styles for the axis ticks in [`LayoutPolar`]. May be applied to
 /// [`RadialAxis`] or [`AngularAxis`].
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct PolarAxisTicks {
     #[serde(flatten)]
@@ -345,6 +350,7 @@ pub enum AutoRange {
 }
 
 /// Controls how the maximum and minimum values are calculated by autorange.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct AutoRangeOptions {
     /// Use this value as the autorange minimum.
@@ -465,6 +471,7 @@ pub enum PolarDirection {
 /// - [`Array`](PolarTickMode::Array): the placement of the ticks is set via
 ///   [`tick_values`](PolarTickMode::Array::tick_values), and the tick text is
 ///   set via [`tick_text`](PolarTickMode::Array::tick_text).
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "tickmode")]
@@ -642,8 +649,27 @@ mod tests {
         let layout = Layout::new().polar(layout_polar);
         let json = serde_json::to_string(&layout).unwrap();
 
-        let expected = r##"{"polar":{"sector":[0.0,270.0],"hole":0.2,"bgcolor":"#dddddd","radialaxis":{"visible":true,"type":"linear","autotypenumbers":"strict","autorangeoptions":{"minallowed":1,"maxallowed":null,"clipmin":null,"clipmax":null,"include":null},"autorange":true,"rangemode":"normal","minallowed":0,"maxallowed":105,"range":[5,100],"categoryorder":"trace","categoryarray":["category 1","category 2"],"angle":0.0,"autotickangles":[0.0,12.2,30.85],"side":"counterclockwise","title":{"text":"My Title"},"hoverformat":"%{label}: <br>Popularity: %{percent} </br> %{text}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"angularaxis":{"visible":true,"type":"-","autotypenumbers":"convert types","categoryorder":"category ascending","categoryarray":["category 3","category 4"],"thetaunit":"radians","period":10,"direction":"counterclockwise","rotation":5.0,"hoverformat":"GDP: %{x} <br>Life Expectancy: %{y}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"gridshape":"circular","uirevision":null,"barmode":"overlay","bargap":0.3}}"##;
+        let expected = r##"{"polar":{"sector":[0.0,270.0],"hole":0.2,"bgcolor":"#dddddd","radialaxis":{"visible":true,"type":"linear","autotypenumbers":"strict","autorangeoptions":{"minallowed":1},"autorange":true,"rangemode":"normal","minallowed":0,"maxallowed":105,"range":[5,100],"categoryorder":"trace","categoryarray":["category 1","category 2"],"angle":0.0,"autotickangles":[0.0,12.2,30.85],"side":"counterclockwise","title":{"text":"My Title"},"hoverformat":"%{label}: <br>Popularity: %{percent} </br> %{text}","color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","tickcolor":"#dddddd","tickfont":{"color":"#eeeeee"}},"angularaxis":{"visible":true,"type":"-","autotypenumbers":"convert types","categoryorder":"category ascending","categoryarray":["category 3","category 4"],"thetaunit":"radians","period":10,"direction":"counterclockwise","rotation":5.0,"hoverformat":"GDP: %{x} <br>Life Expectancy: %{y}","color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","tickcolor":"#dddddd","tickfont":{"color":"#eeeeee"}},"gridshape":"circular","barmode":"overlay","bargap":0.3}}"##;
 
         assert_eq!(json, expected);
+    }
+
+    // Unset fields must be omitted, not written as `null`: plotly.js applies
+    // the layout template (e.g. a dark theme's polar `bgcolor` and grid
+    // colors) only to attributes that are absent, so an explicit `null`
+    // silently overrides the theme.
+    #[test]
+    fn serialize_layout_polar_omits_unset_fields() {
+        let layout_polar = LayoutPolar::new()
+            .bar_mode(PolarBarMode::Stack)
+            .angular_axis(AngularAxis::new().direction(PolarDirection::Clockwise))
+            .radial_axis(
+                RadialAxis::new().auto_range_options(AutoRangeOptions::default().min_allowed(0)),
+            );
+        let json = serde_json::to_string(&layout_polar).unwrap();
+        assert_eq!(
+            json,
+            r#"{"radialaxis":{"autorangeoptions":{"minallowed":0}},"angularaxis":{"direction":"clockwise"},"barmode":"stack"}"#
+        );
     }
 }
