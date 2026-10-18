@@ -253,6 +253,9 @@ pub enum PlotType {
     Parcoords,
     ScatterTernary,
     ScatterSmith,
+    Carpet,
+    ScatterCarpet,
+    ContourCarpet,
 }
 
 #[derive(Serialize, Clone, Debug)]
