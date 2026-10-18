@@ -5,7 +5,7 @@ points along the `(u, v, w)` vector, colored by the vector norm. `anchor` sets w
 cone sits on the position, and `size_mode`/`size_ref` control how the vector norm maps to cone size.
 
 A `StreamTube` trace follows the flow of the same kind of field: tubes start from the `starts`
-positions (or the lowest-`x` plane) and their diameter reflects the local divergence of the field.
+positions (or, when unset, the interior grid points of the x-z plane at the lowest `y`) and their diameter reflects the local divergence of the field.
 
 The following imports have been used to produce the plots below:
 
@@ -14,6 +14,12 @@ use plotly::common::{ColorBar, ColorScale, ColorScalePalette};
 use plotly::layout::{Camera, Layout, LayoutScene};
 use plotly::stream_tube::Starts;
 use plotly::{Cone, Plot, StreamTube};
+```
+
+The examples on this page build their grid with the following helper:
+
+```rust,no_run
+{{#include ../../../../../examples/3d_charts/src/main.rs:grid_3d}}
 ```
 
 The `to_inline_html` method is used to produce the html plot displayed in this page.
