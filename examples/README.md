@@ -9,3 +9,8 @@ You can also configure the chosen example to open the resulting plots automatica
 For more complex examples, instructions on how to run them can be found in the README of each example's subdirectory.
 
 Pull requests with more examples of different behavior are always welcome.
+
+## Proa page composition
+
+See [`proa`](proa) for an example composing three Plotly figures into a reusable
+Rust layout with page metadata and chart components.
