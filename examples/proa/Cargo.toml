@@ -1,0 +1,15 @@
+[package]
+name = "proa_example"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.93"
+publish = false
+
+[dependencies]
+ndarray = "0.17"
+plotly = { path = "../../plotly" }
+proa_core = "0.3.0"
+proa_framework_core = { version = "0.3.0", default-features = false }
+proa_macros = "0.3.0"
+serde = "1"
+serde_json = "1"

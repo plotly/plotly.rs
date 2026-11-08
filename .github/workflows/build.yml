@@ -221,6 +221,7 @@ jobs:
           kaleido,
           maps,
           ndarray,
+          proa,
           scientific_charts,
           shapes,
           statistical_charts,
@@ -240,6 +241,9 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
       - run: cd ${{ github.workspace }}/examples/${{ matrix.example }} && cargo build
+      - name: Test Proa example
+        if: matrix.example == 'proa'
+        run: cd ${{ github.workspace }}/examples/proa && cargo test
 
   build_wasm_examples:
     name: Build Wasm Examples
