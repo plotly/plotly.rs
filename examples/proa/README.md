@@ -2,8 +2,8 @@
 
 This example adapts the three figures from
 [`customization/multiple_plots_example`](../customization/multiple_plots_example)
-into a page built with [Proa](https://proa.so). It demonstrates composing borrowed
-`Plot` values as Rust render components, rather than inserting chart HTML strings
+into a page built with [Proa](https://proa.so). It demonstrates composing Plotly
+figures as Rust render components, rather than inserting chart HTML strings
 into a page builder.
 
 ## Run
@@ -26,17 +26,18 @@ cargo test
 
 ## Components
 
-- `PlotLayout<C>` owns the HTML document, styles, shared Plotly.js script, and
-  initialization of all charts. It accepts any synchronous renderable child.
+- `PlotLayout<C>` in `src/layout.rs` owns the HTML document, styles, shared
+  Plotly.js script, and chart initialization. It accepts any synchronous child.
 - `LayoutMetadata` supplies default title and description values; `PageMetadata`
   overrides them through Proa's metadata cascade. Other pages can inherit the
   defaults or supply their own metadata.
 - `MultiplePlotsPage` renders the page heading and a collection of `ChartCard`
   components.
 - `ChartCard` supplies the common section/heading structure around `PlotlyChart`.
-- `PlotlyChart` is a small, example-local adapter over `&Plot`. It uses the
-  existing `Serialize` implementation and writes JSON directly into Proa's output
-  buffer. It does not call `to_html()` or `to_inline_html()` or clone the plot.
+- `PlotlyChart::new` borrows a `Plot` and serializes it once during setup.
+  Rendering borrows the prepared component and uses Proa's normal text escaping;
+  there is no custom serializer or per-render JSON allocation. It does not call
+  `to_html()` or `to_inline_html()` or clone the plot.
 
 The plot-building functions still use the normal Plotly.rs API. They return
 `Plot`, leaving presentation to the components. Change the layout once to change
@@ -49,8 +50,9 @@ This example uses the published Proa 0.3 metadata API (`Metadata` and
 ## Plotly.js boundary
 
 Each chart renders a container followed by an inert `<template>` holding JSON.
-The serializer encodes HTML-sensitive characters as JSON escapes so the browser
-preserves the data without interpreting it as HTML. Chart IDs are escaped HTML
+Proa escapes the JSON as ordinary HTML text, and the browser decodes those
+entities when reading the template's text content. This preserves the figure
+without interpreting strings in its data as HTML. Chart IDs are escaped HTML
 attributes, never interpolated into JavaScript. The layout's initialization
 script passes each container DOM node and parsed seed to `Plotly.newPlot`.
 
