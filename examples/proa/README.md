@@ -28,9 +28,8 @@ cargo test
 
 - `PlotLayout<C>` in `src/layout.rs` owns the HTML document, styles, shared
   Plotly.js script, and chart initialization. It accepts any synchronous child.
-- `LayoutMetadata` supplies default title and description values; `PageMetadata`
-  overrides them through Proa's metadata cascade. Other pages can inherit the
-  defaults or supply their own metadata.
+- The layout's `render_head` supplies defaults. The page overrides them with
+  `HeadMetadata`, and `{cx.head()}` emits the final document metadata.
 - `MultiplePlotsPage` renders the page heading and a collection of `ChartCard`
   components.
 - `ChartCard` supplies the common section/heading structure around `PlotlyChart`.
@@ -43,9 +42,10 @@ The plot-building functions still use the normal Plotly.rs API. They return
 `Plot`, leaving presentation to the components. Change the layout once to change
 all pages that use it, or change `ChartCard` once to change every chart wrapper.
 
-This example uses the published Proa 0.3 metadata API (`Metadata` and
-`resolve_metadata_stack`). It does not require the newer, unreleased
-`render_head`/managed-head API.
+The example pins a public Proa Git revision for the new managed metadata API,
+which is not in the released 0.3 crates. Cargo fetches it automatically; no local
+Proa checkout is required. `render_page` uses Proa's normal response finalizer to
+prepare layout/page head hooks before writing the standalone HTML file.
 
 ## Plotly.js boundary
 
