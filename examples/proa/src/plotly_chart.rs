@@ -1,101 +1,70 @@
-//! A local adapter: borrow a Plot and serialize it into the page's output.
-
-use std::io;
+//! Prepare figure JSON once; compose the chart by borrowing this component.
 
 use plotly::Plot;
-use proa_core::{DataLoader, RenderBuffer, WebContext, WebRenderSync, WriteBuf, WriteError};
+use proa_core::{DataLoader, WebContext, WebRenderSync, WriteError};
 use proa_macros::html_sync;
-use serde::Serialize;
 
 pub struct PlotlyChart<'a> {
-    pub id: &'a str,
-    pub plot: &'a Plot,
+    id: &'a str,
+    json: String,
     pub class: Option<&'static str>,
 }
 
-impl<L: DataLoader> WebRenderSync<L> for PlotlyChart<'_> {
+impl<'a> PlotlyChart<'a> {
+    pub fn new(id: &'a str, plot: &Plot) -> Result<Self, serde_json::Error> {
+        Ok(Self {
+            id,
+            json: serde_json::to_string(plot)?,
+            class: None,
+        })
+    }
+}
+
+impl<L: DataLoader> WebRenderSync<L> for &PlotlyChart<'_> {
     fn render(self, cx: &mut WebContext<L>) -> Result<(), WriteError> {
         html_sync! {
             <div id={self.id} data-plotly-chart class={self.class}></div>
-            <template data-plotly-seed>{HtmlJson(self.plot)}</template>
+            <template data-plotly-seed>{self.json.as_str()}</template>
         }
         .render(cx)
-    }
-}
-
-// Keep the template content as JSON, with no HTML elements or entities. Write
-// directly into Proa's buffer, encoding HTML-sensitive bytes as JSON escapes.
-struct HtmlJson<'a, T>(&'a T);
-
-impl<L: DataLoader, T: Serialize> WebRenderSync<L> for HtmlJson<'_, T> {
-    fn render(self, cx: &mut WebContext<L>) -> Result<(), WriteError> {
-        serde_json::to_writer(HtmlJsonWriter(cx.output_mut()), self.0)
-            // proa-perf-ok: allocate a diagnostic only on serialization failure
-            .map_err(|error| WriteError::render(error.to_string()))
-    }
-}
-
-struct HtmlJsonWriter<'a>(&'a mut RenderBuffer);
-
-impl io::Write for HtmlJsonWriter<'_> {
-    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-        let mut start = 0;
-        for (index, byte) in bytes.iter().enumerate() {
-            let escaped: &[u8] = match byte {
-                b'<' => b"\\u003c",
-                b'>' => b"\\u003e",
-                b'&' => b"\\u0026",
-                b'\'' => b"\\u0027",
-                _ => continue,
-            };
-            self.0
-                .extend(&bytes[start..index])
-                .map_err(io::Error::other)?;
-            self.0.extend(escaped).map_err(io::Error::other)?;
-            start = index + 1;
-        }
-        self.0.extend(&bytes[start..]).map_err(io::Error::other)?;
-        Ok(bytes.len())
-    }
-
-    fn flush(&mut self) -> io::Result<()> {
-        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use plotly::Layout;
 
     #[test]
-    fn json_seed_preserves_data_without_html_boundaries() {
-        let value = "</template></script><script>injected()</script><!-- & ' \\\" café 🦀";
+    fn figure_data_round_trips_through_html_text_escaping() {
+        let title = "</template></script><script>injected()</script><!-- & ' \\\" café 🦀";
+        let mut plot = Plot::new();
+        plot.set_layout(Layout::new().title(title));
+        let chart = PlotlyChart::new("example", &plot).unwrap();
         let mut cx = WebContext::new();
-        HtmlJson(&value).render(&mut cx).unwrap();
-        let json = cx.into_output().into_string();
-        assert!(!json.contains(['<', '>', '&', '\'']));
-        assert_eq!(serde_json::from_str::<String>(&json).unwrap(), value);
+        chart.render(&mut cx).unwrap();
+        let html = cx.into_output().into_string();
+        assert_eq!(html.matches("</template>").count(), 1);
+        assert!(!html.contains("<script>"));
+        let seed = html.split("data-plotly-seed>").nth(1).unwrap();
+        let json = html_escape::decode_html_entities(seed.split("</template>").next().unwrap());
+        let actual: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(actual["layout"]["title"]["text"], title);
     }
 
     #[test]
     fn chart_ids_are_attributes_and_never_interpolated_into_javascript() {
-        let plot = Plot::new();
+        let chart = PlotlyChart::new("chart\"<&\\name", &Plot::new()).unwrap();
         let mut cx = WebContext::new();
-        PlotlyChart {
-            id: "chart\"<&\\name",
-            plot: &plot,
-            class: None,
-        }
-        .render(&mut cx)
-        .unwrap();
+        chart.render(&mut cx).unwrap();
         let html = cx.into_output().into_string();
         assert!(html.contains("&quot;"));
         assert!(!html.contains("id=\"chart\"<"));
         let seed = html.split("data-plotly-seed>").nth(1).unwrap();
-        let json = seed.split("</template>").next().unwrap();
+        let json = html_escape::decode_html_entities(seed.split("</template>").next().unwrap());
         assert_eq!(
-            serde_json::from_str::<serde_json::Value>(json).unwrap(),
-            serde_json::to_value(plot).unwrap()
+            serde_json::from_str::<serde_json::Value>(&json).unwrap()["data"],
+            serde_json::json!([])
         );
     }
 }
