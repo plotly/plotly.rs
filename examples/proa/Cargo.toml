@@ -8,9 +8,9 @@ publish = false
 [dependencies]
 ndarray = "0.17"
 plotly = { path = "../../plotly" }
-proa_core = "0.3.0"
-proa_framework_core = { version = "0.3.0", default-features = false }
-proa_macros = "0.3.0"
+proa_core = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7" }
+proa_framework_core = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7", default-features = false }
+proa_macros = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7" }
 serde_json = "1"
 
 [dev-dependencies]

@@ -1,8 +1,11 @@
 use proa_core::{
-    text::{raw_text_ok, StaticRaw},
-    DataLoader, WebContext, WebRenderSync, WriteError,
+    text::StaticRaw, ComponentRole, DataLoader, HeadConfig, HeadMetadata, SyncHeadOperation,
+    WebContext, WebRenderSync, WriteError,
 };
-use proa_framework_core::metadata::{CascadeValue, Metadata, ResolvedMetadata};
+use proa_framework_core::{
+    finalize_route_response_sync, FrameworkBody, FrameworkError, FrameworkRequestContext,
+    IslandManifest, RouteFinalizeMode, RouteResponse,
+};
 use proa_macros::html_sync;
 
 // Minimal vendor bridge: RSJS does not expose Plotly.newPlot or its DOM-node
@@ -15,37 +18,30 @@ await Promise.all(Array.from(
 ));
 "#;
 
-pub struct LayoutMetadata;
-
-impl Metadata for LayoutMetadata {
-    fn title(&self) -> CascadeValue<&'static str> {
-        CascadeValue::Set("Plotly.rs")
-    }
-
-    fn description(&self) -> CascadeValue<&'static str> {
-        CascadeValue::Set("Interactive Plotly figures.")
-    }
-}
-
-pub struct PlotLayout<'a, C = ()> {
-    pub metadata: &'a ResolvedMetadata,
+pub struct PlotLayout<C = ()> {
     pub class: Option<&'static str>,
     pub children: Option<C>,
 }
 
-impl<L: DataLoader, C: WebRenderSync<L>> WebRenderSync<L> for PlotLayout<'_, C> {
+impl<L: DataLoader, C: WebRenderSync<L>> WebRenderSync<L> for PlotLayout<C> {
+    const ROLE: ComponentRole = ComponentRole::LAYOUT;
+
+    fn render_head(&self, cx: &mut WebContext<L>) -> impl SyncHeadOperation {
+        cx.head_mut().metadata(HeadMetadata {
+            title: "Plotly.rs".into(),
+            description: "Interactive Plotly figures.".into(),
+            ..Default::default()
+        })
+    }
+
     fn render(self, cx: &mut WebContext<L>) -> Result<(), WriteError> {
-        let title = self.metadata.title.as_deref();
         html_sync! {
             <!DOCTYPE html>
             <html lang="en" data-plot-layout>
                 <head>
                     <meta charset="utf-8" />
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
-                    <title>{raw_text_ok(title)}</title>
-                    {if let Some(description) = self.metadata.description {
-                        html_sync! { <meta name="description" content={description} /> }
-                    }}
+                    {cx.head()}
                     <style>
                         r#"
                         body { margin: 0; color: #172033; background: #f5f7fb; font-family: system-ui, sans-serif; }
@@ -70,5 +66,33 @@ impl<L: DataLoader, C: WebRenderSync<L>> WebRenderSync<L> for PlotLayout<'_, C> 
             </html>
         }
         .render(cx)
+    }
+}
+
+// Use the normal response finalizer even when exporting a static HTML file:
+// it prepares layout/page metadata and publishes the managed head outlet.
+pub fn render_page(page: impl WebRenderSync + Send + 'static) -> Result<Vec<u8>, FrameworkError> {
+    let response = RouteResponse::ssr(PlotLayout {
+        class: None,
+        children: Some(page),
+    })
+    .with_head(HeadConfig::default());
+    let manifest = IslandManifest {
+        islands: Default::default(),
+        assets: Default::default(),
+        import_map: Default::default(),
+        ssr_bundle: None,
+    };
+    let response = finalize_route_response_sync(
+        response,
+        &manifest,
+        &FrameworkRequestContext::default(),
+        RouteFinalizeMode::Document,
+    )?;
+    match response.body {
+        FrameworkBody::Full(body) => Ok(body.to_vec()),
+        _ => Err(FrameworkError::Invariant(
+            "expected a buffered HTML document",
+        )),
     }
 }
