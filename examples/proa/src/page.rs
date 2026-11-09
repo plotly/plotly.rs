@@ -1,4 +1,9 @@
-use plotly::Plot;
+use ndarray::Array;
+use plotly::{
+    color::NamedColor,
+    common::{Marker, Mode, Title},
+    Configuration, Layout, Plot, Scatter, Scatter3D,
+};
 use proa_core::{
     ComponentRole, DataLoader, HeadMetadata, SyncHeadOperation, WebContext, WebRenderSync,
     WriteError,
@@ -11,17 +16,13 @@ const TITLE: &str = "Plotly-rs Multiple Plots";
 const HEADING: &str = "Multiple Plotly plots on the same HTML page";
 const DESCRIPTION: &str = "Three Plotly figures composed into a Proa page.";
 
-pub struct Chart {
+struct Chart {
     title: &'static str,
     plot: PlotlyChart<'static>,
 }
 
 impl Chart {
-    pub fn new(
-        id: &'static str,
-        title: &'static str,
-        plot: &Plot,
-    ) -> Result<Self, serde_json::Error> {
+    fn new(id: &'static str, title: &'static str, plot: &Plot) -> Result<Self, serde_json::Error> {
         Ok(Self {
             title,
             plot: PlotlyChart::new(id, plot)?,
@@ -53,8 +54,13 @@ pub struct MultiplePlotsPage {
 }
 
 impl MultiplePlotsPage {
-    pub fn new(charts: Vec<Chart>) -> Self {
-        Self {
+    pub fn new() -> Result<Self, serde_json::Error> {
+        let charts = vec![
+            Chart::new("scatter_1", "Sine wave", &first_plot())?,
+            Chart::new("scatter_2", "Colored markers", &second_plot())?,
+            Chart::new("scatter_3_3d", "3D scatter", &third_plot())?,
+        ];
+        Ok(Self {
             charts,
             metadata: HeadMetadata {
                 title: TITLE.into(),
@@ -62,7 +68,7 @@ impl MultiplePlotsPage {
                 ..Default::default()
             },
             class: None,
-        }
+        })
     }
 }
 
@@ -88,12 +94,53 @@ impl<L: DataLoader> WebRenderSync<L> for MultiplePlotsPage {
     }
 }
 
+// These construct the same figures as customization/multiple_plots_example.
+// They return Plot values, leaving HTML and library loading to the components.
+fn first_plot() -> Plot {
+    let t: Vec<f64> = Array::linspace(0., 10., 100).into_raw_vec_and_offset().0;
+    let y = t.iter().map(|x| x.sin()).collect();
+    let mut plot = Plot::new();
+    plot.add_trace(Scatter::new(t, y).mode(Mode::Markers));
+    plot.set_configuration(Configuration::default().responsive(true));
+    plot
+}
+
+fn second_plot() -> Plot {
+    let trace = Scatter::new(vec![1, 2, 3, 4], vec![10, 11, 12, 13])
+        .mode(Mode::Markers)
+        .marker(
+            Marker::new()
+                .size_array(vec![40, 60, 80, 100])
+                .color_array(vec![
+                    NamedColor::Red,
+                    NamedColor::Blue,
+                    NamedColor::Cyan,
+                    NamedColor::OrangeRed,
+                ]),
+        );
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_configuration(Configuration::default().responsive(true));
+    plot
+}
+
+fn third_plot() -> Plot {
+    let t: Vec<f64> = Array::linspace(0., 10., 100).into_raw_vec_and_offset().0;
+    let y = t.iter().map(|x| x.sin()).collect();
+    let z = t.iter().map(|x| x.cos()).collect();
+    let mut plot = Plot::new();
+    plot.add_trace(Scatter3D::new(t, y, z).mode(Mode::Markers));
+    plot.set_layout(Layout::new().title(Title::with_text("Scatter3d")));
+    plot.set_configuration(Configuration::default().responsive(true));
+    plot
+}
+
 #[cfg(test)]
 mod tests {
     use proa_framework_core::WebContextDocumentExt;
 
     use super::*;
-    use crate::{first_plot, layout::PlotLayout, second_plot};
+    use crate::layout::PlotLayout;
 
     #[test]
     fn document_composes_each_chart_with_its_own_data_and_one_library() {
@@ -103,10 +150,13 @@ mod tests {
             Chart::new("other", "Other", &plots[1]).unwrap(),
         ];
         let count = charts.len();
-        let mut page = MultiplePlotsPage::new(charts);
-        page.metadata = HeadMetadata {
-            title: "Other <page> & report".into(),
-            ..Default::default()
+        let page = MultiplePlotsPage {
+            charts,
+            metadata: HeadMetadata {
+                title: "Other <page> & report".into(),
+                ..Default::default()
+            },
+            class: None,
         };
         let mut cx = WebContext::new();
         cx.render(PlotLayout {
