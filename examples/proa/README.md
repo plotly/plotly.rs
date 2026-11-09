@@ -14,9 +14,9 @@ Requires Rust 1.93 or newer. From this directory:
 cargo run
 ```
 
-Open `output/multiple_plots.html` in your browser. The file loads Plotly.js 3.7.0
-from its CDN, so an internet connection is required. No application server, WASM
-target, JavaScript build tool, or local Proa checkout is needed.
+Open <http://127.0.0.1:3001> in your browser. Press Ctrl-C to stop the server.
+The page loads Plotly.js 3.7.0 from its CDN, so an internet connection is required.
+No WASM target, JavaScript build tool, or local Proa checkout is needed.
 
 ## Components
 
@@ -27,9 +27,9 @@ target, JavaScript build tool, or local Proa checkout is needed.
 - `src/plots.rs` builds the three figures using Plotly.rs's normal API.
 - `src/chart.rs` defines `Chart` and `ChartCard`, which supplies the common
   section/heading structure.
-- `Chart::new` borrows a `Plot` and serializes it once during setup.
+- `Chart::new` borrows a `Plot` and serializes it during page construction.
   Rendering borrows the prepared component and uses Proa's normal text escaping;
-  there is no custom serializer or per-render JSON allocation. It does not call
+  serialization stays outside the component render methods. It does not call
   `to_html()` or `to_inline_html()` or clone the plot.
 
 The plot-building functions still use the normal Plotly.rs API. They return
@@ -40,9 +40,10 @@ The example pins a public Proa Git revision for the new managed metadata API,
 which is not in the released 0.3 crates. Cargo fetches it automatically; no local
 Proa checkout is required. The Git dependencies will be replaced with crates.io
 versions after Proa 0.4 is released. The revision is from Proa's existing main
-branch; no changes to Proa are required. The small `render_page` helper in
-`layout.rs` uses the existing managed response finalizer for standalone HTML
-export. `src/main.rs` renders and saves the page.
+branch; no changes to Proa are required. `src/main.rs` builds a normal Proa
+server. `FrameworkBuilder::with_head` configures managed metadata once, and the
+route returns `RouteResponse::ssr(PlotLayout { ... })`. The framework handles
+request context, metadata preparation, and response finalization.
 
 ## Plotly.js boundary
 
@@ -56,7 +57,7 @@ script passes each container DOM node and parsed seed to `Plotly.newPlot`.
 The short JavaScript bridge is limited to Plotly's third-party API, which has no
 RSJS binding here. Plotly.js owns the interactive charts and window resizing;
 Proa renders the page on the Rust side. There are no application filters, live
-data updates, or independent component mounting/unmounting in this static-file
+data updates, or independent component mounting/unmounting in this
 example.
 
 The example does not replace Plotly.rs's internal Askama templates, modify its

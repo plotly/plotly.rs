@@ -1,10 +1,6 @@
 use proa_core::{
-    text::StaticRaw, ComponentRole, DataLoader, HeadConfig, HeadMetadata, SyncHeadOperation,
-    WebContext, WebRenderSync, WriteError,
-};
-use proa_framework_core::{
-    finalize_route_response_sync, FrameworkBody, FrameworkError, FrameworkRequestContext,
-    IslandManifest, RouteFinalizeMode, RouteResponse,
+    text::StaticRaw, ComponentRole, DataLoader, HeadMetadata, SyncHeadOperation, WebContext,
+    WebRenderSync, WriteError,
 };
 use proa_macros::html_sync;
 
@@ -66,35 +62,5 @@ impl<L: DataLoader, C: WebRenderSync<L>> WebRenderSync<L> for PlotLayout<C> {
             </html>
         }
         .render(cx)
-    }
-}
-
-// A static-file export uses the existing managed response pipeline so layout
-// and Page head hooks run before the completed HTML is written to disk.
-pub fn render_page(
-    page: impl WebRenderSync + Send + 'static,
-) -> Result<impl AsRef<[u8]>, FrameworkError> {
-    let response = RouteResponse::ssr(PlotLayout {
-        class: None,
-        children: Some(page),
-    })
-    .with_head(HeadConfig::default());
-    let manifest = IslandManifest {
-        islands: Default::default(),
-        assets: Default::default(),
-        import_map: Default::default(),
-        ssr_bundle: None,
-    };
-    let response = finalize_route_response_sync(
-        response,
-        &manifest,
-        &FrameworkRequestContext::default(),
-        RouteFinalizeMode::Document,
-    )?;
-    match response.body {
-        FrameworkBody::Full(bytes) => Ok(bytes),
-        _ => Err(FrameworkError::Invariant(
-            "expected a buffered HTML document",
-        )),
     }
 }
