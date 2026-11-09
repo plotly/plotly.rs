@@ -90,8 +90,7 @@ impl<L: DataLoader> WebRenderSync<L> for MultiplePlotsPage {
 
 #[cfg(test)]
 mod tests {
-    use proa_core::HeadConfig;
-    use proa_framework_core::render_sync_html_document;
+    use proa_framework_core::HtmlDocumentContext;
 
     use super::*;
     use crate::{first_plot, layout::PlotLayout, second_plot};
@@ -109,14 +108,13 @@ mod tests {
             title: "Other <page> & report".into(),
             ..Default::default()
         };
-        let bytes = render_sync_html_document(
-            PlotLayout {
-                class: None,
-                children: Some(page),
-            },
-            HeadConfig::default(),
-        )
+        let mut cx = HtmlDocumentContext::new();
+        cx.render(PlotLayout {
+            class: None,
+            children: Some(page),
+        })
         .unwrap();
+        let bytes = cx.finish().unwrap();
         let html = std::str::from_utf8(&bytes).unwrap();
         assert_eq!(html.matches("<title>").count(), 1);
         assert!(html.contains("<title>Other &lt;page&gt; &amp; report</title>"));
