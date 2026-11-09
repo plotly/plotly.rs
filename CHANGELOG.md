@@ -54,7 +54,7 @@ Highlights: plotly.rs now exposes every non-deprecated plotly.js 3.7 trace type 
 ### Security
 
 - Remove the unused `zip` build-dependency from `plotly_static`; with `plotly_kaleido` gone, no workspace crate depends on `zip` directly
-- Known issue: `zip` 8.x is still pulled in transitively by `webdriver-downloader` 0.17 (used at build time to fetch chromedriver/geckodriver) and is flagged by RUSTSEC-2026-0367/0368/0369. Those advisories concern `ZipArchive::extract()`, which `webdriver-downloader` does not call (it reads the driver entry with `by_name`). It will be resolved once [ik1ne/webdriver-downloader#67](https://github.com/ik1ne/webdriver-downloader/pull/67) is released
+- Bump `webdriver-downloader` build-dependency to 0.18 in `plotly_static`, which moves to `zip` 9 ([ik1ne/webdriver-downloader#67](https://github.com/ik1ne/webdriver-downloader/pull/67)); `zip` 8.x (all releases yanked, flagged by RUSTSEC-2026-0367/0368/0369) is no longer in the dependency tree
 
 ## [0.14.1] - 2026-02-15
 
