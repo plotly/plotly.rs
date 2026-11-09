@@ -32,8 +32,9 @@ impl<L: DataLoader> WebRenderSync<L> for &PlotlyChart<'_> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use plotly::Layout;
+
+    use super::*;
 
     #[test]
     fn figure_data_round_trips_through_html_text_escaping() {
