@@ -30,8 +30,8 @@ cargo test
   Plotly.js script, and chart initialization. It accepts any synchronous child.
 - The layout's `render_head` supplies defaults. The page overrides them with
   `HeadMetadata`, and `{cx.head()}` emits the final document metadata.
-- `MultiplePlotsPage` renders the page heading and a collection of `ChartCard`
-  components.
+- `MultiplePlotsPage` in `src/page.rs` owns the page metadata and renders the
+  page heading and a collection of `ChartCard` components.
 - `ChartCard` supplies the common section/heading structure around `PlotlyChart`.
 - `PlotlyChart::new` borrows a `Plot` and serializes it once during setup.
   Rendering borrows the prepared component and uses Proa's normal text escaping;
@@ -44,8 +44,10 @@ all pages that use it, or change `ChartCard` once to change every chart wrapper.
 
 The example pins a public Proa Git revision for the new managed metadata API,
 which is not in the released 0.3 crates. Cargo fetches it automatically; no local
-Proa checkout is required. `render_page` uses Proa's normal response finalizer to
-prepare layout/page head hooks before writing the standalone HTML file.
+Proa checkout is required. The Git dependencies will be replaced with crates.io
+versions after Proa 0.4 is released. `render_page` uses Proa's normal response
+finalizer to prepare layout/page head hooks before writing the standalone HTML
+file.
 
 ## Plotly.js boundary
 

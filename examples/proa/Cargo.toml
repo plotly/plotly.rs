@@ -2,6 +2,7 @@
 name = "proa_example"
 version = "0.1.0"
 edition = "2021"
+# Proa's minimum supported Rust version.
 rust-version = "1.93"
 publish = false
 

@@ -10,7 +10,4 @@ For more complex examples, instructions on how to run them can be found in the R
 
 Pull requests with more examples of different behavior are always welcome.
 
-## Proa page composition
-
-See [`proa`](proa) for an example composing three Plotly figures into a reusable
-Rust layout with page metadata and chart components.
+See [`proa`](proa) for three Plotly figures composed into a reusable Rust layout with page metadata and chart components.
