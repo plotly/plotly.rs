@@ -7,9 +7,11 @@ rust-version = "1.93"
 publish = false
 
 [dependencies]
+axum = "0.7.9"
 ndarray = "0.17"
 plotly = { path = "../../plotly" }
 proa_core = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7" }
-proa_framework_core = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7", default-features = false }
+proa_framework_axum = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7" }
 proa_macros = { git = "https://github.com/proa-labs/proa", rev = "43c28ff2c94b3f148094300df761eac086e618a7" }
 serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net"] }
