@@ -1,21 +1,14 @@
+mod chart;
 mod layout;
 mod page;
-mod plotly_chart;
+mod plots;
 
-use proa_core::WebContext;
-use proa_framework_core::WebContextDocumentExt;
-
-use crate::{layout::PlotLayout, page::MultiplePlotsPage};
+use crate::{layout::render_page, page::MultiplePlotsPage};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cx = WebContext::new();
-    cx.render(PlotLayout {
-        class: None,
-        children: Some(MultiplePlotsPage::new()?),
-    })?;
-
+    let html = render_page(MultiplePlotsPage::new()?)?;
     std::fs::create_dir_all("./output")?;
-    std::fs::write("./output/multiple_plots.html", cx.finish()?)?;
+    std::fs::write("./output/multiple_plots.html", html)?;
     println!("Multiple plots HTML page saved to: ./output/multiple_plots.html");
     Ok(())
 }
