@@ -14,9 +14,11 @@ Requires Rust 1.93 or newer. From this directory:
 cargo run
 ```
 
-Open <http://127.0.0.1:3001> in your browser. Press Ctrl-C to stop the server.
+The command writes `output/multiple_plots.html` and exits. Open that file in
+your browser. Stdout prints the saved path; it does not contain the HTML.
 The page loads Plotly.js 3.7.0 from its CDN, so an internet connection is required.
-No WASM target, JavaScript build tool, or local Proa checkout is needed.
+No listening server, WASM target, JavaScript build tool, or local Proa checkout
+is needed.
 
 ## Components
 
@@ -40,10 +42,11 @@ The example pins a public Proa Git revision for the new managed metadata API,
 which is not in the released 0.3 crates. Cargo fetches it automatically; no local
 Proa checkout is required. The Git dependencies will be replaced with crates.io
 versions after Proa 0.4 is released. The revision is from Proa's existing main
-branch; no changes to Proa are required. `src/main.rs` builds a normal Proa
-server. `FrameworkBuilder::with_head` configures managed metadata once, and the
-route returns `RouteResponse::ssr(PlotLayout { ... })`. The framework handles
-request context, metadata preparation, and response finalization.
+branch; no changes to Proa are required. `src/main.rs` configures managed metadata
+once with `FrameworkBuilder::with_head`. The route returns
+`RouteResponse::ssr(PlotLayout { ... })`, and an in-process request renders the
+page through the framework's normal middleware. The response HTML is written to
+disk; no listening server or custom response finalizer is required.
 
 ## Plotly.js boundary
 
