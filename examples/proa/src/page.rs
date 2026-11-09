@@ -90,7 +90,7 @@ impl<L: DataLoader> WebRenderSync<L> for MultiplePlotsPage {
 
 #[cfg(test)]
 mod tests {
-    use proa_framework_core::HtmlDocumentContext;
+    use proa_framework_core::WebContextDocumentExt;
 
     use super::*;
     use crate::{first_plot, layout::PlotLayout, second_plot};
@@ -108,7 +108,7 @@ mod tests {
             title: "Other <page> & report".into(),
             ..Default::default()
         };
-        let mut cx = HtmlDocumentContext::new();
+        let mut cx = WebContext::new();
         cx.render(PlotLayout {
             class: None,
             children: Some(page),

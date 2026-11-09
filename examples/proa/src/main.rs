@@ -8,7 +8,8 @@ use plotly::{
     common::{Marker, Mode, Title},
     Configuration, Layout, Plot, Scatter, Scatter3D,
 };
-use proa_framework_core::HtmlDocumentContext;
+use proa_core::WebContext;
+use proa_framework_core::WebContextDocumentExt;
 
 use crate::{
     layout::PlotLayout,
@@ -21,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Chart::new("scatter_2", "Colored markers", &second_plot())?,
         Chart::new("scatter_3_3d", "3D scatter", &third_plot())?,
     ];
-    let mut cx = HtmlDocumentContext::new();
+    let mut cx = WebContext::new();
     cx.render(PlotLayout {
         class: None,
         children: Some(MultiplePlotsPage::new(charts)),

@@ -45,9 +45,9 @@ all pages that use it, or change `ChartCard` once to change every chart wrapper.
 The example pins a public Proa Git revision for the new managed metadata API,
 which is not in the released 0.3 crates. Cargo fetches it automatically; no local
 Proa checkout is required. The Git dependencies will be replaced with crates.io
-versions after Proa 0.4 is released. `HtmlDocumentContext` runs the layout/page
-head hooks when calling `cx.render(...)`; `cx.finish()` returns the standalone
-HTML bytes. The example needs no request context, island manifest, or manual
+versions after Proa 0.4 is released. The example uses the existing `WebContext`
+with `WebContextDocumentExt`: `cx.render(...)` runs the layout/page head hooks,
+and `cx.finish()` returns the standalone HTML bytes. The example needs no request context, island manifest, or manual
 response finalization.
 
 ## Plotly.js boundary
