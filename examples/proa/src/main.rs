@@ -8,9 +8,11 @@ use plotly::{
     common::{Marker, Mode, Title},
     Configuration, Layout, Plot, Scatter, Scatter3D,
 };
+use proa_core::HeadConfig;
+use proa_framework_core::render_sync_html_document;
 
 use crate::{
-    layout::render_page,
+    layout::PlotLayout,
     page::{Chart, MultiplePlotsPage},
 };
 
@@ -20,7 +22,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Chart::new("scatter_2", "Colored markers", &second_plot())?,
         Chart::new("scatter_3_3d", "3D scatter", &third_plot())?,
     ];
-    let html = render_page(MultiplePlotsPage::new(charts))?;
+    let html = render_sync_html_document(
+        PlotLayout {
+            class: None,
+            children: Some(MultiplePlotsPage::new(charts)),
+        },
+        HeadConfig::default(),
+    )?;
 
     std::fs::create_dir_all("./output")?;
     std::fs::write("./output/multiple_plots.html", html)?;

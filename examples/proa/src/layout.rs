@@ -1,10 +1,6 @@
 use proa_core::{
-    text::StaticRaw, ComponentRole, DataLoader, HeadConfig, HeadMetadata, SyncHeadOperation,
-    WebContext, WebRenderSync, WriteError,
-};
-use proa_framework_core::{
-    finalize_route_response_sync, FrameworkBody, FrameworkError, FrameworkRequestContext,
-    IslandManifest, RouteFinalizeMode, RouteResponse,
+    text::StaticRaw, ComponentRole, DataLoader, HeadMetadata, SyncHeadOperation, WebContext,
+    WebRenderSync, WriteError,
 };
 use proa_macros::html_sync;
 
@@ -66,33 +62,5 @@ impl<L: DataLoader, C: WebRenderSync<L>> WebRenderSync<L> for PlotLayout<C> {
             </html>
         }
         .render(cx)
-    }
-}
-
-// Use the normal response finalizer even when exporting a static HTML file:
-// it prepares layout/page metadata and publishes the managed head outlet.
-pub fn render_page(page: impl WebRenderSync + Send + 'static) -> Result<Vec<u8>, FrameworkError> {
-    let response = RouteResponse::ssr(PlotLayout {
-        class: None,
-        children: Some(page),
-    })
-    .with_head(HeadConfig::default());
-    let manifest = IslandManifest {
-        islands: Default::default(),
-        assets: Default::default(),
-        import_map: Default::default(),
-        ssr_bundle: None,
-    };
-    let response = finalize_route_response_sync(
-        response,
-        &manifest,
-        &FrameworkRequestContext::default(),
-        RouteFinalizeMode::Document,
-    )?;
-    match response.body {
-        FrameworkBody::Full(body) => Ok(body.to_vec()),
-        _ => Err(FrameworkError::Invariant(
-            "expected a buffered HTML document",
-        )),
     }
 }
