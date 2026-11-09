@@ -40,7 +40,7 @@ clap = { version = "4.0", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
 dirs = "7.0"
-webdriver-downloader = "0.17"
+webdriver-downloader = "0.18"
 
 # Needed for docs.rs to build the documentation
 [package.metadata.docs.rs]
