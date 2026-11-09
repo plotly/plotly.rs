@@ -9,3 +9,5 @@ You can also configure the chosen example to open the resulting plots automatica
 For more complex examples, instructions on how to run them can be found in the README of each example's subdirectory.
 
 Pull requests with more examples of different behavior are always welcome.
+
+See [`proa`](proa) for three Plotly figures composed into a reusable Rust layout with page metadata and chart components.

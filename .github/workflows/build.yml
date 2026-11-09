@@ -221,6 +221,7 @@ jobs:
           kaleido,
           maps,
           ndarray,
+          proa,
           scientific_charts,
           shapes,
           statistical_charts,
