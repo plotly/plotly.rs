@@ -18,22 +18,16 @@ Open `output/multiple_plots.html` in your browser. The file loads Plotly.js 3.7.
 from its CDN, so an internet connection is required. No application server, WASM
 target, JavaScript build tool, or local Proa checkout is needed.
 
-To run the render and serialization tests:
-
-```bash
-cargo test
-```
-
 ## Components
 
 - `PlotLayout<C>` in `src/layout.rs` owns the HTML document, styles, shared
   Plotly.js script, and chart initialization. It accepts any synchronous child.
-- The layout's `render_head` supplies defaults. The page overrides them with
-  `HeadMetadata`, and `{cx.head()}` emits the final document metadata.
-- `MultiplePlotsPage` in `src/page.rs` owns the figure builders, chart setup,
-  page metadata, and chart-card composition. `src/main.rs` renders and saves it.
-- `ChartCard` supplies the common section/heading structure around `PlotlyChart`.
-- `PlotlyChart::new` borrows a `Plot` and serializes it once during setup.
+- `MultiplePlotsPage` in `src/page.rs` owns chart setup, page metadata, and
+  composition. Its `HeadMetadata` overrides layout defaults at `{cx.head()}`.
+- `src/plots.rs` builds the three figures using Plotly.rs's normal API.
+- `src/chart.rs` defines `Chart` and `ChartCard`, which supplies the common
+  section/heading structure.
+- `Chart::new` borrows a `Plot` and serializes it once during setup.
   Rendering borrows the prepared component and uses Proa's normal text escaping;
   there is no custom serializer or per-render JSON allocation. It does not call
   `to_html()` or `to_inline_html()` or clone the plot.
@@ -45,10 +39,10 @@ all pages that use it, or change `ChartCard` once to change every chart wrapper.
 The example pins a public Proa Git revision for the new managed metadata API,
 which is not in the released 0.3 crates. Cargo fetches it automatically; no local
 Proa checkout is required. The Git dependencies will be replaced with crates.io
-versions after Proa 0.4 is released. The example uses the existing `WebContext`
-with `WebContextDocumentExt`: `cx.render(...)` runs the layout/page head hooks,
-and `cx.finish()` returns the standalone HTML bytes. The example needs no request
-context, island manifest, or manual response finalization.
+versions after Proa 0.4 is released. The revision is from Proa's existing main
+branch; no changes to Proa are required. The small `render_page` helper in
+`layout.rs` uses the existing managed response finalizer for standalone HTML
+export. `src/main.rs` renders and saves the page.
 
 ## Plotly.js boundary
 
