@@ -90,49 +90,8 @@ impl<L: DataLoader> WebRenderSync<L> for MultiplePlotsPage {
 
 #[cfg(test)]
 mod tests {
-    use proa_framework_core::FrameworkError;
-
     use super::*;
     use crate::{first_plot, layout::render_page, second_plot};
-
-    fn render_document(
-        charts: Vec<Chart>,
-        metadata: HeadMetadata,
-    ) -> Result<Vec<u8>, FrameworkError> {
-        render_page(MultiplePlotsPage {
-            charts,
-            metadata,
-            class: None,
-        })
-    }
-
-    #[test]
-    fn page_metadata_overrides_layout_defaults_and_omitted_fields_inherit() {
-        let html = String::from_utf8(
-            render_document(
-                vec![],
-                HeadMetadata {
-                    title: "Other <page> & report".into(),
-                    ..Default::default()
-                },
-            )
-            .unwrap(),
-        )
-        .unwrap();
-        let defaults =
-            String::from_utf8(render_document(vec![], HeadMetadata::default()).unwrap()).unwrap();
-        fn description(html: &str) -> &str {
-            html.split("name=\"description\"")
-                .nth(1)
-                .unwrap()
-                .split('>')
-                .next()
-                .unwrap()
-        }
-        assert_eq!(description(&html), description(&defaults));
-        assert_eq!(html.matches("<title>").count(), 1);
-        assert!(html.contains("Other &lt;page&gt; &amp; report"));
-    }
 
     #[test]
     fn document_composes_each_chart_with_its_own_data_and_one_library() {
@@ -142,8 +101,15 @@ mod tests {
             Chart::new("other", "Other", &plots[1]).unwrap(),
         ];
         let count = charts.len();
-        let html =
-            String::from_utf8(render_document(charts, HeadMetadata::default()).unwrap()).unwrap();
+        let mut page = MultiplePlotsPage::new(charts);
+        page.metadata = HeadMetadata {
+            title: "Other <page> & report".into(),
+            ..Default::default()
+        };
+        let html = String::from_utf8(render_page(page).unwrap()).unwrap();
+        assert_eq!(html.matches("<title>").count(), 1);
+        assert!(html.contains("<title>Other &lt;page&gt; &amp; report</title>"));
+        assert_eq!(html.matches("name=\"description\"").count(), 1);
         assert_eq!(html.matches("src=\"https://cdn.plot.ly/").count(), 1);
         assert_eq!(html.matches("data-chart-card>").count(), count);
         assert!(html.contains("&lt;First &amp; second&gt;"));

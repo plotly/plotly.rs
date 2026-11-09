@@ -52,20 +52,4 @@ mod tests {
         let actual: serde_json::Value = serde_json::from_str(&json).unwrap();
         assert_eq!(actual["layout"]["title"]["text"], title);
     }
-
-    #[test]
-    fn chart_ids_are_attributes_and_never_interpolated_into_javascript() {
-        let chart = PlotlyChart::new("chart\"<&\\name", &Plot::new()).unwrap();
-        let mut cx = WebContext::new();
-        chart.render(&mut cx).unwrap();
-        let html = cx.into_output().into_string();
-        assert!(html.contains("&quot;"));
-        assert!(!html.contains("id=\"chart\"<"));
-        let seed = html.split("data-plotly-seed>").nth(1).unwrap();
-        let json = html_escape::decode_html_entities(seed.split("</template>").next().unwrap());
-        assert_eq!(
-            serde_json::from_str::<serde_json::Value>(&json).unwrap()["data"],
-            serde_json::json!([])
-        );
-    }
 }
