@@ -434,8 +434,12 @@ pub struct Axis {
     #[field_setter(skip)]
     matches: Option<String>,
 
+    /// Sets the values at which ticks on this axis appear (used with
+    /// `TickMode::Array`). On a category axis, plotly.js matches a value
+    /// against category names before treating it as an index, so pass the
+    /// category strings when categories look like numbers.
     #[serde(rename = "tickvals")]
-    tick_values: Option<Vec<f64>>,
+    tick_values: Option<NumOrStringCollection>,
     #[serde(rename = "ticktext")]
     tick_text: Option<Vec<String>>,
     ticks: Option<TicksDirection>,
@@ -1128,6 +1132,21 @@ mod tests {
             "ticklabelposition": "inside",
             "exponentformat": "SI extended",
             "unifiedhovertitle": {"text": "%{x}"},
+        });
+
+        assert_eq!(to_value(axis).unwrap(), expected);
+    }
+
+    #[test]
+    fn serialize_axis_string_tick_values() {
+        let axis = Axis::new()
+            .tick_mode(TickMode::Array)
+            .tick_values(vec!["6", "0"])
+            .tick_text(vec!["Sat".to_string(), "Sun".to_string()]);
+        let expected = json!({
+            "tickmode": "array",
+            "tickvals": ["6", "0"],
+            "ticktext": ["Sat", "Sun"]
         });
 
         assert_eq!(to_value(axis).unwrap(), expected);

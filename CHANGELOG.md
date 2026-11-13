@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed
+
+- `layout::Axis::tick_values` now accepts strings as well as numbers (`NumOrStringCollection`, like `category_array`). On a category axis plotly.js resolves a tick value by category name before index, so numeric-looking categories need string tick values to label the right bars. Existing numeric calls such as `.tick_values(vec![1.0, 2.0])` compile and serialize unchanged. **Breaking (minor):** an untyped empty `.tick_values(vec![])` no longer infers; write `Vec::<f64>::new()`
+
 ## [0.15.0] - 2026-10-18
 
 This is the last release bundling plotly.js 3.x; the upgrade to plotly.js 4.x is planned for 0.16.0 ([#437](https://github.com/plotly/plotly.rs/issues/437)).

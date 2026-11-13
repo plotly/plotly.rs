@@ -99,7 +99,7 @@ fn customized_scatter3d_plot(show: bool, file_name: &str) {
                         .grid_color(front_color)
                         .color(front_color),
                 )
-                .z_axis(Axis::new().title("").tick_values(vec![]))
+                .z_axis(Axis::new().title("").tick_values(Vec::<f64>::new()))
                 .aspect_mode(plotly::layout::AspectMode::Manual)
                 .aspect_ratio((3.0, 1.0, 1.0).into())
                 .camera(
