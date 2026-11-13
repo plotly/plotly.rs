@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
-- `layout::Axis::tick_values` now accepts strings as well as numbers (`NumOrStringCollection`, like `category_array`). On a category axis plotly.js resolves a tick value by category name before index, so numeric-looking categories need string tick values to label the right bars. Existing numeric calls such as `.tick_values(vec![1.0, 2.0])` compile and serialize unchanged. **Breaking (minor):** an untyped empty `.tick_values(vec![])` no longer infers; write `Vec::<f64>::new()`
+- `layout::Axis::tick_values` now accepts strings as well as numbers (`NumOrStringCollection`, like `category_array`). On a category axis plotly.js resolves a tick value by category name before index, so numeric-looking categories need string tick values to label the right bars. Existing numeric calls such as `.tick_values(vec![1.0, 2.0])` compile and serialize unchanged. **Breaking (minor):** arguments whose element type was inferred from the old `Vec<f64>` parameter (an empty `vec![]`, `.collect()`, `Default::default()`) no longer infer; annotate them, e.g. `Vec::<f64>::new()` or `.collect::<Vec<f64>>()`
 
 ## [0.15.0] - 2026-10-18
 
