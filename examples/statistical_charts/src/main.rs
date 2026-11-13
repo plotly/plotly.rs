@@ -11,7 +11,7 @@ use plotly::{
     layout::{Axis, BarMode, BoxMode, Layout, Margin, ViolinMode},
     splom::{SplomDiagonal, SplomDimension},
     violin::{MeanLine, ViolinBox, ViolinPoints, ViolinSide},
-    Bar, BoxPlot, Histogram, Histogram2d, Plot, Scatter, Splom, Violin,
+    Bar, BoxPlot, Histogram, Histogram2d, Histogram2dContour, Plot, Scatter, Splom, Violin,
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -869,6 +869,27 @@ fn histogram2d_aggregation(show: bool, file_name: &str) {
 }
 // ANCHOR_END: histogram2d_aggregation
 
+// ANCHOR: histogram2d_contour
+fn histogram2d_contour(show: bool, file_name: &str) {
+    let n = 5_000;
+    let x = sample_normal_distribution(n, 0.0, 1.0);
+    let y = sample_normal_distribution(n, 0.0, 1.0);
+
+    let trace = Histogram2dContour::new(x, y)
+        .name("2d histogram contour")
+        .n_contours(10)
+        .color_scale(ColorScale::Palette(ColorScalePalette::Blues))
+        .reverse_scale(true);
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: histogram2d_contour
+
 // SPLOM
 fn splom_axis() -> Axis {
     Axis::new()
@@ -1038,6 +1059,7 @@ fn main() {
     basic_histogram2d(false, "basic_histogram2d");
     styled_histogram2d(false, "styled_histogram2d");
     histogram2d_aggregation(false, "histogram2d_aggregation");
+    histogram2d_contour(false, "histogram2d_contour");
 
     // SPLOM
     basic_splom(false, "basic_splom");

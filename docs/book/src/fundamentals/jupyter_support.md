@@ -46,7 +46,7 @@ display a plot:
 
 **Cell 1**
 ```
-:dep plotly = "0.14"
+:dep plotly = "0.15"
 ```
 
 **Cell 2**

@@ -14,6 +14,7 @@ use crate::{
 /// (distance from the center) and an angular axis Theta (distance around the
 /// circumference). See [`ScatterPolar`](crate::traces::ScatterPolar) for
 /// details on traces.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct LayoutPolar {
     /// Sets the angular span of the polar subplot using two angles (in
@@ -44,6 +45,14 @@ pub struct LayoutPolar {
     /// configuration.
     #[serde(rename = "uirevision")]
     ui_revision: Option<NumOrString>,
+    /// Determines how [`BarPolar`](crate::traces::BarPolar) traces on this
+    /// subplot are displayed relative to one another.
+    #[serde(rename = "barmode")]
+    bar_mode: Option<PolarBarMode>,
+    /// Sets the gap between bars of adjacent locations on this subplot, as a
+    /// fraction of the bar width (between 0.0 and 1.0).
+    #[serde(rename = "bargap")]
+    bar_gap: Option<f64>,
 }
 
 impl LayoutPolar {
@@ -55,6 +64,7 @@ impl LayoutPolar {
 
 /// Describes the radial axis of the plot, extending from the center to the
 /// periphery.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct RadialAxis {
     visible: Option<bool>,
@@ -140,6 +150,7 @@ impl RadialAxis {
 }
 
 /// Describes the angular (circular) axis of the plot.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct AngularAxis {
     visible: Option<bool>,
@@ -197,6 +208,7 @@ impl AngularAxis {
 
 /// Provides styles for an axis in [`LayoutPolar`]. May be applied to
 /// [`RadialAxis`] or [`AngularAxis`].
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct PolarAxisAttributes {
     color: Option<Box<dyn Color>>,
@@ -229,6 +241,7 @@ impl PolarAxisAttributes {
 
 /// Provides styles for the axis ticks in [`LayoutPolar`]. May be applied to
 /// [`RadialAxis`] or [`AngularAxis`].
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct PolarAxisTicks {
     #[serde(flatten)]
@@ -253,9 +266,9 @@ pub struct PolarAxisTicks {
     /// Applies a label alias to tick or hover labels matching specific
     /// patterns. For example using { US: \'USA\', CA: \'Canada\' } changes US
     /// to USA, and CA to Canada. The labels we would have shown must match the
-    /// keys exactly, after adding any tick_prefix or tick_suffix. `label_alias`
-    /// can be used with any axis type, and both keys and values can include
-    /// html-like tags or MathJax.
+    /// keys exactly, after adding any `tick_prefix` or `tick_suffix`.
+    /// `label_alias` can be used with any axis type, and both keys and
+    /// values can include html-like tags or MathJax.
     #[serde(rename = "labelalias")]
     label_alias: Option<String>,
     #[serde(rename = "minorloglabels")]
@@ -337,6 +350,7 @@ pub enum AutoRange {
 }
 
 /// Controls how the maximum and minimum values are calculated by autorange.
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, FieldSetter, Serialize)]
 pub struct AutoRangeOptions {
     /// Use this value as the autorange minimum.
@@ -398,6 +412,10 @@ pub struct Hole(f64);
 
 impl Hole {
     /// Create a new hole from the given value.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if `value` is not within `0.0..=1.0`.
     pub fn new(value: f64) -> Result<Self, Box<dyn std::error::Error>> {
         if (0.0..=1.0).contains(&value) {
             Ok(Self(value))
@@ -453,6 +471,7 @@ pub enum PolarDirection {
 /// - [`Array`](PolarTickMode::Array): the placement of the ticks is set via
 ///   [`tick_values`](PolarTickMode::Array::tick_values), and the tick text is
 ///   set via [`tick_text`](PolarTickMode::Array::tick_text).
+#[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "tickmode")]
@@ -483,10 +502,11 @@ pub enum PolarTickMode {
         /// Sets the step size between ticks on this axis. Must be a positive
         /// number or a string suitable for *log* or *date* axes. If the axis
         /// type is set to [`RadialAxisType::Log`], ticks will be set every
-        /// 10^(n*d_tick) where n is the tick number. For example, to set a tick
-        /// mark at 1, 10, 100, 1000, ... set d_tick to 1. To set tick marks at
-        /// 1, 100, 10000, ... set dtick to 2. To set tick marks at 1, 5, 25,
-        /// 125, 625, 3125, ... set dtick to log_10(5), or 0.69897000433.
+        /// `10^(n*d_tick)` where n is the tick number. For example, to set a
+        /// tick mark at 1, 10, 100, 1000, ... set `d_tick` to 1. To set
+        /// tick marks at 1, 100, 10000, ... set dtick to 2. To set tick
+        /// marks at 1, 5, 25, 125, 625, 3125, ... set dtick to
+        /// `log_10(5)`, or 0.69897000433.
         ///
         /// [`RadialAxisType::Log`] has several special values:
         ///
@@ -544,6 +564,18 @@ pub enum RadialAxisType {
 pub enum ThetaUnit {
     Degrees,
     Radians,
+    Gradians,
+}
+
+/// Determines how [`BarPolar`](crate::traces::BarPolar) traces on the same
+/// polar subplot are displayed relative to one another.
+#[derive(Clone, Debug, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PolarBarMode {
+    /// Bars are stacked on top of one another.
+    Stack,
+    /// Bars are plotted over one another.
+    Overlay,
 }
 
 #[cfg(test)]
@@ -552,8 +584,8 @@ mod tests {
     use crate::Layout;
 
     // The focus of the test is serialization, so we test all options for
-    // [`LayoutPolar`], even though some of those options would normally be mutually
-    // exclusive.
+    // [`LayoutPolar`], even though some of those options would normally be
+    // mutually exclusive.
     #[test]
     fn serialize_layout_polar() {
         let ticks = PolarAxisTicks::new()
@@ -610,13 +642,34 @@ mod tests {
             .bg_color("#dddddd")
             .radial_axis(radial_axis)
             .angular_axis(angular_axis)
-            .grid_shape(GridShape::Circular);
+            .grid_shape(GridShape::Circular)
+            .bar_mode(PolarBarMode::Overlay)
+            .bar_gap(0.3);
 
         let layout = Layout::new().polar(layout_polar);
         let json = serde_json::to_string(&layout).unwrap();
 
-        let expected = r##"{"polar":{"sector":[0.0,270.0],"hole":0.2,"bgcolor":"#dddddd","radialaxis":{"visible":true,"type":"linear","autotypenumbers":"strict","autorangeoptions":{"minallowed":1,"maxallowed":null,"clipmin":null,"clipmax":null,"include":null},"autorange":true,"rangemode":"normal","minallowed":0,"maxallowed":105,"range":[5,100],"categoryorder":"trace","categoryarray":["category 1","category 2"],"angle":0.0,"autotickangles":[0.0,12.2,30.85],"side":"counterclockwise","title":{"text":"My Title"},"hoverformat":"%{label}: <br>Popularity: %{percent} </br> %{text}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"angularaxis":{"visible":true,"type":"-","autotypenumbers":"convert types","categoryorder":"category ascending","categoryarray":["category 3","category 4"],"thetaunit":"radians","period":10,"direction":"counterclockwise","rotation":5.0,"hoverformat":"GDP: %{x} <br>Life Expectancy: %{y}","uirevision":null,"color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","nticks":null,"ticks":null,"ticklen":null,"tickwidth":null,"tickcolor":"#dddddd","ticklabelstep":null,"showticklabels":null,"labelalias":null,"minorloglabels":null,"showtickprefix":null,"tickprefix":null,"showticksuffix":null,"ticksuffix":null,"showexponent":null,"exponentformat":null,"minexponent":null,"separatethousands":null,"tickfont":{"color":"#eeeeee"},"tickangle":null,"tickformat":null,"tickformatstops":null,"layer":null},"gridshape":"circular","uirevision":null}}"##;
+        let expected = r##"{"polar":{"sector":[0.0,270.0],"hole":0.2,"bgcolor":"#dddddd","radialaxis":{"visible":true,"type":"linear","autotypenumbers":"strict","autorangeoptions":{"minallowed":1},"autorange":true,"rangemode":"normal","minallowed":0,"maxallowed":105,"range":[5,100],"categoryorder":"trace","categoryarray":["category 1","category 2"],"angle":0.0,"autotickangles":[0.0,12.2,30.85],"side":"counterclockwise","title":{"text":"My Title"},"hoverformat":"%{label}: <br>Popularity: %{percent} </br> %{text}","color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","tickcolor":"#dddddd","tickfont":{"color":"#eeeeee"}},"angularaxis":{"visible":true,"type":"-","autotypenumbers":"convert types","categoryorder":"category ascending","categoryarray":["category 3","category 4"],"thetaunit":"radians","period":10,"direction":"counterclockwise","rotation":5.0,"hoverformat":"GDP: %{x} <br>Life Expectancy: %{y}","color":"#111111","showline":true,"linecolor":"#ffff00","linewidth":5,"showgrid":true,"gridcolor":"#444444","gridwidth":2,"griddash":"solid","tickmode":"auto","tickcolor":"#dddddd","tickfont":{"color":"#eeeeee"}},"gridshape":"circular","barmode":"overlay","bargap":0.3}}"##;
 
         assert_eq!(json, expected);
+    }
+
+    // Unset fields must be omitted, not written as `null`: plotly.js applies
+    // the layout template (e.g. a dark theme's polar `bgcolor` and grid
+    // colors) only to attributes that are absent, so an explicit `null`
+    // silently overrides the theme.
+    #[test]
+    fn serialize_layout_polar_omits_unset_fields() {
+        let layout_polar = LayoutPolar::new()
+            .bar_mode(PolarBarMode::Stack)
+            .angular_axis(AngularAxis::new().direction(PolarDirection::Clockwise))
+            .radial_axis(
+                RadialAxis::new().auto_range_options(AutoRangeOptions::default().min_allowed(0)),
+            );
+        let json = serde_json::to_string(&layout_polar).unwrap();
+        assert_eq!(
+            json,
+            r#"{"radialaxis":{"autorangeoptions":{"minallowed":0}},"angularaxis":{"direction":"clockwise"},"barmode":"stack"}"#
+        );
     }
 }

@@ -26,6 +26,8 @@ mod rangebreaks;
 mod scene;
 mod shape;
 mod slider;
+mod smith;
+mod ternary;
 
 // Re-export layout sub-module types
 pub use self::animation::{
@@ -51,7 +53,7 @@ pub use self::modes::{
 pub use self::polar::{
     AngularAxis, AngularAxisType, AutoRange, AutoRangeOptions, AutoTypeNumbers, AxisLayer,
     GridShape, Hole, LayoutPolar, MinorLogLabels, PolarAxisAttributes, PolarAxisTicks,
-    PolarDirection, PolarTickMode, RadialAxis, RadialAxisType, ThetaUnit,
+    PolarBarMode, PolarDirection, PolarTickMode, RadialAxis, RadialAxisType, ThetaUnit,
 };
 pub use self::rangebreaks::RangeBreak;
 pub use self::scene::{
@@ -66,8 +68,10 @@ pub use self::slider::{
     Slider, SliderCurrentValue, SliderCurrentValueXAnchor, SliderMethod, SliderStep,
     SliderStepBuilder, SliderTransition, SliderTransitionEasing,
 };
+pub use self::smith::{ImaginaryAxis, LayoutSmith, RealAxis, RealAxisSide, RealAxisTicks};
+pub use self::ternary::{LayoutTernary, TernaryAxis};
 
-/// Error type for ControlBuilder operations
+/// Error type for `ControlBuilder` operations
 #[derive(Debug)]
 pub enum ControlBuilderError {
     RestyleSerializationError(String),
@@ -227,11 +231,11 @@ impl Into<Cow<'static, Template>> for &'static Template {
     }
 }
 
-/// Generates Layout and LayoutTemplate
-/// LayoutTemplate matches Layout except it lacks a field for template
+/// Generates Layout and `LayoutTemplate`
+/// `LayoutTemplate` matches Layout except it lacks a field for template
 /// See layout/layout.rs for the full field list and doc comments.
-/// Layout is identical to LayoutTemplate except it has a `template` field and
-/// #[field_setter(kind = "layout")] See layout/layout.rs for the full field
+/// Layout is identical to `LayoutTemplate` except it has a `template` field and
+/// `#[field_setter(kind = "layout")]` See layout/layout.rs for the full field
 /// list and doc comments.
 #[layout_structs]
 pub struct LayoutFields {
@@ -350,7 +354,8 @@ pub struct LayoutFields {
     y_axis8: Option<Box<Axis>>,
     #[serde(rename = "zaxis8")]
     z_axis8: Option<Box<Axis>>,
-    // ternary: Option<LayoutTernary>,
+    ternary: Option<LayoutTernary>,
+    smith: Option<LayoutSmith>,
     scene: Option<LayoutScene>,
     geo: Option<LayoutGeo>,
     map: Option<LayoutMap>,
@@ -405,6 +410,13 @@ pub struct LayoutFields {
     treemap_colorway: Option<Vec<Box<dyn Color>>>,
     #[serde(rename = "extendtreemapcolors")]
     extend_treemap_colors: Option<bool>,
+    #[serde(rename = "funnelareacolorway")]
+    funnel_area_colorway: Option<Vec<Box<dyn Color>>>,
+    #[serde(rename = "extendfunnelareacolors")]
+    extend_funnel_area_colors: Option<bool>,
+    /// Hides the pie / funnel area sectors whose labels are listed here.
+    #[serde(rename = "hiddenlabels")]
+    hidden_labels: Option<Vec<String>>,
     mapbox: Option<Mapbox>,
     #[serde(rename = "updatemenus")]
     update_menus: Option<Vec<UpdateMenu>>,
@@ -672,6 +684,26 @@ mod tests {
     fn serialize_layout_ui_revision() {
         let layout = Layout::new().ui_revision("forever");
         assert_eq!(to_value(layout).unwrap()["uirevision"], json!("forever"));
+    }
+
+    #[test]
+    fn serialize_layout_subplots_and_funnel_area_colors() {
+        let layout = Layout::new()
+            .ternary(LayoutTernary::new().sum(1.0))
+            .smith(LayoutSmith::new())
+            .funnel_area_colorway(vec!["#111111"])
+            .extend_funnel_area_colors(false)
+            .hidden_labels(vec!["a"]);
+
+        let expected = json!({
+            "ternary": {"sum": 1.0},
+            "smith": {},
+            "funnelareacolorway": ["#111111"],
+            "extendfunnelareacolors": false,
+            "hiddenlabels": ["a"],
+        });
+
+        assert_eq!(to_value(layout).unwrap(), expected);
     }
 
     #[test]

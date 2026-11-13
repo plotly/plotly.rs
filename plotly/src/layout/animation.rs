@@ -11,7 +11,7 @@ use serde::Serialize;
 use crate::{Layout, Traces};
 
 /// A frame represents a single state in an animation sequence.
-/// Based on Plotly.js frame_attributes.js specification
+/// Based on Plotly.js `frame_attributes.js` specification
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, FieldSetter)]
 pub struct Frame {
@@ -63,7 +63,7 @@ impl Default for Animation {
 
 impl Animation {
     /// Create a new animation args with default values for options and
-    /// FramesMode set to all frames
+    /// `FramesMode` set to all frames
     pub fn new() -> Self {
         Self::default()
     }
@@ -139,7 +139,7 @@ impl Serialize for FrameListMode {
 }
 
 /// Animation configuration options
-/// Based on actual Plotly.js animation API from animation_attributes.js
+/// Based on actual Plotly.js animation API from `animation_attributes.js`
 #[serde_with::skip_serializing_none]
 #[derive(Serialize, Clone, Debug, FieldSetter)]
 pub struct AnimationOptions {

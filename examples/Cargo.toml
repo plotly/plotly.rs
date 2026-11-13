@@ -9,7 +9,6 @@ members = [
     "downsampling",
     "financial_charts",
     "images",
-    "kaleido",
     "maps",
     "ndarray",
     "plotly_utils",

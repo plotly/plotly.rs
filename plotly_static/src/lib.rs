@@ -76,7 +76,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! plotly_static = { version = "0.1", features = ["chromedriver", "webdriver_download"] }
+//! plotly_static = { version = "0.2", features = ["chromedriver", "webdriver_download"] }
 //! ```
 //!
 //! ## Async Support
@@ -262,26 +262,27 @@
 //!
 //! ## Comparison with Kaleido
 //!
+//! `plotly_static` replaces the Kaleido-based `plotly_kaleido` backend, which
+//! was removed in plotly.rs 0.15.0.
+//!
 //! - **No custom Chromium/Chrome external dependency**: Uses standard WebDriver
 //!   instead of proprietary Kaleido
 //! - **Better Browser Support**: Works with any WebDriver-compatible browser:
 //!   Chrome/Chromium,Firefox,Brave
 //! - **Extensible**: Easy to control browser capabilities and customize the
-//!   StaticExporter instance
+//!   `StaticExporter` instance
 //!
 //! ## Limitations
 //!
 //! - Requires a WebDriver-compatible browser
 //! - PDF export uses browser JavaScript `html2pdf` (not native Plotly PDF)
-//! - EPS is no longer supported and will be removed
+//! - EPS is not supported (removed in 0.2.0); use SVG or PDF instead
 //! - Slightly slower than Kaleido
 //!
 //! ## License
 //!
 //! MIT License - see LICENSE file for details.
 
-// TODO: remove this once version 0.15.0 is out
-#![allow(deprecated)]
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
@@ -322,14 +323,6 @@ const DRIVER_FEATURE_REQUIRED: &str = "Static image export at runtime requires e
 /// - **SVG**: Scalable Vector Graphics format (vector-based, scalable)
 /// - **PDF**: Portable Document Format (implemented via browser JS)
 ///
-/// # Deprecated Formats
-///
-/// - **EPS**: Encapsulated PostScript format (deprecated since 0.13.0, will be
-///   removed in 0.15.0)
-///   - Use SVG or PDF instead for vector graphics
-///   - EPS is not supported in the open source version and in versions prior to
-///     0.13.0 has been generating empty images.
-///
 /// # Examples
 ///
 /// ```rust
@@ -339,7 +332,6 @@ const DRIVER_FEATURE_REQUIRED: &str = "Static image export at runtime requires e
 /// assert_eq!(format.to_string(), "png");
 /// ```
 #[derive(Debug, Clone, Serialize)]
-#[allow(deprecated)]
 pub enum ImageFormat {
     /// Portable Network Graphics format
     PNG,
@@ -351,20 +343,10 @@ pub enum ImageFormat {
     SVG,
     /// Portable Document Format (implemented via browser JS)
     PDF,
-    /// Encapsulated PostScript format (deprecated)
-    ///
-    /// This format is deprecated since version 0.13.0 and will be removed in
-    /// version 0.15.0. Use SVG or PDF instead for vector graphics. EPS is
-    /// not supported in the open source Plotly ecosystem version.
-    #[deprecated(
-        since = "0.13.0",
-        note = "Use SVG or PDF instead. EPS variant will be removed in version 0.15.0"
-    )]
-    EPS,
 }
 
 impl std::fmt::Display for ImageFormat {
-    /// Formats the ImageFormat as a string.
+    /// Formats the `ImageFormat` as a string.
     ///
     /// # Examples
     ///
@@ -383,8 +365,6 @@ impl std::fmt::Display for ImageFormat {
                 Self::WEBP => "webp",
                 Self::SVG => "svg",
                 Self::PDF => "pdf",
-                #[allow(deprecated)]
-                Self::EPS => "eps",
             }
         )
     }
@@ -427,7 +407,7 @@ struct PlotData<'a> {
 /// # Default Configuration
 ///
 /// - WebDriver port: 4444
-/// - WebDriver URL: "http://localhost"
+/// - WebDriver URL: `"http://localhost"`
 /// - Spawn webdriver: true (automatically manages WebDriver lifecycle)
 /// - Offline mode: false
 /// - PDF export timeout: 250ms
@@ -436,7 +416,7 @@ struct PlotData<'a> {
 pub struct StaticExporterBuilder {
     /// WebDriver server port (default: 4444)
     webdriver_port: u32,
-    /// WebDriver server base URL (default: "http://localhost")
+    /// WebDriver server base URL (default: `"http://localhost"`)
     webdriver_url: String,
     /// Auto-spawn WebDriver if not running (default: true)
     spawn_webdriver: bool,
@@ -453,7 +433,7 @@ impl Default for StaticExporterBuilder {
     ///
     /// The default configuration includes:
     /// - WebDriver port: 4444
-    /// - WebDriver URL: "http://localhost"
+    /// - WebDriver URL: `"http://localhost"`
     /// - Spawn webdriver: true
     /// - Offline mode: false
     /// - PDF export timeout: 250ms
@@ -625,7 +605,7 @@ impl StaticExporterBuilder {
     ///   existing WebDriver without spawning
     ///
     /// Returns a `Result<StaticExporter>` where:
-    /// - `Ok(exporter)` - Successfully created the StaticExporter instance
+    /// - `Ok(exporter)` - Successfully created the `StaticExporter` instance
     /// - `Err(e)` - Failed to create the instance (e.g., WebDriver not
     ///   available, port conflicts, etc.)
     ///
@@ -639,6 +619,15 @@ impl StaticExporterBuilder {
     ///     .build()
     ///     .expect("Failed to build StaticExporter");
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if no driver feature (`chromedriver` or `geckodriver`)
+    /// is enabled, or if the WebDriver cannot be spawned or connected to.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the Tokio runtime cannot be created.
     pub fn build(&self) -> Result<StaticExporter> {
         let runtime = std::sync::Arc::new(
             tokio::runtime::Builder::new_multi_thread()
@@ -652,7 +641,7 @@ impl StaticExporterBuilder {
         Ok(StaticExporter { runtime, inner })
     }
 
-    /// Create a new WebDriver instance based on the spawn_webdriver flag
+    /// Create a new WebDriver instance based on the `spawn_webdriver` flag
     #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
     fn create_webdriver(&self) -> Result<WebDriver> {
         let port = self.webdriver_port;
@@ -693,6 +682,13 @@ impl StaticExporterBuilder {
     ///     .build_async()
     ///     .expect("Failed to build AsyncStaticExporter");
     /// ```
+    ///
+    /// Build an [`AsyncStaticExporter`] for use in async contexts.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if no driver feature (`chromedriver` or `geckodriver`)
+    /// is enabled, or if the WebDriver cannot be spawned or connected to.
     pub fn build_async(&self) -> Result<AsyncStaticExporter> {
         #[cfg(not(any(feature = "chromedriver", feature = "geckodriver")))]
         return Err(anyhow!(DRIVER_FEATURE_REQUIRED));
@@ -818,6 +814,12 @@ impl StaticExporter {
     /// // Close the exporter
     /// exporter.close();
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if called from within an async (Tokio) context, if the
+    /// browser export fails, if the image data cannot be decoded, or if the
+    /// file cannot be written.
     pub fn write_fig(
         &mut self,
         dst: &Path,
@@ -847,7 +849,7 @@ impl StaticExporter {
     /// string. or an error if the export fails.
     ///
     /// The format of the string depends on the image format. For
-    /// ImageFormat::SVG the function will generate plain SVG text, for
+    /// `ImageFormat::SVG` the function will generate plain SVG text, for
     /// other formats it will return base64-encoded data.
     ///
     /// # Examples
@@ -880,6 +882,11 @@ impl StaticExporter {
     /// // svg_data contains the SVG markup as a string
     /// assert!(svg_data.starts_with("<svg"));
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if called from within an async (Tokio) context, or if
+    /// the browser export fails.
     pub fn write_to_string(
         &mut self,
         plot: &serde_json::Value,
@@ -920,13 +927,13 @@ impl StaticExporter {
     }
 }
 
-/// Async StaticExporter for async contexts. Keeps the same API as the sync
-/// StaticExporter for compatibility.
+/// Async `StaticExporter` for async contexts. Keeps the same API as the sync
+/// `StaticExporter` for compatibility.
 pub struct AsyncStaticExporter {
     /// WebDriver server port (default: 4444)
     webdriver_port: u32,
 
-    /// WebDriver server base URL (default: "http://localhost")
+    /// WebDriver server base URL (default: `"http://localhost"`)
     webdriver_url: String,
 
     /// WebDriver process manager for spawning and cleanup
@@ -953,6 +960,11 @@ impl AsyncStaticExporter {
     /// Exports a Plotly plot to a static image file
     ///
     /// Same as [`StaticExporter::write_fig`] but async.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the browser export fails, if the image data cannot
+    /// be decoded, or if the file cannot be written.
     pub async fn write_fig(
         &mut self,
         dst: &Path,
@@ -988,6 +1000,10 @@ impl AsyncStaticExporter {
     /// Exports a Plotly plot to a string representation.
     ///
     /// Same as [`StaticExporter::write_to_string`] but async.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the browser export fails.
     pub async fn write_to_string(
         &mut self,
         plot: &serde_json::Value,
@@ -1060,14 +1076,15 @@ impl AsyncStaticExporter {
             new_client
         };
 
-        // For offline mode, write HTML to file to avoid data URI size limits since JS
-        // libraries are embedded in the file
+        // For offline mode, write HTML to file to avoid data URI size limits
+        // since JS libraries are embedded in the file
         let url = if self.offline_mode {
             let temp_file = template::to_file(html_content)
                 .with_context(|| "Failed to create temporary HTML file")?;
             format!("file://{}", temp_file.to_string_lossy())
         } else {
-            // For online mode, use data URI (smaller size since JS is loaded from CDN)
+            // For online mode, use data URI (smaller size since JS is loaded
+            // from CDN)
             format!("data:text/html,{}", encode(html_content))
         };
 
@@ -1128,11 +1145,6 @@ impl AsyncStaticExporter {
             ImageFormat::PNG | ImageFormat::JPEG | ImageFormat::WEBP | ImageFormat::PDF => {
                 common::extract_encoded(result, &plot.format)
             }
-            #[allow(deprecated)]
-            ImageFormat::EPS => {
-                error!("EPS format is deprecated. Use SVG or PDF instead.");
-                common::extract_encoded(result, &plot.format)
-            }
         }
     }
 
@@ -1143,7 +1155,8 @@ impl AsyncStaticExporter {
         }
         #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
         {
-            // Define browser capabilities (copied to avoid reordering existing code)
+            // Define browser capabilities (copied to avoid reordering existing
+            // code)
             let mut caps = JsonMap::new();
             let mut browser_opts = JsonMap::new();
             let browser_args = self.webdriver_browser_caps.clone();
@@ -1373,8 +1386,8 @@ mod tests {
         PORT_COUNTER.fetch_add(1, Ordering::SeqCst)
     }
 
-    // In CI which may run on slow machines, we run a different strategy to generate
-    // the unique port.
+    // In CI which may run on slow machines, we run a different strategy to
+    // generate the unique port.
     #[cfg(feature = "debug")]
     fn get_unique_port() -> u32 {
         static PORT_COUNTER: AtomicU32 = AtomicU32::new(4844);
@@ -1669,8 +1682,8 @@ mod tests {
         assert!(std::fs::remove_file(dst1.as_path()).is_ok());
         exporter1.close();
 
-        // Create second exporter on the same port - this should connect to existing
-        // WebDriver process (but create a new session)
+        // Create second exporter on the same port - this should connect to
+        // existing WebDriver process (but create a new session)
         let mut exporter2 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
@@ -1687,15 +1700,16 @@ mod tests {
         assert!(std::fs::remove_file(dst2.as_path()).is_ok());
         exporter2.close();
 
-        // Create third exporter on the same port - should also connect to existing
-        // WebDriver process
+        // Create third exporter on the same port - should also connect to
+        // existing WebDriver process
         let mut exporter3 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
             .build()
             .unwrap();
 
-        // Export third image using another new session on the same WebDriver process
+        // Export third image using another new session on the same WebDriver
+        // process
         let dst3 = PathBuf::from("process_reuse_3.png");
         exporter3
             .write_fig(dst3.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)

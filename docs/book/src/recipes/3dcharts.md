@@ -7,3 +7,5 @@ Kind | Link
 Scatter3D |[![Scatter 3D Charts](./img/basic_scatter3d.png)](./3dcharts/3dcharts.md)
 Surface Plots | [![Surface Plots](./img/surface_plot.png)](./3dcharts/surface_plots.md)
 Mesh3D | [![Mesh3D](./img/mesh3d.png)](./3dcharts/mesh3d_plots.md)
+Vector Fields (Cone, Streamtube) | [Vector Field Plots](./3dcharts/vector_field_plots.md)
+Isosurface and Volume | [Isosurface and Volume Plots](./3dcharts/volume_plots.md)

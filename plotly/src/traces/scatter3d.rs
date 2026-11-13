@@ -1,4 +1,4 @@
-//! Scatter3D plot
+//! `Scatter3D` plot
 
 #[cfg(feature = "plotly_ndarray")]
 use ndarray::{Array, Ix1};
@@ -105,7 +105,7 @@ where
     #[serde(rename = "legendgroup")]
     legend_group: Option<String>,
     /// Sets the legend rank for this trace. Items and groups with smaller ranks
-    /// are presented on top/left side while with `"reversed"
+    /// are presented on top/left side while with `"reversed"`
     /// `legend.traceorder` they are on bottom/right side. The default
     /// legendrank is 1000, so that you can use ranks less than 1000 to
     /// place certain items before all unranked items, and ranks greater than

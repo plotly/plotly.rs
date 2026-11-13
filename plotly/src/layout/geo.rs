@@ -191,4 +191,10 @@ mod tests {
         let geo = LayoutGeo::new().resolution(GeoResolution::OneOverOneHundredTenMillion);
         assert_eq!(to_value(geo).unwrap(), json!({ "resolution": 110 }));
     }
+
+    #[test]
+    fn serialize_rotation_omits_unset_fields() {
+        let json = serde_json::to_value(Rotation::new().lon(2.0)).unwrap();
+        assert_eq!(json, json!({"lon": 2.0}));
+    }
 }

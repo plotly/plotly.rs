@@ -22,6 +22,11 @@ extern "C" {
 /// The function signature is slightly constrained in that `id` is a `&str`
 /// which represents the `id` of an existing HTML `div` element, rather than
 /// also allowing an instance of a `div` element, itself.
+///
+/// # Panics
+///
+/// Panics if plotly.js rejects the plot (e.g. no element with the given `id`
+/// exists).
 pub async fn new_plot(id: &str, plot: &Plot) {
     let plot_obj = &plot.to_js_object();
 
@@ -37,6 +42,11 @@ pub async fn new_plot(id: &str, plot: &Plot) {
 /// The function signature is slightly constrained in that `id` is a `&str`
 /// which represents the `id` of an existing HTML `div` element, rather than
 /// also allowing an instance of a `div` element, itself.
+///
+/// # Panics
+///
+/// Panics if plotly.js rejects the plot (e.g. no element with the given `id`
+/// exists).
 pub async fn react(id: &str, plot: &Plot) {
     let plot_obj = &plot.to_js_object();
 
