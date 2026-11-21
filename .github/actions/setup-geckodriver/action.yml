@@ -1,0 +1,25 @@
+name: Setup GeckoDriver
+description: Install the pinned Mozilla GeckoDriver on Linux x64
+outputs:
+  path:
+    description: Absolute path to the installed driver
+    value: ${{ steps.install.outputs.path }}
+runs:
+  using: composite
+  steps:
+    - name: Download and verify GeckoDriver
+      id: install
+      shell: bash
+      run: |
+        set -euo pipefail
+        version=v0.37.1
+        archive="geckodriver-${version}-linux64.tar.gz"
+        checksum=e815130ea95983e162ae91843b48d3a3ce991735635fce83a647afde21e09f7e
+        directory=$(mktemp -d "$RUNNER_TEMP/geckodriver.XXXXXX")
+        curl --fail --silent --show-error --location --retry 3 \
+          --output "$directory/$archive" \
+          "https://github.com/mozilla/geckodriver/releases/download/$version/$archive"
+        printf '%s  %s\n' "$checksum" "$directory/$archive" | sha256sum --check --status
+        tar -xzf "$directory/$archive" -C "$directory" geckodriver
+        "$directory/geckodriver" --version
+        printf 'path=%s\n' "$directory/geckodriver" >> "$GITHUB_OUTPUT"
