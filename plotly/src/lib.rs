@@ -7,7 +7,8 @@
 //! The `kaleido` and `kaleido_download` features are deprecated since version
 //! 0.13.0 and will be removed in version 0.15.0. Please migrate to the
 //! `plotly_static` and `static_export_*` features instead.
-#![recursion_limit = "256"] // lets us use a large serde_json::json! macro for testing crate::layout::Axis
+#![recursion_limit = "256"] // lets us use a large serde_json::json! macro for
+                            // testing crate::layout::Axis
 extern crate askama;
 extern crate rand;
 extern crate serde;
@@ -58,7 +59,8 @@ pub use common::color;
 pub use configuration::Configuration;
 pub use layout::Layout;
 pub use plot::{Plot, Trace, Traces};
-// Also provide easy access to modules which contain additional trace-specific types
+// Also provide easy access to modules which contain additional trace-specific
+// types
 pub use traces::{
     box_plot, choropleth, choropleth_map, contour, density_map, funnel, heat_map, histogram,
     histogram2d, icicle, image, indicator, mesh3d, parcats, sankey, scatter, scatter3d,

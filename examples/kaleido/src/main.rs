@@ -14,8 +14,8 @@ fn main() {
     std::fs::create_dir_all("./output").unwrap();
     let filename = "./output/inline_image".to_string();
 
-    // The image will be saved to format!("output/image.{image_format}") relative to
-    // the current working directory.
+    // The image will be saved to format!("output/image.{image_format}")
+    // relative to the current working directory.
     #[allow(deprecated)]
     {
         plot.write_image(&filename, ImageFormat::EPS, width, height, scale);

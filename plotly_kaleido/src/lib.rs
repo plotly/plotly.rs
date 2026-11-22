@@ -116,8 +116,8 @@ struct PlotData<'a> {
     width: usize,
     height: usize,
     scale: f64,
-    // TODO: it would be great if this could be a plotly::Plot, but with the current workspace set
-    // up, that would be a cyclic dependency.
+    // TODO: it would be great if this could be a plotly::Plot, but with the
+    // current workspace set up, that would be a cyclic dependency.
     data: &'a Value,
 }
 
@@ -259,8 +259,8 @@ impl Kaleido {
         let p = self.cmd_path.to_str().unwrap();
         let format_str = format.to_string();
 
-        // Removed flag 'disable-gpu' as it causes issues on MacOS and other platforms
-        // see Kaleido issue #323
+        // Removed flag 'disable-gpu' as it causes issues on MacOS and other
+        // platforms see Kaleido issue #323
         let cmd_args = vec![
             "plotly",
             "--allow-file-access-from-files",
@@ -303,10 +303,10 @@ impl Kaleido {
             let res = KaleidoResult::from(line.as_str());
             if let Some(image_data) = res.result {
                 // TODO: this should be refactored
-                // The assumption is that  KaleidoResult contains a single image.
-                // We should end the loop on the first valid one.
-                // If that is not the case, prior implementation would have returned the last
-                // valid image
+                // The assumption is that  KaleidoResult contains a single
+                // image. We should end the loop on the first valid one.
+                // If that is not the case, prior implementation would have
+                // returned the last valid image
                 return Ok(image_data);
             }
         }

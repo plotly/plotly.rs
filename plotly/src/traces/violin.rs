@@ -3,8 +3,9 @@
 use plotly_derive::FieldSetter;
 use serde::{Serialize, Serializer};
 
-// Re-use the box plot's quartile method, whose values (linear/exclusive/inclusive)
-// are identical to the violin trace's `quartilemethod` attribute.
+// Re-use the box plot's quartile method, whose values
+// (linear/exclusive/inclusive) are identical to the violin trace's
+// `quartilemethod` attribute.
 pub use super::box_plot::QuartileMethod;
 use crate::{
     color::Color,
@@ -324,7 +325,8 @@ mod tests {
         let numeric = Violin::new(vec![1, 2, 3]).span(vec![0., 10.]);
         assert_eq!(to_value(numeric).unwrap()["span"], json!([0.0, 10.0]));
 
-        // Date/string span for date-valued axes (plotly.js types `span` as `any`).
+        // Date/string span for date-valued axes (plotly.js types `span` as
+        // `any`).
         let dated = Violin::new(vec![1, 2, 3])
             .span_mode(SpanMode::Manual)
             .span(vec!["2020-01-01", "2020-12-31"]);

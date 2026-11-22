@@ -172,7 +172,8 @@ impl WebDriver {
     }
 
     fn spawn_process(&self, driver_path: &Option<PathBuf>, port: u32) -> Result<Child> {
-        let driver_path = driver_path.as_ref().unwrap(); // Safe unwrap since we validated above
+        let driver_path = driver_path.as_ref().unwrap(); // Safe unwrap since we
+                                                         // validated above
 
         let mut command = Self::create_command(driver_path, port);
         Self::log_command(&command);

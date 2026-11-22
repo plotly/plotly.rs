@@ -150,8 +150,8 @@ pub enum PlotGLPixelRatio {
 #[serde(rename_all = "camelCase")]
 pub struct Configuration {
     // reference is here: https://github.com/plotly/plotly.js/blob/master/src/plot_api/plot_config.js
-    // missing: edits, show_sources, mode_bar_buttons, set_background, logging, notify_on_logging,
-    // global_transforms, mode_bar_buttons_to_add and locales
+    // missing: edits, show_sources, mode_bar_buttons, set_background, logging,
+    // notify_on_logging, global_transforms, mode_bar_buttons_to_add and locales
     typeset_math: Option<bool>,
     autosizable: Option<bool>,
     scroll_zoom: Option<bool>,
