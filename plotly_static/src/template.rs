@@ -256,7 +256,8 @@ pub(crate) fn to_file(data: &str) -> Result<PathBuf> {
 
 fn offline_js_sources() -> String {
     // tex-mml-chtml conflicts with tex-svg when generating Latex Titles
-    // let local_tex_mml_js = include_str!("../resource/tex-mml-chtml-3.2.0.js");
+    // let local_tex_mml_js =
+    // include_str!("../resource/tex-mml-chtml-3.2.0.js");
     let local_plotly_js = include_str!("../resource/plotly.min.js");
     let local_tex_svg_js = include_str!("../resource/tex-svg-3.2.2.js");
     let local_html2pdf_js = include_str!("../resource/html2pdf.bundle.min.js");

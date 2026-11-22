@@ -509,8 +509,8 @@ impl FieldReceiver {
             _ => quote![],
         };
 
-        // Optional matrix setter for Dim<_> when #[field_setter(with_matrix)] is
-        // present
+        // Optional matrix setter for Dim<_> when #[field_setter(with_matrix)]
+        // is present
         let matrix_setter = if self.with_matrix {
             let matrix_ident = Ident::new(
                 &format!("{field_ident}_matrix"),
@@ -541,7 +541,8 @@ impl FieldReceiver {
                         #return_stmt
                     }
                 },
-                // Generic matrix for other inner types that are already concrete (f64, enums, etc.)
+                // Generic matrix for other inner types that are already
+                // concrete (f64, enums, etc.)
                 FieldType::OptionDimOther(inner_ty) => quote! {
                     #field_docs
                     pub fn #matrix_ident(mut self, value: Vec<Vec<#inner_ty>>) -> #return_ty {

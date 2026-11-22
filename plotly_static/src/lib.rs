@@ -1060,14 +1060,15 @@ impl AsyncStaticExporter {
             new_client
         };
 
-        // For offline mode, write HTML to file to avoid data URI size limits since JS
-        // libraries are embedded in the file
+        // For offline mode, write HTML to file to avoid data URI size limits
+        // since JS libraries are embedded in the file
         let url = if self.offline_mode {
             let temp_file = template::to_file(html_content)
                 .with_context(|| "Failed to create temporary HTML file")?;
             format!("file://{}", temp_file.to_string_lossy())
         } else {
-            // For online mode, use data URI (smaller size since JS is loaded from CDN)
+            // For online mode, use data URI (smaller size since JS is loaded
+            // from CDN)
             format!("data:text/html,{}", encode(html_content))
         };
 
@@ -1143,7 +1144,8 @@ impl AsyncStaticExporter {
         }
         #[cfg(any(feature = "chromedriver", feature = "geckodriver"))]
         {
-            // Define browser capabilities (copied to avoid reordering existing code)
+            // Define browser capabilities (copied to avoid reordering existing
+            // code)
             let mut caps = JsonMap::new();
             let mut browser_opts = JsonMap::new();
             let browser_args = self.webdriver_browser_caps.clone();
@@ -1373,8 +1375,8 @@ mod tests {
         PORT_COUNTER.fetch_add(1, Ordering::SeqCst)
     }
 
-    // In CI which may run on slow machines, we run a different strategy to generate
-    // the unique port.
+    // In CI which may run on slow machines, we run a different strategy to
+    // generate the unique port.
     #[cfg(feature = "debug")]
     fn get_unique_port() -> u32 {
         static PORT_COUNTER: AtomicU32 = AtomicU32::new(4844);
@@ -1669,8 +1671,8 @@ mod tests {
         assert!(std::fs::remove_file(dst1.as_path()).is_ok());
         exporter1.close();
 
-        // Create second exporter on the same port - this should connect to existing
-        // WebDriver process (but create a new session)
+        // Create second exporter on the same port - this should connect to
+        // existing WebDriver process (but create a new session)
         let mut exporter2 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
@@ -1687,15 +1689,16 @@ mod tests {
         assert!(std::fs::remove_file(dst2.as_path()).is_ok());
         exporter2.close();
 
-        // Create third exporter on the same port - should also connect to existing
-        // WebDriver process
+        // Create third exporter on the same port - should also connect to
+        // existing WebDriver process
         let mut exporter3 = StaticExporterBuilder::default()
             .spawn_webdriver(true)
             .webdriver_port(test_port)
             .build()
             .unwrap();
 
-        // Export third image using another new session on the same WebDriver process
+        // Export third image using another new session on the same WebDriver
+        // process
         let dst3 = PathBuf::from("process_reuse_3.png");
         exporter3
             .write_fig(dst3.as_path(), &test_plot, ImageFormat::PNG, 800, 600, 1.0)
