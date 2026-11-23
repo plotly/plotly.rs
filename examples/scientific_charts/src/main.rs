@@ -2,9 +2,16 @@
 
 use std::f64::consts::PI;
 
+use plotly::carpet::{CarpetAxis, CarpetAxisTitle};
 use plotly::common::{ColorScale, ColorScalePalette, Font, HoverInfo};
+use plotly::common::{Marker, Mode};
+use plotly::contour::Coloring;
 use plotly::contour::Contours;
-use plotly::{Contour, HeatMap, Layout, Plot};
+use plotly::layout::{LayoutSmith, LayoutTernary, TernaryAxis};
+use plotly::{
+    Carpet, Contour, ContourCarpet, HeatMap, Layout, Plot, ScatterCarpet, ScatterSmith,
+    ScatterTernary,
+};
 use plotly_utils::write_example_to_html;
 
 // Contour Plots
@@ -185,6 +192,135 @@ fn customized_heat_map(show: bool, file_name: &str) {
 }
 // ANCHOR_END: customized_heat_map
 
+// Ternary Plots
+// ANCHOR: ternary_plot
+fn ternary_plot(show: bool, file_name: &str) {
+    // Soil composition: each sample is a mix of clay, sand and silt (in %).
+    let clay = vec![30.0, 10.0, 55.0, 20.0, 40.0];
+    let sand = vec![50.0, 70.0, 15.0, 30.0, 20.0];
+    let silt = vec![20.0, 20.0, 30.0, 50.0, 40.0];
+
+    let trace = ScatterTernary::new(clay, sand, silt)
+        .mode(Mode::MarkersText)
+        .text_array(vec!["Loam", "Sandy loam", "Clay", "Silt loam", "Clay loam"])
+        .marker(Marker::new().size(12));
+
+    let layout = Layout::new().title("Soil composition").ternary(
+        LayoutTernary::new()
+            .sum(100.0)
+            .a_axis(TernaryAxis::new().title("Clay"))
+            .b_axis(TernaryAxis::new().title("Sand"))
+            .c_axis(TernaryAxis::new().title("Silt")),
+    );
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: ternary_plot
+
+// Smith Charts
+// ANCHOR: smith_chart
+fn smith_chart(show: bool, file_name: &str) {
+    // Normalized impedance of a load swept in frequency.
+    let real = vec![0.5, 1.0, 2.0, 3.0, 2.0, 1.0, 0.5];
+    let imag = vec![0.5, 1.0, 1.5, 0.0, -1.5, -1.0, -0.5];
+
+    let trace = ScatterSmith::new(real, imag)
+        .mode(Mode::LinesMarkers)
+        .name("Load impedance");
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Smith Chart").smith(LayoutSmith::new()));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: smith_chart
+
+// Carpet Plots
+// ANCHOR: carpet_with_scatter
+fn carpet_with_scatter(show: bool, file_name: &str) {
+    let carpet = Carpet::new(
+        vec![4.0, 4.0, 4.0, 4.5, 4.5, 4.5, 5.0, 5.0, 5.0, 6.0, 6.0, 6.0],
+        vec![1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0],
+    )
+    .y(vec![
+        2.0, 3.5, 4.0, 3.0, 4.5, 5.0, 5.5, 6.5, 7.5, 8.0, 8.5, 10.0,
+    ])
+    .a_axis(
+        CarpetAxis::new()
+            .title(CarpetAxisTitle::new().text("a"))
+            .tick_prefix("a = "),
+    )
+    .b_axis(
+        CarpetAxis::new()
+            .title(CarpetAxisTitle::new().text("b"))
+            .tick_prefix("b = "),
+    )
+    .carpet("c1");
+
+    let scatter = ScatterCarpet::new(vec![4.0, 4.5, 5.0, 6.0], vec![2.5, 2.5, 2.5, 2.5])
+        .carpet("c1")
+        .mode(Mode::LinesMarkers)
+        .name("b = 2.5");
+
+    let mut plot = Plot::new();
+    plot.add_trace(carpet);
+    plot.add_trace(scatter);
+    plot.set_layout(Layout::new().title("Scatter on a Carpet"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: carpet_with_scatter
+
+// ANCHOR: contour_carpet
+fn contour_carpet(show: bool, file_name: &str) {
+    let a = vec![0.0, 1.0, 2.0, 3.0, 0.0, 1.0, 2.0, 3.0, 0.0, 1.0, 2.0, 3.0];
+    let b = vec![4.0, 4.0, 4.0, 4.0, 5.0, 5.0, 5.0, 5.0, 6.0, 6.0, 6.0, 6.0];
+
+    let carpet = Carpet::new(a.clone(), b.clone())
+        .x(vec![
+            2.0, 3.0, 4.0, 5.0, 2.2, 3.1, 4.1, 5.1, 1.5, 2.5, 3.5, 4.5,
+        ])
+        .y(vec![
+            1.0, 1.4, 1.6, 1.75, 2.0, 2.5, 2.7, 2.75, 3.0, 3.5, 3.7, 3.75,
+        ])
+        .a_axis(CarpetAxis::new().tick_prefix("a = ").smoothing(0.0))
+        .b_axis(CarpetAxis::new().tick_prefix("b = ").smoothing(0.0));
+
+    let z = vec![
+        1.0, 1.96, 2.56, 3.0625, 4.0, 5.0625, 1.0, 7.5625, 9.0, 12.25, 15.21, 14.0625,
+    ];
+    let contour = ContourCarpet::new(z)
+        .a(a)
+        .b(b)
+        .contours(Contours::new().coloring(Coloring::Fill))
+        .color_scale(ColorScale::Palette(ColorScalePalette::Viridis));
+
+    let mut plot = Plot::new();
+    plot.add_trace(carpet);
+    plot.add_trace(contour);
+    plot.set_layout(Layout::new().title("Contour Carpet"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: contour_carpet
+
 fn main() {
     // Change false to true on any of these lines to display the example.
     // Contour Plots
@@ -199,4 +335,14 @@ fn main() {
     // Heatmaps
     basic_heat_map(false, "basic_heat_map");
     customized_heat_map(false, "customized_heat_map");
+
+    // Ternary Plots
+    ternary_plot(false, "ternary_plot");
+
+    // Smith Charts
+    smith_chart(false, "smith_chart");
+
+    // Carpet Plots
+    carpet_with_scatter(false, "carpet_with_scatter");
+    contour_carpet(false, "contour_carpet");
 }

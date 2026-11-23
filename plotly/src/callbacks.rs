@@ -57,6 +57,12 @@ extern "C" {
 ///     web_sys::console::log_1(&format!("{:?}", evt).into());
 /// });
 /// ```
+///
+/// # Panics
+///
+/// Panics if no element with the given `div_id` exists. The registered
+/// listener panics if a click event cannot be deserialized into
+/// `ClickEvent`.
 pub fn bind_click<F>(div_id: &str, mut cb: F)
 where
     F: 'static + FnMut(ClickEvent),

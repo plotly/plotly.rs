@@ -7,12 +7,27 @@ use syn::DeriveInput;
 use syn::{parse_macro_input, ItemStruct};
 mod field_setter;
 
+/// Derive chainable setters, `new()` and `Default` for a struct of `Option`
+/// fields.
+///
+/// # Panics
+///
+/// Panics, failing compilation, if the input cannot be parsed, if the struct
+/// has unnamed (tuple) fields, or if a `#[field_setter(default = "...")]`
+/// value is not valid Rust tokens. Unsupported attributes are reported as
+/// regular compile errors rather than panics.
 #[proc_macro_derive(FieldSetter, attributes(field_setter))]
 pub fn field_setter(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = syn::parse::<DeriveInput>(input).unwrap();
     field_setter::field_setter_impl(input)
 }
 
+/// Generate both `LayoutTemplate` and `Layout` from a single field list.
+///
+/// # Panics
+///
+/// Panics, failing compilation, if the generated `template` field fails to
+/// parse; this indicates a bug in this macro.
 #[proc_macro_attribute]
 pub fn layout_structs(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as ItemStruct);

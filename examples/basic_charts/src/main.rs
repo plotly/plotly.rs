@@ -30,8 +30,12 @@ use plotly::{
         Align as TableAlign, Cells, Fill as TableFill, Font as TableFont, Header, Line as TableLine,
     },
     treemap::{BranchValues, Marker as TreemapMarker, Packing, PathBar, Side, Tiling},
-    Bar, Icicle, Indicator, Parcats, Pie, Plot, Sankey, Scatter, ScatterPolar, Sunburst, Table,
-    Treemap,
+    Bar, BarPolar, Icicle, Indicator, Parcats, Parcoords, Pie, Plot, Sankey, Scatter, ScatterPolar,
+    Sunburst, Table, Treemap,
+};
+use plotly::{
+    layout::PolarBarMode,
+    parcoords::{ConstraintRange, Dimension, ParcoordsLine},
 };
 use plotly_utils::write_example_to_html;
 use rand_distr::{Distribution, Normal, Uniform};
@@ -1476,6 +1480,87 @@ fn indicator_gauge(show: bool, file_name: &str) {
 }
 // ANCHOR_END: indicator_gauge
 
+// Polar Bar Charts
+// ANCHOR: wind_rose
+fn wind_rose(show: bool, file_name: &str) {
+    let directions = vec!["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    let bands = [
+        (
+            "< 5 m/s",
+            vec![7.0, 5.5, 4.5, 6.0, 5.0, 6.5, 7.5, 6.0],
+            NamedColor::LightSkyBlue,
+        ),
+        (
+            "5-10 m/s",
+            vec![5.0, 3.5, 2.5, 4.0, 3.0, 4.5, 6.0, 4.5],
+            NamedColor::DodgerBlue,
+        ),
+        (
+            "> 10 m/s",
+            vec![2.5, 1.5, 1.0, 2.0, 1.5, 2.5, 3.5, 2.0],
+            NamedColor::DarkBlue,
+        ),
+    ];
+
+    let mut plot = Plot::new();
+    for (name, frequency, color) in bands {
+        let trace = BarPolar::new(directions.clone(), frequency)
+            .name(name)
+            .marker(Marker::new().color(color));
+        plot.add_trace(trace);
+    }
+
+    let layout = Layout::new().title("Wind Rose").polar(
+        LayoutPolar::new()
+            .bar_mode(PolarBarMode::Stack)
+            .bar_gap(0.1)
+            .angular_axis(AngularAxis::new().direction(PolarDirection::Clockwise)),
+    );
+    plot.set_layout(layout);
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: wind_rose
+
+// Parallel Coordinates
+// ANCHOR: basic_parcoords
+fn basic_parcoords(show: bool, file_name: &str) {
+    let trace = Parcoords::new(vec![
+        Dimension::new()
+            .label("Sepal length")
+            .values(vec![5.1, 4.9, 7.0, 6.4, 6.3, 5.8]),
+        Dimension::new()
+            .label("Sepal width")
+            .values(vec![3.5, 3.0, 3.2, 3.2, 3.3, 2.7]),
+        Dimension::new()
+            .label("Petal length")
+            .values(vec![1.4, 1.4, 4.7, 4.5, 6.0, 5.1])
+            .constraint_range(ConstraintRange::Single([4.0, 6.5])),
+        Dimension::new()
+            .label("Petal width")
+            .values(vec![0.2, 0.2, 1.4, 1.5, 2.5, 1.9]),
+    ])
+    .line(
+        ParcoordsLine::new()
+            .color_array(vec![0.0, 0.0, 1.0, 1.0, 2.0, 2.0])
+            .color_scale(ColorScale::Palette(ColorScalePalette::Viridis))
+            .show_scale(true),
+    );
+
+    let mut plot = Plot::new();
+    plot.add_trace(trace);
+    plot.set_layout(Layout::new().title("Parallel Coordinates"));
+
+    let path = write_example_to_html(&plot, file_name);
+    if show {
+        plot.show_html(path);
+    }
+}
+// ANCHOR_END: basic_parcoords
+
 fn main() {
     // Change false to true on any of these lines to display the example.
 
@@ -1534,6 +1619,12 @@ fn main() {
     // Parallel Categories
     basic_parcats(false, "basic_parcats");
     styled_parcats(false, "styled_parcats");
+
+    // Polar Bar Charts
+    wind_rose(false, "wind_rose");
+
+    // Parallel Coordinates
+    basic_parcoords(false, "basic_parcoords");
 
     // Indicator Charts
     basic_indicator(false, "basic_indicator");

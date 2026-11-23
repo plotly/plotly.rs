@@ -1,18 +1,20 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 use crate::{
-    common::{ColorBar, ColorScale, ColorScaleElement, Font, Label, Title},
+    common::{ColorBar, ColorScale, ColorScaleElement, Font, Label, Ticks, Title},
     layout::{
-        Axis, ColorAxis, HoverMode, LayoutColorScale, LayoutTemplate, Template, TicksDirection,
+        AngularAxis, Axis, ColorAxis, HoverMode, LayoutColorScale, LayoutPolar, LayoutTemplate,
+        LayoutTernary, PolarAxisAttributes, PolarAxisTicks, RadialAxis, Template, TernaryAxis,
+        TicksDirection,
     },
 };
 
-pub static DEFAULT: Lazy<Template> = Lazy::new(|| {
+pub static DEFAULT: LazyLock<Template> = LazyLock::new(|| {
     let layout_template = LayoutTemplate::new();
     Template::new().layout(layout_template)
 });
 
-pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
+pub static PLOTLY_WHITE: LazyLock<Template> = LazyLock::new(|| {
     let layout_template = LayoutTemplate::new()
         .color_axis(ColorAxis::new().color_bar(ColorBar::new().outline_width(0)))
         .color_scale(
@@ -86,9 +88,21 @@ pub static PLOTLY_WHITE: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
-    // the following are unimplemented: layout.autotypenumbers, layout.polar,
-    // layout.ternary, layout.scene, layout.*defaults
+pub static PLOTLY_DARK: LazyLock<Template> = LazyLock::new(|| {
+    // the following are unimplemented: layout.autotypenumbers, layout.scene
+    // (its axes have no background attributes yet), layout.*defaults
+    let polar_axis = || {
+        PolarAxisAttributes::new()
+            .grid_color("#506784")
+            .line_color("#506784")
+            .ticks(PolarAxisTicks::new().ticks(Ticks::None))
+    };
+    let ternary_axis = || {
+        TernaryAxis::new()
+            .grid_color("#506784")
+            .line_color("#506784")
+            .ticks(Ticks::None)
+    };
     let layout_template = LayoutTemplate::new()
         .color_axis(ColorAxis::new().color_bar(ColorBar::new().outline_width(0)))
         .color_scale(
@@ -158,11 +172,24 @@ pub static PLOTLY_DARK: Lazy<Template> = Lazy::new(|| {
                 // missing title.standoff = 15
                 .zero_line_color("#283442")
                 .zero_line_width(2),
+        )
+        .polar(
+            LayoutPolar::new()
+                .bg_color("rgb(17,17,17)")
+                .angular_axis(AngularAxis::new().axis_attributes(polar_axis()))
+                .radial_axis(RadialAxis::new().axis_attributes(polar_axis())),
+        )
+        .ternary(
+            LayoutTernary::new()
+                .bg_color("rgb(17,17,17)")
+                .a_axis(ternary_axis())
+                .b_axis(ternary_axis())
+                .c_axis(ternary_axis()),
         );
     Template::new().layout(layout_template)
 });
 
-pub static SEABORN: Lazy<Template> = Lazy::new(|| {
+pub static SEABORN: LazyLock<Template> = LazyLock::new(|| {
     // Based on seaborn's "darkgrid" style and "deep" color palette
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#333333"))
@@ -192,7 +219,7 @@ pub static SEABORN: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static SEABORN_WHITEGRID: Lazy<Template> = Lazy::new(|| {
+pub static SEABORN_WHITEGRID: LazyLock<Template> = LazyLock::new(|| {
     // Seaborn "whitegrid" style
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#333333"))
@@ -222,7 +249,7 @@ pub static SEABORN_WHITEGRID: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static SEABORN_DARK: Lazy<Template> = Lazy::new(|| {
+pub static SEABORN_DARK: LazyLock<Template> = LazyLock::new(|| {
     // Seaborn "dark" style
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#eaeaf2"))
@@ -252,7 +279,7 @@ pub static SEABORN_DARK: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static MATPLOTLIB: Lazy<Template> = Lazy::new(|| {
+pub static MATPLOTLIB: LazyLock<Template> = LazyLock::new(|| {
     // Based on matplotlib's classic style with publication-ready formatting
     // Inspired by: https://medium.com/swlh/formatting-a-plotly-figure-with-matplotlib-style-fa56ddd97539
     let layout_template = LayoutTemplate::new()
@@ -296,7 +323,7 @@ pub static MATPLOTLIB: Lazy<Template> = Lazy::new(|| {
     Template::new().layout(layout_template)
 });
 
-pub static PLOTNINE: Lazy<Template> = Lazy::new(|| {
+pub static PLOTNINE: LazyLock<Template> = LazyLock::new(|| {
     // Based on plotnine's default theme (ggplot2-inspired)
     let layout_template = LayoutTemplate::new()
         .font(Font::new().family("DejaVu Sans").size(12).color("#525252"))
@@ -395,6 +422,23 @@ mod tests {
 
         let expected = r##"{"template":{"layout":{"title":{"x":0.05},"font":{"color":"#f2f5fa"}"##; // etc...
         assert!(plot.to_json().contains(expected));
+    }
+
+    // polar and ternary subplots get the dark background and grid too (as in
+    // plotly.py's plotly_dark); without them plotly.js draws a white
+    // disc/triangle on the dark paper
+    #[test]
+    fn plotly_dark_styles_polar_and_ternary() {
+        let json = serde_json::to_value(&*PLOTLY_DARK).unwrap();
+        let layout = &json["layout"];
+        let axis = serde_json::json!({"linecolor": "#506784", "gridcolor": "#506784", "ticks": ""});
+        assert_eq!(layout["polar"]["bgcolor"], "rgb(17,17,17)");
+        assert_eq!(layout["polar"]["angularaxis"], axis);
+        assert_eq!(layout["polar"]["radialaxis"], axis);
+        assert_eq!(layout["ternary"]["bgcolor"], "rgb(17,17,17)");
+        for k in ["aaxis", "baxis", "caxis"] {
+            assert_eq!(layout["ternary"][k], axis, "{k}");
+        }
     }
 
     #[test]

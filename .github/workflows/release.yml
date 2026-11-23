@@ -22,8 +22,6 @@ jobs:
         install-chromedriver: true        
     - run: cargo publish --allow-dirty -p plotly_derive
     - run: sleep 10
-    - run: cargo publish --allow-dirty -p plotly_kaleido
-    - run: sleep 10
     - run: cargo publish --allow-dirty -p plotly
     # plotly_static is not part of the same ecosystem yet so it doesn't use the same TOKEN
     # - run: sleep 10
