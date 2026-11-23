@@ -41,7 +41,7 @@ tokio = { version = "1", features = ["full"] }
 anyhow = "1.0"
 dirs = "7.0"
 zip = "9.4"
-webdriver-downloader = "0.18"
+webdriver-downloader = "0.19"
 
 # Needed for docs.rs to build the documentation
 [package.metadata.docs.rs]
